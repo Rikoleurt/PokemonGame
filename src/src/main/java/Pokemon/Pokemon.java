@@ -1,6 +1,5 @@
 package Pokemon;
 
-import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,19 +8,26 @@ import static java.lang.Math.round;
 public class Pokemon {
 
     int HP;
+    int maxHP;
+    int speed;
+    int atk;
+    int def;
     int level;
     String name;
     Type type;
-    String nature;
-    String evolution;
+
+    // String evolution;
     Attack attack;
 
-    public Pokemon(int HP, int level, String name, Type type, String nature, Attack attack){
+    public Pokemon(int HP, int maxHP, int speed, int atk, int def, int level, String name, Type type, Attack attack){
         this.HP = HP;
+        this.maxHP = maxHP;
+        this.speed = speed;
+        this.atk = atk;
+        this.def = def;
         this.level = level;
         this.name = name;
         this.type = type;
-        this.nature = nature;
         this.attack = attack;
     }
 
@@ -41,33 +47,37 @@ public class Pokemon {
         return HP;
     }
 
-    public String getNature() {
-        return nature;
+    public int getMaxHP() {
+        return maxHP;
+    }
+    public int getSpeed() {
+        return speed;
+    }
+    public int getAtk() {
+        return atk;
+    }
+    public int getDef() {
+        return def;
     }
 
-    public String getEvolution() {
-        return evolution;
-    }
+    // public String getEvolution() {return evolution;}
 
     public Attack getAttack() {
         return attack;
     }
 
-    public void setDamage(Pokemon pokemon, Attack attack){
-        attack = new Attack(this.name, (int) round(calculateDamage(attack, pokemon)), type, "Special");
-        pokemon.HP -= attack.getDamage();
-        System.out.println(pokemon.getName() + "uses " + attack.getName() );
-        System.out.println("Number of damage: " + calculateDamage(attack, pokemon));
+    public static void useAttack(Pokemon pokemon, Attack attack){
+        pokemon.HP -= (int) calculateDamage(pokemon.getAttack(), pokemon.getDef(), pokemon);
+        System.out.println(pokemon.getName() + " uses " + attack.getName());
+        System.out.println("Pokemon HP : "  + pokemon.getHP());
     }
 
-    public double calculateDamage(Attack attack, Pokemon pokemon) {
+    public static float calculateDamage(Attack attack, int defense, Pokemon pokemon) {
 
-        attack = pokemon.getAttack();
-
-        double AttackDamage = attack.getDamage();
+        float AttackDamage = attack.getDamage();
 
         if(checkWeaknesses(pokemon).contains(attack.getType())){
-            AttackDamage *= 2;
+            AttackDamage *= 2 - round((float) defense);
             System.out.println("The attack is super effective");
         }
         if(checkImmunities(pokemon).contains(attack.getType())){
@@ -75,15 +85,19 @@ public class Pokemon {
             System.out.println("No effect");
         }
         if(checkResistances(pokemon).contains(attack.getType())){
-            AttackDamage *= 0.5;
+            AttackDamage *= 0.5f - round((float) defense);
             System.out.println("The attack is not very effective");
+        }
+        else {
+            AttackDamage = AttackDamage - round((float) defense);
+            System.out.println("tttt");
         }
 
         return AttackDamage;
     }
 
 
-    public List<Type> checkWeaknesses(Pokemon pokemon) {
+    public static List<Type> checkWeaknesses(Pokemon pokemon) {
 
         List<Type> weaknesses = new ArrayList<>();
 
@@ -182,7 +196,7 @@ public class Pokemon {
         return weaknesses;
     }
 
-    public List<Type> checkResistances(Pokemon pokemon) {
+    public static List<Type> checkResistances(Pokemon pokemon) {
 
         List<Type> resistances = new ArrayList<>();
 
@@ -299,65 +313,53 @@ public class Pokemon {
     }
 
 
-    public List<Type> checkImmunities(Pokemon pokemon) {
+    public static List<Type> checkImmunities(Pokemon pokemon) {
 
         List<Type> immunities = new ArrayList<>();
 
         switch (pokemon.getType()) {
             case normal:
-                immunities.add(Type.ghost); // Immunité aux attaques de type Ghost
+                immunities.add(Type.ghost);
                 break;
             case fire:
-                // Pas d'immunité spécifique
                 break;
             case water:
-                // Pas d'immunité spécifique
                 break;
             case grass:
-                // Pas d'immunité spécifique
                 break;
             case electric:
-                // Pas d'immunité spécifique
                 break;
             case ice:
-                // Pas d'immunité spécifique
                 break;
             case fighting:
-                // Pas d'immunité spécifique
                 break;
             case poison:
-                // Pas d'immunité spécifique
                 break;
             case ground:
-                immunities.add(Type.electric); // Immunité aux attaques de type Electric
+                immunities.add(Type.electric);
                 break;
             case flying:
-                immunities.add(Type.ground); // Immunité aux attaques de type Ground
+                immunities.add(Type.ground);
                 break;
             case psychic:
-                // Pas d'immunité spécifique
                 break;
             case bug:
-                // Pas d'immunité spécifique
                 break;
             case rock:
-                // Pas d'immunité spécifique
                 break;
             case ghost:
-                immunities.add(Type.normal); // Immunité aux attaques de type Normal
-                immunities.add(Type.fighting); // Immunité aux attaques de type Fighting
+                immunities.add(Type.normal);
+                immunities.add(Type.fighting);
                 break;
             case dragon:
-                // Pas d'immunité spécifique
                 break;
             case dark:
-                immunities.add(Type.psychic); // Immunité aux attaques de type Psychic
+                immunities.add(Type.psychic);
                 break;
             case steel:
-                // Pas d'immunité spécifique
                 break;
             case fairy:
-                immunities.add(Type.dragon); // Immunité aux attaques de type Dragon
+                immunities.add(Type.dragon);
                 break;
             default:
                 immunities = new ArrayList<>();

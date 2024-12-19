@@ -5,12 +5,15 @@ public class Attack {
     int damage;
     Type type;
     String Mode;
+    int PP;
 
 
-    public Attack(String name, int damage, Type type, String Mode) {
+    public Attack(String name, int damage, Type type, String Mode, int PP) {
+        this.name = name;
         this.damage = damage;
         this.type = type;
         this.Mode = Mode;
+        this.PP = PP;
     }
 
     public int getDamage() {
@@ -27,6 +30,8 @@ public class Attack {
     public String getName() {
         return name;
     }
-
+    public int getPP() {
+        return PP;
+    }
 
 }
