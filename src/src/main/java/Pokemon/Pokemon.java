@@ -1,5 +1,9 @@
 package Pokemon;
 
+import Pokemon.PokemonEnum.Effect;
+import Pokemon.PokemonEnum.Nature;
+import Pokemon.PokemonEnum.Type;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,23 +16,33 @@ public class Pokemon {
     int speed;
     int atk;
     int def;
+    int atkSpe;
+    int defSpe;
     int level;
+    int exp;
     String name;
     Type type;
-
-    // String evolution;
     Attack attack;
+    Nature nature;
+    Effect effect;
 
-    public Pokemon(int HP, int maxHP, int speed, int atk, int def, int level, String name, Type type, Attack attack){
+
+    public Pokemon(int HP, int maxHP, int speed, int atk, int def, int atkSpe, int defSpe, int level, int exp, String name,
+                   Type type, Nature nature, Attack attack, Effect effect){
         this.HP = HP;
         this.maxHP = maxHP;
         this.speed = speed;
         this.atk = atk;
         this.def = def;
+        this.atkSpe = atkSpe;
+        this.defSpe = defSpe;
         this.level = level;
+        this.exp = exp;
         this.name = name;
         this.type = type;
         this.attack = attack;
+        this.nature = nature;
+        this.effect = effect;
     }
 
     public Type getType() {
@@ -72,28 +86,25 @@ public class Pokemon {
         System.out.println("Pokemon HP : "  + pokemon.getHP());
     }
 
-    public static float calculateDamage(Attack attack, int defense, Pokemon pokemon) {
-
-        float AttackDamage = attack.getDamage();
+    public static double calculateDamage(Attack attack, int defense, Pokemon pokemon) {
+        float coefficient;
 
         if(checkWeaknesses(pokemon).contains(attack.getType())){
-            AttackDamage *= 2 - round((float) defense);
+            coefficient = 2;
             System.out.println("The attack is super effective");
+            return (((((pokemon.level * 0.4 + 2) * pokemon.getAtk() * attack.getPower())/pokemon.getDef())/50) + 2) * coefficient;
         }
         if(checkImmunities(pokemon).contains(attack.getType())){
-            AttackDamage *= 0;
-            System.out.println("No effect");
+            System.out.println("This attack does not affect the pokemon");
+            return 0;
         }
         if(checkResistances(pokemon).contains(attack.getType())){
-            AttackDamage *= 0.5f - round((float) defense);
+            coefficient = 0.5f;
             System.out.println("The attack is not very effective");
+            return (((((pokemon.level * 0.4 + 2) * pokemon.getAtk() * attack.getPower())/pokemon.getDef())/50) + 2) * coefficient;
+        } else {
+            return (((((pokemon.level * 0.4 + 2) * pokemon.getAtk() * attack.getPower())/pokemon.getDef())/50) + 2);
         }
-        else {
-            AttackDamage = AttackDamage - round((float) defense);
-            System.out.println("tttt");
-        }
-
-        return AttackDamage;
     }
 
 

@@ -1,4 +1,4 @@
-package Pokemon;
+package Pokemon.PokemonEnum;
 
 public enum Type {
     normal,
