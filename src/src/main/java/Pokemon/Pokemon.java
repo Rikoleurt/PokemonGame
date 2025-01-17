@@ -13,11 +13,17 @@ public class Pokemon {
 
     int HP;
     int maxHP;
+    int hpIV;
     int speed;
+    int speedIV;
     int atk;
+    int atkIV;
     int def;
+    int defIV;
     int atkSpe;
+    int atkSpeIV;
     int defSpe;
+    int defSpeIV;
     int level;
     int exp;
     String name;
@@ -27,15 +33,21 @@ public class Pokemon {
     Effect effect;
 
 
-    public Pokemon(int HP, int maxHP, int speed, int atk, int def, int atkSpe, int defSpe, int level, int exp, String name,
-                   Type type, Nature nature, Attack attack, Effect effect){
+    public Pokemon(int HP, int maxHP, int hpIV, int speed, int speedIV, int atk, int atkIV, int def, int defIV, int atkSpe, int atkSpeIV,
+                   int defSpe, int defSpeIV, int level, int exp, String name, Type type, Nature nature, Attack attack, Effect effect){
         this.HP = HP;
         this.maxHP = maxHP;
+        this.hpIV = hpIV;
         this.speed = speed;
+        this.speedIV = speedIV;
         this.atk = atk;
+        this.atkIV = atkIV;
         this.def = def;
+        this.defIV = defIV;
         this.atkSpe = atkSpe;
+        this.atkSpeIV = atkSpeIV;
         this.defSpe = defSpe;
+        this.defSpeIV = defSpeIV;
         this.level = level;
         this.exp = exp;
         this.name = name;
@@ -81,29 +93,39 @@ public class Pokemon {
     }
 
     public static void useAttack(Pokemon pokemon, Attack attack){
-        pokemon.HP -= (int) calculateDamage(pokemon.getAttack(), pokemon.getDef(), pokemon);
+        pokemon.HP -= (int) totalDamage(pokemon.getAttack(), pokemon);
         System.out.println(pokemon.getName() + " uses " + attack.getName());
         System.out.println("Pokemon HP : "  + pokemon.getHP());
     }
 
-    public static double calculateDamage(Attack attack, int defense, Pokemon pokemon) {
-        float coefficient;
-
-        if(checkWeaknesses(pokemon).contains(attack.getType())){
-            coefficient = 2;
-            System.out.println("The attack is super effective");
-            return (((((pokemon.level * 0.4 + 2) * pokemon.getAtk() * attack.getPower())/pokemon.getDef())/50) + 2) * coefficient;
+    public static double totalDamage(Attack attack, Pokemon pokemon) {
+        float power = attack.getPower();
+        if(attack.isStab(pokemon, attack)) {
+            power *= 1.5f;
+            System.out.println("stab true");
+        } else {
+            System.out.println("stab false");
         }
-        if(checkImmunities(pokemon).contains(attack.getType())){
+        return calculateEffectiveness(attack, pokemon, power);
+    }
+
+    private static double calculateEffectiveness(Attack attack, Pokemon pokemon, float power) {
+        float effectivenessCoefficient;
+        if (checkWeaknesses(pokemon).contains(attack.getType())) {
+            effectivenessCoefficient = 2;
+            System.out.println("The attack is super effective");
+            return (((((pokemon.level * 0.4 + 2) * pokemon.getAtk() * power) / pokemon.getDef()) / 50) + 2) * effectivenessCoefficient ;
+        }
+        if (checkImmunities(pokemon).contains(attack.getType())) {
             System.out.println("This attack does not affect the pokemon");
             return 0;
         }
-        if(checkResistances(pokemon).contains(attack.getType())){
-            coefficient = 0.5f;
+        if (checkResistances(pokemon).contains(attack.getType())) {
+            effectivenessCoefficient = 0.5f;
             System.out.println("The attack is not very effective");
-            return (((((pokemon.level * 0.4 + 2) * pokemon.getAtk() * attack.getPower())/pokemon.getDef())/50) + 2) * coefficient;
+            return (((((pokemon.level * 0.4 + 2) * pokemon.getAtk() * power) / pokemon.getDef()) / 50) + 2) * effectivenessCoefficient;
         } else {
-            return (((((pokemon.level * 0.4 + 2) * pokemon.getAtk() * attack.getPower())/pokemon.getDef())/50) + 2);
+            return (((((pokemon.level * 0.4 + 2) * pokemon.getAtk() * power) / pokemon.getDef()) / 50) + 2);
         }
     }
 

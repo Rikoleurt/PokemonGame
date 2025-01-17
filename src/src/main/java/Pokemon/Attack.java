@@ -42,6 +42,7 @@ public class Attack {
     boolean isStab(Pokemon pokemon, Attack attack) {
         return pokemon.getType().equals(attack.getType());
     }
+
     double criticalProb(Pokemon pokemon, Attack attack) {
         float t;
         t = (float) round(((float) pokemon.getSpeed() / 2) % 2);
