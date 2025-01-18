@@ -14,16 +14,28 @@ public class Pokemon {
     int HP;
     int maxHP;
     int hpIV;
+    int hpEV;
+    int baseHP;
     int speed;
     int speedIV;
+    int speedEV;
+    int baseSpeed;
     int atk;
     int atkIV;
+    int atkEV;
+    int baseAtk;
     int def;
     int defIV;
+    int defEV;
+    int baseDef;
     int atkSpe;
     int atkSpeIV;
+    int atkSpeEV;
+    int baseAtkSpe;
     int defSpe;
     int defSpeIV;
+    int defSpeEV;
+    int baseDefSpe;
     int level;
     int exp;
     String name;
@@ -33,21 +45,35 @@ public class Pokemon {
     Effect effect;
 
 
-    public Pokemon(int HP, int maxHP, int hpIV, int speed, int speedIV, int atk, int atkIV, int def, int defIV, int atkSpe, int atkSpeIV,
-                   int defSpe, int defSpeIV, int level, int exp, String name, Type type, Nature nature, Attack attack, Effect effect){
+    public Pokemon(int HP, int maxHP, int hpIV, int hpEV, int baseHP, int speed, int speedIV, int speedEV, int baseSpeed,
+                   int atk, int atkIV, int atkEV, int baseAtk, int def, int defIV, int defEV, int baseDef, int atkSpe, int atkSpeIV,
+                   int atkSpeEV, int baseAtkSpe, int defSpe, int defSpeIV, int defSpeEV, int baseDefSpe, int level, int exp,
+                   String name, Type type, Nature nature, Attack attack, Effect effect){
         this.HP = HP;
         this.maxHP = maxHP;
         this.hpIV = hpIV;
+        this.hpEV = hpEV;
+        this.baseHP = baseHP;
         this.speed = speed;
         this.speedIV = speedIV;
+        this.speedEV = speedEV;
+        this.baseSpeed = baseSpeed;
         this.atk = atk;
         this.atkIV = atkIV;
+        this.atkEV = atkEV;
+        this.baseAtk = baseAtk;
         this.def = def;
         this.defIV = defIV;
+        this.defEV = defEV;
+        this.baseDef = baseDef;
         this.atkSpe = atkSpe;
         this.atkSpeIV = atkSpeIV;
+        this.atkSpeEV = atkSpeEV;
+        this.baseAtkSpe = baseAtkSpe;
         this.defSpe = defSpe;
         this.defSpeIV = defSpeIV;
+        this.defSpeEV = defSpeEV;
+        this.baseDefSpe = baseDefSpe;
         this.level = level;
         this.exp = exp;
         this.name = name;
@@ -57,18 +83,6 @@ public class Pokemon {
         this.effect = effect;
     }
 
-    public Type getType() {
-        return type;
-    }
-
-    public String getName(){
-        return name;
-    }
-
-    public int getLevel() {
-        return level;
-    }
-
     public int getHP() {
         return HP;
     }
@@ -76,20 +90,104 @@ public class Pokemon {
     public int getMaxHP() {
         return maxHP;
     }
+
+    public int getHpIV() {
+        return hpIV;
+    }
+
+    public int getHpEV() {
+        return hpEV;
+    }
+
+    public int getBaseHP() {
+        return baseHP;
+    }
+
     public int getSpeed() {
         return speed;
     }
+
+    public int getSpeedIV() {
+        return speedIV;
+    }
+
+    public int getSpeedEV() {
+        return speedEV;
+    }
+    public int getBaseSpeed() {
+        return baseSpeed;
+    }
+
     public int getAtk() {
         return atk;
     }
+
+    public int getAtkIV() {
+        return atkIV;
+    }
+
+    public int getAtkEV() {
+        return atkEV;
+    }
+    public int getBaseAtk() {
+        return baseAtk;
+    }
+
     public int getDef() {
         return def;
     }
 
-    // public String getEvolution() {return evolution;}
+    public int getDefIV() {
+        return defIV;
+    }
+
+    public int getDefEV() {
+        return defEV;
+    }
+
+    public int getBaseDef() {
+        return baseDef;
+    }
+
+    public int getDefSpe() {
+        return defSpe;
+    }
+
+    public int getDefSpeIV() {
+        return defSpeIV;
+    }
+
+    public int getDefSpeEV() {
+        return defSpeEV;
+    }
+    public int getBaseDefSpe() {
+        return baseDefSpe;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+    public int getExp() {
+        return exp;
+    }
+
+    public String getName() {
+        return name;
+    }
+    public Type getType() {
+        return type;
+    }
+
+    public Nature getNature() {
+        return nature;
+    }
 
     public Attack getAttack() {
         return attack;
+    }
+
+    public Effect getEffect() {
+        return effect;
     }
 
     public static void useAttack(Pokemon pokemon, Attack attack){
@@ -127,6 +225,12 @@ public class Pokemon {
         } else {
             return (((((pokemon.level * 0.4 + 2) * pokemon.getAtk() * power) / pokemon.getDef()) / 50) + 2);
         }
+    }
+
+    private int calculateIV (Pokemon pokemon, int stat) {
+        int IV = 0;
+        // IV = (stat/pokemon.getNatureValue() * 100/pokemon.getLevel() - pokemon.getEV()/4 - 2 * pokemon.getBaseStat()
+        return IV;
     }
 
 
