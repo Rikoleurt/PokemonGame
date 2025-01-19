@@ -190,6 +190,17 @@ public class Pokemon {
         return effect;
     }
 
+    public int getEV(int stat){
+        return stat;
+    }
+
+    public int getIV(int stat){
+        return stat;
+    }
+    public int getBaseStat(int stat){
+        return stat;
+    }
+
     public static void useAttack(Pokemon pokemon, Attack attack){
         pokemon.HP -= (int) totalDamage(pokemon.getAttack(), pokemon);
         System.out.println(pokemon.getName() + " uses " + attack.getName());
@@ -228,9 +239,13 @@ public class Pokemon {
     }
 
     private int calculateIV (Pokemon pokemon, int stat) {
-        int IV = 0;
-        // IV = (stat/pokemon.getNatureValue() * 100/pokemon.getLevel() - pokemon.getEV()/4 - 2 * pokemon.getBaseStat()
+        int IV = (stat * 100/pokemon.getLevel() - pokemon.getEV(stat)/4 - 2 * pokemon.getBaseStat(stat));
         return IV;
+    }
+
+    public float calculateNature(Pokemon pokemon) {
+        Nature[][] natures = new Nature[4][4];
+        
     }
 
 
