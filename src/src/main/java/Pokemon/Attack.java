@@ -1,6 +1,7 @@
 package Pokemon;
 
 import Pokemon.AttackEnum.AttackMode;
+import Pokemon.PokemonEnum.Effect;
 import Pokemon.PokemonEnum.Type;
 
 import static java.lang.Math.round;
@@ -8,16 +9,27 @@ import static java.lang.Math.round;
 public class Attack {
     String name;
     int power;
+    int precision;
     Type type;
     AttackMode Mode;
+    Effect effect;
     int PP;
 
 
-    public Attack(String name, int power, Type type, AttackMode Mode, int PP) {
+    public Attack(String name, int power, int precision, Type type, AttackMode Mode, int PP) {
         this.name = name;
         this.power = power;
+        this.precision = precision;
         this.type = type;
         this.Mode = Mode;
+        this.PP = PP;
+    }
+
+    public Attack(String name, Effect effect, int precision, Type type, int PP) {
+        this.name = name;
+        this.effect = effect;
+        this.precision = precision;
+        this.type = type;
         this.PP = PP;
     }
 
@@ -39,9 +51,14 @@ public class Attack {
         return PP;
     }
 
-    boolean isStab(Pokemon pokemon, Attack attack) {
-        return pokemon.getType().equals(attack.getType());
+    public Effect getEffect() {
+        return effect;
     }
+
+    boolean isStab(Attack attack) {
+        return this.getType().equals(attack.getType());
+    }
+
 
     double criticalProb(Pokemon pokemon, Attack attack) {
         float t;

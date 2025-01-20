@@ -1,10 +1,13 @@
 package Pokemon;
 
+import Pokemon.AttackEnum.AttackMode;
 import Pokemon.PokemonEnum.Effect;
 import Pokemon.PokemonEnum.Nature;
 import Pokemon.PokemonEnum.Type;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static java.lang.Math.round;
@@ -40,15 +43,22 @@ public class Pokemon {
     int exp;
     String name;
     Type type;
-    Attack attack;
+    ArrayList<Attack> attacks;
     Nature nature;
     Effect effect;
 
+    Nature[][] natures = {
+            {Nature.Hardy},  {Nature.Lonely},  {Nature.Adamant}, {Nature.Naughty},  {Nature.Brave},
+            {Nature.Bold},   {Nature.Docile},  {Nature.Impish},  {Nature.Lax},      {Nature.Relaxed},
+            {Nature.Modest}, {Nature.Mild},    {Nature.Bashful}, {Nature.Quiet},    {Nature.Rash},
+            {Nature.Calm},   {Nature.Gentle},  {Nature.Careful}, {Nature.Sassy},    {Nature.Quirky},
+            {Nature.Timid},  {Nature.Hasty},   {Nature.Jolly},   {Nature.Naive},    {Nature.Serious}
+    };
 
-    public Pokemon(int HP, int maxHP, int hpIV, int hpEV, int baseHP, int speed, int speedIV, int speedEV, int baseSpeed,
+    private Pokemon(int HP, int maxHP, int hpIV, int hpEV, int baseHP, int speed, int speedIV, int speedEV, int baseSpeed,
                    int atk, int atkIV, int atkEV, int baseAtk, int def, int defIV, int defEV, int baseDef, int atkSpe, int atkSpeIV,
                    int atkSpeEV, int baseAtkSpe, int defSpe, int defSpeIV, int defSpeEV, int baseDefSpe, int level, int exp,
-                   String name, Type type, Nature nature, Attack attack, Effect effect){
+                   String name, Type type, Nature nature, ArrayList<Attack> attacks, Effect effect){
         this.HP = HP;
         this.maxHP = maxHP;
         this.hpIV = hpIV;
@@ -78,9 +88,22 @@ public class Pokemon {
         this.exp = exp;
         this.name = name;
         this.type = type;
-        this.attack = attack;
+        this.attacks = attacks;
         this.nature = nature;
         this.effect = effect;
+    }
+
+    public Pokemon(int HP, int maxHP, int atk, int def, int atkSpe, int defSpe, int speed, Type type, ArrayList<Attack> attacks, String name){
+        this.HP = HP;
+        this.maxHP = maxHP;
+        this.atk = atk;
+        this.def = def;
+        this.atkSpe = atkSpe;
+        this.defSpe = defSpe;
+        this.speed = speed;
+        this.type = type;
+        this.attacks = attacks;
+        this.name = name;
     }
 
     public int getHP() {
@@ -145,6 +168,8 @@ public class Pokemon {
         return defEV;
     }
 
+    public int getAtkSpe(){ return atkSpe;}
+
     public int getBaseDef() {
         return baseDef;
     }
@@ -182,9 +207,14 @@ public class Pokemon {
         return nature;
     }
 
-    public Attack getAttack() {
-        return attack;
+    public ArrayList<Attack> getAttacks() {
+            return attacks;
     }
+
+    public Attack getAttack(){
+        return attacks.get(0);
+    }
+
 
     public Effect getEffect() {
         return effect;
@@ -201,15 +231,20 @@ public class Pokemon {
         return stat;
     }
 
-    public static void useAttack(Pokemon pokemon, Attack attack){
-        pokemon.HP -= (int) totalDamage(pokemon.getAttack(), pokemon);
-        System.out.println(pokemon.getName() + " uses " + attack.getName());
-        System.out.println("Pokemon HP : "  + pokemon.getHP());
+    public void useAttack(Pokemon target, Attack attack){
+        target.HP -= (int) totalDamage(this.getAttack(), target);
+        System.out.println(this.getName() + " uses " + attack.getName());
+        System.out.println("Pokemon HP : "  + target.getHP());
+    }
+    public void useStatusAttack(Pokemon target, Attack statusAttack){
+        target.effect = statusAttack.getEffect();
+        System.out.println(this.getName() + " uses " + statusAttack);
+        System.out.println("Pokemon Effect : "  + target.getEffect());
     }
 
-    public static double totalDamage(Attack attack, Pokemon pokemon) {
+    public double totalDamage(Attack attack, Pokemon pokemon) {
         float power = attack.getPower();
-        if(attack.isStab(pokemon, attack)) {
+        if(attack.isStab(attack)) {
             power *= 1.5f;
             System.out.println("stab true");
         } else {
@@ -218,34 +253,52 @@ public class Pokemon {
         return calculateEffectiveness(attack, pokemon, power);
     }
 
-    private static double calculateEffectiveness(Attack attack, Pokemon pokemon, float power) {
+    private double calculateEffectiveness(Attack attack, Pokemon pokemon, float power) {
         float effectivenessCoefficient;
-        if (checkWeaknesses(pokemon).contains(attack.getType())) {
-            effectivenessCoefficient = 2;
-            System.out.println("The attack is super effective");
-            return (((((pokemon.level * 0.4 + 2) * pokemon.getAtk() * power) / pokemon.getDef()) / 50) + 2) * effectivenessCoefficient ;
+        switch (attack.getMode()) {
+            case physical:
+                if (checkWeaknesses(pokemon).contains(attack.getType())) {
+                    effectivenessCoefficient = 2;
+                    System.out.println("The attack is super effective");
+                    return (((((pokemon.level * 0.4 + 2) * pokemon.getAtk() * power) / pokemon.getDef()) / 50) + 2) * effectivenessCoefficient;
+                }
+                if (checkImmunities(pokemon).contains(attack.getType())) {
+                    System.out.println("This attack does not affect the pokemon");
+                    return 0;
+                }
+                if (checkResistances(pokemon).contains(attack.getType())) {
+                    effectivenessCoefficient = 0.5f;
+                    System.out.println("The attack is not very effective");
+                    return (((((pokemon.level * 0.4 + 2) * pokemon.getAtk() * power) / pokemon.getDef()) / 50) + 2) * effectivenessCoefficient;
+                } else {
+                    return (((((pokemon.level * 0.4 + 2) * pokemon.getAtk() * power) / pokemon.getDef()) / 50) + 2);
+                }
+            case special:
+                if (checkWeaknesses(pokemon).contains(attack.getType())) {
+                    effectivenessCoefficient = 2;
+                    System.out.println("The attack is super effective");
+                    return (((((pokemon.level * 0.4 + 2) * pokemon.getAtkSpe() * power) / pokemon.getDefSpe()) / 50) + 2) * effectivenessCoefficient;
+                }
+                if (checkImmunities(pokemon).contains(attack.getType())) {
+                    System.out.println("This attack does not affect the pokemon");
+                    return 0;
+                }
+                if (checkResistances(pokemon).contains(attack.getType())) {
+                    effectivenessCoefficient = 0.5f;
+                    System.out.println("The attack is not very effective");
+                    return (((((pokemon.level * 0.4 + 2) * pokemon.getAtkSpe() * power) / pokemon.getDefSpe()) / 50) + 2) * effectivenessCoefficient;
+                } else {
+                    return (((((pokemon.level * 0.4 + 2) * pokemon.getAtkSpe() * power) / pokemon.getDefSpe()) / 50) + 2);
+                }
+            case status:
+
         }
-        if (checkImmunities(pokemon).contains(attack.getType())) {
-            System.out.println("This attack does not affect the pokemon");
-            return 0;
-        }
-        if (checkResistances(pokemon).contains(attack.getType())) {
-            effectivenessCoefficient = 0.5f;
-            System.out.println("The attack is not very effective");
-            return (((((pokemon.level * 0.4 + 2) * pokemon.getAtk() * power) / pokemon.getDef()) / 50) + 2) * effectivenessCoefficient;
-        } else {
-            return (((((pokemon.level * 0.4 + 2) * pokemon.getAtk() * power) / pokemon.getDef()) / 50) + 2);
-        }
+        return (((((pokemon.level * 0.4 + 2) * pokemon.getAtkSpe() * power) / pokemon.getDefSpe()) / 50) + 2);
     }
 
     private int calculateIV (Pokemon pokemon, int stat) {
         int IV = (stat * 100/pokemon.getLevel() - pokemon.getEV(stat)/4 - 2 * pokemon.getBaseStat(stat));
         return IV;
-    }
-
-    public float calculateNature(Pokemon pokemon) {
-        Nature[][] natures = new Nature[4][4];
-        
     }
 
 
