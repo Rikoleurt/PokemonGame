@@ -93,7 +93,7 @@ public class Pokemon {
         this.effect = effect;
     }
 
-    public Pokemon(int HP, int maxHP, int atk, int def, int atkSpe, int defSpe, int speed, Type type, ArrayList<Attack> attacks, String name){
+    public Pokemon(int HP, int maxHP, int atk, int def, int atkSpe, int defSpe, int speed, int level, Type type, ArrayList<Attack> attacks, String name){
         this.HP = HP;
         this.maxHP = maxHP;
         this.atk = atk;
@@ -168,7 +168,9 @@ public class Pokemon {
         return defEV;
     }
 
-    public int getAtkSpe(){ return atkSpe;}
+    public int getAtkSpe(){
+        return atkSpe;
+    }
 
     public int getBaseDef() {
         return baseDef;
@@ -211,10 +213,12 @@ public class Pokemon {
             return attacks;
     }
 
+// ---------------------------------------------------------------------------------------------------------------------
     public Attack getAttack(){
-        return attacks.get(0);
+        return attacks.get(1);
     }
-
+    // Problem here ^^^^^^^
+// ---------------------------------------------------------------------------------------------------------------------
 
     public Effect getEffect() {
         return effect;
@@ -232,9 +236,8 @@ public class Pokemon {
     }
 
     public void useAttack(Pokemon target, Attack attack){
-        target.HP -= (int) totalDamage(this.getAttack(), target);
+        target.HP -= (int) totalDamage(this.getAttack(), this);
         System.out.println(this.getName() + " uses " + attack.getName());
-        System.out.println("Pokemon HP : "  + target.getHP());
     }
     public void useStatusAttack(Pokemon target, Attack statusAttack){
         target.effect = statusAttack.getEffect();
@@ -291,9 +294,11 @@ public class Pokemon {
                     return (((((pokemon.level * 0.4 + 2) * pokemon.getAtkSpe() * power) / pokemon.getDefSpe()) / 50) + 2);
                 }
             case status:
-
+                break;
+            default:
+                break;
         }
-        return (((((pokemon.level * 0.4 + 2) * pokemon.getAtkSpe() * power) / pokemon.getDefSpe()) / 50) + 2);
+        return 0;
     }
 
     private int calculateIV (Pokemon pokemon, int stat) {
@@ -302,7 +307,7 @@ public class Pokemon {
     }
 
 
-    public static List<Type> checkWeaknesses(Pokemon pokemon) {
+    public List<Type> checkWeaknesses(Pokemon pokemon) {
 
         List<Type> weaknesses = new ArrayList<>();
 
@@ -401,7 +406,7 @@ public class Pokemon {
         return weaknesses;
     }
 
-    public static List<Type> checkResistances(Pokemon pokemon) {
+    public List<Type> checkResistances(Pokemon pokemon) {
 
         List<Type> resistances = new ArrayList<>();
 
@@ -518,7 +523,7 @@ public class Pokemon {
     }
 
 
-    public static List<Type> checkImmunities(Pokemon pokemon) {
+    public  List<Type> checkImmunities(Pokemon pokemon) {
 
         List<Type> immunities = new ArrayList<>();
 
