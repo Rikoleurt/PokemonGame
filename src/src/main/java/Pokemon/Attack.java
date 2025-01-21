@@ -4,7 +4,10 @@ import Pokemon.AttackEnum.AttackMode;
 import Pokemon.PokemonEnum.Effect;
 import Pokemon.PokemonEnum.Type;
 
-import static java.lang.Math.round;
+import java.sql.SQLOutput;
+import java.util.Random;
+
+import static java.lang.Math.*;
 
 public class Attack {
     String name;
@@ -55,19 +58,20 @@ public class Attack {
         return effect;
     }
 
-    boolean isStab(Attack attack) {
-        return this.getType().equals(attack.getType());
+    boolean isStab(Pokemon pokemon) {
+        return pokemon.getType().equals(pokemon.getAttack(this).getType());
     }
 
-
-    double criticalProb(Pokemon pokemon, Attack attack) {
-        float t;
-        t = (float) round(((float) pokemon.getSpeed() / 2) % 2);
-        double criticalProb = t/256;
-
-        return criticalProb;
+    double criticalProb(Pokemon pokemon) {
+        return (float) round(((float) pokemon.getSpeed() / 2));
     }
     boolean isCritical(Pokemon pokemon) {
-        return false;
+        Random random = new Random();
+        double rand = random.nextDouble(256)/256;
+        double criticalProb = criticalProb(pokemon)/256;
+        return rand < criticalProb;
+    }
+    double criticalDamage(Pokemon pokemon) {
+        return (double) (2 * pokemon.getLevel() + 5) / (pokemon.getLevel() + 5);
     }
 }

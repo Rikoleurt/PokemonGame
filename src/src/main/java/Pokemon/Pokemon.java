@@ -213,12 +213,9 @@ public class Pokemon {
             return attacks;
     }
 
-// ---------------------------------------------------------------------------------------------------------------------
-    public Attack getAttack(){
-        return attacks.get(1);
+    public Attack getAttack(Attack attack){
+        return attacks.get(attacks.indexOf(attack));
     }
-    // Problem here ^^^^^^^
-// ---------------------------------------------------------------------------------------------------------------------
 
     public Effect getEffect() {
         return effect;
@@ -235,8 +232,12 @@ public class Pokemon {
         return stat;
     }
 
+    public void setAttack(ArrayList<Attack> attacks, int position, Attack attack) {
+        attacks.set(position, attack);
+    }
+
     public void useAttack(Pokemon target, Attack attack){
-        target.HP -= (int) totalDamage(this.getAttack(), this);
+        target.HP -= (int) totalDamage(this.getAttack(attack), this, target);
         System.out.println(this.getName() + " uses " + attack.getName());
     }
     public void useStatusAttack(Pokemon target, Attack statusAttack){
@@ -245,57 +246,61 @@ public class Pokemon {
         System.out.println("Pokemon Effect : "  + target.getEffect());
     }
 
-    public double totalDamage(Attack attack, Pokemon pokemon) {
+    public double totalDamage(Attack attack, Pokemon launcher, Pokemon target) {
         float power = attack.getPower();
-        if(attack.isStab(attack)) {
+        double augmentedDamage = 0;
+        if(attack.isStab(launcher)) {
             power *= 1.5f;
             System.out.println("stab true");
         } else {
             System.out.println("stab false");
         }
-        return calculateEffectiveness(attack, pokemon, power);
+        if(attack.isCritical(launcher)){
+            augmentedDamage = attack.criticalDamage(launcher);
+            System.out.println("Critical hit !");
+            return calculateEffectiveness(attack, launcher, target, power) * augmentedDamage;
+        }
+        return calculateEffectiveness(attack, launcher, target, power);
     }
 
-    private double calculateEffectiveness(Attack attack, Pokemon pokemon, float power) {
+    private double calculateEffectiveness(Attack attack, Pokemon launcher, Pokemon target, float power) {
         float effectivenessCoefficient;
-        switch (attack.getMode()) {
+        switch (launcher.getAttack(attack).getMode()) {
             case physical:
-                if (checkWeaknesses(pokemon).contains(attack.getType())) {
+                if (checkWeaknesses(target).contains(attack.getType())) {
                     effectivenessCoefficient = 2;
                     System.out.println("The attack is super effective");
-                    return (((((pokemon.level * 0.4 + 2) * pokemon.getAtk() * power) / pokemon.getDef()) / 50) + 2) * effectivenessCoefficient;
+                    return (((((launcher.level * 0.4 + 2) * launcher.getAtk() * power) / target.getDef()) / 50) + 2) * effectivenessCoefficient;
                 }
-                if (checkImmunities(pokemon).contains(attack.getType())) {
+                if (checkImmunities(target).contains(attack.getType())) {
                     System.out.println("This attack does not affect the pokemon");
                     return 0;
                 }
-                if (checkResistances(pokemon).contains(attack.getType())) {
+                if (checkResistances(target).contains(attack.getType())) {
                     effectivenessCoefficient = 0.5f;
                     System.out.println("The attack is not very effective");
-                    return (((((pokemon.level * 0.4 + 2) * pokemon.getAtk() * power) / pokemon.getDef()) / 50) + 2) * effectivenessCoefficient;
+                    return (((((launcher.level * 0.4 + 2) * launcher.getAtk() * power) / target.getDef()) / 50) + 2) * effectivenessCoefficient;
                 } else {
-                    return (((((pokemon.level * 0.4 + 2) * pokemon.getAtk() * power) / pokemon.getDef()) / 50) + 2);
+                    return (((((launcher.level * 0.4 + 2) * launcher.getAtk() * power) / target.getDef()) / 50) + 2);
                 }
             case special:
-                if (checkWeaknesses(pokemon).contains(attack.getType())) {
+                if (checkWeaknesses(target).contains(attack.getType())) {
                     effectivenessCoefficient = 2;
                     System.out.println("The attack is super effective");
-                    return (((((pokemon.level * 0.4 + 2) * pokemon.getAtkSpe() * power) / pokemon.getDefSpe()) / 50) + 2) * effectivenessCoefficient;
+                    return (((((launcher.level * 0.4 + 2) * launcher.getAtkSpe() * power) / target.getDefSpe()) / 50) + 2) * effectivenessCoefficient;
                 }
-                if (checkImmunities(pokemon).contains(attack.getType())) {
+                if (checkImmunities(target).contains(attack.getType())) {
                     System.out.println("This attack does not affect the pokemon");
                     return 0;
                 }
-                if (checkResistances(pokemon).contains(attack.getType())) {
+                if (checkResistances(target).contains(attack.getType())) {
                     effectivenessCoefficient = 0.5f;
                     System.out.println("The attack is not very effective");
-                    return (((((pokemon.level * 0.4 + 2) * pokemon.getAtkSpe() * power) / pokemon.getDefSpe()) / 50) + 2) * effectivenessCoefficient;
+                    return (((((launcher.level * 0.4 + 2) * launcher.getAtkSpe() * power) / target.getDefSpe()) / 50) + 2) * effectivenessCoefficient;
                 } else {
-                    return (((((pokemon.level * 0.4 + 2) * pokemon.getAtkSpe() * power) / pokemon.getDefSpe()) / 50) + 2);
+                    return (((((launcher.level * 0.4 + 2) * launcher.getAtkSpe() * power) / target.getDefSpe()) / 50) + 2);
                 }
             case status:
-                break;
-            default:
                 break;
         }
         return 0;
