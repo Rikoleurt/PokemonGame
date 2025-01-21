@@ -102,6 +102,7 @@ public class Pokemon {
         this.defSpe = defSpe;
         this.speed = speed;
         this.type = type;
+        this.level = level;
         this.attacks = attacks;
         this.name = name;
     }
@@ -210,7 +211,7 @@ public class Pokemon {
     }
 
     public ArrayList<Attack> getAttacks() {
-            return attacks;
+        return attacks;
     }
 
     public Attack getAttack(Attack attack){
@@ -239,7 +240,6 @@ public class Pokemon {
     public void useAttack(Pokemon target, Attack attack){
         target.HP -= (int) totalDamage(this.getAttack(attack), this, target);
         System.out.println(this.getName() + " uses " + attack.getName());
-        System.out.println(totalDamage(this.getAttack(attack), this, target));
     }
     public void useStatusAttack(Pokemon target, Attack statusAttack){
         target.effect = statusAttack.getEffect();
@@ -252,17 +252,12 @@ public class Pokemon {
         double augmentedDamage = 1;
         if(attack.isStab(launcher)) {
             power *= 1.5f;
-            System.out.println("stab true");
-        } else {
-            System.out.println("stab false");
         }
         if(attack.isCritical(launcher)){
             augmentedDamage = launcher.getAttack(attack).criticalDamage(launcher);
-            System.out.println(augmentedDamage);
             System.out.println("Critical hit !");
             return calculateEffectiveness(attack, launcher, target, power) * augmentedDamage;
         }
-        System.out.println(calculateEffectiveness(attack, launcher, target, power));
         return calculateEffectiveness(attack, launcher, target, power);
     }
 
