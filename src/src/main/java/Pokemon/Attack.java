@@ -71,7 +71,7 @@ public class Attack {
         double criticalProb = criticalProb(pokemon)/256;
         return rand < criticalProb;
     }
-    double criticalDamage(Pokemon pokemon) {
-        return (double) (2 * pokemon.getLevel() + 5) / (pokemon.getLevel() + 5);
+    public float criticalDamage(Pokemon pokemon) {
+        return (float) (2 * pokemon.getLevel() + 5) / (pokemon.getLevel() + 5);
     }
 }

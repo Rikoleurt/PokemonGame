@@ -239,6 +239,7 @@ public class Pokemon {
     public void useAttack(Pokemon target, Attack attack){
         target.HP -= (int) totalDamage(this.getAttack(attack), this, target);
         System.out.println(this.getName() + " uses " + attack.getName());
+        System.out.println(totalDamage(this.getAttack(attack), this, target));
     }
     public void useStatusAttack(Pokemon target, Attack statusAttack){
         target.effect = statusAttack.getEffect();
@@ -248,7 +249,7 @@ public class Pokemon {
 
     public double totalDamage(Attack attack, Pokemon launcher, Pokemon target) {
         float power = attack.getPower();
-        double augmentedDamage = 0;
+        double augmentedDamage = 1;
         if(attack.isStab(launcher)) {
             power *= 1.5f;
             System.out.println("stab true");
@@ -256,10 +257,12 @@ public class Pokemon {
             System.out.println("stab false");
         }
         if(attack.isCritical(launcher)){
-            augmentedDamage = attack.criticalDamage(launcher);
+            augmentedDamage = launcher.getAttack(attack).criticalDamage(launcher);
+            System.out.println(augmentedDamage);
             System.out.println("Critical hit !");
             return calculateEffectiveness(attack, launcher, target, power) * augmentedDamage;
         }
+        System.out.println(calculateEffectiveness(attack, launcher, target, power));
         return calculateEffectiveness(attack, launcher, target, power);
     }
 

@@ -44,10 +44,11 @@ public class Main {
                 Type.water, carapuceAtk, "Carapuce"
         );
 
-        for(int i = 0; i < 1000; i++){
+        for(int i = 0; i < 100; i++){
             pikachu.useAttack(carapuce, thunder);
-            System.out.println("Carapuce's HP : " + carapuce.getHP());
         }
+        System.out.println(thunder.criticalDamage(pikachu));
+        System.out.println((2*9+5)/(9+5));
     }
 }
 
