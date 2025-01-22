@@ -6,5 +6,6 @@ public enum Effect {
     burned,
     confused,
     asleep,
-    inLove
+    inLove,
+    freeze
 }

@@ -9,6 +9,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 import static java.lang.Math.round;
 
@@ -93,7 +94,7 @@ public class Pokemon {
         this.effect = effect;
     }
 
-    public Pokemon(int HP, int maxHP, int atk, int def, int atkSpe, int defSpe, int speed, int level, Type type, ArrayList<Attack> attacks, String name){
+    public Pokemon(int HP, int maxHP, int atk, int def, int atkSpe, int defSpe, int speed, int level, Type type, ArrayList<Attack> attacks, String name, Effect effect){
         this.HP = HP;
         this.maxHP = maxHP;
         this.atk = atk;
@@ -105,6 +106,7 @@ public class Pokemon {
         this.level = level;
         this.attacks = attacks;
         this.name = name;
+        this.effect = effect;
     }
 
     public int getHP() {
@@ -240,11 +242,26 @@ public class Pokemon {
     public void useAttack(Pokemon target, Attack attack){
         target.HP -= (int) totalDamage(this.getAttack(attack), this, target);
         System.out.println(this.getName() + " uses " + attack.getName());
+        System.out.println(target.getName() + " HP : " + target.HP + "/" + target.getMaxHP());
     }
     public void useStatusAttack(Pokemon target, Attack statusAttack){
-        target.effect = statusAttack.getEffect();
-        System.out.println(this.getName() + " uses " + statusAttack);
-        System.out.println("Pokemon Effect : "  + target.getEffect());
+        System.out.println(this.getName() + " uses " + statusAttack.getName());
+        target.effect = calculateEffect(target, statusAttack);
+        System.out.println(target.getName() + " is " + target.getEffect() + "! It may be unable to move!");
+    }
+
+    public Effect calculateEffect(Pokemon target, Attack statusAttack){
+        if(target.getEffect() != null){
+            System.out.println(target.getName() + " is already " + target.getEffect() + "! It won't have any effect.");
+        }
+        if(checkImmunities(target).contains(statusAttack.getType())){
+            System.out.println("This attack does not affect the pokemon");
+            return null;
+        }
+        if(target.getEffect() == null){
+            return statusAttack.getEffect();
+        }
+        return target.getEffect();
     }
 
     public double totalDamage(Attack attack, Pokemon launcher, Pokemon target) {
@@ -307,6 +324,32 @@ public class Pokemon {
     private int calculateIV (Pokemon pokemon, int stat) {
         int IV = (stat * 100/pokemon.getLevel() - pokemon.getEV(stat)/4 - 2 * pokemon.getBaseStat(stat));
         return IV;
+    }
+
+    private void calculateEffectChanges(Pokemon target, Attack attack) {
+        Random random = new Random();
+        switch (this.getEffect()) {
+            case asleep -> {
+            }
+            case burned -> {
+                if(this.getAttack(attack).getMode().equals(AttackMode.physical)){
+                    double totalDamage = totalDamage(attack,this,target);
+                    totalDamage /= 2;
+                }
+                this.HP /= 16;
+            }
+            case freeze -> {
+            }
+            case inLove -> {
+            }
+            case confused -> {
+            }
+            case poisoned -> {
+            }
+            case paralyzed -> {
+                target.speed /= 4;
+            }
+        }
     }
 
 
@@ -515,7 +558,7 @@ public class Pokemon {
                 resistances.add(Type.fighting);
                 resistances.add(Type.bug);
                 resistances.add(Type.dark);
-                resistances.add(Type.dragon); // Immunité
+                resistances.add(Type.dragon);
                 break;
             default:
                 resistances = new ArrayList<>();

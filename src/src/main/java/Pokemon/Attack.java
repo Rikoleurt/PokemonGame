@@ -35,6 +35,14 @@ public class Attack {
         this.type = type;
         this.PP = PP;
     }
+    public Attack(String name, int power, int precision, Type type, int PP, Effect effect) {
+        this.name = name;
+        this.power = power;
+        this.precision = precision;
+        this.type = type;
+        this.PP = PP;
+        this.effect = effect;
+    }
 
     public int getPower() {
         return power;
