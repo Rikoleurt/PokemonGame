@@ -5,13 +5,9 @@ import Pokemon.PokemonEnum.Effect;
 import Pokemon.PokemonEnum.Nature;
 import Pokemon.PokemonEnum.Type;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
-
-import static java.lang.Math.round;
 
 public class Pokemon {
 
@@ -240,6 +236,13 @@ public class Pokemon {
     }
 
     public void useAttack(Pokemon target, Attack attack){
+        if(this.getAttack(attack).getMode() == AttackMode.physical && this.getEffect() == Effect.burned){
+             target.HP -= (int) totalDamage(this.getAttack(attack), this, target)/2;
+             System.out.println(this.getName() + " uses " + attack.getName());
+             System.out.println(target.getName() + " HP : " + target.HP + "/" + target.getMaxHP());
+             return;
+        }
+        if(this.getAttack(attack).getMode() == AttackMode.physical && this.getEffect() == Effect.burned)
         target.HP -= (int) totalDamage(this.getAttack(attack), this, target);
         System.out.println(this.getName() + " uses " + attack.getName());
         System.out.println(target.getName() + " HP : " + target.HP + "/" + target.getMaxHP());
@@ -266,7 +269,7 @@ public class Pokemon {
 
     public double totalDamage(Attack attack, Pokemon launcher, Pokemon target) {
         float power = attack.getPower();
-        double augmentedDamage = 1;
+        double augmentedDamage;
         if(attack.isStab(launcher)) {
             power *= 1.5f;
         }
