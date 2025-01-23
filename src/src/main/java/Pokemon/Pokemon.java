@@ -44,6 +44,11 @@ public class Pokemon {
     Nature nature;
     Effect effect;
 
+    Random random = new Random();
+    int randSleep = random.nextInt(0,4);
+    int i = 3;
+    int poisonCoefficient = 1;
+
     Nature[][] natures = {
             {Nature.Hardy},  {Nature.Lonely},  {Nature.Adamant}, {Nature.Naughty},  {Nature.Brave},
             {Nature.Bold},   {Nature.Docile},  {Nature.Impish},  {Nature.Lax},      {Nature.Relaxed},
@@ -266,6 +271,19 @@ public class Pokemon {
                 this.setEffect(null);
             }
         }
+        if(this.getEffect() == Effect.asleep){
+            if(randSleep == 1){
+                System.out.println(this.getName() + " woke up!");
+                this.setEffect(null);
+            }
+            if(randSleep < 1){
+                System.out.println(this.getName() + " is asleep!");
+                randSleep = random.nextInt(0,i);
+                --i;
+                System.out.println(i);
+                return;
+            }
+        }
         target.HP -= (int) totalDamage(this.getAttack(attack), this, target);
         System.out.println(this.getName() + " uses " + attack.getName());
         System.out.println(target.getName() + " HP : " + target.HP + "/" + target.getMaxHP());
@@ -284,7 +302,11 @@ public class Pokemon {
                 break;
             case badlyPoisoned:
                 System.out.println(this.getName() + " is badly poisoned!");
-                this.HP = this.HP - (this.maxHP/8);
+                this.HP = this.HP - (this.maxHP/16 * poisonCoefficient);
+                ++poisonCoefficient;
+                System.out.println(poisonCoefficient);
+                break;
+            default:
                 break;
         }
     }
@@ -359,11 +381,9 @@ public class Pokemon {
                 } else {
                     return (((((launcher.level * 0.4 + 2) * launcher.getAtkSpe() * power) / target.getDefSpe()) / 50) + 2);
                 }
-            case status:
-                break;
+            }
+            return 0;
         }
-        return 0;
-    }
 
     private int calculateIV (Pokemon pokemon, int stat) {
         int IV = (stat * 100/pokemon.getLevel() - pokemon.getEV(stat)/4 - 2 * pokemon.getBaseStat(stat));

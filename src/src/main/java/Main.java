@@ -34,7 +34,7 @@ public class Main {
                 51, 50,
                 90,
                 9,
-                Type.electric, pikachuAtk, "Pikachu", Effect.poisoned
+                Type.electric, pikachuAtk, "Pikachu", Effect.asleep
         );
 
         Pokemon carapuce = new Pokemon(
@@ -48,6 +48,7 @@ public class Main {
 
         pikachu.useAttack(carapuce, electricPunch);
         System.out.println("Pikachu's HP: " + pikachu.getHP() + "/" + pikachu.getMaxHP());
+
     }
 }
 
