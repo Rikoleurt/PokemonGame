@@ -109,6 +109,7 @@ public class Pokemon {
         return HP;
     }
 
+
     public int getMaxHP() {
         return maxHP;
     }
@@ -220,6 +221,10 @@ public class Pokemon {
         return effect;
     }
 
+    public void setEffect(Effect effect) {
+        this.effect = effect;
+    }
+
     public int getEV(int stat){
         return stat;
     }
@@ -236,16 +241,52 @@ public class Pokemon {
     }
 
     public void useAttack(Pokemon target, Attack attack){
+        Random random = new Random();
         if(this.getAttack(attack).getMode() == AttackMode.physical && this.getEffect() == Effect.burned){
              target.HP -= (int) totalDamage(this.getAttack(attack), this, target)/2;
              System.out.println(this.getName() + " uses " + attack.getName());
              System.out.println(target.getName() + " HP : " + target.HP + "/" + target.getMaxHP());
              return;
         }
-        if(this.getAttack(attack).getMode() == AttackMode.physical && this.getEffect() == Effect.burned)
+        if(this.getEffect() == Effect.paralyzed){
+            int randInt = random.nextInt(0,4);
+            if(randInt == 1){
+                System.out.println(this.getName() + " is paralyzed! It can't move!");
+                return;
+            }
+        }
+        if(this.getEffect() == Effect.freeze){
+            int randInt = random.nextInt(0,4);
+            System.out.println(randInt);
+            if(randInt < 3){
+                System.out.println(this.getName() + " is frozen solid!");
+                return;
+            } else {
+                System.out.println(this.getName() + " is not frozen anymore!");
+                this.setEffect(null);
+            }
+        }
         target.HP -= (int) totalDamage(this.getAttack(attack), this, target);
         System.out.println(this.getName() + " uses " + attack.getName());
         System.out.println(target.getName() + " HP : " + target.HP + "/" + target.getMaxHP());
+        updateStatusEffect();
+    }
+
+    public void updateStatusEffect(){
+        switch(this.getEffect()){
+            case burned:
+                System.out.println(this.getName() + " suffers from burn!");
+                this.HP = this.HP - (this.maxHP/16);
+                break;
+            case poisoned:
+                System.out.println(this.getName() + " is poisoned!");
+                this.HP = this.HP - (this.maxHP/8);
+                break;
+            case badlyPoisoned:
+                System.out.println(this.getName() + " is badly poisoned!");
+                this.HP = this.HP - (this.maxHP/8);
+                break;
+        }
     }
     public void useStatusAttack(Pokemon target, Attack statusAttack){
         System.out.println(this.getName() + " uses " + statusAttack.getName());
@@ -327,32 +368,6 @@ public class Pokemon {
     private int calculateIV (Pokemon pokemon, int stat) {
         int IV = (stat * 100/pokemon.getLevel() - pokemon.getEV(stat)/4 - 2 * pokemon.getBaseStat(stat));
         return IV;
-    }
-
-    private void calculateEffectChanges(Pokemon target, Attack attack) {
-        Random random = new Random();
-        switch (this.getEffect()) {
-            case asleep -> {
-            }
-            case burned -> {
-                if(this.getAttack(attack).getMode().equals(AttackMode.physical)){
-                    double totalDamage = totalDamage(attack,this,target);
-                    totalDamage /= 2;
-                }
-                this.HP /= 16;
-            }
-            case freeze -> {
-            }
-            case inLove -> {
-            }
-            case confused -> {
-            }
-            case poisoned -> {
-            }
-            case paralyzed -> {
-                target.speed /= 4;
-            }
-        }
     }
 
 

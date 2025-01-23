@@ -16,11 +16,13 @@ public class Main {
         Attack waterGun = new Attack("Water Gun", 40, 100, Type.water, AttackMode.special, 40);
         Attack thunder = new Attack("Thunder", 80, 100, Type.electric, AttackMode.special, 20);
         Attack thunderWave = new Attack("ThunderWave", Effect.paralyzed, 100, Type.electric, 40);
+        Attack electricPunch = new Attack("Electric punch", 80,100, Type.electric, AttackMode.physical, 40);
 
         ArrayList<Attack> pikachuAtk = new ArrayList<>();
         pikachuAtk.add(charge);
         pikachuAtk.add(thunder);
         pikachuAtk.add(thunderWave);
+        pikachuAtk.add(electricPunch);
 
         ArrayList<Attack> carapuceAtk = new ArrayList<>();
         carapuceAtk.add(charge);
@@ -32,7 +34,7 @@ public class Main {
                 51, 50,
                 90,
                 9,
-                Type.electric, pikachuAtk, "Pikachu", null
+                Type.electric, pikachuAtk, "Pikachu", Effect.poisoned
         );
 
         Pokemon carapuce = new Pokemon(
@@ -44,8 +46,8 @@ public class Main {
                 Type.water, carapuceAtk, "Carapuce", null
         );
 
-       pikachu.useAttack(carapuce, thunder);
-        System.out.println("Carapuce's HP : " + carapuce.getHP() + "/" + carapuce.getMaxHP());
+        pikachu.useAttack(carapuce, electricPunch);
+        System.out.println("Pikachu's HP: " + pikachu.getHP() + "/" + pikachu.getMaxHP());
     }
 }
 
