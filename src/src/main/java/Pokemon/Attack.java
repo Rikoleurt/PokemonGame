@@ -1,10 +1,9 @@
 package Pokemon;
 
 import Pokemon.AttackEnum.AttackMode;
-import Pokemon.PokemonEnum.Effect;
+import Pokemon.PokemonEnum.Status;
 import Pokemon.PokemonEnum.Type;
 
-import java.sql.SQLOutput;
 import java.util.Random;
 
 import static java.lang.Math.*;
@@ -15,7 +14,7 @@ public class Attack {
     int precision;
     Type type;
     AttackMode Mode;
-    Effect effect;
+    Status status;
     int PP;
 
 
@@ -28,20 +27,20 @@ public class Attack {
         this.PP = PP;
     }
 
-    public Attack(String name, Effect effect, int precision, Type type, int PP) {
+    public Attack(String name, Status status, int precision, Type type, int PP) {
         this.name = name;
-        this.effect = effect;
+        this.status = status;
         this.precision = precision;
         this.type = type;
         this.PP = PP;
     }
-    public Attack(String name, int power, int precision, Type type, int PP, Effect effect) {
+    public Attack(String name, int power, int precision, Type type, int PP, Status status) {
         this.name = name;
         this.power = power;
         this.precision = precision;
         this.type = type;
         this.PP = PP;
-        this.effect = effect;
+        this.status = status;
     }
 
     public int getPower() {
@@ -62,8 +61,8 @@ public class Attack {
         return PP;
     }
 
-    public Effect getEffect() {
-        return effect;
+    public Status getEffect() {
+        return status;
     }
 
     boolean isStab(Pokemon pokemon) {

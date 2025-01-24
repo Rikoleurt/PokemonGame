@@ -1,21 +1,18 @@
 import Pokemon.AttackEnum.AttackMode;
 import Pokemon.Pokemon;
 
-import Pokemon.PokemonEnum.Effect;
-import Pokemon.PokemonEnum.Nature;
+import Pokemon.PokemonEnum.Status;
 import Pokemon.PokemonEnum.Type;
 import Pokemon.Attack;
 
 import java.util.ArrayList;
 
-import java.util.ArrayList;
-
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         Attack charge = new Attack("Charge", 40, 100, Type.normal, AttackMode.physical, 40);
         Attack waterGun = new Attack("Water Gun", 40, 100, Type.water, AttackMode.special, 40);
         Attack thunder = new Attack("Thunder", 80, 100, Type.electric, AttackMode.special, 20);
-        Attack thunderWave = new Attack("ThunderWave", Effect.paralyzed, 100, Type.electric, 40);
+        Attack thunderWave = new Attack("ThunderWave", Status.paralyzed, 100, Type.electric, 40);
         Attack electricPunch = new Attack("Electric punch", 80,100, Type.electric, AttackMode.physical, 40);
 
         ArrayList<Attack> pikachuAtk = new ArrayList<>();
@@ -34,7 +31,7 @@ public class Main {
                 51, 50,
                 90,
                 9,
-                Type.electric, pikachuAtk, "Pikachu", Effect.asleep,
+                Type.electric, pikachuAtk, "Pikachu", Status.normal,
                 "male"
         );
 
@@ -44,18 +41,19 @@ public class Main {
                 50, 64, // Special Attack et Special Defense
                 43,
                 10,// Speed
-                Type.water, carapuceAtk, "Carapuce", Effect.normal,
+                Type.water, carapuceAtk, "Carapuce", Status.normal,
                 "female"
         );
 
-        pikachu.useAttack(carapuce, electricPunch);
-        System.out.println("Pikachu's HP: " + pikachu.getHP() + "/" + pikachu.getMaxHP());
-        pikachu.useAttack(carapuce, electricPunch);
-        System.out.println("Pikachu's HP: " + pikachu.getHP() + "/" + pikachu.getMaxHP());
-        pikachu.useAttack(carapuce, electricPunch);
-        System.out.println("Pikachu's HP: " + pikachu.getHP() + "/" + pikachu.getMaxHP());
-        pikachu.useAttack(carapuce, electricPunch);
 
+        pikachu.useAttack(carapuce, electricPunch);
+        System.out.println("Pikachu: " + pikachu.getHP() + "/" + pikachu.getMaxHP());
+        pikachu.useAttack(carapuce, electricPunch);
+        System.out.println("Pikachu: " + pikachu.getHP() + "/" + pikachu.getMaxHP());
+        pikachu.useAttack(carapuce, electricPunch);
+        System.out.println("Pikachu: " + pikachu.getHP() + "/" + pikachu.getMaxHP());
+        pikachu.useAttack(carapuce, electricPunch);
+        System.out.println("Pikachu: " + pikachu.getHP() + "/" + pikachu.getMaxHP());
     }
 }
 

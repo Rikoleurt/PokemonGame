@@ -1,7 +1,7 @@
 package Pokemon;
 
 import Pokemon.AttackEnum.AttackMode;
-import Pokemon.PokemonEnum.Effect;
+import Pokemon.PokemonEnum.Status;
 import Pokemon.PokemonEnum.Nature;
 import Pokemon.PokemonEnum.Type;
 
@@ -43,13 +43,14 @@ public class Pokemon {
     Type type;
     ArrayList<Attack> attacks;
     Nature nature;
-    Effect effect;
+    Status status;
     String gender;
 
     Random random = new Random();
     int wakeUp = 0;
     int poisonCoefficient = 1;
     int healConfusion = 1;
+    int healFear = 0;
 
     Nature[][] natures = {
             {Nature.Hardy},  {Nature.Lonely},  {Nature.Adamant}, {Nature.Naughty},  {Nature.Brave},
@@ -62,7 +63,7 @@ public class Pokemon {
     private Pokemon(int HP, int maxHP, int hpIV, int hpEV, int baseHP, int speed, int speedIV, int speedEV, int baseSpeed,
                    int atk, int atkIV, int atkEV, int baseAtk, int def, int defIV, int defEV, int baseDef, int atkSpe, int atkSpeIV,
                    int atkSpeEV, int baseAtkSpe, int defSpe, int defSpeIV, int defSpeEV, int baseDefSpe, int level, int exp,
-                   String name, Type type, Nature nature, ArrayList<Attack> attacks, Effect effect){
+                   String name, Type type, Nature nature, ArrayList<Attack> attacks, Status status){
         this.HP = HP;
         this.maxHP = maxHP;
         this.hpIV = hpIV;
@@ -94,10 +95,10 @@ public class Pokemon {
         this.type = type;
         this.attacks = attacks;
         this.nature = nature;
-        this.effect = effect;
+        this.status = status;
     }
 
-    public Pokemon(int HP, int maxHP, int atk, int def, int atkSpe, int defSpe, int speed, int level, Type type, ArrayList<Attack> attacks, String name, Effect effect, String gender){
+    public Pokemon(int HP, int maxHP, int atk, int def, int atkSpe, int defSpe, int speed, int level, Type type, ArrayList<Attack> attacks, String name, Status status, String gender){
         this.HP = HP;
         this.maxHP = maxHP;
         this.atk = atk;
@@ -109,7 +110,7 @@ public class Pokemon {
         this.level = level;
         this.attacks = attacks;
         this.name = name;
-        this.effect = effect;
+        this.status = status;
         this.gender = gender;
     }
 
@@ -225,12 +226,12 @@ public class Pokemon {
         return attacks.get(attacks.indexOf(attack));
     }
 
-    public Effect getEffect() {
-        return effect;
+    public Status getEffect() {
+        return status;
     }
 
-    public void setEffect(Effect effect) {
-        this.effect = effect;
+    public void setEffect(Status status) {
+        this.status = status;
     }
 
     public int getEV(int stat){
@@ -254,20 +255,20 @@ public class Pokemon {
 
     public void useAttack(Pokemon target, Attack attack){
         Random random = new Random();
-        if(this.getAttack(attack).getMode() == AttackMode.physical && this.getEffect() == Effect.burned){
+        if(this.getAttack(attack).getMode() == AttackMode.physical && this.getEffect() == Status.burned){
              target.HP -= (int) totalDamage(this.getAttack(attack), this, target)/2;
              System.out.println(this.getName() + " uses " + attack.getName());
              System.out.println(target.getName() + " HP : " + target.HP + "/" + target.getMaxHP());
              return;
         }
-        if(this.getEffect() == Effect.paralyzed){
+        if(this.getEffect() == Status.paralyzed){
             int randInt = random.nextInt(0,4);
             if(randInt == 1){
                 System.out.println(this.getName() + " is paralyzed! It can't move!");
                 return;
             }
         }
-        if(this.getEffect() == Effect.freeze){
+        if(this.getEffect() == Status.freeze){
             int randInt = random.nextInt(0,4);
             System.out.println(randInt);
             if(randInt < 3){
@@ -278,25 +279,25 @@ public class Pokemon {
                 this.setEffect(null);
             }
         }
-        if(this.getEffect() == Effect.asleep){
+        if(this.getEffect() == Status.asleep){
             int randInt = random.nextInt(0,3);
             if(randInt == 0){
                 System.out.println(this.getName() + " woke up!");
-                this.setEffect(Effect.normal);
+                this.setEffect(Status.normal);
             }
             if(randInt > 0){
                 System.out.println(this.getName() + " is asleep!");
                 ++wakeUp;
                 if(wakeUp == 4){
                     System.out.println(this.getName() + " woke up!");
-                    this.effect = Effect.normal;
+                    this.status = Status.normal;
                 }
                 if(wakeUp != 4) {
                     return;
                 }
             }
         }
-        if(this.getEffect() == Effect.attracted && !Objects.equals(this.getGender(), target.getGender())){
+        if(this.getEffect() == Status.attracted && !Objects.equals(this.getGender(), target.getGender())){
             int randInt = random.nextInt(0,2);
             System.out.println(randInt);
             if(randInt == 1){
@@ -304,19 +305,43 @@ public class Pokemon {
                 return;
             }
         }
-        if(this.getEffect() == Effect.confused){
+        if(this.getEffect() == Status.confused){
             int randInt = random.nextInt(0,2);
-            System.out.println(randInt);
+            System.out.println(healConfusion);
+            ++healConfusion;
+            if(randInt == 0){
+                if(healConfusion < 4) {
+                    System.out.println(this.getName() + " is confused!");
+                }
+            }
             if(randInt == 1){
                 System.out.println(this.getName() + " is confused!");
                 System.out.println(this.getName() + " hurt itself in its confusion!");
                 this.HP -= (int) (((((this.getLevel() * 0.4 + 2) * this.getAtk() * 40) / target.getDef()) / 50) + 2);
                 return;
             }
+            if(healConfusion > 4){
+                System.out.println(this.getName() + " snapped out of confusion!");
+                this.setEffect(Status.normal);
+                healConfusion = 0;
+            }
         }
-        System.out.println(this.getName() + " uses " + attack.getName());
-        target.HP -= (int) totalDamage(this.getAttack(attack), this, target);
-        System.out.println(target.getName() + " HP : " + target.HP + "/" + target.getMaxHP());
+        if(this.getEffect() == Status.fear){
+            System.out.println(this.getName() + " is fear! It can't attack!");
+        }
+        if(
+                (this.getEffect() == Status.normal || this.getEffect() == Status.cursed || this.getEffect() == Status.burned
+           || this.getEffect() == Status.paralyzed || this.getEffect() == Status.freeze || this.getEffect() == Status.attracted
+           || this.getEffect() == Status.confused || this.getEffect() == Status.asleep
+                )
+                        && target.getHP() > 0){
+            System.out.println(this.getName() + " uses " + attack.getName());
+            target.HP -= (int) totalDamage(this.getAttack(attack), this, target);
+            System.out.println(target.getName() + " HP : " + target.HP + "/" + target.getMaxHP());
+        }
+        if(target.getHP() < 0) {
+            System.out.println(target.getName() + " is K.O");
+        }
         updateStatusEffect();
     }
 
@@ -340,21 +365,25 @@ public class Pokemon {
                 System.out.println(poisonCoefficient);
                 break;
             case confused:
-                if(healConfusion == 4){
-                    System.out.println(this.getName() + "snapped out of confusion!");
-                    this.effect = Effect.normal;
-                }
-                healConfusion++;
             case asleep:
+            case fear:
+                healFear++;
+                if(healFear == 1) {
+                    this.setEffect(Status.normal);
+                    healFear = 0;
+                }
+                break;
+            case cursed:
+                this.HP = this.HP - (this.maxHP/4);
         }
     }
     public void useStatusAttack(Pokemon target, Attack statusAttack){
         System.out.println(this.getName() + " uses " + statusAttack.getName());
-        target.effect = calculateEffect(target, statusAttack);
+        target.status = calculateEffect(target, statusAttack);
         System.out.println(target.getName() + " is " + target.getEffect() + "! It may be unable to move!");
     }
 
-    public Effect calculateEffect(Pokemon target, Attack statusAttack){
+    public Status calculateEffect(Pokemon target, Attack statusAttack){
         if(target.getEffect() != null){
             System.out.println(target.getName() + " is already " + target.getEffect() + "! It won't have any effect.");
         }

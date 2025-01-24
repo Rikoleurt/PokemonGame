@@ -1,6 +1,6 @@
 package Pokemon.PokemonEnum;
 
-public enum Effect {
+public enum Status {
     normal,
     poisoned,
     badlyPoisoned,
@@ -9,5 +9,8 @@ public enum Effect {
     confused,
     asleep,
     attracted,
-    freeze
+    freeze,
+    fear,
+    cursed,
+    KO
 }
