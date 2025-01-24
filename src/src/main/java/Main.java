@@ -34,7 +34,8 @@ public class Main {
                 51, 50,
                 90,
                 9,
-                Type.electric, pikachuAtk, "Pikachu", Effect.asleep
+                Type.electric, pikachuAtk, "Pikachu", Effect.asleep,
+                "male"
         );
 
         Pokemon carapuce = new Pokemon(
@@ -43,11 +44,17 @@ public class Main {
                 50, 64, // Special Attack et Special Defense
                 43,
                 10,// Speed
-                Type.water, carapuceAtk, "Carapuce", null
+                Type.water, carapuceAtk, "Carapuce", Effect.normal,
+                "female"
         );
 
         pikachu.useAttack(carapuce, electricPunch);
         System.out.println("Pikachu's HP: " + pikachu.getHP() + "/" + pikachu.getMaxHP());
+        pikachu.useAttack(carapuce, electricPunch);
+        System.out.println("Pikachu's HP: " + pikachu.getHP() + "/" + pikachu.getMaxHP());
+        pikachu.useAttack(carapuce, electricPunch);
+        System.out.println("Pikachu's HP: " + pikachu.getHP() + "/" + pikachu.getMaxHP());
+        pikachu.useAttack(carapuce, electricPunch);
 
     }
 }

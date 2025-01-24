@@ -7,6 +7,7 @@ import Pokemon.PokemonEnum.Type;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 public class Pokemon {
@@ -43,11 +44,12 @@ public class Pokemon {
     ArrayList<Attack> attacks;
     Nature nature;
     Effect effect;
+    String gender;
 
     Random random = new Random();
-    int randSleep = random.nextInt(0,4);
-    int i = 3;
+    int wakeUp = 0;
     int poisonCoefficient = 1;
+    int healConfusion = 1;
 
     Nature[][] natures = {
             {Nature.Hardy},  {Nature.Lonely},  {Nature.Adamant}, {Nature.Naughty},  {Nature.Brave},
@@ -95,7 +97,7 @@ public class Pokemon {
         this.effect = effect;
     }
 
-    public Pokemon(int HP, int maxHP, int atk, int def, int atkSpe, int defSpe, int speed, int level, Type type, ArrayList<Attack> attacks, String name, Effect effect){
+    public Pokemon(int HP, int maxHP, int atk, int def, int atkSpe, int defSpe, int speed, int level, Type type, ArrayList<Attack> attacks, String name, Effect effect, String gender){
         this.HP = HP;
         this.maxHP = maxHP;
         this.atk = atk;
@@ -108,6 +110,7 @@ public class Pokemon {
         this.attacks = attacks;
         this.name = name;
         this.effect = effect;
+        this.gender = gender;
     }
 
     public int getHP() {
@@ -241,6 +244,10 @@ public class Pokemon {
         return stat;
     }
 
+    public String getGender() {
+        return gender;
+    }
+
     public void setAttack(ArrayList<Attack> attacks, int position, Attack attack) {
         attacks.set(position, attack);
     }
@@ -272,26 +279,52 @@ public class Pokemon {
             }
         }
         if(this.getEffect() == Effect.asleep){
-            if(randSleep == 1){
+            int randInt = random.nextInt(0,3);
+            if(randInt == 0){
                 System.out.println(this.getName() + " woke up!");
-                this.setEffect(null);
+                this.setEffect(Effect.normal);
             }
-            if(randSleep < 1){
+            if(randInt > 0){
                 System.out.println(this.getName() + " is asleep!");
-                randSleep = random.nextInt(0,i);
-                --i;
-                System.out.println(i);
+                ++wakeUp;
+                if(wakeUp == 4){
+                    System.out.println(this.getName() + " woke up!");
+                    this.effect = Effect.normal;
+                }
+                if(wakeUp != 4) {
+                    return;
+                }
+            }
+        }
+        if(this.getEffect() == Effect.attracted && !Objects.equals(this.getGender(), target.getGender())){
+            int randInt = random.nextInt(0,2);
+            System.out.println(randInt);
+            if(randInt == 1){
+                System.out.println(this.getName() + " is in love with " + target.getName() + "!");
                 return;
             }
         }
-        target.HP -= (int) totalDamage(this.getAttack(attack), this, target);
+        if(this.getEffect() == Effect.confused){
+            int randInt = random.nextInt(0,2);
+            System.out.println(randInt);
+            if(randInt == 1){
+                System.out.println(this.getName() + " is confused!");
+                System.out.println(this.getName() + " hurt itself in its confusion!");
+                this.HP -= (int) (((((this.getLevel() * 0.4 + 2) * this.getAtk() * 40) / target.getDef()) / 50) + 2);
+                return;
+            }
+        }
         System.out.println(this.getName() + " uses " + attack.getName());
+        target.HP -= (int) totalDamage(this.getAttack(attack), this, target);
         System.out.println(target.getName() + " HP : " + target.HP + "/" + target.getMaxHP());
         updateStatusEffect();
     }
 
+
     public void updateStatusEffect(){
         switch(this.getEffect()){
+            case normal, attracted:
+                break;
             case burned:
                 System.out.println(this.getName() + " suffers from burn!");
                 this.HP = this.HP - (this.maxHP/16);
@@ -306,8 +339,13 @@ public class Pokemon {
                 ++poisonCoefficient;
                 System.out.println(poisonCoefficient);
                 break;
-            default:
-                break;
+            case confused:
+                if(healConfusion == 4){
+                    System.out.println(this.getName() + "snapped out of confusion!");
+                    this.effect = Effect.normal;
+                }
+                healConfusion++;
+            case asleep:
         }
     }
     public void useStatusAttack(Pokemon target, Attack statusAttack){
