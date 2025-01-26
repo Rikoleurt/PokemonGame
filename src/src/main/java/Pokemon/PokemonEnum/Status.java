@@ -2,15 +2,14 @@ package Pokemon.PokemonEnum;
 
 public enum Status {
     normal,
-    poisoned,
-    badlyPoisoned,
     paralyzed,
     burned,
+    freeze,
     confused,
+    poisoned,
+    badlyPoisoned,
     asleep,
     attracted,
-    freeze,
     fear,
-    cursed,
-    KO
+    cursed
 }

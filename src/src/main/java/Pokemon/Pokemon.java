@@ -299,7 +299,6 @@ public class Pokemon {
         }
         if(this.getEffect() == Status.attracted && !Objects.equals(this.getGender(), target.getGender())){
             int randInt = random.nextInt(0,2);
-            System.out.println(randInt);
             if(randInt == 1){
                 System.out.println(this.getName() + " is in love with " + target.getName() + "!");
                 return;
@@ -329,18 +328,13 @@ public class Pokemon {
         if(this.getEffect() == Status.fear){
             System.out.println(this.getName() + " is fear! It can't attack!");
         }
-        if(
-                (this.getEffect() == Status.normal || this.getEffect() == Status.cursed || this.getEffect() == Status.burned
+        if((this.getEffect() == Status.normal || this.getEffect() == Status.cursed || this.getEffect() == Status.burned
            || this.getEffect() == Status.paralyzed || this.getEffect() == Status.freeze || this.getEffect() == Status.attracted
-           || this.getEffect() == Status.confused || this.getEffect() == Status.asleep
-                )
-                        && target.getHP() > 0){
+           || this.getEffect() == Status.confused || this.getEffect() == Status.asleep)
+        ){
             System.out.println(this.getName() + " uses " + attack.getName());
             target.HP -= (int) totalDamage(this.getAttack(attack), this, target);
             System.out.println(target.getName() + " HP : " + target.HP + "/" + target.getMaxHP());
-        }
-        if(target.getHP() < 0) {
-            System.out.println(target.getName() + " is K.O");
         }
         updateStatusEffect();
     }

@@ -31,7 +31,7 @@ public class Main {
                 51, 50,
                 90,
                 9,
-                Type.electric, pikachuAtk, "Pikachu", Status.normal,
+                Type.electric, pikachuAtk, "Pikachu", Status.attracted,
                 "male"
         );
 
