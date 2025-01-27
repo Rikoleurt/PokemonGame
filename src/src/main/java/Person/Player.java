@@ -1,7 +1,9 @@
 package Person;
 
 import Inventory.Inventory;
+import Pokemon.Pokemon;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.awt.event.KeyEvent;
@@ -10,10 +12,12 @@ public class Player {
 
     String nickname;
     Inventory inventory;
+    LinkedList<Pokemon> pokemons;
 
-    Player(String nickname, Inventory inventory) {
+    public Player(String nickname, Inventory inventory, LinkedList<Pokemon> pokemons) {
         this.nickname = nickname;
         this.inventory = inventory;
+        this.pokemons = pokemons;
     }
     public String getNickname() {
         return nickname;
@@ -22,6 +26,12 @@ public class Player {
         return inventory;
     }
 
+    public LinkedList<Pokemon> getPokemons() {
+        return pokemons;
+    }
+    public Pokemon getPokemon(Pokemon pokemon) {
+        return pokemons.get(getPokemons().indexOf(pokemon));
+    }
     public void setInventory(Inventory inventory) {
         this.inventory = inventory;
     }

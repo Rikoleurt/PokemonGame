@@ -342,7 +342,7 @@ public class Pokemon {
 
     public void updateStatusEffect(){
         switch(this.getEffect()){
-            case normal, attracted:
+            case normal, attracted, asleep:
                 break;
             case burned:
                 System.out.println(this.getName() + " suffers from burn!");
@@ -359,7 +359,6 @@ public class Pokemon {
                 System.out.println(poisonCoefficient);
                 break;
             case confused:
-            case asleep:
             case fear:
                 healFear++;
                 if(healFear == 1) {
