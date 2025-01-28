@@ -49,6 +49,7 @@ public class Terrain {
         switch (attack.getDebris()){
             case spikes:
                 nbSpikes++;
+                // Need to activate this when a pokemon is replaced by another
                 if(nbSpikes == 1) {
                     pokemon.HP -= pokemon.maxHP / 8;
                 }
@@ -160,8 +161,8 @@ public class Terrain {
     }
     public void addPokemon(Player player, NPC npc) {
         Terrain terrain = new Terrain(pokemonOnField, debris, meteo);
-        terrain.getPokemonOnField().add(player.getPokemons().get(0));
-        System.out.println(player.getPokemons().get(0).getName() + " Go!");
+        terrain.getPokemonOnField().add(player.getTeam().get(0));
+        System.out.println(player.getTeam().get(0).getName() + " Go!");
         terrain.getPokemonOnField().add(npc.getPokemons().get(0));
         System.out.println("The foe is sending " + npc.getPokemons().get(0).getName());
     }

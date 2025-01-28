@@ -4,20 +4,17 @@ import Inventory.Inventory;
 import Pokemon.Pokemon;
 
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
-import java.awt.event.KeyEvent;
 
 public class Player {
 
     String nickname;
     Inventory inventory;
-    LinkedList<Pokemon> pokemons;
+    LinkedList<Pokemon> team;
 
-    public Player(String nickname, Inventory inventory, LinkedList<Pokemon> pokemons) {
+    public Player(String nickname, Inventory inventory, LinkedList<Pokemon> team) {
         this.nickname = nickname;
         this.inventory = inventory;
-        this.pokemons = pokemons;
+        this.team = team;
     }
     public String getNickname() {
         return nickname;
@@ -26,12 +23,60 @@ public class Player {
         return inventory;
     }
 
-    public LinkedList<Pokemon> getPokemons() {
-        return pokemons;
+    public LinkedList<Pokemon> getTeam() {
+        return team;
     }
     public Pokemon getPokemon(Pokemon pokemon) {
-        return pokemons.get(getPokemons().indexOf(pokemon));
+        return team.get(getTeam().indexOf(pokemon));
     }
+    public Pokemon getFrontPokemon(Pokemon pokemon) {
+        return team.get(0);
+    }
+
+    public void exchangePokemonToFront(Pokemon pokemon, Pokemon otherPokemon) {
+        System.out.println(otherPokemon.getName() + " " + team.indexOf(otherPokemon));
+        System.out.println(pokemon.getName() + " " + team.indexOf(pokemon));
+
+        if(this.isFront(pokemon)) {
+            int temp = team.indexOf(otherPokemon); // bulbizarre at ?
+            Pokemon tempPokemon = team.get(0); // temp Pokemon is pikachu
+            team.set(0, otherPokemon); // set to 0 bulbizarre
+            team.set(temp, tempPokemon); // set to ? pikachu
+        } else {
+            System.out.println("Not possible because " + otherPokemon.getName() + " is not at the front");
+        }
+
+        System.out.println(otherPokemon.getName() + " " + team.indexOf(otherPokemon));
+        System.out.println(pokemon.getName() + " " + team.indexOf(pokemon));
+    }
+
+    public void exchangePositionOf(Pokemon pokemon, Pokemon otherPokemon) {
+        System.out.println(otherPokemon.getName() + " " + team.indexOf(otherPokemon));
+        System.out.println(pokemon.getName() + " " + team.indexOf(pokemon));
+
+        int temp = team.indexOf(otherPokemon); // Bulbizarre at position 1
+        Pokemon tempPokemon = getPokemon(pokemon); // temp is pikachu
+        int index = team.indexOf(tempPokemon); // index of pikachu is 0
+        team.set(index, otherPokemon);
+        team.set(temp, tempPokemon);
+
+        System.out.println(otherPokemon.getName() + " " + team.indexOf(otherPokemon));
+        System.out.println(pokemon.getName() + " " + team.indexOf(pokemon));
+    }
+
+    public boolean isFront(Pokemon pokemon) {
+        return getFrontPokemon(pokemon) == pokemon;
+    }
+    public int getTeamSize() {
+        return team.size();
+    }
+
+    public int getIndexOf(Pokemon pokemon) {
+        return team.indexOf(pokemon);
+    }
+
+    // I stopped working here, goal : compare the index of pokemons to know if they changed their position 
+
     public void setInventory(Inventory inventory) {
         this.inventory = inventory;
     }

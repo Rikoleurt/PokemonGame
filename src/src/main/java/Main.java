@@ -12,7 +12,6 @@ import Pokemon.Terrain;
 import Pokemon.TerrainEnum.Debris;
 import Pokemon.TerrainEnum.Meteo;
 
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Map;
@@ -87,6 +86,8 @@ public class Main {
         LinkedList<Pokemon> pokemons2 = new LinkedList<>();
         LinkedList<Pokemon> onField = new LinkedList<>();
         pokemons.add(pikachu);
+        pokemons.add(bulbizarre);
+        pokemons.add(salameche);
         pokemons2.add(carapuce);
         NPC npc = new NPC("NPC", pokemons2);
         Map<Items, Integer> bag = Map.of();
@@ -96,7 +97,7 @@ public class Main {
         terrain.addPokemon(player, npc);
         terrain.setMeteo(Meteo.sunny);
         terrain.setDebris(Debris.spikes);
-
+        player.exchangePositionOf(salameche,bulbizarre);
     }
 }
 
