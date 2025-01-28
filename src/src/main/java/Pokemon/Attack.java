@@ -3,6 +3,7 @@ package Pokemon;
 import Pokemon.AttackEnum.AttackMode;
 import Pokemon.PokemonEnum.Status;
 import Pokemon.PokemonEnum.Type;
+import Pokemon.TerrainEnum.Debris;
 
 import java.util.Random;
 
@@ -16,6 +17,7 @@ public class Attack {
     AttackMode Mode;
     Status status;
     int PP;
+    Debris debris;
 
 
     public Attack(String name, int power, int precision, Type type, AttackMode Mode, int PP) {
@@ -43,6 +45,14 @@ public class Attack {
         this.status = status;
     }
 
+    public Attack(String name, int power, Type type, int PP, Debris debris){
+        this.name = name;
+        this.power = power;
+        this.type = type;
+        this.PP = PP;
+        this.debris = debris;
+    }
+
     public int getPower() {
         return power;
     }
@@ -63,6 +73,10 @@ public class Attack {
 
     public Status getEffect() {
         return status;
+    }
+
+    public Debris getDebris() {
+        return debris;
     }
 
     boolean isStab(Pokemon pokemon) {

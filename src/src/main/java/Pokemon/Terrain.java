@@ -45,9 +45,10 @@ public class Terrain {
     }
 
 
-    public void debrisEffect(Terrain terrain, Pokemon pokemon) {
-        switch (terrain.getDebris()){
+    public void updateDebris(Pokemon pokemon, Attack attack, Terrain terrain) {
+        switch (attack.getDebris()){
             case spikes:
+                nbSpikes++;
                 if(nbSpikes == 1) {
                     pokemon.HP -= pokemon.maxHP / 8;
                 }
@@ -85,15 +86,20 @@ public class Terrain {
                         ) {
                     pokemon.HP -= pokemon.maxHP / 2;
                 }
+                if(terrain.getDebris() != Debris.normal){
+                    System.out.println("It won't have any effects");
+                    return;
+                }
             case poisonSpikes:
+                nbPoisonSpikes++;
                 if(nbPoisonSpikes == 1) {
                     pokemon.status = Status.poisoned;
                 }
                 if(nbPoisonSpikes == 2) {
                     pokemon.status = Status.badlyPoisoned;
                 }
+            }
         }
-    }
 
     public void meteorEffect(Terrain terrain, Pokemon pokemon, Attack attack) {
         switch (terrain.getMeteo()){

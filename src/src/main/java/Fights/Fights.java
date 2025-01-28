@@ -7,16 +7,16 @@ import java.util.Random;
 
 public class Fights {
 
-    public static void newFight(NPC person, Pokemon frontPokemon) {
+    public void newFight(NPC person, Pokemon frontPokemon) {
         System.out.println(person.getName() + " would like to battle!");
         System.out.println(person.getName() + " sent out " + frontPokemon.getName());
     }
 
-    public static void changePokemon(NPC person, Pokemon pokemon) {
+    public void changePokemon(NPC person, Pokemon pokemon) {
         System.out.println(person.getName() + " changed his pokemon to " + pokemon.getName());
     }
 
-    public static void faintedPokemon(Pokemon pokemon) {
+    public void faintedPokemon(Pokemon pokemon) {
         Random random = new Random();
         int randomNumber = random.nextInt(100);
         if(pokemon.getHP() < 0) {
@@ -30,7 +30,7 @@ public class Fights {
         }
     }
 
-    public static void endFight(NPC person) {
+    public void endFight(NPC person) {
         System.out.println(person.getName() + " has been defeated");
     }
 }

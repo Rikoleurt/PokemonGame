@@ -51,6 +51,8 @@ public class Pokemon {
     int poisonCoefficient = 1;
     int healConfusion = 1;
     int healFear = 0;
+    int nbSpikes = 0;
+    int nbPoisonSpikes = 0;
 
     Nature[][] natures = {
             {Nature.Hardy},  {Nature.Lonely},  {Nature.Adamant}, {Nature.Naughty},  {Nature.Brave},
@@ -226,7 +228,7 @@ public class Pokemon {
         return attacks.get(attacks.indexOf(attack));
     }
 
-    public Status getEffect() {
+    public Status getStatus() {
         return status;
     }
 
@@ -254,21 +256,74 @@ public class Pokemon {
     }
 
     public void useAttack(Pokemon target, Attack attack){
-        Random random = new Random();
-        if(this.getAttack(attack).getMode() == AttackMode.physical && this.getEffect() == Status.burned){
-             target.HP -= (int) totalDamage(this.getAttack(attack), this, target)/2;
-             System.out.println(this.getName() + " uses " + attack.getName());
-             System.out.println(target.getName() + " HP : " + target.HP + "/" + target.getMaxHP());
-             return;
+        statusEffect(target, attack);
+        if((this.getStatus() == Status.normal || this.getStatus() == Status.cursed || this.getStatus() == Status.burned
+           || this.getStatus() == Status.paralyzed || this.getStatus() == Status.freeze || this.getStatus() == Status.attracted
+           || this.getStatus() == Status.confused || this.getStatus() == Status.asleep)
+        ){
+            System.out.println(this.getName() + " uses " + attack.getName());
+            target.HP -= (int) totalDamage(this.getAttack(attack), this, target);
+            System.out.println(target.getName() + " HP : " + target.HP + "/" + target.getMaxHP());
         }
-        if(this.getEffect() == Status.paralyzed){
+        updateStatus();
+    }
+
+
+    public void useDebrisAttack(Terrain terrain, Attack debrisAttack, Pokemon target){
+        statusEffect(target, debrisAttack);
+        System.out.println(this.getName() + " uses " + debrisAttack.getName());
+        terrain.setDebris(debrisAttack.getDebris());
+        terrain.updateDebris(this, debrisAttack, terrain);
+        updateStatus();
+    }
+
+    public void useStatusAttack(Pokemon target, Attack statusAttack){
+        statusEffect(target, statusAttack);
+        System.out.println(this.getName() + " uses " + statusAttack.getName());
+        target.status = setStatus(target, statusAttack);
+        System.out.println(target.getName() + " is " + target.getStatus() + "! It may be unable to move!");
+    }
+
+    // ------------------------------------------------------------------------------------------------------------------
+    // Everything that touches to terrain, debris and meteo
+    // ------------------------------------------------------------------------------------------------------------------
+
+
+
+    // ------------------------------------------------------------------------------------------------------------------
+    // Everything that touches to Pokemon's status
+    // ------------------------------------------------------------------------------------------------------------------
+
+    public Status setStatus(Pokemon target, Attack statusAttack){
+        if(target.getStatus() != Status.normal){
+            System.out.println(target.getName() + " is already " + target.getStatus() + "! It won't have any effect.");
+        }
+        if(checkImmunities(target).contains(statusAttack.getType())){
+            System.out.println("This attack does not affect the pokemon");
+            return null;
+        }
+        if(target.getStatus() == Status.normal){
+            return statusAttack.getEffect();
+        }
+        return target.getStatus();
+    }
+
+    public void statusEffect(Pokemon target, Attack attack){
+        Random random = new Random();
+        if(this.getAttack(attack).getMode() == AttackMode.physical && this.getStatus() == Status.burned){
+            target.HP -= (int) totalDamage(this.getAttack(attack), this, target)/2;
+            System.out.println(this.getName() + " uses " + attack.getName());
+            System.out.println(target.getName() + " HP : " + target.HP + "/" + target.getMaxHP());
+            return;
+        }
+        if(this.getStatus() == Status.paralyzed){
             int randInt = random.nextInt(0,4);
             if(randInt == 1){
                 System.out.println(this.getName() + " is paralyzed! It can't move!");
                 return;
             }
         }
-        if(this.getEffect() == Status.freeze){
+        if(this.getStatus() == Status.freeze){
             int randInt = random.nextInt(0,4);
             System.out.println(randInt);
             if(randInt < 3){
@@ -279,7 +334,7 @@ public class Pokemon {
                 this.setEffect(null);
             }
         }
-        if(this.getEffect() == Status.asleep){
+        if(this.getStatus() == Status.asleep){
             int randInt = random.nextInt(0,3);
             if(randInt == 0){
                 System.out.println(this.getName() + " woke up!");
@@ -297,14 +352,14 @@ public class Pokemon {
                 }
             }
         }
-        if(this.getEffect() == Status.attracted && !Objects.equals(this.getGender(), target.getGender())){
+        if(this.getStatus() == Status.attracted && !Objects.equals(this.getGender(), target.getGender())){
             int randInt = random.nextInt(0,2);
             if(randInt == 1){
                 System.out.println(this.getName() + " is in love with " + target.getName() + "!");
                 return;
             }
         }
-        if(this.getEffect() == Status.confused){
+        if(this.getStatus() == Status.confused){
             int randInt = random.nextInt(0,2);
             System.out.println(healConfusion);
             ++healConfusion;
@@ -325,23 +380,13 @@ public class Pokemon {
                 healConfusion = 0;
             }
         }
-        if(this.getEffect() == Status.fear){
+        if(this.getStatus() == Status.fear){
             System.out.println(this.getName() + " is fear! It can't attack!");
         }
-        if((this.getEffect() == Status.normal || this.getEffect() == Status.cursed || this.getEffect() == Status.burned
-           || this.getEffect() == Status.paralyzed || this.getEffect() == Status.freeze || this.getEffect() == Status.attracted
-           || this.getEffect() == Status.confused || this.getEffect() == Status.asleep)
-        ){
-            System.out.println(this.getName() + " uses " + attack.getName());
-            target.HP -= (int) totalDamage(this.getAttack(attack), this, target);
-            System.out.println(target.getName() + " HP : " + target.HP + "/" + target.getMaxHP());
-        }
-        updateStatusEffect();
     }
 
-
-    public void updateStatusEffect(){
-        switch(this.getEffect()){
+    public void updateStatus(){
+        switch(this.getStatus()){
             case normal, attracted, asleep:
                 break;
             case burned:
@@ -370,25 +415,10 @@ public class Pokemon {
                 this.HP = this.HP - (this.maxHP/4);
         }
     }
-    public void useStatusAttack(Pokemon target, Attack statusAttack){
-        System.out.println(this.getName() + " uses " + statusAttack.getName());
-        target.status = calculateEffect(target, statusAttack);
-        System.out.println(target.getName() + " is " + target.getEffect() + "! It may be unable to move!");
-    }
 
-    public Status calculateEffect(Pokemon target, Attack statusAttack){
-        if(target.getEffect() != null){
-            System.out.println(target.getName() + " is already " + target.getEffect() + "! It won't have any effect.");
-        }
-        if(checkImmunities(target).contains(statusAttack.getType())){
-            System.out.println("This attack does not affect the pokemon");
-            return null;
-        }
-        if(target.getEffect() == null){
-            return statusAttack.getEffect();
-        }
-        return target.getEffect();
-    }
+    // ------------------------------------------------------------------------------------------------------------------
+    // Total damages of special and physical attacks
+    // ------------------------------------------------------------------------------------------------------------------
 
     public double totalDamage(Attack attack, Pokemon launcher, Pokemon target) {
         float power = attack.getPower();
@@ -445,11 +475,10 @@ public class Pokemon {
             return 0;
         }
 
-    private int calculateIV (Pokemon pokemon, int stat) {
-        int IV = (stat * 100/pokemon.getLevel() - pokemon.getEV(stat)/4 - 2 * pokemon.getBaseStat(stat));
-        return IV;
-    }
 
+    // ------------------------------------------------------------------------------------------------------------------
+    // Type table
+    // ------------------------------------------------------------------------------------------------------------------
 
     public List<Type> checkWeaknesses(Pokemon pokemon) {
 
@@ -556,7 +585,7 @@ public class Pokemon {
 
         switch (pokemon.getType()) {
             case normal:
-                // Pas de résistances spécifiques
+                // No resistances
                 break;
             case fire:
                 resistances.add(Type.fire);
@@ -606,7 +635,7 @@ public class Pokemon {
                 resistances.add(Type.grass);
                 resistances.add(Type.fighting);
                 resistances.add(Type.bug);
-                resistances.add(Type.ground); // Immunité au sol
+                resistances.add(Type.ground);
                 break;
             case psychic:
                 resistances.add(Type.fighting);
@@ -723,4 +752,12 @@ public class Pokemon {
         return immunities;
     }
 
+    // ------------------------------------------------------------------------------------------------------------------
+    // IV
+    // ------------------------------------------------------------------------------------------------------------------
+
+    private int calculateIV (Pokemon pokemon, int stat) {
+        int IV = (stat * 100/pokemon.getLevel() - pokemon.getEV(stat)/4 - 2 * pokemon.getBaseStat(stat));
+        return IV;
+    }
 }
