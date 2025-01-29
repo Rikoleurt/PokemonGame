@@ -2,6 +2,8 @@ package Person;
 
 import Inventory.Inventory;
 import Pokemon.Pokemon;
+import Pokemon.TerrainEnum.Debris;
+import Pokemon.Terrain;
 
 import java.util.LinkedList;
 
@@ -34,8 +36,6 @@ public class Player {
     }
 
     public void exchangePokemonToFront(Pokemon pokemon, Pokemon otherPokemon) {
-        System.out.println(otherPokemon.getName() + " " + team.indexOf(otherPokemon));
-        System.out.println(pokemon.getName() + " " + team.indexOf(pokemon));
 
         if(this.isFront(pokemon)) {
             int temp = team.indexOf(otherPokemon); // bulbizarre at ?
@@ -46,13 +46,10 @@ public class Player {
             System.out.println("Not possible because " + otherPokemon.getName() + " is not at the front");
         }
 
-        System.out.println(otherPokemon.getName() + " " + team.indexOf(otherPokemon));
-        System.out.println(pokemon.getName() + " " + team.indexOf(pokemon));
+
     }
 
     public void exchangePositionOf(Pokemon pokemon, Pokemon otherPokemon) {
-        System.out.println(otherPokemon.getName() + " " + team.indexOf(otherPokemon));
-        System.out.println(pokemon.getName() + " " + team.indexOf(pokemon));
 
         int temp = team.indexOf(otherPokemon); // Bulbizarre at position 1
         Pokemon tempPokemon = getPokemon(pokemon); // temp is pikachu
@@ -60,8 +57,6 @@ public class Player {
         team.set(index, otherPokemon);
         team.set(temp, tempPokemon);
 
-        System.out.println(otherPokemon.getName() + " " + team.indexOf(otherPokemon));
-        System.out.println(pokemon.getName() + " " + team.indexOf(pokemon));
     }
 
     public boolean isFront(Pokemon pokemon) {
@@ -83,5 +78,18 @@ public class Player {
 
     public void setNickname(String nickname) {
         this.nickname = nickname;
+    }
+
+    public boolean hasChanged(Pokemon pokemon, Pokemon otherPokemon) {
+        int first = getIndexOf(pokemon);
+        exchangePokemonToFront(pokemon, otherPokemon);
+        int second = getIndexOf(otherPokemon);
+        return second == first;
+    }
+    public void sendPokemon(Pokemon pokemon, Terrain terrain, NPC npc){
+        if(terrain.getDebris() != Debris.normal){
+            terrain.updateDebris(this.getFrontPokemon(pokemon), terrain);
+        }
+        terrain.addPokemon(this,npc);
     }
 }

@@ -1,9 +1,11 @@
 package Pokemon;
 
+import Person.Player;
 import Pokemon.AttackEnum.AttackMode;
 import Pokemon.PokemonEnum.Status;
 import Pokemon.PokemonEnum.Nature;
 import Pokemon.PokemonEnum.Type;
+import Pokemon.TerrainEnum.Debris;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -273,7 +275,14 @@ public class Pokemon {
         statusEffect(target, debrisAttack);
         System.out.println(this.getName() + " uses " + debrisAttack.getName());
         terrain.setDebris(debrisAttack.getDebris());
-        terrain.updateDebris(this, debrisAttack, terrain);
+        terrain.updateDebris(this, terrain);
+        Debris debris = debrisAttack.getDebris();
+        if(debris == Debris.spikes){
+            nbSpikes++;
+        }
+        if(debris == Debris.poisonSpikes){
+            nbPoisonSpikes++;
+        }
         updateStatus();
     }
 
@@ -287,8 +296,6 @@ public class Pokemon {
     // ------------------------------------------------------------------------------------------------------------------
     // Everything that touches to terrain, debris and meteo
     // ------------------------------------------------------------------------------------------------------------------
-
-
 
     // ------------------------------------------------------------------------------------------------------------------
     // Everything that touches to Pokemon's status

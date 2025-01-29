@@ -82,22 +82,30 @@ public class Main {
         );
 
 
-        LinkedList<Pokemon> pokemons = new LinkedList<>();
-        LinkedList<Pokemon> pokemons2 = new LinkedList<>();
-        LinkedList<Pokemon> onField = new LinkedList<>();
-        pokemons.add(pikachu);
-        pokemons.add(bulbizarre);
-        pokemons.add(salameche);
-        pokemons2.add(carapuce);
-        NPC npc = new NPC("NPC", pokemons2);
+        LinkedList<Pokemon> team = new LinkedList<>();
+        LinkedList<Pokemon> enemyTeam = new LinkedList<>();
+        team.add(pikachu);
+        team.add(bulbizarre);
+        team.add(salameche);
+        enemyTeam.add(carapuce);
+
+        NPC npc = new NPC("NPC", enemyTeam);
         Map<Items, Integer> bag = Map.of();
+
         Inventory inventory = new Inventory(bag, 100);
-        Terrain terrain = new Terrain(onField, Debris.normal, Meteo.normal);
-        Player player = new Player("Jason", inventory, pokemons);
+
+        Terrain terrain = new Terrain(team, enemyTeam, Debris.normal, Meteo.normal);
+
+        Player player = new Player("Jason", inventory, team);
+
         terrain.addPokemon(player, npc);
         terrain.setMeteo(Meteo.sunny);
         terrain.setDebris(Debris.spikes);
+
         player.exchangePositionOf(salameche,bulbizarre);
+
+        System.out.println(player.hasChanged(pikachu,bulbizarre));
+
     }
 }
 

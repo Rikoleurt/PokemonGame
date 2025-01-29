@@ -10,15 +10,16 @@ import Pokemon.TerrainEnum.Meteo;
 import java.util.LinkedList;
 
 public class Terrain {
-    LinkedList<Pokemon> pokemonOnField;
+    LinkedList<Pokemon> team;
+    LinkedList<Pokemon> enemyTeam;
     Debris debris;
     Meteo meteo;
 
     int nbSpikes = 0;
     int nbPoisonSpikes = 0;
 
-    public Terrain(LinkedList<Pokemon> pokemonOnField, Debris debris, Meteo meteo) {
-        this.pokemonOnField = pokemonOnField;
+    public Terrain(LinkedList<Pokemon> team, LinkedList<Pokemon> enemyTeam, Debris debris, Meteo meteo) {
+        this.team = team;
         this.debris = debris;
         this.meteo = meteo;
     }
@@ -31,8 +32,8 @@ public class Terrain {
         return meteo;
     }
 
-    public LinkedList<Pokemon> getPokemonOnField() {
-        return pokemonOnField;
+    public LinkedList<Pokemon> getTeam() {
+        return team;
     }
 
     public void setDebris(Debris debris) {
@@ -44,12 +45,16 @@ public class Terrain {
         this.meteo = meteo;
     }
 
+    public void debrisEffect(Player player, Pokemon pokemon, Pokemon otherPokemon, Terrain terrain) {
+        if(player.hasChanged(player.getFrontPokemon(pokemon), player.getPokemon(otherPokemon))){
+            updateDebris(otherPokemon, terrain);
+        }
+    }
 
-    public void updateDebris(Pokemon pokemon, Attack attack, Terrain terrain) {
-        switch (attack.getDebris()){
+
+    public void updateDebris(Pokemon pokemon, Terrain terrain) {
+        switch (terrain.getDebris()){
             case spikes:
-                nbSpikes++;
-                // Need to activate this when a pokemon is replaced by another
                 if(nbSpikes == 1) {
                     pokemon.HP -= pokemon.maxHP / 8;
                 }
@@ -58,6 +63,10 @@ public class Terrain {
                 }
                 if(nbSpikes == 3) {
                     pokemon.HP -= pokemon.maxHP / 4;
+                }
+                if(nbSpikes < 3) {
+                    System.out.println("It won't have any effect");
+                    return;
                 }
             case stealthRock:
                 if(pokemon.checkWeaknesses(pokemon).contains(Type.fighting) && pokemon.checkWeaknesses(pokemon).contains(Type.ground)) {
@@ -88,16 +97,18 @@ public class Terrain {
                     pokemon.HP -= pokemon.maxHP / 2;
                 }
                 if(terrain.getDebris() != Debris.normal){
-                    System.out.println("It won't have any effects");
+                    System.out.println("It won't have any effect");
                     return;
                 }
             case poisonSpikes:
-                nbPoisonSpikes++;
                 if(nbPoisonSpikes == 1) {
                     pokemon.status = Status.poisoned;
                 }
                 if(nbPoisonSpikes == 2) {
                     pokemon.status = Status.badlyPoisoned;
+                }
+                if(nbPoisonSpikes < 2) {
+                    System.out.println("It won't have any effect");
                 }
             }
         }
@@ -160,10 +171,12 @@ public class Terrain {
         }
     }
     public void addPokemon(Player player, NPC npc) {
-        Terrain terrain = new Terrain(pokemonOnField, debris, meteo);
-        terrain.getPokemonOnField().add(player.getTeam().get(0));
+        Terrain terrain = new Terrain(player.getTeam(), npc.getPokemons(), debris, meteo);
+
+        terrain.getTeam().add(player.getTeam().get(0));
         System.out.println(player.getTeam().get(0).getName() + " Go!");
-        terrain.getPokemonOnField().add(npc.getPokemons().get(0));
+
+        terrain.getTeam().add(npc.getPokemons().get(0));
         System.out.println("The foe is sending " + npc.getPokemons().get(0).getName());
     }
 }
