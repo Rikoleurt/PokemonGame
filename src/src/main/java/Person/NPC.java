@@ -21,4 +21,7 @@ public class NPC {
     public LinkedList<Pokemon> getPokemons() {
         return pokemons;
     }
+    public Pokemon getFrontPokemon() {
+        return pokemons.get(0);
+    }
 }

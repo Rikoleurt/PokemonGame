@@ -7,15 +7,6 @@ import java.util.Random;
 
 public class Fights {
 
-    public void newFight(NPC person, Pokemon frontPokemon) {
-        System.out.println(person.getName() + " would like to battle!");
-        System.out.println(person.getName() + " sent out " + frontPokemon.getName());
-    }
-
-    public void changePokemon(NPC person, Pokemon pokemon) {
-        System.out.println(person.getName() + " changed his pokemon to " + pokemon.getName());
-    }
-
     public void faintedPokemon(Pokemon pokemon) {
         Random random = new Random();
         int randomNumber = random.nextInt(100);

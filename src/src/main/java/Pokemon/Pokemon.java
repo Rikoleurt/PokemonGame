@@ -43,6 +43,8 @@ public class Pokemon {
     int exp;
     String name;
     Type type;
+    Type type1;
+    Type type2;
     ArrayList<Attack> attacks;
     Nature nature;
     Status status;
@@ -116,6 +118,21 @@ public class Pokemon {
         this.name = name;
         this.status = status;
         this.gender = gender;
+    }
+    public Pokemon(int HP, int maxHP, int atk, int def, int atkSpe, int defSpe, int speed, int level, Type type1, Type type2, ArrayList<Attack> attacks, Status status, String gender){
+        this.HP = HP;
+        this.maxHP = maxHP;
+        this.atk = atk;
+        this.def = def;
+        this.atkSpe = atkSpe;
+        this.defSpe = defSpe;
+        this.speed = speed;
+        this.type1 = type1;
+        this.type2 = type2;
+        this.level = level;
+        this.attacks = attacks;
+        this.gender = gender;
+
     }
 
     public int getHP() {
@@ -275,14 +292,15 @@ public class Pokemon {
         statusEffect(target, debrisAttack);
         System.out.println(this.getName() + " uses " + debrisAttack.getName());
         terrain.setDebris(debrisAttack.getDebris());
-        terrain.updateDebris(this, terrain);
-        Debris debris = debrisAttack.getDebris();
-        if(debris == Debris.spikes){
+        if(debrisAttack.getDebris() == Debris.spikes){
             nbSpikes++;
+            System.out.println(nbSpikes);
         }
-        if(debris == Debris.poisonSpikes){
+        if(debrisAttack.getDebris() == Debris.poisonSpikes){
             nbPoisonSpikes++;
+            System.out.println("nbPoisonSPikes : " + nbPoisonSpikes);
         }
+        terrain.updateDebris(target, terrain);
         updateStatus();
     }
 
@@ -290,7 +308,7 @@ public class Pokemon {
         statusEffect(target, statusAttack);
         System.out.println(this.getName() + " uses " + statusAttack.getName());
         target.status = setStatus(target, statusAttack);
-        System.out.println(target.getName() + " is " + target.getStatus() + "! It may be unable to move!");
+        System.out.println(target.getName() + " is " + target.getStatus() + "!");
     }
 
     // ------------------------------------------------------------------------------------------------------------------

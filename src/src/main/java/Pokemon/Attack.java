@@ -36,18 +36,17 @@ public class Attack {
         this.type = type;
         this.PP = PP;
     }
-    public Attack(String name, int power, int precision, Type type, int PP, Status status) {
+    public Attack(String name, int precision, Type type, int PP, Status status) {
         this.name = name;
-        this.power = power;
+
         this.precision = precision;
         this.type = type;
         this.PP = PP;
         this.status = status;
     }
 
-    public Attack(String name, int power, Type type, int PP, Debris debris){
+    public Attack(String name, Type type, int PP, Debris debris){
         this.name = name;
-        this.power = power;
         this.type = type;
         this.PP = PP;
         this.debris = debris;

@@ -25,6 +25,7 @@ public class Main {
         Attack electricPunch = new Attack("Electric punch", 80,100, Type.electric, AttackMode.physical, 40);
         Attack ember = new Attack("Ember", 40,100,Type.fire,AttackMode.special, 40);
         Attack vineWhip = new Attack("Ember", 40,100,Type.grass, AttackMode.physical, 40);
+        Attack toxicSpikes = new Attack("Toxic Spikes", Type.poison, 40 , Debris.poisonSpikes);
 
         ArrayList<Attack> pikachuAtk = new ArrayList<>();
         pikachuAtk.add(charge);
@@ -35,6 +36,7 @@ public class Main {
         ArrayList<Attack> carapuceAtk = new ArrayList<>();
         carapuceAtk.add(charge);
         carapuceAtk.add(waterGun);
+        carapuceAtk.add(toxicSpikes);
 
         ArrayList<Attack> salamecheAtk = new ArrayList<>();
         salamecheAtk.add(ember);
@@ -87,7 +89,11 @@ public class Main {
         team.add(pikachu);
         team.add(bulbizarre);
         team.add(salameche);
+
+        System.out.println("Team: " + team.get(0).getName() + " " + team.get(1).getName() + " " + team.get(2).getName());
+
         enemyTeam.add(carapuce);
+        enemyTeam.add(salameche);
 
         NPC npc = new NPC("NPC", enemyTeam);
         Map<Items, Integer> bag = Map.of();
@@ -97,15 +103,13 @@ public class Main {
         Terrain terrain = new Terrain(team, enemyTeam, Debris.normal, Meteo.normal);
 
         Player player = new Player("Jason", inventory, team);
+        carapuce.useDebrisAttack(terrain, toxicSpikes, player.getFrontPokemon());
+        carapuce.useDebrisAttack(terrain, toxicSpikes, player.getFrontPokemon());
 
-        terrain.addPokemon(player, npc);
-        terrain.setMeteo(Meteo.sunny);
-        terrain.setDebris(Debris.spikes);
-
-        player.exchangePositionOf(salameche,bulbizarre);
-
-        System.out.println(player.hasChanged(pikachu,bulbizarre));
-
+        player.sendPokemon(npc);
+        player.changePokemon(salameche,terrain);
+        System.out.println(salameche.getHP() + "/" + salameche.getMaxHP());
+        System.out.println(salameche.getStatus());
     }
 }
 
