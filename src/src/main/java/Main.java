@@ -110,20 +110,19 @@ public class Main {
 
         player.sendPokemon(terrain);
 
-        carapuce.useDebrisAttack(terrain, spikes, player.getFrontPokemon());
-
         player.changePokemon(salameche,terrain);
         printHP(salameche);
-        
+
         salameche.useAttack(carapuce, ember);
 
         printHP(carapuce);
 
-        carapuce.useDebrisAttack(terrain, spikes, player.getFrontPokemon());
-        carapuce.useDebrisAttack(terrain, spikes, player.getFrontPokemon());
-        carapuce.useDebrisAttack(terrain, spikes, player.getFrontPokemon());
+        carapuce.useDebrisAttack(terrain, toxicSpikes, player.getFrontPokemon());
+        carapuce.useDebrisAttack(terrain, toxicSpikes, player.getFrontPokemon());
 
         player.changePokemon(pikachu,terrain);
+        printHP(pikachu);
+        pikachu.useAttack(carapuce, thunder);
         printHP(pikachu);
     }
 

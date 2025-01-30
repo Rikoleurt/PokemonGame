@@ -18,9 +18,9 @@ public class Terrain {
     Debris debris;
     Meteo meteo;
 
-    int nbSpikes = 0;
-    int nbPoisonSpikes = 0;
-    int nbStealthRocks = 0;
+    private int nbSpikes = 0;
+    private int nbPoisonSpikes = 0;
+    private int nbStealthRocks = 0;
 
     public Terrain(LinkedList<Pokemon> team, LinkedList<Pokemon> enemyTeam, Debris debris, Meteo meteo) {
         this.team = team;
