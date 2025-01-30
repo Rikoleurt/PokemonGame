@@ -76,13 +76,6 @@ public class Player {
         this.nickname = nickname;
     }
 
-    public boolean hasChanged(Pokemon pokemon, Pokemon otherPokemon) {
-        int first = getIndexOf(pokemon);
-        exchangePokemonToFront(pokemon, otherPokemon);
-        int second = getIndexOf(otherPokemon);
-        return second == first;
-    }
-
     /// ------------------------------------------------------------------------------------------------------------------
     // Player's choices in fights
     /// ------------------------------------------------------------------------------------------------------------------
@@ -97,14 +90,10 @@ public class Player {
 
     public void changePokemon(Pokemon pokemon, Terrain terrain){
         System.out.println(this.getFrontPokemon().getName() + " stop! ");
-
         exchangePokemonToFront(getFrontPokemon(), pokemon);
-
         System.out.println(pokemon.getName() + "! Go!");
-
-        System.out.println(terrain.getDebris());
         if(terrain.getDebris() != Debris.normal){
-            terrain.debrisEffect(this, pokemon, terrain);
+            terrain.debrisEffect(this, terrain);
         }
     }
 

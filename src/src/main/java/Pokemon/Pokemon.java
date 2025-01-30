@@ -56,8 +56,6 @@ public class Pokemon {
     int poisonCoefficient = 1;
     int healConfusion = 1;
     int healFear = 0;
-    int nbSpikes;
-    int nbPoisonSpikes;
 
 
     Nature[][] natures = {
@@ -280,7 +278,8 @@ public class Pokemon {
         statusEffect(target, attack);
         if((this.getStatus() == Status.normal || this.getStatus() == Status.cursed || this.getStatus() == Status.burned
            || this.getStatus() == Status.paralyzed || this.getStatus() == Status.freeze || this.getStatus() == Status.attracted
-           || this.getStatus() == Status.confused || this.getStatus() == Status.asleep)
+           || this.getStatus() == Status.confused || this.getStatus() == Status.asleep || this.getStatus() == Status.poisoned
+           || this.getStatus() == Status.badlyPoisoned)
         ){
             System.out.println(this.getName() + " uses " + attack.getName());
             target.HP -= (int) totalDamage(this.getAttack(attack), this, target);
@@ -293,13 +292,6 @@ public class Pokemon {
         statusEffect(target, debrisAttack);
         System.out.println(this.getName() + " uses " + debrisAttack.getName());
         terrain.setDebris(debrisAttack.getDebris());
-        if(debrisAttack.getDebris() == Debris.spikes){
-            nbSpikes++;
-            System.out.println(nbSpikes);
-        }
-        if(debrisAttack.getDebris() == Debris.poisonSpikes){
-            nbPoisonSpikes++;
-        }
         updateStatus();
     }
 
@@ -310,14 +302,14 @@ public class Pokemon {
         System.out.println(target.getName() + " is " + target.getStatus() + "!");
     }
 
-    // ------------------------------------------------------------------------------------------------------------------
+    /// ------------------------------------------------------------------------------------------------------------------
     // Everything that touches to terrain, debris and meteo
-    // ------------------------------------------------------------------------------------------------------------------
+    /// ------------------------------------------------------------------------------------------------------------------
 
 
-    // ------------------------------------------------------------------------------------------------------------------
+    /// ------------------------------------------------------------------------------------------------------------------
     // Everything that touches to Pokemon's status
-    // ------------------------------------------------------------------------------------------------------------------
+    /// ------------------------------------------------------------------------------------------------------------------
 
     public Status setStatus(Pokemon target, Attack statusAttack){
         if(target.getStatus() != Status.normal){

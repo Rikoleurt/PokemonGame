@@ -26,6 +26,8 @@ public class Main {
         Attack ember = new Attack("Ember", 40,100,Type.fire,AttackMode.special, 40);
         Attack vineWhip = new Attack("Ember", 40,100,Type.grass, AttackMode.physical, 40);
         Attack toxicSpikes = new Attack("Toxic Spikes", Type.poison, 40 , Debris.poisonSpikes);
+        Attack stealthRock = new Attack("Stealth Rock", Type.rock, 40, Debris.stealthRock);
+        Attack spikes = new Attack("Spikes", Type.normal, 40, Debris.spikes);
 
         ArrayList<Attack> pikachuAtk = new ArrayList<>();
         pikachuAtk.add(charge);
@@ -37,6 +39,8 @@ public class Main {
         carapuceAtk.add(charge);
         carapuceAtk.add(waterGun);
         carapuceAtk.add(toxicSpikes);
+        carapuceAtk.add(stealthRock);
+        carapuceAtk.add(spikes);
 
         ArrayList<Attack> salamecheAtk = new ArrayList<>();
         salamecheAtk.add(ember);
@@ -106,12 +110,25 @@ public class Main {
 
         player.sendPokemon(terrain);
 
-        carapuce.useDebrisAttack(terrain, toxicSpikes, player.getFrontPokemon());
+        carapuce.useDebrisAttack(terrain, spikes, player.getFrontPokemon());
 
         player.changePokemon(salameche,terrain);
+        printHP(salameche);
+        
+        salameche.useAttack(carapuce, ember);
 
-        System.out.println(salameche.getHP() + "/" + salameche.getMaxHP());
+        printHP(carapuce);
 
+        carapuce.useDebrisAttack(terrain, spikes, player.getFrontPokemon());
+        carapuce.useDebrisAttack(terrain, spikes, player.getFrontPokemon());
+        carapuce.useDebrisAttack(terrain, spikes, player.getFrontPokemon());
+
+        player.changePokemon(pikachu,terrain);
+        printHP(pikachu);
+    }
+
+    static void printHP(Pokemon pokemon) {
+        System.out.println(pokemon.getHP() + "/" + pokemon.getMaxHP());
     }
 }
 

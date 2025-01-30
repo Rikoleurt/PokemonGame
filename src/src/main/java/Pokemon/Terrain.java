@@ -11,13 +11,16 @@ import Pokemon.TerrainEnum.Meteo;
 import java.util.LinkedList;
 
 public class Terrain {
+
     LinkedList<Pokemon> team;
     LinkedList<Pokemon> enemyTeam;
+
     Debris debris;
     Meteo meteo;
+
     int nbSpikes = 0;
     int nbPoisonSpikes = 0;
-    // When we call this variable, it resets to 0
+    int nbStealthRocks = 0;
 
     public Terrain(LinkedList<Pokemon> team, LinkedList<Pokemon> enemyTeam, Debris debris, Meteo meteo) {
         this.team = team;
@@ -42,7 +45,37 @@ public class Terrain {
         return enemyTeam;
     }
 
+
+    // setDebris is called when the a pokemon launches a debris attakc
     public void setDebris(Debris debris) {
+        if(debris == Debris.spikes){
+            nbSpikes++;
+            System.out.println(nbSpikes);
+            if(nbSpikes > 3) {
+                System.out.println("It won't have any effect");
+                nbSpikes = 3;
+            }
+        }
+        if(debris == Debris.stealthRock){
+            nbStealthRocks++;
+            System.out.println(nbStealthRocks);
+            if(nbStealthRocks > 1){
+                System.out.println("It won't have any effect");
+                nbStealthRocks = 1;
+            }
+        }
+        if(debris == Debris.poisonSpikes){
+            nbPoisonSpikes++;
+            System.out.println(nbPoisonSpikes);
+            if(nbPoisonSpikes > 2) {
+                System.out.println("It won't have any effect");
+                nbPoisonSpikes = 2;
+            }
+        }
+        this.debris = debris;
+    }
+
+    public void setDebris2(Debris debris) {
         this.debris = debris;
     }
 
@@ -51,12 +84,12 @@ public class Terrain {
         this.meteo = meteo;
     }
 
-    public void debrisEffect(Player player, Pokemon otherPokemon, Terrain terrain) {
-        if(player.hasChanged(player.getFrontPokemon(), player.getPokemon(otherPokemon))){
-            updateDebris(player.getFrontPokemon(), terrain);
-        }
-    }
 
+
+    // debrisEffect is only called when the player or the npc changes its pokemon i.e changePokemon();
+    public void debrisEffect(Player player, Terrain terrain) {
+            updateDebris(player.getFrontPokemon(), terrain);
+    }
 
     public void updateDebris(Pokemon pokemon, Terrain terrain) {
         switch (terrain.getDebris()){
@@ -64,129 +97,53 @@ public class Terrain {
                 if(nbSpikes == 1) {
                     System.out.println("Spikes affects " + pokemon.getName());
                     pokemon.HP -= pokemon.maxHP / 8;
-                    return;
                 }
                 if(nbSpikes == 2) {
+                    System.out.println("Spikes affects " + pokemon.getName());
                     pokemon.HP -= (int) (pokemon.maxHP / 5.33);
-                    return;
                 }
                 if(nbSpikes == 3) {
+                    System.out.println("Spikes affects " + pokemon.getName());
                     pokemon.HP -= pokemon.maxHP / 4;
-                    return;
-                }
-                if(nbSpikes > 3) {
-                    System.out.println("It won't have any effect");
-                    return;
                 }
             case stealthRock:
-                if(pokemon.checkWeaknesses(pokemon).contains(Type.fighting) && pokemon.checkWeaknesses(pokemon).contains(Type.ground)) {
-                    pokemon.HP -= pokemon.maxHP / 32;
-                    return;
-                }
-                if(pokemon.checkWeaknesses(pokemon).contains(Type.fighting) || pokemon.checkWeaknesses(pokemon).contains(Type.ground)) {
-                    pokemon.HP -= pokemon.maxHP / 16;
-                    return;
-                }
-                if(!pokemon.checkWeaknesses(pokemon).contains(Type.fighting) || !pokemon.checkWeaknesses(pokemon).contains(Type.ground)
-                    || !pokemon.checkWeaknesses(pokemon).contains(Type.fire) || !pokemon.checkWeaknesses(pokemon).contains(Type.ice)
-                    || !pokemon.checkWeaknesses(pokemon).contains(Type.bug)  || !pokemon.checkWeaknesses(pokemon).contains(Type.flying)) {
-                    pokemon.HP -= pokemon.maxHP / 8;
-                    return;
-                }
-                if(pokemon.checkWeaknesses(pokemon).contains(Type.fire) || pokemon.checkWeaknesses(pokemon).contains(Type.ice)
-                   || pokemon.checkWeaknesses(pokemon).contains(Type.bug) || pokemon.checkWeaknesses(pokemon).contains(Type.flying)
-                ) {
-                    pokemon.HP -= pokemon.maxHP / 4;
-                    return;
+                if(nbStealthRocks == 1) {
+                    if (pokemon.checkWeaknesses(pokemon).contains(Type.fighting) && pokemon.checkWeaknesses(pokemon).contains(Type.ground)) {
+                        pokemon.HP -= pokemon.maxHP / 32;
+                    }
+                    if (pokemon.checkWeaknesses(pokemon).contains(Type.fighting) || pokemon.checkWeaknesses(pokemon).contains(Type.ground)) {
+                        pokemon.HP -= pokemon.maxHP / 16;
+                    }
+                    if (!pokemon.checkWeaknesses(pokemon).contains(Type.fighting) || !pokemon.checkWeaknesses(pokemon).contains(Type.ground)
+                            || !pokemon.checkWeaknesses(pokemon).contains(Type.fire) || !pokemon.checkWeaknesses(pokemon).contains(Type.ice)
+                            || !pokemon.checkWeaknesses(pokemon).contains(Type.bug) || !pokemon.checkWeaknesses(pokemon).contains(Type.flying)) {
+                        pokemon.HP -= pokemon.maxHP / 8;
+                    }
+                    if (pokemon.checkWeaknesses(pokemon).contains(Type.fire) || pokemon.checkWeaknesses(pokemon).contains(Type.ice)
+                            || pokemon.checkWeaknesses(pokemon).contains(Type.bug) || pokemon.checkWeaknesses(pokemon).contains(Type.flying)
+                    ) {
+                        pokemon.HP -= pokemon.maxHP / 4;
 
-                }
-                if (
-                        (pokemon.checkWeaknesses(pokemon).contains(Type.fire) && pokemon.checkWeaknesses(pokemon).contains(Type.ice)) ||
-                        (pokemon.checkWeaknesses(pokemon).contains(Type.fire) && pokemon.checkWeaknesses(pokemon).contains(Type.bug)) ||
-                        (pokemon.checkWeaknesses(pokemon).contains(Type.fire) && pokemon.checkWeaknesses(pokemon).contains(Type.flying)) ||
-                        (pokemon.checkWeaknesses(pokemon).contains(Type.ice) && pokemon.checkWeaknesses(pokemon).contains(Type.bug)) ||
-                        (pokemon.checkWeaknesses(pokemon).contains(Type.ice) && pokemon.checkWeaknesses(pokemon).contains(Type.flying)) ||
-                        (pokemon.checkWeaknesses(pokemon).contains(Type.flying) && pokemon.checkWeaknesses(pokemon).contains(Type.ice)) ||
-                        (pokemon.checkWeaknesses(pokemon).contains(Type.flying) && pokemon.checkWeaknesses(pokemon).contains(Type.bug))
-                        ) {
-                    pokemon.HP -= pokemon.maxHP / 2;
-                    return;
-                }
-                if(terrain.getDebris() != Debris.normal){
-                    System.out.println("It won't have any effect");
-                    return;
+                    }
+                    if (
+                            (pokemon.checkWeaknesses(pokemon).contains(Type.fire) && pokemon.checkWeaknesses(pokemon).contains(Type.ice)) ||
+                                    (pokemon.checkWeaknesses(pokemon).contains(Type.fire) && pokemon.checkWeaknesses(pokemon).contains(Type.bug)) ||
+                                    (pokemon.checkWeaknesses(pokemon).contains(Type.fire) && pokemon.checkWeaknesses(pokemon).contains(Type.flying)) ||
+                                    (pokemon.checkWeaknesses(pokemon).contains(Type.ice) && pokemon.checkWeaknesses(pokemon).contains(Type.bug)) ||
+                                    (pokemon.checkWeaknesses(pokemon).contains(Type.ice) && pokemon.checkWeaknesses(pokemon).contains(Type.flying)) ||
+                                    (pokemon.checkWeaknesses(pokemon).contains(Type.flying) && pokemon.checkWeaknesses(pokemon).contains(Type.ice)) ||
+                                    (pokemon.checkWeaknesses(pokemon).contains(Type.flying) && pokemon.checkWeaknesses(pokemon).contains(Type.bug))
+                    ) {
+                        pokemon.HP -= pokemon.maxHP / 2;
+                    }
                 }
             case poisonSpikes:
-                System.out.println(nbPoisonSpikes);
                 if(nbPoisonSpikes == 1) {
                     pokemon.status = Status.poisoned;
-                    return;
                 }
                 if(nbPoisonSpikes == 2) {
                     pokemon.status = Status.badlyPoisoned;
-                    return;
-                }
-                if(nbPoisonSpikes > 2) {
-                    System.out.println("It won't have any effect");
                 }
             }
         }
-
-    public void meteorEffect(Terrain terrain, Pokemon pokemon, Attack attack) {
-        switch (terrain.getMeteo()){
-            case rainy:
-                if(pokemon.getAttack(attack).getType().equals(Type.water)){
-                    attack.power *= 1.5;
-                }
-                if(pokemon.getAttack(attack).getType().equals(Type.fire)){
-                    attack.power *= 0.5;
-                }
-                if(pokemon.getAttack(attack).getName().equals("Solar Beam")){
-                    attack.power = 60;
-                }
-                if(pokemon.getAttack(attack).getName().equals("Thunder")){
-                    attack.precision = 100;
-                }
-                if(pokemon.getAttack(attack).getName().equals("Hurricane")){
-                    attack.precision = 100;
-                }
-                // More to add here
-            case sunny:
-                if(pokemon.getAttack(attack).getType().equals(Type.fire)){
-                    attack.power *= 1.5;
-                }
-                if(pokemon.getAttack(attack).getType().equals(Type.water)){
-                    attack.power *= 0.5;
-                }
-                if(pokemon.getAttack(attack).getName().equals("Thunder")){
-                    attack.precision = 50;
-                }
-                if(pokemon.getAttack(attack).getName().equals("Hurricane")){
-                    attack.precision = 50;
-                }
-            case hailstorm:
-                if(!pokemon.getType().equals(Type.ice)){
-                    pokemon.HP -= pokemon.maxHP/16;
-                }
-                if(pokemon.getAttack(attack).getName().equals("Solar Beam")){
-                    attack.power = 60;
-                }
-                if(pokemon.getAttack(attack).getName().equals("Weather Ball")){
-                    attack.type = Type.ice;
-                }
-            case sandstorm:
-                if(!pokemon.getType().equals(Type.rock) || !pokemon.getType().equals(Type.ground) || !pokemon.getType().equals(Type.steel)){
-                    pokemon.HP -= pokemon.maxHP/16;
-                }
-                if(pokemon.getAttack(attack).getName().equals("Solar Beam")){
-                    attack.power = 60;
-                }
-                if(pokemon.getAttack(attack).getName().equals("Weather Ball")){
-                    attack.power = 100;
-                    attack.type = Type.rock;
-                }
-            default:
-                // More to add here
-        }
-    }
 }
