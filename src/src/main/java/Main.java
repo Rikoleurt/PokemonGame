@@ -103,13 +103,15 @@ public class Main {
         Terrain terrain = new Terrain(team, enemyTeam, Debris.normal, Meteo.normal);
 
         Player player = new Player("Jason", inventory, team);
-        carapuce.useDebrisAttack(terrain, toxicSpikes, player.getFrontPokemon());
+
+        player.sendPokemon(terrain);
+
         carapuce.useDebrisAttack(terrain, toxicSpikes, player.getFrontPokemon());
 
-        player.sendPokemon(npc);
         player.changePokemon(salameche,terrain);
+
         System.out.println(salameche.getHP() + "/" + salameche.getMaxHP());
-        System.out.println(salameche.getStatus());
+
     }
 }
 

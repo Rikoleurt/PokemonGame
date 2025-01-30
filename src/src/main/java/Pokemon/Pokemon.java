@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
+
 public class Pokemon {
 
     int HP;
@@ -55,8 +56,9 @@ public class Pokemon {
     int poisonCoefficient = 1;
     int healConfusion = 1;
     int healFear = 0;
-    int nbSpikes = 0;
-    int nbPoisonSpikes = 0;
+    int nbSpikes;
+    int nbPoisonSpikes;
+
 
     Nature[][] natures = {
             {Nature.Hardy},  {Nature.Lonely},  {Nature.Adamant}, {Nature.Naughty},  {Nature.Brave},
@@ -287,7 +289,6 @@ public class Pokemon {
         updateStatus();
     }
 
-
     public void useDebrisAttack(Terrain terrain, Attack debrisAttack, Pokemon target){
         statusEffect(target, debrisAttack);
         System.out.println(this.getName() + " uses " + debrisAttack.getName());
@@ -298,9 +299,7 @@ public class Pokemon {
         }
         if(debrisAttack.getDebris() == Debris.poisonSpikes){
             nbPoisonSpikes++;
-            System.out.println("nbPoisonSPikes : " + nbPoisonSpikes);
         }
-        terrain.updateDebris(target, terrain);
         updateStatus();
     }
 
@@ -314,6 +313,7 @@ public class Pokemon {
     // ------------------------------------------------------------------------------------------------------------------
     // Everything that touches to terrain, debris and meteo
     // ------------------------------------------------------------------------------------------------------------------
+
 
     // ------------------------------------------------------------------------------------------------------------------
     // Everything that touches to Pokemon's status

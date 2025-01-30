@@ -83,39 +83,29 @@ public class Player {
         return second == first;
     }
 
-    // ------------------------------------------------------------------------------------------------------------------
+    /// ------------------------------------------------------------------------------------------------------------------
     // Player's choices in fights
-    // ------------------------------------------------------------------------------------------------------------------
+    /// ------------------------------------------------------------------------------------------------------------------
 
-    // sendPokemon() is called automatically at the beginning of the fights
-    public void sendPokemon(NPC npc){
-        System.out.println("turn " + turn);
-        Terrain t = new Terrain(this.getTeam(), npc.getPokemons(), Debris.normal, Meteo.normal);
-        if(turn == 0){
-            System.out.println(npc.getName() + " would like to battle!");
-            System.out.println(npc.getName() + " sent out " + npc.getFrontPokemon().getName());
-            t.getEnemyTeam().add(npc.getFrontPokemon());
-            System.out.println(getFrontPokemon().getName() + "! Go!");
-            t.getTeam().add(getFrontPokemon());
-            turn++;
-            System.out.println("turn " + turn);
-        }
+    // sendPokemon() should be called automatically at the beginning of the fights
+    public void sendPokemon(Terrain terrain){
+        System.out.println(getFrontPokemon().getName() + "! Go!");
+        terrain.getTeam().add(getFrontPokemon());
     }
 
     // After sending a first pokemon, the player has multiple choices in fights
 
     public void changePokemon(Pokemon pokemon, Terrain terrain){
-
         System.out.println(this.getFrontPokemon().getName() + " stop! ");
+
         exchangePokemonToFront(getFrontPokemon(), pokemon);
+
         System.out.println(pokemon.getName() + "! Go!");
 
         System.out.println(terrain.getDebris());
         if(terrain.getDebris() != Debris.normal){
             terrain.debrisEffect(this, pokemon, terrain);
         }
-
-        turn++;
     }
 
     public void useItem(Pokemon pokemon){

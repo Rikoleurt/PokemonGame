@@ -7,6 +7,7 @@ import Pokemon.PokemonEnum.Type;
 import Pokemon.TerrainEnum.Debris;
 import Pokemon.TerrainEnum.Meteo;
 
+
 import java.util.LinkedList;
 
 public class Terrain {
@@ -14,9 +15,9 @@ public class Terrain {
     LinkedList<Pokemon> enemyTeam;
     Debris debris;
     Meteo meteo;
-
-    int nbSpikes;
-    int nbPoisonSpikes;
+    int nbSpikes = 0;
+    int nbPoisonSpikes = 0;
+    // When we call this variable, it resets to 0
 
     public Terrain(LinkedList<Pokemon> team, LinkedList<Pokemon> enemyTeam, Debris debris, Meteo meteo) {
         this.team = team;
@@ -51,16 +52,13 @@ public class Terrain {
     }
 
     public void debrisEffect(Player player, Pokemon otherPokemon, Terrain terrain) {
-        System.out.println(player.hasChanged(player.getFrontPokemon(), player.getPokemon(otherPokemon)));
         if(player.hasChanged(player.getFrontPokemon(), player.getPokemon(otherPokemon))){
-            System.out.println(player.getFrontPokemon().getName());
             updateDebris(player.getFrontPokemon(), terrain);
         }
     }
 
 
     public void updateDebris(Pokemon pokemon, Terrain terrain) {
-        System.out.println(terrain.getDebris());
         switch (terrain.getDebris()){
             case spikes:
                 if(nbSpikes == 1) {
@@ -119,7 +117,7 @@ public class Terrain {
                     return;
                 }
             case poisonSpikes:
-                System.out.println("nbPoisonSpikes is " + nbPoisonSpikes);
+                System.out.println(nbPoisonSpikes);
                 if(nbPoisonSpikes == 1) {
                     pokemon.status = Status.poisoned;
                     return;
