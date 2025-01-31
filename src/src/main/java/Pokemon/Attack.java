@@ -18,6 +18,8 @@ public class Attack {
     Status status;
     int PP;
     Debris debris;
+    String stat;
+    int raiseLevel;
 
 
     public Attack(String name, int power, int precision, Type type, AttackMode Mode, int PP) {
@@ -38,7 +40,6 @@ public class Attack {
     }
     public Attack(String name, int precision, Type type, int PP, Status status) {
         this.name = name;
-
         this.precision = precision;
         this.type = type;
         this.PP = PP;
@@ -50,6 +51,14 @@ public class Attack {
         this.type = type;
         this.PP = PP;
         this.debris = debris;
+    }
+
+    public Attack(String name, Type type, int PP, String stat, int raiseLevel){
+        this.name = name;
+        this.type = type;
+        this.PP = PP;
+        this.stat = stat;
+        this.raiseLevel = raiseLevel;
     }
 
     public int getPower() {
@@ -76,6 +85,14 @@ public class Attack {
 
     public Debris getDebris() {
         return debris;
+    }
+
+    public String getStat() {
+        return stat;
+    }
+
+    public int getRaiseLevel() {
+        return raiseLevel;
     }
 
     boolean isStab(Pokemon pokemon) {

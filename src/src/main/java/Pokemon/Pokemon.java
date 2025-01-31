@@ -51,11 +51,16 @@ public class Pokemon {
     Status status;
     String gender;
 
-    Random random = new Random();
     int wakeUp = 0;
     int poisonCoefficient = 1;
     int healConfusion = 1;
     int healFear = 0;
+
+    int atkRaise = 0;
+    int defRaise = 0;
+    int speedRaise = 0;
+    int atkSpeRaise = 0;
+    int defSpeRaise = 0;
 
 
     Nature[][] natures = {
@@ -279,8 +284,7 @@ public class Pokemon {
         if((this.getStatus() == Status.normal || this.getStatus() == Status.cursed || this.getStatus() == Status.burned
            || this.getStatus() == Status.paralyzed || this.getStatus() == Status.freeze || this.getStatus() == Status.attracted
            || this.getStatus() == Status.confused || this.getStatus() == Status.asleep || this.getStatus() == Status.poisoned
-           || this.getStatus() == Status.badlyPoisoned)
-        ){
+           || this.getStatus() == Status.badlyPoisoned)){
             System.out.println(this.getName() + " uses " + attack.getName());
             target.HP -= (int) totalDamage(this.getAttack(attack), this, target);
             System.out.println(target.getName() + " HP : " + target.HP + "/" + target.getMaxHP());
@@ -300,6 +304,12 @@ public class Pokemon {
         System.out.println(this.getName() + " uses " + statusAttack.getName());
         target.status = setStatus(target, statusAttack);
         System.out.println(target.getName() + " is " + target.getStatus() + "!");
+        updateStatus();
+    }
+
+    public void useStatAttack(Attack attack){
+        statusEffect(null, attack);
+        updateStatus();
     }
 
     /// ------------------------------------------------------------------------------------------------------------------
@@ -433,9 +443,9 @@ public class Pokemon {
         }
     }
 
-    // ------------------------------------------------------------------------------------------------------------------
+    /// ------------------------------------------------------------------------------------------------------------------
     // Total damages of special and physical attacks
-    // ------------------------------------------------------------------------------------------------------------------
+    /// ------------------------------------------------------------------------------------------------------------------
 
     public double totalDamage(Attack attack, Pokemon launcher, Pokemon target) {
         float power = attack.getPower();
@@ -493,9 +503,9 @@ public class Pokemon {
         }
 
 
-    // ------------------------------------------------------------------------------------------------------------------
+    /// ------------------------------------------------------------------------------------------------------------------
     // Type table
-    // ------------------------------------------------------------------------------------------------------------------
+    /// ------------------------------------------------------------------------------------------------------------------
 
     public List<Type> checkWeaknesses(Pokemon pokemon) {
 

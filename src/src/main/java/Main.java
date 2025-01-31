@@ -18,6 +18,7 @@ import java.util.Map;
 
 public class Main {
     public static void main(String[] args) throws InterruptedException {
+
         Attack charge = new Attack("Charge", 40, 100, Type.normal, AttackMode.physical, 40);
         Attack waterGun = new Attack("Water Gun", 40, 100, Type.water, AttackMode.special, 40);
         Attack thunder = new Attack("Thunder", 80, 100, Type.electric, AttackMode.special, 20);
@@ -90,6 +91,7 @@ public class Main {
 
         LinkedList<Pokemon> team = new LinkedList<>();
         LinkedList<Pokemon> enemyTeam = new LinkedList<>();
+
         team.add(pikachu);
         team.add(bulbizarre);
         team.add(salameche);
@@ -124,10 +126,18 @@ public class Main {
         printHP(pikachu);
         pikachu.useAttack(carapuce, thunder);
         printHP(pikachu);
+
+        player.changePokemon(bulbizarre,terrain);
+        printHP(bulbizarre);
+        printStatus(bulbizarre);
+
     }
 
     static void printHP(Pokemon pokemon) {
         System.out.println(pokemon.getHP() + "/" + pokemon.getMaxHP());
+    }
+    static void printStatus(Pokemon pokemon) {
+        System.out.println(pokemon.getName() + " is " + pokemon.getStatus());
     }
 }
 
