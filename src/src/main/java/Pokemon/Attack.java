@@ -72,9 +72,11 @@ public class Attack {
     public AttackMode getMode() {
         return Mode;
     }
+
     public String getName() {
         return name;
     }
+
     public int getPP() {
         return PP;
     }
