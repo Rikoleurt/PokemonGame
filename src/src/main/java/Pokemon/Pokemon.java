@@ -51,11 +51,16 @@ public class Pokemon {
     Status status;
     String gender;
 
-    Random random = new Random();
     int wakeUp = 0;
     int poisonCoefficient = 1;
     int healConfusion = 1;
     int healFear = 0;
+
+    int atkRaise = 0;
+    int defRaise = 0;
+    int speedRaise = 0;
+    int atkSpeRaise = 0;
+    int defSpeRaise = 0;
 
 
     Nature[][] natures = {
@@ -119,7 +124,8 @@ public class Pokemon {
         this.status = status;
         this.gender = gender;
     }
-    public Pokemon(int HP, int maxHP, int atk, int def, int atkSpe, int defSpe, int speed, int level, Type type1, Type type2, ArrayList<Attack> attacks, Status status, String gender){
+    public Pokemon(int HP, int maxHP, int atk, int def, int atkSpe, int defSpe, int speed, int level, Type type1, Type type2,
+                   ArrayList<Attack> attacks, Status status, String gender){
         this.HP = HP;
         this.maxHP = maxHP;
         this.atk = atk;
@@ -131,8 +137,33 @@ public class Pokemon {
         this.type2 = type2;
         this.level = level;
         this.attacks = attacks;
+        this.status = status;
         this.gender = gender;
+    }
 
+    public Pokemon(String name, int HP, int maxHP, int atk, int baseAtk, int def, int baseDef, int atkSpe, int baseAtkSpe, int defSpe, int baseDefSpe, int speed, int baseSpeed,
+                   int level, Type type, ArrayList<Attack> attacks, int atkRaise, int defRaise, int speedRaise,  int atkSpeRaise, int defSpeRaise){
+        this.name = name;
+        this.HP = HP;
+        this.maxHP = maxHP;
+        this.atk = atk;
+        this.baseAtk = baseAtk;
+        this.def = def;
+        this.baseDef = baseDef;
+        this.atkSpe = atkSpe;
+        this.baseAtkSpe = baseAtkSpe;
+        this.defSpe = defSpe;
+        this.baseDefSpe = baseDefSpe;
+        this.speed = speed;
+        this.baseSpeed = baseSpeed;
+        this.level = level;
+        this.type = type;
+        this.attacks = attacks;
+        this.atkRaise = atkRaise;
+        this.defRaise = defRaise;
+        this.speedRaise = speedRaise;
+        this.atkSpeRaise = atkSpeRaise;
+        this.defSpeRaise = defSpeRaise;
     }
 
     public int getHP() {
@@ -279,8 +310,7 @@ public class Pokemon {
         if((this.getStatus() == Status.normal || this.getStatus() == Status.cursed || this.getStatus() == Status.burned
            || this.getStatus() == Status.paralyzed || this.getStatus() == Status.freeze || this.getStatus() == Status.attracted
            || this.getStatus() == Status.confused || this.getStatus() == Status.asleep || this.getStatus() == Status.poisoned
-           || this.getStatus() == Status.badlyPoisoned)
-        ){
+           || this.getStatus() == Status.badlyPoisoned)){
             System.out.println(this.getName() + " uses " + attack.getName());
             target.HP -= (int) totalDamage(this.getAttack(attack), this, target);
             System.out.println(target.getName() + " HP : " + target.HP + "/" + target.getMaxHP());
@@ -300,7 +330,48 @@ public class Pokemon {
         System.out.println(this.getName() + " uses " + statusAttack.getName());
         target.status = setStatus(target, statusAttack);
         System.out.println(target.getName() + " is " + target.getStatus() + "!");
+        updateStatus();
     }
+
+    public void useStatAttack(Attack attack){
+        statusEffect(null, attack);
+        switch (attack.getStat()) {
+            case "atk"    -> atkRaise += attack.getRaiseLevel();
+            case "def"    -> defRaise += attack.getRaiseLevel();
+            case "speed"  -> speedRaise += attack.getRaiseLevel();
+            case "atkSpe" -> atkSpeRaise += attack.getRaiseLevel();
+            case "defSpe" -> defSpeRaise += attack.getRaiseLevel();
+        }
+        System.out.println("atkRaise : " + atkRaise);
+        System.out.println("defRaise : " + defRaise);
+        System.out.println("speedRaise : " + speedRaise);
+        System.out.println("atkSpeRaise : " + atkSpeRaise);
+        System.out.println("defSpeRaise : " + defSpeRaise);
+        updateStat();
+    }
+
+    /// ------------------------------------------------------------------------------------------------------------------
+    // Everything that touches to stat changes in fights
+    /// ------------------------------------------------------------------------------------------------------------------
+
+    public void updateStat(){
+        this.atk = applyStatModifier(this.baseAtk, atkRaise);
+        this.def = applyStatModifier(this.baseDef, defRaise);
+        this.speed = applyStatModifier(this.baseSpeed, speedRaise);
+        this.atkSpe = applyStatModifier(this.baseAtkSpe, atkSpeRaise);
+        this.defSpe = applyStatModifier(this.baseDefSpe, defSpeRaise);
+    }
+
+    private int applyStatModifier(int baseStat, int stage){
+        if (stage > 6) stage = 6;
+        if (stage < -6) stage = -6;
+
+        int[] multipliersNumerator = {2, 2, 2, 2, 2, 2, 2, 3, 4, 5, 6, 7, 8};
+        int[] multipliersDenominator = {8, 7, 6, 5, 4, 3, 2, 2, 2, 2, 2, 2, 2};
+
+        return (baseStat * multipliersNumerator[stage + 6]) / multipliersDenominator[stage + 6];
+    }
+
 
     /// ------------------------------------------------------------------------------------------------------------------
     // Everything that touches to terrain, debris and meteo
@@ -433,9 +504,9 @@ public class Pokemon {
         }
     }
 
-    // ------------------------------------------------------------------------------------------------------------------
+    /// ------------------------------------------------------------------------------------------------------------------
     // Total damages of special and physical attacks
-    // ------------------------------------------------------------------------------------------------------------------
+    /// ------------------------------------------------------------------------------------------------------------------
 
     public double totalDamage(Attack attack, Pokemon launcher, Pokemon target) {
         float power = attack.getPower();
@@ -493,9 +564,9 @@ public class Pokemon {
         }
 
 
-    // ------------------------------------------------------------------------------------------------------------------
+    /// ------------------------------------------------------------------------------------------------------------------
     // Type table
-    // ------------------------------------------------------------------------------------------------------------------
+    /// ------------------------------------------------------------------------------------------------------------------
 
     public List<Type> checkWeaknesses(Pokemon pokemon) {
 

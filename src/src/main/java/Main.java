@@ -18,6 +18,7 @@ import java.util.Map;
 
 public class Main {
     public static void main(String[] args) throws InterruptedException {
+
         Attack charge = new Attack("Charge", 40, 100, Type.normal, AttackMode.physical, 40);
         Attack waterGun = new Attack("Water Gun", 40, 100, Type.water, AttackMode.special, 40);
         Attack thunder = new Attack("Thunder", 80, 100, Type.electric, AttackMode.special, 20);
@@ -28,12 +29,14 @@ public class Main {
         Attack toxicSpikes = new Attack("Toxic Spikes", Type.poison, 40 , Debris.poisonSpikes);
         Attack stealthRock = new Attack("Stealth Rock", Type.rock, 40, Debris.stealthRock);
         Attack spikes = new Attack("Spikes", Type.normal, 40, Debris.spikes);
+        Attack swordDance = new Attack("Sword Dance", Type.normal, 20, "atk", -2);
 
         ArrayList<Attack> pikachuAtk = new ArrayList<>();
         pikachuAtk.add(charge);
         pikachuAtk.add(thunder);
         pikachuAtk.add(thunderWave);
         pikachuAtk.add(electricPunch);
+        pikachuAtk.add(swordDance);
 
         ArrayList<Attack> carapuceAtk = new ArrayList<>();
         carapuceAtk.add(charge);
@@ -47,14 +50,17 @@ public class Main {
         ArrayList<Attack> bulbizarreAtk = new ArrayList<>();
         bulbizarreAtk.add(vineWhip);
 
-        Pokemon pikachu = new Pokemon(
+        Pokemon pikachu = new Pokemon("pikachu",
                 35, 35,
-                55, 40,
-                51, 50,
-                90,
+                55, 55,
+                40, 40,
+                50, 50,
+                50, 50,
+                90, 90,
                 9,
-                Type.electric, pikachuAtk, "Pikachu", Status.attracted,
-                "male"
+                Type.electric,
+                pikachuAtk,
+                0, 0, 0, 0, 0
         );
 
         Pokemon carapuce = new Pokemon(
@@ -90,6 +96,7 @@ public class Main {
 
         LinkedList<Pokemon> team = new LinkedList<>();
         LinkedList<Pokemon> enemyTeam = new LinkedList<>();
+
         team.add(pikachu);
         team.add(bulbizarre);
         team.add(salameche);
@@ -124,11 +131,28 @@ public class Main {
         printHP(pikachu);
         pikachu.useAttack(carapuce, thunder);
         printHP(pikachu);
+
+        player.changePokemon(bulbizarre,terrain);
+        printHP(bulbizarre);
+        printStatus(bulbizarre);
+
+        player.changePokemon(pikachu,terrain);
+
+        printAtk(pikachu);
+        pikachu.useStatAttack(swordDance);
+        printAtk(pikachu);
+        pikachu.useStatAttack(swordDance);
+        printAtk(pikachu);
+        pikachu.useStatAttack(swordDance);
+        printAtk(pikachu);
+
     }
 
     static void printHP(Pokemon pokemon) {
         System.out.println(pokemon.getHP() + "/" + pokemon.getMaxHP());
     }
+    static void printStatus(Pokemon pokemon) { System.out.println(pokemon.getName() + " is " + pokemon.getStatus());}
+    static void printAtk(Pokemon pokemon) {System.out.println(pokemon.getName() + " : " + pokemon.getAtk());}
 }
 
 
