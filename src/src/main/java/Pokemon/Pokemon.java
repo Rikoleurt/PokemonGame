@@ -142,7 +142,7 @@ public class Pokemon {
     }
 
     public Pokemon(String name, int HP, int maxHP, int atk, int baseAtk, int def, int baseDef, int atkSpe, int baseAtkSpe, int defSpe, int baseDefSpe, int speed, int baseSpeed,
-                   int level, Type type, ArrayList<Attack> attacks, int atkRaise, int defRaise, int speedRaise,  int atkSpeRaise, int defSpeRaise){
+                   int level, Type type, ArrayList<Attack> attacks, int atkRaise, int defRaise, int speedRaise,  int atkSpeRaise, int defSpeRaise, Status status, String gender){
         this.name = name;
         this.HP = HP;
         this.maxHP = maxHP;
@@ -164,6 +164,8 @@ public class Pokemon {
         this.speedRaise = speedRaise;
         this.atkSpeRaise = atkSpeRaise;
         this.defSpeRaise = defSpeRaise;
+        this.status = status;
+        this.gender = gender;
     }
 
     public int getHP() {
