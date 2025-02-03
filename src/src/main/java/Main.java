@@ -16,8 +16,26 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Map;
 
-public class Main {
-    public static void main(String[] args) throws InterruptedException {
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+
+import static javafx.application.Application.launch;
+
+public class Main extends Application {
+
+    private int playerHP = 35;
+    private static int opponentHP = 44;
+    private ProgressBar playerHPBar = new ProgressBar(1);
+    private static ProgressBar opponentHPBar = new ProgressBar(1);
+    private Label playerHPLabel = new Label("HP: " + playerHP);
+    private static Label opponentHPLabel = new Label("HP: " + opponentHP);
+
+    public static void main(String[] args) {
 
         Attack charge = new Attack("Charge", 40, 100, Type.normal, AttackMode.physical, 40);
         Attack waterGun = new Attack("Water Gun", 40, 100, Type.water, AttackMode.special, 40);
@@ -50,6 +68,7 @@ public class Main {
         ArrayList<Attack> bulbizarreAtk = new ArrayList<>();
         bulbizarreAtk.add(vineWhip);
 
+
         Pokemon pikachu = new Pokemon("pikachu",
                 35, 35,
                 55, 55,
@@ -74,21 +93,21 @@ public class Main {
         );
 
         Pokemon salameche = new Pokemon(
-                39, 39, // HP et maxHP
-                52, 43, // Attack et Defense
-                60, 50, // Special Attack et Special Defense
-                65,     // Speed
-                11,     // Niveau (exemple)
+                39, 39,
+                52, 43,
+                60, 50,
+                65,
+                11,
                 Type.fire, salamecheAtk, "Salamèche", Status.normal,
                 "male"
         );
 
         Pokemon bulbizarre = new Pokemon(
-                45, 45, // HP et maxHP
-                49, 49, // Attack et Defense
-                65, 65, // Special Attack et Special Defense
-                45,     // Speed
-                10,     // Niveau (exemple)
+                45, 45,
+                49, 49,
+                65, 65,
+                45,
+                10,
                 Type.grass, bulbizarreAtk, "Bulbizarre", Status.normal,
                 "female"
         );
@@ -145,14 +164,56 @@ public class Main {
         printAtk(pikachu);
         pikachu.useStatAttack(swordDance);
         printAtk(pikachu);
+        launch(args);
 
+    }
+
+
+    private void attack() {
+        opponentHP -= 10;
+        if (opponentHP < 0) opponentHP = 0;
+        opponentHPBar.setProgress((double) opponentHP / 44);
+        opponentHPLabel.setText("HP: " + opponentHP);
     }
 
     static void printHP(Pokemon pokemon) {
         System.out.println(pokemon.getHP() + "/" + pokemon.getMaxHP());
     }
-    static void printStatus(Pokemon pokemon) { System.out.println(pokemon.getName() + " is " + pokemon.getStatus());}
-    static void printAtk(Pokemon pokemon) {System.out.println(pokemon.getName() + " : " + pokemon.getAtk());}
+    static void printStatus(Pokemon pokemon) {
+        System.out.println(pokemon.getName() + " is " + pokemon.getStatus());
+    }
+    static void printAtk(Pokemon pokemon) {
+        System.out.println(pokemon.getName() + " : " + pokemon.getAtk());
+    }
+    static void printDef(Pokemon pokemon) {
+        System.out.println(pokemon.getName() + " : " + pokemon.getDef());}
+    static void printSpeed(Pokemon pokemon) {System.out.println(pokemon.getName() + " : " + pokemon.getSpeed());
+    }
+    static void printAtkSpe(Pokemon pokemon) {
+        System.out.println(pokemon.getName() + " : " + pokemon.getAtkSpe());
+    }
+    static void printDefSpe(Pokemon pokemon) {
+        System.out.println(pokemon.getName() + " : " + pokemon.getDefSpe());
+    }
+
+    @Override
+    public void start(Stage stage) throws Exception {
+        VBox layout = new VBox(10);
+        layout.setStyle("-fx-padding: 20; -fx-alignment: center;");
+
+        Label playerLabel = new Label("Pikachu");
+        Label opponentLabel = new Label("Carapuce");
+
+        Button attackButton = new Button("Attaquer");
+        attackButton.setOnAction(e -> attack());
+
+        layout.getChildren().addAll(opponentLabel, opponentHPBar, opponentHPLabel, attackButton, playerLabel, playerHPBar, playerHPLabel);
+
+        Scene scene = new Scene(layout, 300, 250);
+        stage.setScene(scene);
+        stage.setTitle("Combat Pokémon");
+        stage.show();
+    }
 }
 
 
