@@ -1,11 +1,13 @@
 package Pokemon;
 
-import Person.Player;
 import Pokemon.AttackEnum.AttackMode;
+import Pokemon.Attacks.Attack;
+import Pokemon.Attacks.StatusAttack;
+import Pokemon.Attacks.UpgradeMove;
 import Pokemon.PokemonEnum.Status;
 import Pokemon.PokemonEnum.Nature;
 import Pokemon.PokemonEnum.Type;
-import Pokemon.TerrainEnum.Debris;
+import Pokemon.Attacks.DebrisAttack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +48,7 @@ public class Pokemon {
     Type type;
     Type type1;
     Type type2;
-    ArrayList<Attack> attacks;
+    ArrayList<Move> moves;
     Nature nature;
     Status status;
     String gender;
@@ -72,9 +74,9 @@ public class Pokemon {
     };
 
     private Pokemon(int HP, int maxHP, int hpIV, int hpEV, int baseHP, int speed, int speedIV, int speedEV, int baseSpeed,
-                   int atk, int atkIV, int atkEV, int baseAtk, int def, int defIV, int defEV, int baseDef, int atkSpe, int atkSpeIV,
-                   int atkSpeEV, int baseAtkSpe, int defSpe, int defSpeIV, int defSpeEV, int baseDefSpe, int level, int exp,
-                   String name, Type type, Nature nature, ArrayList<Attack> attacks, Status status){
+                    int atk, int atkIV, int atkEV, int baseAtk, int def, int defIV, int defEV, int baseDef, int atkSpe, int atkSpeIV,
+                    int atkSpeEV, int baseAtkSpe, int defSpe, int defSpeIV, int defSpeEV, int baseDefSpe, int level, int exp,
+                    String name, Type type, Nature nature, ArrayList<Move> moves, Status status){
         this.HP = HP;
         this.maxHP = maxHP;
         this.hpIV = hpIV;
@@ -104,12 +106,12 @@ public class Pokemon {
         this.exp = exp;
         this.name = name;
         this.type = type;
-        this.attacks = attacks;
+        this.moves = moves;
         this.nature = nature;
         this.status = status;
     }
 
-    public Pokemon(int HP, int maxHP, int atk, int def, int atkSpe, int defSpe, int speed, int level, Type type, ArrayList<Attack> attacks, String name, Status status, String gender){
+    public Pokemon(int HP, int maxHP, int atk, int def, int atkSpe, int defSpe, int speed, int level, Type type, ArrayList<Move> moves, String name, Status status, String gender){
         this.HP = HP;
         this.maxHP = maxHP;
         this.atk = atk;
@@ -119,13 +121,13 @@ public class Pokemon {
         this.speed = speed;
         this.type = type;
         this.level = level;
-        this.attacks = attacks;
+        this.moves = moves;
         this.name = name;
         this.status = status;
         this.gender = gender;
     }
     public Pokemon(int HP, int maxHP, int atk, int def, int atkSpe, int defSpe, int speed, int level, Type type1, Type type2,
-                   ArrayList<Attack> attacks, Status status, String gender){
+                   ArrayList<Move> moves, Status status, String gender){
         this.HP = HP;
         this.maxHP = maxHP;
         this.atk = atk;
@@ -136,13 +138,13 @@ public class Pokemon {
         this.type1 = type1;
         this.type2 = type2;
         this.level = level;
-        this.attacks = attacks;
+        this.moves = moves;
         this.status = status;
         this.gender = gender;
     }
 
     public Pokemon(String name, int HP, int maxHP, int atk, int baseAtk, int def, int baseDef, int atkSpe, int baseAtkSpe, int defSpe, int baseDefSpe, int speed, int baseSpeed,
-                   int level, Type type, ArrayList<Attack> attacks, int atkRaise, int defRaise, int speedRaise,  int atkSpeRaise, int defSpeRaise, Status status, String gender){
+                   int level, Type type, ArrayList<Move> moves, int atkRaise, int defRaise, int speedRaise, int atkSpeRaise, int defSpeRaise, Status status, String gender){
         this.name = name;
         this.HP = HP;
         this.maxHP = maxHP;
@@ -158,7 +160,7 @@ public class Pokemon {
         this.baseSpeed = baseSpeed;
         this.level = level;
         this.type = type;
-        this.attacks = attacks;
+        this.moves = moves;
         this.atkRaise = atkRaise;
         this.defRaise = defRaise;
         this.speedRaise = speedRaise;
@@ -272,12 +274,12 @@ public class Pokemon {
         return nature;
     }
 
-    public ArrayList<Attack> getAttacks() {
-        return attacks;
+    public ArrayList<Move> getAttacks() {
+        return moves;
     }
 
-    public Attack getAttack(Attack attack){
-        return attacks.get(attacks.indexOf(attack));
+    public Move getAttack(Move move){
+        return moves.get(moves.indexOf(move));
     }
 
     public Status getStatus() {
@@ -303,53 +305,73 @@ public class Pokemon {
         return gender;
     }
 
-    public void setAttack(ArrayList<Attack> attacks, int position, Attack attack) {
-        attacks.set(position, attack);
+    public void setAttack(ArrayList<Move> moves, int position, Move move) {
+        moves.set(position, move);
     }
+
+    public void attack(Pokemon target, Move move, Terrain terrain) {
+        System.out.println(move.getClass());
+        if(this.getAttack(move) instanceof Attack attack){
+            statusEffect(target, move);
+            if((this.getStatus() == Status.normal || this.getStatus() == Status.cursed || this.getStatus() == Status.burned
+                    || this.getStatus() == Status.paralyzed || this.getStatus() == Status.freeze || this.getStatus() == Status.attracted
+                    || this.getStatus() == Status.confused || this.getStatus() == Status.asleep || this.getStatus() == Status.poisoned
+                    || this.getStatus() == Status.badlyPoisoned)){
+                System.out.println(this.getName() + " uses " + move.getName());
+                target.HP -= (int) totalDamage((Attack) this.getAttack(attack), this, target);
+                System.out.println(target.getName() + " HP : " + target.HP + "/" + target.getMaxHP());
+            }
+        }
+        if(this.getAttack(move) instanceof DebrisAttack debrisAttack){
+            statusEffect(target, move);
+            System.out.println(this.getName() + " uses " + move.getName());
+            terrain.setDebris(debrisAttack.getDebris());
+        }
+        if(this.getAttack(move) instanceof StatusAttack statusAttack){
+            statusEffect(target, statusAttack);
+            System.out.println(this.getName() + " uses " + move.getName());
+            target.status = setStatus(target, statusAttack);
+            System.out.println(target.getName() + " is " + target.getStatus() + "!");
+        }
+        if(this.getAttack(move) instanceof UpgradeMove upgradeMove){
+            statusEffect(null, upgradeMove);
+            System.out.println(upgradeMove.getRaiseLevel());
+            switch (upgradeMove.getStat()) {
+                case "atk"    -> atkRaise += upgradeMove.getRaiseLevel();
+                case "def"    -> defRaise += upgradeMove.getRaiseLevel();
+                case "speed"  -> speedRaise += upgradeMove.getRaiseLevel();
+                case "atkSpe" -> atkSpeRaise += upgradeMove.getRaiseLevel();
+                case "defSpe" -> defSpeRaise += upgradeMove.getRaiseLevel();
+            }
+            System.out.println("atkRaise : " + atkRaise);
+            System.out.println("defRaise : " + defRaise);
+            System.out.println("speedRaise : " + speedRaise);
+            System.out.println("atkSpeRaise : " + atkSpeRaise);
+            System.out.println("defSpeRaise : " + defSpeRaise);
+            updateStat();
+        }
+        updateStatus();
+    }
+
 
     public void useAttack(Pokemon target, Attack attack){
-        statusEffect(target, attack);
-        if((this.getStatus() == Status.normal || this.getStatus() == Status.cursed || this.getStatus() == Status.burned
-           || this.getStatus() == Status.paralyzed || this.getStatus() == Status.freeze || this.getStatus() == Status.attracted
-           || this.getStatus() == Status.confused || this.getStatus() == Status.asleep || this.getStatus() == Status.poisoned
-           || this.getStatus() == Status.badlyPoisoned)){
-            System.out.println(this.getName() + " uses " + attack.getName());
-            target.HP -= (int) totalDamage(this.getAttack(attack), this, target);
-            System.out.println(target.getName() + " HP : " + target.HP + "/" + target.getMaxHP());
-        }
-        updateStatus();
+
+
     }
 
-    public void useDebrisAttack(Terrain terrain, Attack debrisAttack, Pokemon target){
+    public void useDebrisAttack(Terrain terrain, DebrisAttack debrisAttack, Pokemon target){
         statusEffect(target, debrisAttack);
-        System.out.println(this.getName() + " uses " + debrisAttack.getName());
-        terrain.setDebris(debrisAttack.getDebris());
+
         updateStatus();
     }
 
-    public void useStatusAttack(Pokemon target, Attack statusAttack){
+    public void useStatusAttack(Pokemon target, StatusAttack statusAttack){
         statusEffect(target, statusAttack);
-        System.out.println(this.getName() + " uses " + statusAttack.getName());
-        target.status = setStatus(target, statusAttack);
-        System.out.println(target.getName() + " is " + target.getStatus() + "!");
         updateStatus();
     }
 
-    public void useStatAttack(Attack attack){
-        statusEffect(null, attack);
-        switch (attack.getStat()) {
-            case "atk"    -> atkRaise += attack.getRaiseLevel();
-            case "def"    -> defRaise += attack.getRaiseLevel();
-            case "speed"  -> speedRaise += attack.getRaiseLevel();
-            case "atkSpe" -> atkSpeRaise += attack.getRaiseLevel();
-            case "defSpe" -> defSpeRaise += attack.getRaiseLevel();
-        }
-        System.out.println("atkRaise : " + atkRaise);
-        System.out.println("defRaise : " + defRaise);
-        System.out.println("speedRaise : " + speedRaise);
-        System.out.println("atkSpeRaise : " + atkSpeRaise);
-        System.out.println("defSpeRaise : " + defSpeRaise);
-        updateStat();
+    public void useStatAttack(UpgradeMove move){
+        statusEffect(null, move);
     }
 
     /// ------------------------------------------------------------------------------------------------------------------
@@ -384,25 +406,25 @@ public class Pokemon {
     // Everything that touches to Pokemon's status
     /// ------------------------------------------------------------------------------------------------------------------
 
-    public Status setStatus(Pokemon target, Attack statusAttack){
+    public Status setStatus(Pokemon target, StatusAttack statusMove){
         if(target.getStatus() != Status.normal){
             System.out.println(target.getName() + " is already " + target.getStatus() + "! It won't have any effect.");
         }
-        if(checkImmunities(target).contains(statusAttack.getType())){
+        if(checkImmunities(target).contains(statusMove.getType())){
             System.out.println("This attack does not affect the pokemon");
             return null;
         }
         if(target.getStatus() == Status.normal){
-            return statusAttack.getEffect();
+            return statusMove.getStatus();
         }
         return target.getStatus();
     }
 
-    public void statusEffect(Pokemon target, Attack attack){
+    public void statusEffect(Pokemon target, Move move){
         Random random = new Random();
-        if(this.getAttack(attack).getMode() == AttackMode.physical && this.getStatus() == Status.burned){
-            target.HP -= (int) totalDamage(this.getAttack(attack), this, target)/2;
-            System.out.println(this.getName() + " uses " + attack.getName());
+        if(this.getAttack(move).getMode() == AttackMode.physical && this.getStatus() == Status.burned){
+            target.HP -= (int) totalDamage((Attack) this.getAttack(move), this, target)/2;
+            System.out.println(this.getName() + " uses " + move.getName());
             System.out.println(target.getName() + " HP : " + target.HP + "/" + target.getMaxHP());
             return;
         }
@@ -524,20 +546,20 @@ public class Pokemon {
         return calculateEffectiveness(attack, launcher, target, power);
     }
 
-    private double calculateEffectiveness(Attack attack, Pokemon launcher, Pokemon target, float power) {
+    private double calculateEffectiveness(Move move, Pokemon launcher, Pokemon target, float power) {
         float effectivenessCoefficient;
-        switch (launcher.getAttack(attack).getMode()) {
+        switch (launcher.getAttack(move).getMode()) {
             case physical:
-                if (checkWeaknesses(target).contains(attack.getType())) {
+                if (checkWeaknesses(target).contains(move.getType())) {
                     effectivenessCoefficient = 2;
                     System.out.println("The attack is super effective");
                     return (((((launcher.level * 0.4 + 2) * launcher.getAtk() * power) / target.getDef()) / 50) + 2) * effectivenessCoefficient;
                 }
-                if (checkImmunities(target).contains(attack.getType())) {
+                if (checkImmunities(target).contains(move.getType())) {
                     System.out.println("This attack does not affect the pokemon");
                     return 0;
                 }
-                if (checkResistances(target).contains(attack.getType())) {
+                if (checkResistances(target).contains(move.getType())) {
                     effectivenessCoefficient = 0.5f;
                     System.out.println("The attack is not very effective");
                     return (((((launcher.level * 0.4 + 2) * launcher.getAtk() * power) / target.getDef()) / 50) + 2) * effectivenessCoefficient;
@@ -545,16 +567,16 @@ public class Pokemon {
                     return (((((launcher.level * 0.4 + 2) * launcher.getAtk() * power) / target.getDef()) / 50) + 2);
                 }
             case special:
-                if (checkWeaknesses(target).contains(attack.getType())) {
+                if (checkWeaknesses(target).contains(move.getType())) {
                     effectivenessCoefficient = 2;
                     System.out.println("The attack is super effective");
                     return (((((launcher.level * 0.4 + 2) * launcher.getAtkSpe() * power) / target.getDefSpe()) / 50) + 2) * effectivenessCoefficient;
                 }
-                if (checkImmunities(target).contains(attack.getType())) {
+                if (checkImmunities(target).contains(move.getType())) {
                     System.out.println("This attack does not affect the pokemon");
                     return 0;
                 }
-                if (checkResistances(target).contains(attack.getType())) {
+                if (checkResistances(target).contains(move.getType())) {
                     effectivenessCoefficient = 0.5f;
                     System.out.println("The attack is not very effective");
                     return (((((launcher.level * 0.4 + 2) * launcher.getAtkSpe() * power) / target.getDefSpe()) / 50) + 2) * effectivenessCoefficient;

@@ -5,14 +5,18 @@ import Person.Player;
 import Pokemon.AttackEnum.AttackMode;
 import Pokemon.Pokemon;
 
+import Pokemon.Attacks.UpgradeMove;
+import Pokemon.Attacks.Attack;
+import Pokemon.Attacks.StatusAttack;
+import Pokemon.Attacks.DebrisAttack;
+
 import Pokemon.PokemonEnum.Status;
 import Pokemon.PokemonEnum.Type;
-import Pokemon.Attack;
+import Pokemon.Move;
 import Pokemon.Terrain;
 import Pokemon.TerrainEnum.Debris;
 import Pokemon.TerrainEnum.Meteo;
 
-import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Map;
@@ -43,32 +47,32 @@ public class Main extends Application {
         Attack charge = new Attack("Charge", 40, 100, Type.normal, AttackMode.physical, 40);
         Attack waterGun = new Attack("Water Gun", 40, 100, Type.water, AttackMode.special, 40);
         Attack thunder = new Attack("Thunder", 80, 100, Type.electric, AttackMode.special, 20);
-        Attack thunderWave = new Attack("ThunderWave", Status.paralyzed, 100, Type.electric, 40);
+        StatusAttack thunderWave = new StatusAttack("ThunderWave", 100, Status.paralyzed, Type.electric, AttackMode.status, 20);
         Attack electricPunch = new Attack("Electric punch", 80,100, Type.electric, AttackMode.physical, 40);
         Attack ember = new Attack("Ember", 40,100,Type.fire,AttackMode.special, 40);
         Attack vineWhip = new Attack("Ember", 40,100,Type.grass, AttackMode.physical, 40);
-        Attack toxicSpikes = new Attack("Toxic Spikes", Type.poison, 40 , Debris.poisonSpikes);
-        Attack stealthRock = new Attack("Stealth Rock", Type.rock, 40, Debris.stealthRock);
-        Attack spikes = new Attack("Spikes", Type.normal, 40, Debris.spikes);
-        Attack swordDance = new Attack("Sword Dance", Type.normal, 20, "atk", -2);
+        DebrisAttack toxicSpikes = new DebrisAttack("Toxic Spikes", Type.poison, AttackMode.status, 20, Debris.poisonSpikes );
+        DebrisAttack stealthRock = new DebrisAttack("Stealth Rock", Type.rock, AttackMode.status, 40, Debris.stealthRock);
+        DebrisAttack spikes = new DebrisAttack("Spikes", Type.normal, AttackMode.status,40, Debris.spikes);
+        UpgradeMove swordDance = new UpgradeMove("Sword Dance", "atk",2, Type.normal, AttackMode.status, 20);
 
-        ArrayList<Attack> pikachuAtk = new ArrayList<>();
+        ArrayList<Move> pikachuAtk = new ArrayList<>();
         pikachuAtk.add(charge);
         pikachuAtk.add(thunder);
         pikachuAtk.add(thunderWave);
         pikachuAtk.add(electricPunch);
         pikachuAtk.add(swordDance);
 
-        ArrayList<Attack> carapuceAtk = new ArrayList<>();
+        ArrayList<Move> carapuceAtk = new ArrayList<>();
         carapuceAtk.add(charge);
         carapuceAtk.add(waterGun);
         carapuceAtk.add(toxicSpikes);
         carapuceAtk.add(stealthRock);
         carapuceAtk.add(spikes);
 
-        ArrayList<Attack> salamecheAtk = new ArrayList<>();
+        ArrayList<Move> salamecheAtk = new ArrayList<>();
         salamecheAtk.add(ember);
-        ArrayList<Attack> bulbizarreAtk = new ArrayList<>();
+        ArrayList<Move> bulbizarreAtk = new ArrayList<>();
         bulbizarreAtk.add(vineWhip);
 
 
@@ -139,20 +143,13 @@ public class Main extends Application {
 
         player.sendPokemon(terrain);
 
-        player.changePokemon(salameche,terrain);
-        printHP(salameche);
-
-        salameche.useAttack(carapuce, ember);
-
-        printHP(carapuce);
-
-        carapuce.useDebrisAttack(terrain, toxicSpikes, player.getFrontPokemon());
-        carapuce.useDebrisAttack(terrain, toxicSpikes, player.getFrontPokemon());
+        carapuce.attack(player.getFrontPokemon(), toxicSpikes, terrain);
+        carapuce.attack(player.getFrontPokemon(), toxicSpikes, terrain);
 
         player.changePokemon(pikachu,terrain);
         printHP(pikachu);
-        pikachu.useAttack(carapuce, thunder);
-        printHP(pikachu);
+        pikachu.attack(carapuce, thunder, terrain);
+        printHP(carapuce);
 
         player.changePokemon(bulbizarre,terrain);
         printHP(bulbizarre);
@@ -161,12 +158,15 @@ public class Main extends Application {
         player.changePokemon(pikachu,terrain);
 
         printAtk(pikachu);
-        pikachu.useStatAttack(swordDance);
+        pikachu.attack(carapuce,swordDance,terrain);
         printAtk(pikachu);
-        pikachu.useStatAttack(swordDance);
+        pikachu.attack(carapuce,swordDance,terrain);
         printAtk(pikachu);
-        pikachu.useStatAttack(swordDance);
+        pikachu.attack(carapuce,swordDance,terrain);
         printAtk(pikachu);
+        printHP(pikachu);
+        pikachu.attack(carapuce, electricPunch, terrain);
+        printHP(carapuce);
         launch(args);
 
     }
@@ -228,14 +228,14 @@ public class Main extends Application {
             layout.getChildren().removeAll(fightButton, pokemonButton, runButton,bagButton);
             layout.getChildren().addAll(atk1Button, atk2Button, atk3Button, atk4Button);
         });
-        Attack pAtk1 = p.getAttacks().get(0);
-        Attack pAtk2 = p.getAttacks().get(1);
-        Attack pAtk3 = p.getAttacks().get(2);
-        Attack pAtk4 = p.getAttacks().get(3);
+        Attack pAtk1 = (Attack) p.getAttacks().get(0);
+        Attack pAtk2 = (Attack) p.getAttacks().get(1);
+        StatusAttack pAtk3 = (StatusAttack) p.getAttacks().get(2);
+        Attack pAtk4 = (Attack) p.getAttacks().get(3);
 
         atk1Button.setOnAction(e -> {p.useAttack(enemyP,pAtk1);});
         atk2Button.setOnAction(e ->{p.useAttack(enemyP,pAtk2);});
-        atk3Button.setOnAction(e ->{p.useAttack(enemyP,pAtk3);});
+        atk3Button.setOnAction(e ->{p.useStatusAttack(enemyP,pAtk3);});
         atk4Button.setOnAction(e ->{p.useAttack(enemyP,pAtk4);});
     }
 
@@ -244,32 +244,32 @@ public class Main extends Application {
         Attack charge = new Attack("Charge", 40, 100, Type.normal, AttackMode.physical, 40);
         Attack waterGun = new Attack("Water Gun", 40, 100, Type.water, AttackMode.special, 40);
         Attack thunder = new Attack("Thunder", 80, 100, Type.electric, AttackMode.special, 20);
-        Attack thunderWave = new Attack("ThunderWave", Status.paralyzed, 100, Type.electric, 40);
+        StatusAttack thunderWave = new StatusAttack("ThunderWave", 100, Status.paralyzed, Type.electric, AttackMode.status, 20);
         Attack electricPunch = new Attack("Electric punch", 80,100, Type.electric, AttackMode.physical, 40);
         Attack ember = new Attack("Ember", 40,100,Type.fire,AttackMode.special, 40);
         Attack vineWhip = new Attack("Ember", 40,100,Type.grass, AttackMode.physical, 40);
-        Attack toxicSpikes = new Attack("Toxic Spikes", Type.poison, 40 , Debris.poisonSpikes);
-        Attack stealthRock = new Attack("Stealth Rock", Type.rock, 40, Debris.stealthRock);
-        Attack spikes = new Attack("Spikes", Type.normal, 40, Debris.spikes);
-        Attack swordDance = new Attack("Sword Dance", Type.normal, 20, "atk", -2);
+        DebrisAttack toxicSpikes = new DebrisAttack("Toxic Spikes", Type.poison, AttackMode.status, 20, Debris.poisonSpikes );
+        DebrisAttack stealthRock = new DebrisAttack("Stealth Rock", Type.rock, AttackMode.status, 40, Debris.stealthRock);
+        DebrisAttack spikes = new DebrisAttack("Spikes", Type.normal, AttackMode.status,40, Debris.spikes);
+        UpgradeMove swordDance = new UpgradeMove("Sword Dance", "atk",-2, Type.normal, AttackMode.status, 20);
 
-        ArrayList<Attack> pikachuAtk = new ArrayList<>();
+        ArrayList<Move> pikachuAtk = new ArrayList<>();
         pikachuAtk.add(charge);
         pikachuAtk.add(thunder);
         pikachuAtk.add(thunderWave);
         pikachuAtk.add(electricPunch);
         pikachuAtk.add(swordDance);
 
-        ArrayList<Attack> carapuceAtk = new ArrayList<>();
+        ArrayList<Move> carapuceAtk = new ArrayList<>();
         carapuceAtk.add(charge);
         carapuceAtk.add(waterGun);
         carapuceAtk.add(toxicSpikes);
         carapuceAtk.add(stealthRock);
         carapuceAtk.add(spikes);
 
-        ArrayList<Attack> salamecheAtk = new ArrayList<>();
+        ArrayList<Move> salamecheAtk = new ArrayList<>();
         salamecheAtk.add(ember);
-        ArrayList<Attack> bulbizarreAtk = new ArrayList<>();
+        ArrayList<Move> bulbizarreAtk = new ArrayList<>();
         bulbizarreAtk.add(vineWhip);
 
 
@@ -334,8 +334,8 @@ public class Main extends Application {
 
     NPC initiateEnemy(){
         LinkedList<Pokemon> enemyTeam = new LinkedList<>();
-        ArrayList<Attack> carapuceAtk = new ArrayList<>();
-        ArrayList<Attack> salamecheAtk = new ArrayList<>();
+        ArrayList<Move> carapuceAtk = new ArrayList<>();
+        ArrayList<Move> salamecheAtk = new ArrayList<>();
         Attack charge = new Attack("Charge", 40, 100, Type.normal, AttackMode.physical, 40);
         Attack waterGun = new Attack("Water Gun", 40, 100, Type.water, AttackMode.special, 40);
         Attack ember = new Attack("Ember", 40,100,Type.fire,AttackMode.special, 40);
