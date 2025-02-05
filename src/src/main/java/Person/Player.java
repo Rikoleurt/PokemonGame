@@ -1,31 +1,30 @@
 package Person;
 
-import Inventory.Inventory;
+import Inventory.Bag;
 import Pokemon.Pokemon;
 import Pokemon.TerrainEnum.Debris;
 import Pokemon.Terrain;
-import Pokemon.TerrainEnum.Meteo;
 
 import java.util.LinkedList;
 
 public class Player {
 
     String nickname;
-    Inventory inventory;
+    Bag bag;
     LinkedList<Pokemon> team;
 
     int turn;
 
-    public Player(String nickname, Inventory inventory, LinkedList<Pokemon> team) {
+    public Player(String nickname, Bag bag, LinkedList<Pokemon> team) {
         this.nickname = nickname;
-        this.inventory = inventory;
+        this.bag = bag;
         this.team = team;
     }
     public String getNickname() {
         return nickname;
     }
-    public Inventory getInventory() {
-        return inventory;
+    public Bag getInventory() {
+        return bag;
     }
 
     public LinkedList<Pokemon> getTeam() {
@@ -68,8 +67,8 @@ public class Player {
         return team.indexOf(pokemon);
     }
 
-    public void setInventory(Inventory inventory) {
-        this.inventory = inventory;
+    public void setInventory(Bag bag) {
+        this.bag = bag;
     }
 
     public void setNickname(String nickname) {

@@ -354,26 +354,6 @@ public class Pokemon {
     }
 
 
-    public void useAttack(Pokemon target, Attack attack){
-
-
-    }
-
-    public void useDebrisAttack(Terrain terrain, DebrisAttack debrisAttack, Pokemon target){
-        statusEffect(target, debrisAttack);
-
-        updateStatus();
-    }
-
-    public void useStatusAttack(Pokemon target, StatusAttack statusAttack){
-        statusEffect(target, statusAttack);
-        updateStatus();
-    }
-
-    public void useStatAttack(UpgradeMove move){
-        statusEffect(null, move);
-    }
-
     /// ------------------------------------------------------------------------------------------------------------------
     // Everything that touches to stat changes in fights
     /// ------------------------------------------------------------------------------------------------------------------

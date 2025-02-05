@@ -4,19 +4,28 @@ import Inventory.Items.Items;
 
 public class StatBooster extends Items {
 
-    @Override
-    protected void addItem(int quantity) {
+    String name;
+    String description;
+    String stat;
+    int raiseLevel;
 
+    public StatBooster(String name, String description, String stat, int raiseLevel) {
+        this.name = name;
+        this.description = description;
+        this.stat = stat;
+        this.raiseLevel = raiseLevel;
     }
 
     @Override
-    protected void removeItem() {
-
+    public String getName() {
+        return name;
     }
 
+    public String getStat() {
+        return stat;
+    }
 
-    @Override
-    protected void buyItem() {
-
+    public int getRaiseLevel() {
+        return raiseLevel;
     }
 }

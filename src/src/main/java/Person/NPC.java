@@ -7,21 +7,21 @@ import java.util.LinkedList;
 public class NPC {
 
     String name;
-    LinkedList<Pokemon> pokemons;
+    LinkedList<Pokemon> team;
 
-    public NPC(String name, LinkedList<Pokemon> pokemons) {
+    public NPC(String name, LinkedList<Pokemon> team) {
         this.name = name;
-        this.pokemons = pokemons;
+        this.team = team;
     }
 
     public String getName() {
         return name;
     }
 
-    public LinkedList<Pokemon> getPokemons() {
-        return pokemons;
+    public LinkedList<Pokemon> getTeam() {
+        return team;
     }
     public Pokemon getFrontPokemon() {
-        return pokemons.get(0);
+        return team.get(0);
     }
 }
