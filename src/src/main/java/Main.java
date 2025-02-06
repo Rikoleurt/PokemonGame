@@ -17,10 +17,7 @@ import Pokemon.Move;
 import Pokemon.TerrainEnum.Debris;
 import Pokemon.Terrain;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 
 import Pokemon.TerrainEnum.Meteo;
 import javafx.application.Application;
@@ -32,11 +29,14 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import static javafx.application.Application.launch;
 
 public class Main extends Application {
+
+    static Font customFont = Font.loadFont(Main.class.getResource("/font/pokemonFont.ttf").toExternalForm(), 20);
 
     static Player player = initiatePlayer();
     static NPC npc = initiateEnemy();
@@ -62,9 +62,12 @@ public class Main extends Application {
         Label playerLabel = new Label("Pikachu");
         Label opponentLabel = new Label("Carapuce");
 
+        playerLabel.setFont(customFont);
+        opponentLabel.setFont(customFont);
+
         layout.getChildren().addAll(opponentLabel, opponentHPBar, opponentHPLabel, playerLabel, playerHPBar, playerHPLabel);
         addAttackButtons();
-        Scene scene = new Scene(layout, 1000, 1000);
+        Scene scene = new Scene(layout, 1980, 1200);
         stage.setScene(scene);
         stage.setTitle("Combat Pokémon");
         stage.show();
@@ -76,6 +79,11 @@ public class Main extends Application {
         Button pokemonButton = new Button("Pokemon");
         Button runButton = new Button("Run");
 
+        fightButton.setFont(customFont);
+        bagButton.setFont(customFont);
+        pokemonButton.setFont(customFont);
+        runButton.setFont(customFont);
+
         Pokemon p = player.getFrontPokemon();
         Pokemon enemyP = npc.getFrontPokemon();
 
@@ -86,10 +94,16 @@ public class Main extends Application {
         Button atk3Button = new Button(p.getAttacks().get(2).getName());
         Button atk4Button = new Button(p.getAttacks().get(3).getName());
 
+        atk1Button.setFont(customFont);
+        atk2Button.setFont(customFont);
+        atk3Button.setFont(customFont);
+        atk4Button.setFont(customFont);
+
         fightButton.setOnAction(e -> {
             layout.getChildren().removeAll(fightButton, pokemonButton, runButton,bagButton);
             layout.getChildren().addAll(atk1Button, atk2Button, atk3Button, atk4Button);
         });
+        
         Attack pAtk1 = (Attack) p.getAttacks().get(0);
         Attack pAtk2 = (Attack) p.getAttacks().get(1);
         StatusAttack pAtk3 = (StatusAttack) p.getAttacks().get(2);
@@ -118,34 +132,38 @@ public class Main extends Application {
             printAttackText(pAtk4);
             updateHPBars();
         });
-
-
-        System.out.println(npc.getFrontPokemon().getName());
-        System.out.println(npc.getFrontPokemon().getHP());
-        foePokemonHP = enemyP.getHP();
-        opponentHPBar.setProgress((double) foePokemonHP / 44);
-        opponentHPLabel.setText("HP: " + foePokemonHP);
     }
 
     private void printAttackText(Move move){
         Label textLabel = new Label(player.getFrontPokemon().getName() + " uses " + player.getFrontPokemon().getAttack(move).getName());
-        textLabel.setStyle("-fx-font-size: 16px; -fx-text-fill: white;");
-
-        // Création de la bulle
-        Rectangle bubble = new Rectangle(250, 50);
+        textLabel.setFont(customFont);
+        Rectangle bubble = new Rectangle(1000, 100);
         bubble.setArcWidth(20);
         bubble.setArcHeight(20);
-        bubble.setFill(Color.BLACK);
+        bubble.setFill(Color.web("#b6bab8"));
+        bubble.setOpacity(0.5);
         bubble.setStroke(Color.WHITE);
 
-        // Ajout du texte dans la bulle
         StackPane textBubble = new StackPane();
         textBubble.getChildren().addAll(bubble, textLabel);
+
+        textBubble.setTranslateY(0);
+
+        layout.getChildren().add(textBubble);
+
+        layout.setOnMouseClicked(event -> {
+            layout.getChildren().remove(textBubble);
+            layout.setOnMouseClicked(null);
+        });
     }
 
+
     private void updateHPBars() {
-        foePokemonHP = npc.getFrontPokemon().getHP();  // Récupérer les HP actuels de l'adversaire
-        playerPokemonHP = player.getFrontPokemon().getHP(); // Récupérer les HP du joueur
+        opponentHPLabel.setFont(customFont);
+        playerHPLabel.setFont(customFont);
+
+        foePokemonHP = npc.getFrontPokemon().getHP();
+        playerPokemonHP = player.getFrontPokemon().getHP();
 
         opponentHPBar.setProgress((double) foePokemonHP / npc.getFrontPokemon().getMaxHP());
         opponentHPLabel.setText("HP: " + foePokemonHP);
@@ -190,7 +208,7 @@ public class Main extends Application {
         ArrayList<Move> bulbizarreAtk = new ArrayList<>();
         bulbizarreAtk.add(vineWhip);
 
-        Pokemon pikachu = new Pokemon("pikachu", 35, 35, 55, 55, 40, 40, 50, 50, 50, 50,
+        Pokemon pikachu = new Pokemon("Pikachu", 35, 35, 55, 55, 40, 40, 50, 50, 50, 50,
                 90, 90, 9, Type.electric, pikachuAtk, 0, 0, 0, 0, 0,
                 Status.normal, "male");
 
