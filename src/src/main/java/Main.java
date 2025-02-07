@@ -21,10 +21,13 @@ import java.util.*;
 
 import Pokemon.TerrainEnum.Meteo;
 import javafx.application.Application;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -46,10 +49,10 @@ public class Main extends Application {
     private static int foePokemonHP = npc.getFrontPokemon().getHP();
     private static ProgressBar playerHPBar = new ProgressBar(1);
     private static ProgressBar opponentHPBar = new ProgressBar(1);
-    private final Label playerHPLabel = new Label("HP: " + playerPokemonHP);
+    private static final Label playerHPLabel = new Label("HP: " + playerPokemonHP);
     private static Label opponentHPLabel = new Label("HP: " + foePokemonHP);
 
-    VBox layout = new VBox(10);
+    static VBox layout = new VBox(10);
 
     public static void main(String[] args) {
         launch(args);
@@ -57,81 +60,107 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        layout.setStyle("-fx-padding: 20; -fx-alignment: center;");
+        layout.setStyle("-fx-padding: 10; -fx-alignment: center;");
 
-        Label playerLabel = new Label("Pikachu");
-        Label opponentLabel = new Label("Carapuce");
+        Label playerLabel = new Label(player.getFrontPokemon().getName());
+        Label opponentLabel = new Label(npc.getFrontPokemon().getName());
 
         playerLabel.setFont(customFont);
         opponentLabel.setFont(customFont);
+
+        opponentHPLabel.setFont(customFont);
+        playerHPLabel.setFont(customFont);
 
         layout.getChildren().addAll(opponentLabel, opponentHPBar, opponentHPLabel, playerLabel, playerHPBar, playerHPLabel);
         addAttackButtons();
         Scene scene = new Scene(layout, 1980, 1200);
         stage.setScene(scene);
-        stage.setTitle("Combat Pokémon");
+        stage.setTitle("Pokémon fight");
         stage.show();
     }
 
-    void addAttackButtons(){
-        Button fightButton = new Button("Fight");
-        Button bagButton = new Button("Bag");
-        Button pokemonButton = new Button("Pokemon");
-        Button runButton = new Button("Run");
+    void addAttackButtons() {
+        // Création des boutons
+        Button fightButton = createStyledButton("Fight");
+        Button bagButton = createStyledButton("Bag");
+        Button pokemonButton = createStyledButton("Pokemon");
+        Button runButton = createStyledButton("Run");
 
-        fightButton.setFont(customFont);
-        bagButton.setFont(customFont);
-        pokemonButton.setFont(customFont);
-        runButton.setFont(customFont);
+        // Organisation en deux lignes (2x2)
+        HBox firstRow = new HBox(10, fightButton, bagButton);
+        HBox secondRow = new HBox(10, pokemonButton, runButton);
 
+        // Conteneur des boutons
+        VBox buttonLayout = new VBox(10, firstRow, secondRow);
+        buttonLayout.setAlignment(Pos.CENTER_RIGHT); // Alignement interne
+
+        // Positionner le conteneur en bas à droite avec BorderPane
+        BorderPane borderPane = new BorderPane();
+        borderPane.setBottom(buttonLayout);
+        BorderPane.setAlignment(buttonLayout, Pos.BOTTOM_RIGHT);
+
+        // Ajout au layout principal
+        layout.getChildren().add(borderPane);
+
+        // Définition du comportement des attaques
         Pokemon p = player.getFrontPokemon();
         Pokemon enemyP = npc.getFrontPokemon();
 
-        layout.getChildren().addAll(fightButton, bagButton, pokemonButton, runButton);
-
-        Button atk1Button = new Button(p.getAttacks().get(0).getName());
-        Button atk2Button = new Button(p.getAttacks().get(1).getName());
-        Button atk3Button = new Button(p.getAttacks().get(2).getName());
-        Button atk4Button = new Button(p.getAttacks().get(3).getName());
-
-        atk1Button.setFont(customFont);
-        atk2Button.setFont(customFont);
-        atk3Button.setFont(customFont);
-        atk4Button.setFont(customFont);
+        Button atk1Button = createStyledButton(p.getAttacks().get(0).getName());
+        Button atk2Button = createStyledButton(p.getAttacks().get(1).getName());
+        Button atk3Button = createStyledButton(p.getAttacks().get(2).getName());
+        Button atk4Button = createStyledButton(p.getAttacks().get(3).getName());
 
         fightButton.setOnAction(e -> {
-            layout.getChildren().removeAll(fightButton, pokemonButton, runButton,bagButton);
-            layout.getChildren().addAll(atk1Button, atk2Button, atk3Button, atk4Button);
+            layout.getChildren().remove(borderPane);
+
+            HBox attackRow1 = new HBox(10, atk1Button, atk2Button);
+            HBox attackRow2 = new HBox(10, atk3Button, atk4Button);
+
+            VBox attackLayout = new VBox(10, attackRow1, attackRow2);
+            attackLayout.setAlignment(Pos.CENTER_RIGHT);
+
+            BorderPane attackPane = new BorderPane();
+            attackPane.setBottom(attackLayout);
+            BorderPane.setAlignment(attackLayout, Pos.BOTTOM_RIGHT);
+
+            layout.getChildren().add(attackPane);
         });
-        
-        Attack pAtk1 = (Attack) p.getAttacks().get(0);
-        Attack pAtk2 = (Attack) p.getAttacks().get(1);
-        StatusAttack pAtk3 = (StatusAttack) p.getAttacks().get(2);
-        Attack pAtk4 = (Attack) p.getAttacks().get(3);
 
         atk1Button.setOnAction(e -> {
-            p.attack(enemyP, pAtk1, terrain);
-            printAttackText(pAtk1);
+            p.attack(enemyP, p.getAttacks().get(0), terrain);
             updateHPBars();
         });
 
         atk2Button.setOnAction(e -> {
-            p.attack(enemyP, pAtk2, terrain);
-            printAttackText(pAtk2);
+            p.attack(enemyP, p.getAttacks().get(1), terrain);
             updateHPBars();
         });
 
         atk3Button.setOnAction(e -> {
-            p.attack(enemyP, pAtk3, terrain);
-            printAttackText(pAtk3);
+            p.attack(enemyP, p.getAttacks().get(2), terrain);
             updateHPBars();
         });
 
         atk4Button.setOnAction(e -> {
-            p.attack(enemyP, pAtk4, terrain);
-            printAttackText(pAtk4);
+            p.attack(enemyP, p.getAttacks().get(3), terrain);
             updateHPBars();
         });
+    }
+
+
+    private Button createStyledButton(String text) {
+        Button button = new Button(text);
+        button.setFont(customFont);
+        button.setPrefSize(150, 50);  // Taille uniforme des boutons
+        button.setStyle("-fx-background-color: white; " +
+                "-fx-border-color: black; " +
+                "-fx-border-width: 2px; " +
+                "-fx-border-radius: 0px; " +
+                "-fx-background-radius: 0px; " +
+                "-fx-font-weight: bold; " +
+                "-fx-text-fill: black; ");
+        return button;
     }
 
     private void printAttackText(Move move){
@@ -157,10 +186,7 @@ public class Main extends Application {
         });
     }
 
-
-    private void updateHPBars() {
-        opponentHPLabel.setFont(customFont);
-        playerHPLabel.setFont(customFont);
+    private static void updateHPBars() {
 
         foePokemonHP = npc.getFrontPokemon().getHP();
         playerPokemonHP = player.getFrontPokemon().getHP();
