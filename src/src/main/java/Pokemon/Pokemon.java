@@ -174,7 +174,6 @@ public class Pokemon {
         return HP;
     }
 
-
     public int getMaxHP() {
         return maxHP;
     }
@@ -202,6 +201,7 @@ public class Pokemon {
     public int getSpeedEV() {
         return speedEV;
     }
+
     public int getBaseSpeed() {
         return baseSpeed;
     }
@@ -217,6 +217,7 @@ public class Pokemon {
     public int getAtkEV() {
         return atkEV;
     }
+
     public int getBaseAtk() {
         return baseAtk;
     }
@@ -252,6 +253,7 @@ public class Pokemon {
     public int getDefSpeEV() {
         return defSpeEV;
     }
+
     public int getBaseDefSpe() {
         return baseDefSpe;
     }
@@ -259,6 +261,7 @@ public class Pokemon {
     public int getLevel() {
         return level;
     }
+
     public int getExp() {
         return exp;
     }
@@ -266,6 +269,7 @@ public class Pokemon {
     public String getName() {
         return name;
     }
+
     public Type getType() {
         return type;
     }
@@ -297,6 +301,7 @@ public class Pokemon {
     public int getIV(int stat){
         return stat;
     }
+
     public int getBaseStat(int stat){
         return stat;
     }
@@ -334,7 +339,7 @@ public class Pokemon {
             System.out.println(target.getName() + " is " + target.getStatus() + "!");
         }
         if(this.getAttack(move) instanceof UpgradeMove upgradeMove){
-            statusEffect(null, upgradeMove);
+            statusEffect(target, upgradeMove);
             System.out.println(upgradeMove.getRaiseLevel());
             switch (upgradeMove.getStat()) {
                 case "atk"    -> atkRaise += upgradeMove.getRaiseLevel();

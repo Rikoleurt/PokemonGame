@@ -35,6 +35,9 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
+import static StaticObjects.Moves.initiateAttacks;
+import static StaticObjects.NPC.initiateEnemy;
+import static StaticObjects.Player.initiatePlayer;
 import static javafx.application.Application.launch;
 
 public class Main extends Application {
@@ -44,267 +47,67 @@ public class Main extends Application {
     static Player player = initiatePlayer();
     static NPC npc = initiateEnemy();
     static Terrain terrain = initiateTerrain();
-
-    private static int playerPokemonHP = player.getFrontPokemon().getHP();
-    private static int foePokemonHP = npc.getFrontPokemon().getHP();
-    private static ProgressBar playerHPBar = new ProgressBar(1);
-    private static ProgressBar opponentHPBar = new ProgressBar(1);
-    private static final Label playerHPLabel = new Label("HP: " + playerPokemonHP);
-    private static Label opponentHPLabel = new Label("HP: " + foePokemonHP);
-
-    static VBox layout = new VBox(10);
+    static HashMap<Integer, Move> attacks = initiateAttacks();
 
     public static void main(String[] args) {
-        launch(args);
+        System.out.println(player.getFrontPokemon().getName());
     }
 
-    @Override
-    public void start(Stage stage) throws Exception {
-        layout.setStyle("-fx-padding: 10; -fx-alignment: center;");
+        @Override
+        public void start(Stage stage) throws Exception {
 
-        Label playerLabel = new Label(player.getFrontPokemon().getName());
-        Label opponentLabel = new Label(npc.getFrontPokemon().getName());
+        }
 
-        playerLabel.setFont(customFont);
-        opponentLabel.setFont(customFont);
+        private Button createStyledButton(String text) {
+            Button button = new Button(text);
+            button.setFont(customFont);
+            button.setPrefSize(150, 50);  // Taille uniforme des boutons
+            button.setStyle("-fx-background-color: white; " +
+                    "-fx-border-color: black; " +
+                    "-fx-border-width: 2px; " +
+                    "-fx-border-radius: 0px; " +
+                    "-fx-background-radius: 0px; " +
+                    "-fx-font-weight: bold; " +
+                    "-fx-text-fill: black; ");
+            return button;
+        }
 
-        opponentHPLabel.setFont(customFont);
-        playerHPLabel.setFont(customFont);
+        static Terrain initiateTerrain() {
+            return new Terrain(player.getTeam(), npc.getTeam(), Debris.normal, Meteo.normal);
+        }
 
-        layout.getChildren().addAll(opponentLabel, opponentHPBar, opponentHPLabel, playerLabel, playerHPBar, playerHPLabel);
-        addAttackButtons();
-        Scene scene = new Scene(layout, 1980, 1200);
-        stage.setScene(scene);
-        stage.setTitle("Pokémon fight");
-        stage.show();
+        static void printHP(Pokemon pokemon)
+        {
+            System.out.println(pokemon.getHP() + "/" + pokemon.getMaxHP());
+        }
+
+        static void printStatus(Pokemon pokemon)
+        {
+            System.out.println(pokemon.getName() + " is " + pokemon.getStatus());
+        }
+
+        static void printAtk(Pokemon pokemon)
+        {
+            System.out.println(pokemon.getName() + " : " + pokemon.getAtk());
+        }
+
+        static void printDef(Pokemon pokemon)
+        {
+            System.out.println(pokemon.getName() + " : " + pokemon.getDef());
+        }
+
+        static void printSpeed(Pokemon pokemon)
+        {
+            System.out.println(pokemon.getName() + " : " + pokemon.getSpeed());
+        }
+
+        static void printAtkSpe(Pokemon pokemon)
+        {
+            System.out.println(pokemon.getName() + " : " + pokemon.getAtkSpe());
+        }
+
+        static void printDefSpe(Pokemon pokemon)
+        {
+            System.out.println(pokemon.getName() + " : " + pokemon.getDefSpe());
+        }
     }
-
-    void addAttackButtons() {
-        // Création des boutons
-        Button fightButton = createStyledButton("Fight");
-        Button bagButton = createStyledButton("Bag");
-        Button pokemonButton = createStyledButton("Pokemon");
-        Button runButton = createStyledButton("Run");
-
-        // Organisation en deux lignes (2x2)
-        HBox firstRow = new HBox(10, fightButton, bagButton);
-        HBox secondRow = new HBox(10, pokemonButton, runButton);
-
-        // Conteneur des boutons
-        VBox buttonLayout = new VBox(10, firstRow, secondRow);
-        buttonLayout.setAlignment(Pos.CENTER_RIGHT); // Alignement interne
-
-        // Positionner le conteneur en bas à droite avec BorderPane
-        BorderPane borderPane = new BorderPane();
-        borderPane.setBottom(buttonLayout);
-        BorderPane.setAlignment(buttonLayout, Pos.BOTTOM_RIGHT);
-
-        // Ajout au layout principal
-        layout.getChildren().add(borderPane);
-
-        // Définition du comportement des attaques
-        Pokemon p = player.getFrontPokemon();
-        Pokemon enemyP = npc.getFrontPokemon();
-
-        Button atk1Button = createStyledButton(p.getAttacks().get(0).getName());
-        Button atk2Button = createStyledButton(p.getAttacks().get(1).getName());
-        Button atk3Button = createStyledButton(p.getAttacks().get(2).getName());
-        Button atk4Button = createStyledButton(p.getAttacks().get(3).getName());
-
-        fightButton.setOnAction(e -> {
-            layout.getChildren().remove(borderPane);
-
-            HBox attackRow1 = new HBox(10, atk1Button, atk2Button);
-            HBox attackRow2 = new HBox(10, atk3Button, atk4Button);
-
-            VBox attackLayout = new VBox(10, attackRow1, attackRow2);
-            attackLayout.setAlignment(Pos.CENTER_RIGHT);
-
-            BorderPane attackPane = new BorderPane();
-            attackPane.setBottom(attackLayout);
-            BorderPane.setAlignment(attackLayout, Pos.BOTTOM_RIGHT);
-
-            layout.getChildren().add(attackPane);
-        });
-
-        atk1Button.setOnAction(e -> {
-            p.attack(enemyP, p.getAttacks().get(0), terrain);
-            updateHPBars();
-        });
-
-        atk2Button.setOnAction(e -> {
-            p.attack(enemyP, p.getAttacks().get(1), terrain);
-            updateHPBars();
-        });
-
-        atk3Button.setOnAction(e -> {
-            p.attack(enemyP, p.getAttacks().get(2), terrain);
-            updateHPBars();
-        });
-
-        atk4Button.setOnAction(e -> {
-            p.attack(enemyP, p.getAttacks().get(3), terrain);
-            updateHPBars();
-        });
-    }
-
-
-    private Button createStyledButton(String text) {
-        Button button = new Button(text);
-        button.setFont(customFont);
-        button.setPrefSize(150, 50);  // Taille uniforme des boutons
-        button.setStyle("-fx-background-color: white; " +
-                "-fx-border-color: black; " +
-                "-fx-border-width: 2px; " +
-                "-fx-border-radius: 0px; " +
-                "-fx-background-radius: 0px; " +
-                "-fx-font-weight: bold; " +
-                "-fx-text-fill: black; ");
-        return button;
-    }
-
-    private void printAttackText(Move move){
-        Label textLabel = new Label(player.getFrontPokemon().getName() + " uses " + player.getFrontPokemon().getAttack(move).getName());
-        textLabel.setFont(customFont);
-        Rectangle bubble = new Rectangle(1000, 100);
-        bubble.setArcWidth(20);
-        bubble.setArcHeight(20);
-        bubble.setFill(Color.web("#b6bab8"));
-        bubble.setOpacity(0.5);
-        bubble.setStroke(Color.WHITE);
-
-        StackPane textBubble = new StackPane();
-        textBubble.getChildren().addAll(bubble, textLabel);
-
-        textBubble.setTranslateY(0);
-
-        layout.getChildren().add(textBubble);
-
-        layout.setOnMouseClicked(event -> {
-            layout.getChildren().remove(textBubble);
-            layout.setOnMouseClicked(null);
-        });
-    }
-
-    private static void updateHPBars() {
-
-        foePokemonHP = npc.getFrontPokemon().getHP();
-        playerPokemonHP = player.getFrontPokemon().getHP();
-
-        opponentHPBar.setProgress((double) foePokemonHP / npc.getFrontPokemon().getMaxHP());
-        opponentHPLabel.setText("HP: " + foePokemonHP);
-
-        playerHPBar.setProgress((double) playerPokemonHP / player.getFrontPokemon().getMaxHP());
-        playerHPLabel.setText("HP: " + playerPokemonHP);
-    }
-
-    static Terrain initiateTerrain(){
-        return new Terrain(player.getTeam(), npc.getTeam(), Debris.normal, Meteo.normal);
-    }
-    static Player initiatePlayer() {
-
-        Attack charge = new Attack("Charge", 40, 100, Type.normal, AttackMode.physical, 40);
-        Attack waterGun = new Attack("Water Gun", 40, 100, Type.water, AttackMode.special, 40);
-        Attack thunder = new Attack("Thunder", 80, 100, Type.electric, AttackMode.special, 20);
-        StatusAttack thunderWave = new StatusAttack("ThunderWave", 100, Status.paralyzed, Type.electric, AttackMode.status, 20);
-        Attack electricPunch = new Attack("Electric punch", 80,100, Type.electric, AttackMode.physical, 40);
-        Attack ember = new Attack("Ember", 40,100,Type.fire,AttackMode.special, 40);
-        Attack vineWhip = new Attack("Ember", 40,100,Type.grass, AttackMode.physical, 40);
-        DebrisAttack toxicSpikes = new DebrisAttack("Toxic Spikes", Type.poison, AttackMode.status, 20, Debris.poisonSpikes );
-        DebrisAttack stealthRock = new DebrisAttack("Stealth Rock", Type.rock, AttackMode.status, 40, Debris.stealthRock);
-        DebrisAttack spikes = new DebrisAttack("Spikes", Type.normal, AttackMode.status,40, Debris.spikes);
-        UpgradeMove swordDance = new UpgradeMove("Sword Dance", "atk",-2, Type.normal, AttackMode.status, 20);
-
-        ArrayList<Move> pikachuAtk = new ArrayList<>();
-        pikachuAtk.add(charge);
-        pikachuAtk.add(thunder);
-        pikachuAtk.add(thunderWave);
-        pikachuAtk.add(electricPunch);
-        pikachuAtk.add(swordDance);
-
-        ArrayList<Move> carapuceAtk = new ArrayList<>();
-        carapuceAtk.add(charge);
-        carapuceAtk.add(waterGun);
-        carapuceAtk.add(toxicSpikes);
-        carapuceAtk.add(stealthRock);
-        carapuceAtk.add(spikes);
-
-        ArrayList<Move> salamecheAtk = new ArrayList<>();
-        salamecheAtk.add(ember);
-        ArrayList<Move> bulbizarreAtk = new ArrayList<>();
-        bulbizarreAtk.add(vineWhip);
-
-        Pokemon pikachu = new Pokemon("Pikachu", 35, 35, 55, 55, 40, 40, 50, 50, 50, 50,
-                90, 90, 9, Type.electric, pikachuAtk, 0, 0, 0, 0, 0,
-                Status.normal, "male");
-
-        Pokemon carapuce = new Pokemon(44, 44, 48, 65, 50, 64, 43, 10,
-                Type.water, carapuceAtk, "Carapuce", Status.normal, "female");
-
-        Pokemon salameche = new Pokemon(39, 39, 52, 43, 60, 50, 65, 11,
-                Type.fire, salamecheAtk, "Salamèche", Status.normal, "male");
-
-        Pokemon bulbizarre = new Pokemon(45, 45, 49, 49, 65, 65, 45, 10,
-                Type.grass, bulbizarreAtk, "Bulbizarre", Status.normal, "female");
-
-        Map<Items, Integer> inventory = new HashMap<>();
-        inventory.put(new Heal("Potion", "Heals 20HP", 20), 3);
-        Bag bag = new Bag(inventory, 100);
-
-        LinkedList<Pokemon> team = new LinkedList<>();
-
-        team.add(pikachu);
-        team.add(bulbizarre);
-        team.add(salameche);
-
-        return new Player("Jason", bag, team);
-    }
-
-    static NPC initiateEnemy(){
-
-        LinkedList<Pokemon> enemyTeam = new LinkedList<>();
-        ArrayList<Move> carapuceAtk = new ArrayList<>();
-        ArrayList<Move> salamecheAtk = new ArrayList<>();
-
-        Attack charge = new Attack("Charge", 40, 100, Type.normal, AttackMode.physical, 40);
-        Attack waterGun = new Attack("Water Gun", 40, 100, Type.water, AttackMode.special, 40);
-        Attack ember = new Attack("Ember", 40,100,Type.fire,AttackMode.special, 40);
-
-        Pokemon carapuce = new Pokemon(44, 44, 48, 65, 50, 64, 43, 10,
-                Type.water, carapuceAtk, "Carapuce", Status.normal, "female");
-
-        Pokemon salameche = new Pokemon(39, 39, 52, 43, 60, 50, 65, 11,
-                Type.fire, salamecheAtk, "Salamèche", Status.normal, "male");
-
-        enemyTeam.add(carapuce);
-        enemyTeam.add(salameche);
-
-        carapuceAtk.add(charge);
-        carapuceAtk.add(waterGun);
-
-        salamecheAtk.add(ember);
-        return new NPC("npc", enemyTeam);
-    }
-
-    static void printHP(Pokemon pokemon) {
-        System.out.println(pokemon.getHP() + "/" + pokemon.getMaxHP());
-    }
-    static void printStatus(Pokemon pokemon) {
-        System.out.println(pokemon.getName() + " is " + pokemon.getStatus());
-    }
-    static void printAtk(Pokemon pokemon) {
-        System.out.println(pokemon.getName() + " : " + pokemon.getAtk());
-    }
-    static void printDef(Pokemon pokemon) {
-        System.out.println(pokemon.getName() + " : " + pokemon.getDef());}
-    static void printSpeed(Pokemon pokemon) {System.out.println(pokemon.getName() + " : " + pokemon.getSpeed());
-    }
-    static void printAtkSpe(Pokemon pokemon) {
-        System.out.println(pokemon.getName() + " : " + pokemon.getAtkSpe());
-    }
-    static void printDefSpe(Pokemon pokemon) {
-        System.out.println(pokemon.getName() + " : " + pokemon.getDefSpe());
-    }
-}
-
-
