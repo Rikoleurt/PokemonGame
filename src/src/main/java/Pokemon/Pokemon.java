@@ -314,6 +314,10 @@ public class Pokemon {
         moves.set(position, move);
     }
 
+    public void setHP(int HP) {
+        this.HP = HP;
+    }
+
     public void attack(Pokemon target, Move move, Terrain terrain) {
         System.out.println(move.getClass());
         if(this.getAttack(move) instanceof Attack attack){

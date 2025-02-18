@@ -4,7 +4,7 @@ import Pokemon.Pokemon;
 
 import java.util.LinkedList;
 
-public class NPC {
+public class NPC{
 
     String name;
     LinkedList<Pokemon> team;
@@ -22,6 +22,6 @@ public class NPC {
         return team;
     }
     public Pokemon getFrontPokemon() {
-        return team.get(0);
+        return team.getFirst();
     }
 }
