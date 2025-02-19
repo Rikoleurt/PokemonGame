@@ -46,7 +46,6 @@ public class Terrain {
     }
 
 
-    // setDebris is called when the a pokemon launches a debris attakc
     public void setDebris(Debris debris) {
         if(debris == Debris.spikes){
             nbSpikes++;
