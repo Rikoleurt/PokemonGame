@@ -1,8 +1,11 @@
 package Person;
 
 import Pokemon.Pokemon;
+import Pokemon.Move;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Random;
 
 public class NPC{
 

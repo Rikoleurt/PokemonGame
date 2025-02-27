@@ -13,6 +13,8 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import static View.FightView.FightView.player;
 
 public class PlayerHPBar extends VBox {
@@ -20,6 +22,7 @@ public class PlayerHPBar extends VBox {
     static Font font = Font.loadFont(PlayerHPBar.class.getResource("/font/pokemonFont.ttf").toExternalForm(), 18);
 
     Pokemon pokemon = player.getFrontPokemon();
+    TextBubble bubble;
 
     // Player variable
     int pokemonHP = pokemon.getHP();
@@ -34,14 +37,11 @@ public class PlayerHPBar extends VBox {
     Label LvlLabel = new Label("Lvl : " + pokemon.getLevel());
     Label StatusLabel = new Label(status.toString());
 
-    ProgressBar playerBar = new ProgressBar(10);
+    ProgressBar playerBar = new ProgressBar(1);
 
-    // Text Label
+    protected PlayerHPBar(double spacing, TextBubble bubble){
 
-    Label battleMessage = new Label("");
-
-
-    protected PlayerHPBar(double spacing){
+        this.bubble = bubble;
 
         pokemonNameLabel.setFont(font);
         HPLabel.setFont(font);
@@ -50,9 +50,6 @@ public class PlayerHPBar extends VBox {
 
         playerBar.setPrefSize(150,20);
         playerBar.setStyle("-fx-accent: #709f5e;");
-
-        pokemon.setHP(10);
-        updateHPBars();
 
         HBox HBox1 = new HBox(pokemonNameLabel, LvlLabel);
         HBox HBox2 = new HBox(HPLabel, playerBar);
@@ -75,35 +72,55 @@ public class PlayerHPBar extends VBox {
             this.getChildren().add(statusHBox);
             statusHBox.setSpacing(spacing * 10);
         }
-
-        // Bubble
-        battleMessage.setFont(font);
-        battleMessage.setStyle("-fx-background-color: rgba(0, 0, 0, 0.7); -fx-text-fill: white; -fx-padding: 5px; -fx-border-radius: 5px;");
-        battleMessage.setVisible(false);
-
     }
 
-    private void updateHPBars() {
-        int currentHP = pokemon.getHP();
-        playerBar.setProgress((double) currentHP / pokemon.getMaxHP());
-        HPsLabel.setText(currentHP + "/" + pokemon.getMaxHP());
+    void updateHPBars(Runnable onFinish) {
+        AtomicInteger currentHP = new AtomicInteger(Math.max(0, pokemon.getHP()));
+        int maxHP = pokemon.getMaxHP();
 
-        if(currentHP > pokemon.getMaxHP() / 2){
-            playerBar.setStyle("-fx-accent: #709f5e;");
-        } else if(currentHP > pokemon.getMaxHP() / 4){
-            playerBar.setStyle("-fx-accent: #f68524;");
-        } else {
-            playerBar.setStyle("-fx-accent: #d81e1e;");
-        }
+        double startProgress = playerBar.getProgress();
+        double endProgress = Math.max(0, (double) currentHP.get() / maxHP);
+
+        Timeline timeline = new Timeline();
+        KeyFrame keyFrame = new KeyFrame(
+                Duration.millis(50),
+                e -> {
+                    double progress = playerBar.getProgress();
+                    if (progress > endProgress) {
+                        playerBar.setProgress(Math.max(progress - 0.02, endProgress));
+
+                        int displayedHP = (int) Math.round(playerBar.getProgress() * maxHP);
+                        currentHP.set(Math.max(0, displayedHP));
+
+                        HPsLabel.setText(currentHP.get() + "/" + maxHP);
+
+                        if (currentHP.get() > maxHP / 2) {
+                            playerBar.setStyle("-fx-accent: #709f5e;");
+                        } else if (currentHP.get() > maxHP / 4) {
+                            playerBar.setStyle("-fx-accent: #f68524;");
+                        } else {
+                            playerBar.setStyle("-fx-accent: #d81e1e;");
+                        }
+                    }
+                });
+
+        timeline.getKeyFrames().add(keyFrame);
+        timeline.setCycleCount((int) ((startProgress - endProgress) / 0.02));
+
+        timeline.setOnFinished(e -> {
+            playerBar.setProgress(endProgress);
+            HPsLabel.setText(currentHP.get() + "/" + maxHP);
+
+            if (currentHP.get() <= 0) {
+                System.out.println("ttt");
+                bubble.showMessage(pokemon.getName() + " is K.O");
+                System.out.println("Bubble : " + bubble.getParent());
+            }
+            if (onFinish != null) {
+                onFinish.run();
+            }
+        });
+
+        timeline.play();
     }
-
-    // Not the right place
-    void showBattleMessage(String message) {
-        battleMessage.setText(message);
-        battleMessage.setVisible(true);
-
-        // Cache la bulle après 2 secondes
-        new Timeline(new KeyFrame(Duration.seconds(2), e -> battleMessage.setVisible(false))).play();
-    }
-
 }

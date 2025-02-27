@@ -2,6 +2,8 @@ package View.FightView;
 
 import Person.NPC;
 import Pokemon.PokemonEnum.Status;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -10,6 +12,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import Pokemon.Pokemon;
+import javafx.util.Duration;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static View.FightView.FightView.npc;
 
@@ -17,7 +22,7 @@ public class EnemyHPBar extends VBox {
     static Font font = Font.loadFont(EnemyHPBar.class.getResource("/font/pokemonFont.ttf").toExternalForm(), 18);
 
     Pokemon pokemon = npc.getFrontPokemon();
-
+    TextBubble bubble;
     // NPC Variable
     int pokemonHP = pokemon.getHP();
     int pokemonLvl = pokemon.getLevel();
@@ -30,9 +35,11 @@ public class EnemyHPBar extends VBox {
     Label HPs = new Label(pokemonHP + "/" + pokemonMaxHP);
     Label status = new Label(pokemon.getStatus().toString());
 
-    ProgressBar npcBar = new ProgressBar(10);
+    ProgressBar npcBar = new ProgressBar(1);
 
-    public EnemyHPBar(double spacing){
+    public EnemyHPBar(double spacing, TextBubble bubble) {
+
+        this.bubble = bubble;
 
         name.setFont(font);
         HP.setFont(font);
@@ -64,17 +71,47 @@ public class EnemyHPBar extends VBox {
         }
     }
 
-    public void updateHPBars(){
-        int currentHP = pokemon.getHP();
-        npcBar.setProgress((double) currentHP / pokemon.getMaxHP());
-        HPs.setText(currentHP + "/" + pokemon.getMaxHP());
+    void updateHPBars(Runnable onFinish) {
+        AtomicInteger currentHP = new AtomicInteger(Math.max(0, pokemon.getHP()));
+        int maxHP = pokemon.getMaxHP();
 
-        if(currentHP > pokemon.getMaxHP() / 2){
-            npcBar.setStyle("-fx-accent: #709f5e;");
-        } else if(currentHP > pokemon.getMaxHP() / 4){
-            npcBar.setStyle("-fx-accent: #f68524;");
-        } else {
-            npcBar.setStyle("-fx-accent: #d81e1e;");
-        }
+        double startProgress = npcBar.getProgress();
+        double endProgress = Math.max(0, (double) currentHP.get() / maxHP);
+
+        Timeline timeline = new Timeline();
+        KeyFrame keyFrame = new KeyFrame(
+                Duration.millis(50),
+                e -> {
+                    double progress = npcBar.getProgress();
+                    if (progress > endProgress) {
+                        npcBar.setProgress(Math.max(progress - 0.02, endProgress));
+
+                        int displayedHP = (int) Math.round(npcBar.getProgress() * maxHP);
+                        currentHP.set(Math.max(0, displayedHP));
+
+                        HPs.setText(currentHP.get() + "/" + maxHP);
+
+                        if (currentHP.get() > maxHP / 2) {
+                            npcBar.setStyle("-fx-accent: #709f5e;");
+                        } else if (currentHP.get() > maxHP / 4) {
+                            npcBar.setStyle("-fx-accent: #f68524;");
+                        } else {
+                            npcBar.setStyle("-fx-accent: #d81e1e;");
+                        }
+                    }
+                });
+
+        timeline.getKeyFrames().add(keyFrame);
+        timeline.setCycleCount((int) ((startProgress - endProgress) / 0.02));
+
+        timeline.setOnFinished(e -> {
+            npcBar.setProgress(endProgress);
+            HPs.setText(currentHP.get() + "/" + maxHP);
+            if (onFinish != null) {
+                onFinish.run();
+            }
+        });
+
+        timeline.play();
     }
 }

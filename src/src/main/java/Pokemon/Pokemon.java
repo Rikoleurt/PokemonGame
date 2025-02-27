@@ -290,7 +290,7 @@ public class Pokemon {
         return status;
     }
 
-    public void setEffect(Status status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 
@@ -318,8 +318,15 @@ public class Pokemon {
         this.HP = HP;
     }
 
+    public Status isKO(){
+        if(this.getHP() <= 0){
+            return Status.KO;
+        }
+        return Status.normal;
+    }
+
     public void attack(Pokemon target, Move move, Terrain terrain) {
-        System.out.println(move.getClass());
+        //System.out.println(move.getClass());
         if(this.getAttack(move) instanceof Attack attack){
             statusEffect(target, move);
             if((this.getStatus() == Status.normal || this.getStatus() == Status.cursed || this.getStatus() == Status.burned
@@ -432,14 +439,14 @@ public class Pokemon {
                 return;
             } else {
                 System.out.println(this.getName() + " is not frozen anymore!");
-                this.setEffect(null);
+                this.setStatus(null);
             }
         }
         if(this.getStatus() == Status.asleep){
             int randInt = random.nextInt(0,3);
             if(randInt == 0){
                 System.out.println(this.getName() + " woke up!");
-                this.setEffect(Status.normal);
+                this.setStatus(Status.normal);
             }
             if(randInt > 0){
                 System.out.println(this.getName() + " is asleep!");
@@ -477,7 +484,7 @@ public class Pokemon {
             }
             if(healConfusion > 4){
                 System.out.println(this.getName() + " snapped out of confusion!");
-                this.setEffect(Status.normal);
+                this.setStatus(Status.normal);
                 healConfusion = 0;
             }
         }
@@ -508,7 +515,7 @@ public class Pokemon {
             case fear:
                 healFear++;
                 if(healFear == 1) {
-                    this.setEffect(Status.normal);
+                    this.setStatus(Status.normal);
                     healFear = 0;
                 }
                 break;
@@ -860,5 +867,47 @@ public class Pokemon {
     private int calculateIV (Pokemon pokemon, int stat) {
         int IV = (stat * 100/pokemon.getLevel() - pokemon.getEV(stat)/4 - 2 * pokemon.getBaseStat(stat));
         return IV;
+    }
+
+    public Move chooseMove() {
+        Random rand = new Random();
+        int randomNumber = rand.nextInt(1,4);
+        Move move = null;
+        ArrayList<Move> moves = this.getAttacks();
+
+        if(randomNumber == 1){
+            if(moves.getFirst() != null){
+                move = moves.getFirst();
+            }
+            if(moves.getFirst() == null){
+                chooseMove();
+            }
+        }
+        if(randomNumber == 2){
+            if(moves.get(1) != null){
+                move = moves.get(1);
+            }
+            if(moves.get(1) == null){
+                chooseMove();
+            }
+        }
+        if(randomNumber == 3){
+            if(moves.get(2) != null){
+                move = moves.get(2);
+            }
+            if(moves.get(2) == null){
+                chooseMove();
+            }
+        }
+        if(randomNumber == 4){
+            if(moves.get(3) != null){
+                move = moves.get(3);
+            }
+            if(moves.get(3) == null){
+                chooseMove();
+            }
+        }
+        System.out.println(move);
+        return move;
     }
 }
