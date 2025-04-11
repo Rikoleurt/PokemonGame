@@ -14,6 +14,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
+import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvValidationException;
+
+import java.io.FileReader;
+import java.io.IOException;
+
 
 public class Pokemon {
 
@@ -318,11 +324,8 @@ public class Pokemon {
         this.HP = HP;
     }
 
-    public Status isKO(){
-        if(this.getHP() <= 0){
-            return Status.KO;
-        }
-        return Status.normal;
+    public boolean isKO(){
+        return this.getHP() <= 0;
     }
 
     public void attack(Pokemon target, Move move, Terrain terrain) {
@@ -868,6 +871,61 @@ public class Pokemon {
         int IV = (stat * 100/pokemon.getLevel() - pokemon.getEV(stat)/4 - 2 * pokemon.getBaseStat(stat));
         return IV;
     }
+    // ------------------------------------------------------------------------------------------------------------------
+    // EXP
+    // ------------------------------------------------------------------------------------------------------------------
+
+    public int calculateEXP(Pokemon defeatedPokemon) {
+        String filePath = "/Users/condreajason/Repositories/PokemonGame/src/src/main/resources/data/pokemon.csv";
+        int baseExperience = getBaseExperience(defeatedPokemon.getName(), filePath);
+
+        if (baseExperience == -1) {
+            System.out.println("Can't find base exp for : " + defeatedPokemon.getName());
+            return 0;
+        }
+
+        return ((baseExperience * defeatedPokemon.getLevel()) / 7);
+    }
+
+    public static int getBaseExperience(String pokemonName, String filePath) {
+        try (CSVReader reader = new CSVReader(new FileReader(filePath))) {
+            String[] nextLine;
+            boolean isHeader = true;
+            int expIndex = -1, nameIndex = -1;
+
+            while ((nextLine = reader.readNext()) != null) {
+                if (isHeader) {
+                    for (int i = 0; i < nextLine.length; i++) {
+                        if (nextLine[i].equalsIgnoreCase("identifier")) { 
+                            nameIndex = i;
+                        } else if (nextLine[i].equalsIgnoreCase("base_experience")) {
+                            expIndex = i;
+                        }
+                    }
+                    isHeader = false;
+
+                    if (nameIndex == -1 || expIndex == -1) {
+                        System.err.println("Error : can't find columns 'indentifier' or 'base_experience'.");
+                        return -1;
+                    }
+                    continue;
+                }
+
+                if (nextLine.length > nameIndex && nextLine[nameIndex].equalsIgnoreCase(pokemonName)) {
+                    return Integer.parseInt(nextLine[expIndex]);
+                }
+            }
+        } catch (IOException | NumberFormatException | CsvValidationException e) {
+            e.printStackTrace();
+        }
+        System.err.println("Erreur : Pokémon '" + pokemonName + "' non trouvé dans le fichier CSV.");
+        return -1;
+    }
+
+
+    // ------------------------------------------------------------------------------------------------------------------
+    // Pokemon AI
+    // ------------------------------------------------------------------------------------------------------------------
 
     public Move chooseMove() {
         Random rand = new Random();

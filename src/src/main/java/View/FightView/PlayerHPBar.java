@@ -112,7 +112,6 @@ public class PlayerHPBar extends VBox {
             HPsLabel.setText(currentHP.get() + "/" + maxHP);
 
             if (currentHP.get() <= 0) {
-                System.out.println("ttt");
                 bubble.showMessage(pokemon.getName() + " is K.O");
                 System.out.println("Bubble : " + bubble.getParent());
             }
