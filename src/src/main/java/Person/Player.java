@@ -1,47 +1,44 @@
 package Person;
 
-import Inventory.Inventory;
+import Inventory.Bag;
 import Pokemon.Pokemon;
 import Pokemon.TerrainEnum.Debris;
 import Pokemon.Terrain;
-import Pokemon.TerrainEnum.Meteo;
 
 import java.util.LinkedList;
 
 public class Player {
 
-    String nickname;
-    Inventory inventory;
+    String name;
+    Bag bag;
     LinkedList<Pokemon> team;
 
-    int turn;
-
-    public Player(String nickname, Inventory inventory, LinkedList<Pokemon> team) {
-        this.nickname = nickname;
-        this.inventory = inventory;
+    public Player(String name, Bag bag, LinkedList<Pokemon> team) {
+        this.name = name;
+        this.bag = bag;
         this.team = team;
     }
-    public String getNickname() {
-        return nickname;
-    }
-    public Inventory getInventory() {
-        return inventory;
+
+    public Bag getInventory() {
+        return bag;
     }
 
     public LinkedList<Pokemon> getTeam() {
         return team;
     }
+
     public Pokemon getPokemon(Pokemon pokemon) {
         return team.get(getTeam().indexOf(pokemon));
     }
+
     public Pokemon getFrontPokemon() {
-        return team.get(0);
+        return team.getFirst();
     }
 
     public void exchangePokemonToFront(Pokemon pokemon, Pokemon otherPokemon) {
         if(this.isFront(pokemon)) {
             int temp = team.indexOf(otherPokemon); // bulbizarre at ?
-            Pokemon tempPokemon = team.get(0); // temp Pokemon is pikachu
+            Pokemon tempPokemon = team.getFirst(); // temp Pokemon is pikachu
             team.set(0, otherPokemon); // set to 0 bulbizarre
             team.set(temp, tempPokemon); // set to ? pikachu
         } else {
@@ -68,12 +65,12 @@ public class Player {
         return team.indexOf(pokemon);
     }
 
-    public void setInventory(Inventory inventory) {
-        this.inventory = inventory;
+    public void setInventory(Bag bag) {
+        this.bag = bag;
     }
 
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
+    public void setNickname(String name) {
+        this.name = name;
     }
 
     /// ------------------------------------------------------------------------------------------------------------------

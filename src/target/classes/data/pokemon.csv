@@ -897,7 +897,7 @@ id,identifier,species_id,height,weight,base_experience,order,is_default
 896,glastrier,896,22,8000,290,1088,1
 897,spectrier,897,20,445,290,1089,1
 898,calyrex,898,11,77,250,1090,1
-10001,deoxys-attack,386,17,608,270,515,0
+10001,deoxys-move,386,17,608,270,515,0
 10002,deoxys-defense,386,17,608,270,516,0
 10003,deoxys-speed,386,17,608,270,517,0
 10004,wormadam-sandy,413,5,65,148,543,0

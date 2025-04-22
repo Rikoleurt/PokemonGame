@@ -11,5 +11,6 @@ public enum Status {
     asleep,
     attracted,
     fear,
-    cursed
+    cursed,
+    KO
 }

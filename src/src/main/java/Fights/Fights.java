@@ -1,11 +1,25 @@
 package Fights;
 
 import Person.NPC;
+import Person.Player;
 import Pokemon.Pokemon;
 
 import java.util.Random;
 
 public class Fights {
+
+    boolean playerTurn = false;
+    boolean npcTurn = false;
+    public void turn(Player player, NPC npc) {
+        Pokemon playerP = player.getFrontPokemon();
+        Pokemon npcP = npc.getFrontPokemon();
+        if(playerP.getBaseSpeed() > npcP.getBaseSpeed()) {
+            playerTurn = true;
+        }
+        if(npcP.getBaseSpeed() > playerP.getBaseSpeed()) {
+            npcTurn = true;
+        }
+    }
 
     public void faintedPokemon(Pokemon pokemon) {
         Random random = new Random();
