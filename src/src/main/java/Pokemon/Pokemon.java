@@ -4,6 +4,7 @@ import Pokemon.AttackEnum.AttackMode;
 import Pokemon.Attacks.Attack;
 import Pokemon.Attacks.StatusAttack;
 import Pokemon.Attacks.UpgradeMove;
+import Pokemon.PokemonEnum.Experience;
 import Pokemon.PokemonEnum.Status;
 import Pokemon.PokemonEnum.Nature;
 import Pokemon.PokemonEnum.Type;
@@ -50,6 +51,7 @@ public class Pokemon {
     int baseDefSpe;
     int level;
     int exp;
+    int maxExp;
     String name;
     Type type;
     Type type1;
@@ -58,6 +60,7 @@ public class Pokemon {
     Nature nature;
     Status status;
     String gender;
+    Experience expType;
 
     int wakeUp = 0;
     int poisonCoefficient = 1;
@@ -79,43 +82,6 @@ public class Pokemon {
             {Nature.Timid},  {Nature.Hasty},   {Nature.Jolly},   {Nature.Naive},    {Nature.Serious}
     };
 
-    private Pokemon(int HP, int maxHP, int hpIV, int hpEV, int baseHP, int speed, int speedIV, int speedEV, int baseSpeed,
-                    int atk, int atkIV, int atkEV, int baseAtk, int def, int defIV, int defEV, int baseDef, int atkSpe, int atkSpeIV,
-                    int atkSpeEV, int baseAtkSpe, int defSpe, int defSpeIV, int defSpeEV, int baseDefSpe, int level, int exp,
-                    String name, Type type, Nature nature, ArrayList<Move> moves, Status status){
-        this.HP = HP;
-        this.maxHP = maxHP;
-        this.hpIV = hpIV;
-        this.hpEV = hpEV;
-        this.baseHP = baseHP;
-        this.speed = speed;
-        this.speedIV = speedIV;
-        this.speedEV = speedEV;
-        this.baseSpeed = baseSpeed;
-        this.atk = atk;
-        this.atkIV = atkIV;
-        this.atkEV = atkEV;
-        this.baseAtk = baseAtk;
-        this.def = def;
-        this.defIV = defIV;
-        this.defEV = defEV;
-        this.baseDef = baseDef;
-        this.atkSpe = atkSpe;
-        this.atkSpeIV = atkSpeIV;
-        this.atkSpeEV = atkSpeEV;
-        this.baseAtkSpe = baseAtkSpe;
-        this.defSpe = defSpe;
-        this.defSpeIV = defSpeIV;
-        this.defSpeEV = defSpeEV;
-        this.baseDefSpe = baseDefSpe;
-        this.level = level;
-        this.exp = exp;
-        this.name = name;
-        this.type = type;
-        this.moves = moves;
-        this.nature = nature;
-        this.status = status;
-    }
 
     public Pokemon(int HP, int maxHP, int atk, int def, int atkSpe, int defSpe, int speed, int level, Type type, ArrayList<Move> moves, String name, Status status, String gender){
         this.HP = HP;
@@ -175,6 +141,37 @@ public class Pokemon {
         this.status = status;
         this.gender = gender;
     }
+
+    public Pokemon(String name, int HP, int maxHP, int atk, int baseAtk, int def, int baseDef, int atkSpe, int baseAtkSpe, int defSpe, int baseDefSpe, int speed, int baseSpeed,
+                   int level, Type type, ArrayList<Move> moves, int atkRaise, int defRaise, int speedRaise, int atkSpeRaise, int defSpeRaise, Status status, String gender, int exp, int maxExp, Experience expType){
+        this.name = name;
+        this.HP = HP;
+        this.maxHP = maxHP;
+        this.atk = atk;
+        this.baseAtk = baseAtk;
+        this.def = def;
+        this.baseDef = baseDef;
+        this.atkSpe = atkSpe;
+        this.baseAtkSpe = baseAtkSpe;
+        this.defSpe = defSpe;
+        this.baseDefSpe = baseDefSpe;
+        this.speed = speed;
+        this.baseSpeed = baseSpeed;
+        this.level = level;
+        this.type = type;
+        this.moves = moves;
+        this.atkRaise = atkRaise;
+        this.defRaise = defRaise;
+        this.speedRaise = speedRaise;
+        this.atkSpeRaise = atkSpeRaise;
+        this.defSpeRaise = defSpeRaise;
+        this.status = status;
+        this.gender = gender;
+        this.exp = exp;
+        this.maxExp = maxExp;
+        this.expType = expType;
+    }
+
 
     public int getHP() {
         return HP;
@@ -272,6 +269,10 @@ public class Pokemon {
         return exp;
     }
 
+    public int getMaxExp() {
+        return maxExp;
+    }
+
     public String getName() {
         return name;
     }
@@ -322,6 +323,17 @@ public class Pokemon {
 
     public void setHP(int HP) {
         this.HP = HP;
+    }
+
+    public Experience getExpType() {
+        return expType;
+    }
+
+    public void setExp(int exp) {
+        this.exp = exp;
+    }
+    public void levelUp(){
+        level++;
     }
 
     public boolean isKO(){
@@ -921,6 +933,49 @@ public class Pokemon {
         System.err.println("Erreur : Pokémon '" + pokemonName + "' non trouvé dans le fichier CSV.");
         return -1;
     }
+
+    public double calculateMaxExp(Pokemon winner) {
+        double currentMaxExp = 0;
+        int N = winner.getLevel();
+
+        switch (winner.getExpType()) {
+            case Fast -> currentMaxExp = 0.8 * Math.pow(N, 3);
+            case Medium -> currentMaxExp = Math.pow(N, 3);
+            case Slow -> currentMaxExp = 1.25 * Math.pow(N, 3);
+            case Parabolic -> currentMaxExp = 1.2 * Math.pow(N, 3) - 15 * Math.pow(N, 2) + 100 * N - 140;
+            case Erratic -> {
+                if (1 <= N && N <= 50) {
+                    currentMaxExp = Math.pow(N, 3) * (100 - N) / 50;
+                } else if (51 <= N && N <= 68) {
+                    currentMaxExp = Math.pow(N, 3) * (150 - N) / 100;
+                } else if (69 <= N && N <= 98) {
+                    currentMaxExp = Math.pow(N, 3) * (
+                            1.274 - (1.0 / 50) * Math.floor(N / 3.0) - calculateP(winner)
+                    );
+                } else if (99 <= N && N <= 100) {
+                    currentMaxExp = Math.pow(N, 3) * (160 - N) / 100;
+                }
+            }
+            case Fluctuating -> {
+                if (1 <= N && N <= 15) {
+                    currentMaxExp = Math.pow(N, 3) * ((24 + Math.floor((N + 1) / 3.0)) / 50);
+                } else if (16 <= N && N <= 35) {
+                    currentMaxExp = Math.pow(N, 3) * ((14 + N) / 50.0);
+                } else if (36 <= N && N <= 100) {
+                    currentMaxExp = Math.pow(N, 3) * ((32 + Math.floor(N / 2.0)) / 50);
+                }
+            }
+        }
+
+        currentMaxExp = Math.round(currentMaxExp);
+        return currentMaxExp;
+    }
+
+    private double calculateP(Pokemon winner) {
+        double[] pValues = {0.0, 0.008, 0.014};
+        return pValues[winner.getLevel() % 3];
+    }
+
 
 
     // ------------------------------------------------------------------------------------------------------------------

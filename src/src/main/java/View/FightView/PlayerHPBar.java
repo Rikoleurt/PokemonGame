@@ -38,6 +38,7 @@ public class PlayerHPBar extends VBox {
     Label StatusLabel = new Label(status.toString());
 
     ProgressBar playerBar = new ProgressBar(1);
+    ProgressBar expBar = new ProgressBar(1);
 
     protected PlayerHPBar(double spacing, TextBubble bubble){
 
@@ -48,14 +49,20 @@ public class PlayerHPBar extends VBox {
         HPsLabel.setFont(font);
         LvlLabel.setFont(font);
 
-        playerBar.setPrefSize(150,20);
+        playerBar.setPrefSize(150,17);
         playerBar.setStyle("-fx-accent: #709f5e;");
 
+        expBar.setPrefSize(182,15);
+        expBar.setStyle("-fx-accent: #9642c1;");
+        expBar.setProgress(pokemon.getExp());
+
         HBox HBox1 = new HBox(pokemonNameLabel, LvlLabel);
+        HBox HBox1b = new HBox(expBar);
         HBox HBox2 = new HBox(HPLabel, playerBar);
         HBox HBox3 = new HBox(HPsLabel);
 
         HBox1.setSpacing(spacing * 10);
+        HBox1b.setSpacing(spacing);
         HBox2.setSpacing(spacing);
         HBox3.setSpacing(spacing);
 
@@ -63,7 +70,7 @@ public class PlayerHPBar extends VBox {
 
         setPadding(new Insets(20));
 
-        this.getChildren().addAll(HBox1, HBox2, HBox3);
+        this.getChildren().addAll(HBox1,HBox1b, HBox2, HBox3);
         this.setAlignment(Pos.BOTTOM_RIGHT);
 
         if(!pokemon.getStatus().equals(Status.normal)){
@@ -122,4 +129,68 @@ public class PlayerHPBar extends VBox {
 
         timeline.play();
     }
+
+    void updateExpBars(int expGain, Runnable onFinish) {
+        applyExpGain(expGain, onFinish);
+    }
+
+    private void applyExpGain(int remainingExp, Runnable onFinish) {
+
+        int currentExp = pokemon.getExp();
+        int currentMaxExp = pokemon.getMaxExp();
+        int expToNextLevel = currentMaxExp - currentExp;
+        int appliedExp = Math.min(remainingExp, expToNextLevel);
+        int finalExp = currentExp + appliedExp;
+
+        double startProgress = (double) currentExp / currentMaxExp;
+        double endProgress = (double) finalExp / currentMaxExp;
+
+        pokemon.setExp(finalExp); // mettre à jour immédiatement
+
+        AtomicInteger displayedExp = new AtomicInteger(currentExp);
+
+        Timeline timeline = new Timeline();
+        KeyFrame keyFrame = new KeyFrame(Duration.millis(50), e -> {
+            double progress = expBar.getProgress();
+            if (progress < endProgress) {
+                double nextProgress = Math.min(progress + 0.01, endProgress);
+                expBar.setProgress(nextProgress);
+
+                int shownExp = (int) Math.round(nextProgress * currentMaxExp);
+                displayedExp.set(shownExp);
+            }
+        });
+
+        timeline.getKeyFrames().add(keyFrame);
+        timeline.setCycleCount((int) ((endProgress - startProgress) / 0.01));
+
+        timeline.setOnFinished(e -> {
+            expBar.setProgress(endProgress);
+
+            if (finalExp >= currentMaxExp) {
+                // Le Pokémon monte de niveau
+                pokemon.levelUp();
+                pokemon.setExp(0); // Reset exp
+                expBar.setProgress(0);
+
+                // Recalculer l'expérience requise pour le niveau suivant
+                // Si getMaxExp() dépend du niveau, il doit être mis à jour en interne
+                int newMaxExp = pokemon.getMaxExp();
+
+                // Afficher le niveau mis à jour
+                LvlLabel.setText("Lvl : " + pokemon.getLevel());
+                bubble.showMessage(pokemon.getName() + " monte au niveau " + pokemon.getLevel() + " !");
+
+                // Reprendre avec le reste de l'XP
+                applyExpGain(remainingExp - appliedExp, onFinish);
+            } else {
+                if (onFinish != null) {
+                    onFinish.run();
+                }
+            }
+        });
+
+        timeline.play();
+    }
+
 }
