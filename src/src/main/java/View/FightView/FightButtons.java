@@ -156,7 +156,10 @@ public class FightButtons extends HBox {
                     System.out.println("textBubble : " + textBubble.getParent());
                     playerHPBar.updateHPBars(null);
                     if (npcPokemon.isKO()) {
-                        textBubble.showMessage(npcPokemon.getName() + " is K.0 ");
+                        textBubble.showMessage(npcPokemon.getName() + " is K.O ");
+                        int totalExp = playerPokemon.calculateEXP(npcPokemon);
+                        playerHPBar.updateExpBars(totalExp, null);
+                        textBubble.showMessage(playerPokemon.getName() + " earned " + totalExp + " exp");
                     }
                 });
                 textBubble.showMessage(playerPokemon.getName() + " uses " + move.getName());

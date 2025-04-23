@@ -25,17 +25,20 @@ public class PlayerHPBar extends VBox {
     TextBubble bubble;
 
     // Player variable
+    String pokemonName = pokemon.getName();
     int pokemonHP = pokemon.getHP();
     int pokemonLvl = pokemon.getLevel();
     int pokemonMaxHP = pokemon.getMaxHP();
-    Status status = pokemon.getStatus();
+    Status pokemonStatus = pokemon.getStatus();
+    String statusString = pokemon.getStatus().toString();
+
 
     // Player Labels
-    Label pokemonNameLabel = new Label(pokemon.getName());
+    Label pokemonNameLabel = new Label(pokemonName);
     Label HPLabel = new Label("HP :");
-    Label HPsLabel = new Label(pokemon.getHP() + "/" + pokemon.getMaxHP());
-    Label LvlLabel = new Label("Lvl : " + pokemon.getLevel());
-    Label StatusLabel = new Label(status.toString());
+    Label HPsLabel = new Label(pokemonHP + "/" + pokemonMaxHP);
+    Label LvlLabel = new Label("Lvl : " + pokemonLvl);
+    Label StatusLabel = new Label(statusString);
 
     ProgressBar playerBar = new ProgressBar(1);
     ProgressBar expBar = new ProgressBar(1);
@@ -73,7 +76,7 @@ public class PlayerHPBar extends VBox {
         this.getChildren().addAll(HBox1,HBox1b, HBox2, HBox3);
         this.setAlignment(Pos.BOTTOM_RIGHT);
 
-        if(!pokemon.getStatus().equals(Status.normal)){
+        if(!pokemonStatus.equals(Status.normal)){
             this.getChildren().remove(HBox3);
             HBox statusHBox = new HBox(HPsLabel, StatusLabel);
             this.getChildren().add(statusHBox);
@@ -137,7 +140,7 @@ public class PlayerHPBar extends VBox {
     private void applyExpGain(int remainingExp, Runnable onFinish) {
 
         int currentExp = pokemon.getExp();
-        int currentMaxExp = pokemon.getMaxExp();
+        int currentMaxExp = pokemon.calculateMaxExp();
         int expToNextLevel = currentMaxExp - currentExp;
         int appliedExp = Math.min(remainingExp, expToNextLevel);
         int finalExp = currentExp + appliedExp;
@@ -145,7 +148,7 @@ public class PlayerHPBar extends VBox {
         double startProgress = (double) currentExp / currentMaxExp;
         double endProgress = (double) finalExp / currentMaxExp;
 
-        pokemon.setExp(finalExp); // mettre à jour immédiatement
+        pokemon.setExp(finalExp);
 
         AtomicInteger displayedExp = new AtomicInteger(currentExp);
 
@@ -168,20 +171,16 @@ public class PlayerHPBar extends VBox {
             expBar.setProgress(endProgress);
 
             if (finalExp >= currentMaxExp) {
-                // Le Pokémon monte de niveau
                 pokemon.levelUp();
-                pokemon.setExp(0); // Reset exp
+                pokemon.setExp(0);
                 expBar.setProgress(0);
 
-                // Recalculer l'expérience requise pour le niveau suivant
-                // Si getMaxExp() dépend du niveau, il doit être mis à jour en interne
+
                 int newMaxExp = pokemon.getMaxExp();
 
-                // Afficher le niveau mis à jour
                 LvlLabel.setText("Lvl : " + pokemon.getLevel());
-                bubble.showMessage(pokemon.getName() + " monte au niveau " + pokemon.getLevel() + " !");
+                bubble.showMessage(pokemon.getName() + " upgrades to level " + pokemon.getLevel() + " !");
 
-                // Reprendre avec le reste de l'XP
                 applyExpGain(remainingExp - appliedExp, onFinish);
             } else {
                 if (onFinish != null) {

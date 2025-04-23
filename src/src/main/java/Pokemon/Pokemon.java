@@ -341,7 +341,6 @@ public class Pokemon {
     }
 
     public void attack(Pokemon target, Move move, Terrain terrain) {
-        //System.out.println(move.getClass());
         if(this.getAttack(move) instanceof Attack attack){
             statusEffect(target, move);
             if((this.getStatus() == Status.normal || this.getStatus() == Status.cursed || this.getStatus() == Status.burned
@@ -374,20 +373,15 @@ public class Pokemon {
                 case "atkSpe" -> atkSpeRaise += upgradeMove.getRaiseLevel();
                 case "defSpe" -> defSpeRaise += upgradeMove.getRaiseLevel();
             }
-            System.out.println("atkRaise : " + atkRaise);
-            System.out.println("defRaise : " + defRaise);
-            System.out.println("speedRaise : " + speedRaise);
-            System.out.println("atkSpeRaise : " + atkSpeRaise);
-            System.out.println("defSpeRaise : " + defSpeRaise);
             updateStat();
         }
         updateStatus();
     }
 
 
-    /// ------------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------------
     // Everything that touches to stat changes in fights
-    /// ------------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------------
 
     public void updateStat(){
         this.atk = applyStatModifier(this.baseAtk, atkRaise);
@@ -408,14 +402,14 @@ public class Pokemon {
     }
 
 
-    /// ------------------------------------------------------------------------------------------------------------------
-    // Everything that touches to terrain, debris and meteo
-    /// ------------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------------
+    // Everything that touches to terrain, debris and climate
+    // ------------------------------------------------------------------------------------------------------------------
 
 
-    /// ------------------------------------------------------------------------------------------------------------------
-    // Everything that touches to Pokemon's status
-    /// ------------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------------
+    // Everything that touches to status
+    // ------------------------------------------------------------------------------------------------------------------
 
     public Status setStatus(Pokemon target, StatusAttack statusMove){
         if(target.getStatus() != Status.normal){
@@ -539,10 +533,17 @@ public class Pokemon {
         }
     }
 
-    /// ------------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------------
     // Total damages of special and physical attacks
-    /// ------------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------------
 
+    /**
+     * Calculates the total damage (includes critical hits and the stab)
+     * @param attack
+     * @param launcher
+     * @param target
+     * @return The total damage done to the target
+     */
     public double totalDamage(Attack attack, Pokemon launcher, Pokemon target) {
         float power = attack.getPower();
         double augmentedDamage;
@@ -557,6 +558,14 @@ public class Pokemon {
         return calculateEffectiveness(attack, launcher, target, power);
     }
 
+    /**
+     * Checks if the move is effective or not (only works for physical and special attakcs)
+     * @param move The move that is used
+     * @param launcher The Pokémon that launches the move
+     * @param target The Pokémon that will get attacked
+     * @param power The power of the move
+     * @return The attack damage without taking into account critical/stab hits
+     */
     private double calculateEffectiveness(Move move, Pokemon launcher, Pokemon target, float power) {
         float effectivenessCoefficient;
         switch (launcher.getAttack(move).getMode()) {
@@ -599,9 +608,9 @@ public class Pokemon {
         }
 
 
-    /// ------------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
     // Type table
-    /// ------------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------------
 
     public List<Type> checkWeaknesses(Pokemon pokemon) {
 
@@ -818,7 +827,6 @@ public class Pokemon {
         return resistances;
     }
 
-
     public  List<Type> checkImmunities(Pokemon pokemon) {
 
         List<Type> immunities = new ArrayList<>();
@@ -883,10 +891,18 @@ public class Pokemon {
         int IV = (stat * 100/pokemon.getLevel() - pokemon.getEV(stat)/4 - 2 * pokemon.getBaseStat(stat));
         return IV;
     }
+
     // ------------------------------------------------------------------------------------------------------------------
     // EXP
     // ------------------------------------------------------------------------------------------------------------------
 
+
+    /**
+     *
+     * Calculates the experience gain based on a formula, the base experience of the Pokémon can be got in the csv file
+     * @param defeatedPokemon The defeated Pokémon
+     * @return ((baseExperience * defeatedPokemon.getLevel()) / 7)
+     */
     public int calculateEXP(Pokemon defeatedPokemon) {
         String filePath = "/Users/condreajason/Repositories/PokemonGame/src/src/main/resources/data/pokemon.csv";
         int baseExperience = getBaseExperience(defeatedPokemon.getName(), filePath);
@@ -899,6 +915,12 @@ public class Pokemon {
         return ((baseExperience * defeatedPokemon.getLevel()) / 7);
     }
 
+    /**
+     * Get the base experience in the csv file
+     * @param pokemonName name of the Pokémon we have to search for
+     * @param filePath File path
+     * @return The base experience of the Pokémon
+     */
     public static int getBaseExperience(String pokemonName, String filePath) {
         try (CSVReader reader = new CSVReader(new FileReader(filePath))) {
             String[] nextLine;
@@ -934,46 +956,50 @@ public class Pokemon {
         return -1;
     }
 
-    public double calculateMaxExp(Pokemon winner) {
-        double currentMaxExp = 0;
-        int N = winner.getLevel();
+    /**
+     * Calculates the maximum experience to reach for each level
+     * @return The current maximum experience
+     */
+    public int calculateMaxExp() {
+        int currentMaxExp = 0;
+        int N = this.getLevel();
+        double nCubed = Math.pow(N,3);
 
-        switch (winner.getExpType()) {
-            case Fast -> currentMaxExp = 0.8 * Math.pow(N, 3);
-            case Medium -> currentMaxExp = Math.pow(N, 3);
-            case Slow -> currentMaxExp = 1.25 * Math.pow(N, 3);
-            case Parabolic -> currentMaxExp = 1.2 * Math.pow(N, 3) - 15 * Math.pow(N, 2) + 100 * N - 140;
+        switch (this.getExpType()) {
+            case Fast -> currentMaxExp = (int) (0.8 * nCubed);
+            case Medium -> currentMaxExp = (int) nCubed;
+            case Slow -> currentMaxExp = (int) (1.25 * nCubed);
+            case Parabolic -> currentMaxExp = (int) (1.2 * nCubed - 15 * Math.pow(N, 2) + 100 * N - 140);
             case Erratic -> {
                 if (1 <= N && N <= 50) {
-                    currentMaxExp = Math.pow(N, 3) * (100 - N) / 50;
+                    currentMaxExp = (int) (nCubed * (100 - N) / 50);
                 } else if (51 <= N && N <= 68) {
-                    currentMaxExp = Math.pow(N, 3) * (150 - N) / 100;
+                    currentMaxExp = (int) (nCubed * (150 - N) / 100);
                 } else if (69 <= N && N <= 98) {
-                    currentMaxExp = Math.pow(N, 3) * (
-                            1.274 - (1.0 / 50) * Math.floor(N / 3.0) - calculateP(winner)
-                    );
+                    currentMaxExp = (int) (nCubed * (
+                                                1.274 - (1.0 / 50) * Math.floor(N / 3.0) - calculateP()
+                                        ));
                 } else if (99 <= N && N <= 100) {
-                    currentMaxExp = Math.pow(N, 3) * (160 - N) / 100;
+                    currentMaxExp = (int) (nCubed * (160 - N) / 100);
                 }
             }
             case Fluctuating -> {
                 if (1 <= N && N <= 15) {
-                    currentMaxExp = Math.pow(N, 3) * ((24 + Math.floor((N + 1) / 3.0)) / 50);
+                    currentMaxExp = (int) (nCubed * ((24 + Math.floor((N + 1) / 3.0)) / 50));
                 } else if (16 <= N && N <= 35) {
-                    currentMaxExp = Math.pow(N, 3) * ((14 + N) / 50.0);
+                    currentMaxExp = (int) (nCubed * ((14 + N) / 50.0));
                 } else if (36 <= N && N <= 100) {
-                    currentMaxExp = Math.pow(N, 3) * ((32 + Math.floor(N / 2.0)) / 50);
+                    currentMaxExp = (int) (nCubed * ((32 + Math.floor(N / 2.0)) / 50));
                 }
             }
         }
 
-        currentMaxExp = Math.round(currentMaxExp);
         return currentMaxExp;
     }
 
-    private double calculateP(Pokemon winner) {
+    private double calculateP() {
         double[] pValues = {0.0, 0.008, 0.014};
-        return pValues[winner.getLevel() % 3];
+        return pValues[this.getLevel() % 3];
     }
 
 
@@ -982,6 +1008,10 @@ public class Pokemon {
     // Pokemon AI
     // ------------------------------------------------------------------------------------------------------------------
 
+    /**
+     * Recursively choose a random move in the Pokémon's move pool
+     * @return A random move
+     */
     public Move chooseMove() {
         Random rand = new Random();
         int randomNumber = rand.nextInt(1,4);

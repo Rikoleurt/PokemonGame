@@ -21,7 +21,7 @@ public class Pokemons {
     public static Pokemon initiateBulbizarre() {
         bulbizarreMoves.add(attacks.get(4));
         bulbizarreMoves.add(attacks.get(6));
-        return new Pokemon("Bulbizarre", 45, 45, 49, 49, 49, 49, 65, 65, 65, 65,
+        return new Pokemon("bulbasaur", 45, 45, 49, 49, 49, 49, 65, 65, 65, 65,
                 45, 45, 10, Type.grass, bulbizarreMoves, 0, 0, 0, 0, 0,
                 Status.normal, "female", 0, 100, Experience.Fast);
     }
