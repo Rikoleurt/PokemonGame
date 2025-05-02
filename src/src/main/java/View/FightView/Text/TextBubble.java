@@ -1,15 +1,12 @@
-package View.FightView;
+package View.FightView.Text;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
 
-import javafx.scene.input.KeyEvent;
-
-public class TextBubble extends HBox {
+public class TextBubble extends HBox implements Bubble {
 
     static Font font = Font.loadFont(TextBubble.class.getResource("/font/pokemonFont.ttf").toExternalForm(), 18);
 
@@ -19,7 +16,7 @@ public class TextBubble extends HBox {
 
     public TextBubble() {
         setAlignment(Pos.CENTER_LEFT);
-        setPadding(new Insets(10));
+        //setPadding(new Insets(10));
         this.setStyle("-fx-background-color: rgba(0, 0, 0, 0.5);" + // Fond noir semi-transparent
                 "-fx-border-color: darkgray;" +               // Bordure gris foncé
                 "-fx-border-width: 4px;" +                    // Épaisseur de la bordure
@@ -37,23 +34,38 @@ public class TextBubble extends HBox {
 
     }
 
-
-    void showMessage(String message) {
+    @Override
+    public void showMessage(String message) {
+        showBubble();
         this.message.setText(message);
         this.message.setVisible(true);
         setMessageVisible(true);
     }
 
+    @Override
     public void hideMessage() {
         this.message.setVisible(false);
         setMessageVisible(false);
+        hideBubble();
     }
 
+    @Override
     public boolean isMessageVisible() {
         return isMessageVisible;
     }
 
+    @Override
     public void setMessageVisible(boolean b) {
         isMessageVisible = b;
+    }
+
+    @Override
+    public void hideBubble() {
+        this.setVisible(false);
+    }
+
+    @Override
+    public void showBubble() {
+        this.setVisible(true);
     }
 }

@@ -2,6 +2,8 @@ package View.FightView;
 
 import Pokemon.Pokemon;
 import Pokemon.PokemonEnum.Status;
+import View.FightView.Text.StatBubble;
+import View.FightView.Text.TextBubble;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.geometry.Insets;
@@ -22,7 +24,8 @@ public class PlayerHPBar extends VBox {
     static Font font = Font.loadFont(PlayerHPBar.class.getResource("/font/pokemonFont.ttf").toExternalForm(), 18);
 
     Pokemon pokemon = player.getFrontPokemon();
-    TextBubble bubble;
+    TextBubble textBubble;
+    StatBubble statBubble;
 
     // Player variable
     String pokemonName = pokemon.getName();
@@ -43,9 +46,10 @@ public class PlayerHPBar extends VBox {
     ProgressBar playerBar = new ProgressBar(1);
     ProgressBar expBar = new ProgressBar(1);
 
-    protected PlayerHPBar(double spacing, TextBubble bubble){
+    protected PlayerHPBar(double spacing, TextBubble textBubble, StatBubble statBubble) {
 
-        this.bubble = bubble;
+        this.textBubble = textBubble;
+        this.statBubble = statBubble;
 
         pokemonNameLabel.setFont(font);
         HPLabel.setFont(font);
@@ -58,11 +62,12 @@ public class PlayerHPBar extends VBox {
         expBar.setPrefSize(182,15);
         expBar.setStyle("-fx-accent: #9642c1;");
         expBar.setProgress(pokemon.getExp());
-
+        HBox statBox = new HBox(statBubble);
         HBox HBox1 = new HBox(pokemonNameLabel, LvlLabel);
         HBox HBox1b = new HBox(expBar);
         HBox HBox2 = new HBox(HPLabel, playerBar);
         HBox HBox3 = new HBox(HPsLabel);
+
 
         HBox1.setSpacing(spacing * 10);
         HBox1b.setSpacing(spacing);
@@ -73,13 +78,13 @@ public class PlayerHPBar extends VBox {
 
         setPadding(new Insets(20));
 
-        this.getChildren().addAll(HBox1,HBox1b, HBox2, HBox3);
-        this.setAlignment(Pos.BOTTOM_RIGHT);
+        getChildren().addAll(statBubble, HBox1,HBox1b, HBox2, HBox3);
+        setAlignment(Pos.BOTTOM_RIGHT);
 
         if(!pokemonStatus.equals(Status.normal)){
-            this.getChildren().remove(HBox3);
+            getChildren().remove(HBox3);
             HBox statusHBox = new HBox(HPsLabel, StatusLabel);
-            this.getChildren().add(statusHBox);
+            getChildren().add(statusHBox);
             statusHBox.setSpacing(spacing * 10);
         }
     }
@@ -122,8 +127,8 @@ public class PlayerHPBar extends VBox {
             HPsLabel.setText(currentHP.get() + "/" + maxHP);
 
             if (currentHP.get() <= 0) {
-                bubble.showMessage(pokemon.getName() + " is K.O");
-                System.out.println("Bubble : " + bubble.getParent());
+                textBubble.showMessage(pokemon.getName() + " is K.O");
+
             }
             if (onFinish != null) {
                 onFinish.run();
@@ -175,13 +180,14 @@ public class PlayerHPBar extends VBox {
                 pokemon.setExp(0);
                 expBar.setProgress(0);
 
-
                 int newMaxExp = pokemon.getMaxExp();
 
                 LvlLabel.setText("Lvl : " + pokemon.getLevel());
-                bubble.showMessage(pokemon.getName() + " upgrades to level " + pokemon.getLevel() + " !");
+                textBubble.showMessage(pokemon.getName() + " upgrades to level " + pokemon.getLevel() + " !");
 
                 applyExpGain(remainingExp - appliedExp, onFinish);
+
+                statBubble.showMessage("test");
             } else {
                 if (onFinish != null) {
                     onFinish.run();

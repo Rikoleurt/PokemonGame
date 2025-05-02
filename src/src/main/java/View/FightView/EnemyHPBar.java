@@ -1,7 +1,7 @@
 package View.FightView;
 
-import Person.NPC;
 import Pokemon.PokemonEnum.Status;
+import View.FightView.Text.TextBubble;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.geometry.Insets;
