@@ -86,8 +86,10 @@ public class FightButtons extends HBox {
 
            HBox1.getChildren().addAll(atk1Button, atk2Button);
            HBox2.getChildren().addAll(atk3Button, atk4Button);
+
            vBox.getChildren().addAll(textBubble, HBox1, HBox2);
            vBox2.getChildren().add(textBubble);
+
            vBox2.setVisible(false);
            components.addAll(vBox2, vBox);
 
@@ -101,6 +103,7 @@ public class FightButtons extends HBox {
 
         runButton.setOnAction(e -> {
         });
+
         atkButtonAction();
     }
 
@@ -135,20 +138,32 @@ public class FightButtons extends HBox {
     private void atkButtonAction() {
         atk1Button.setOnAction(e -> {
             if(pAtk1 != null) {
-                AtkButtonAction(pAtk1, terrain);
+                try {
+                    AtkButtonAction(pAtk1, terrain);
+                } catch (InterruptedException ex) {
+                    throw new RuntimeException(ex);
+                }
             }
         });
 
         atk2Button.setOnAction(e -> {
             if(pAtk2 != null) {
-                AtkButtonAction(pAtk2, terrain);
+                try {
+                    AtkButtonAction(pAtk2, terrain);
+                } catch (InterruptedException ex) {
+                    throw new RuntimeException(ex);
+                }
             }
 
         });
 
         atk3Button.setOnAction(e -> {
             if(pAtk3 != null) {
-                AtkButtonAction(pAtk3, terrain);
+                try {
+                    AtkButtonAction(pAtk3, terrain);
+                } catch (InterruptedException ex) {
+                    throw new RuntimeException(ex);
+                }
             }
 
 
@@ -165,29 +180,36 @@ public class FightButtons extends HBox {
         return playerPokemon.getSpeed() > npcPokemon.getSpeed();
     }
 
-    private void AtkButtonAction(Move move, Terrain terrain) {
+    private void AtkButtonAction(Move move, Terrain terrain) throws InterruptedException {
         boolean priority = compareSpeed();
         if(!playerPokemon.getStatus().equals(Status.KO) || !npcPokemon.getStatus().equals(Status.KO)) {
+            vBox2.setVisible(true);
+            HBox1.setVisible(false);
+            HBox2.setVisible(false);
             if (priority) {
-                vBox2.setVisible(true);
-                HBox1.setVisible(false);
-                HBox2.setVisible(false);
                 playerPokemon.attack(npcPokemon, move, terrain);
+                Thread.sleep(1000);
+
                 enemyHPBar.updateHPBars(() -> {
                     Move enemyMove = npcPokemon.chooseMove();
                     npcPokemon.attack(playerPokemon, enemyMove, terrain);
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
 
                     textBubble.showMessage(npcPokemon.getName() + " uses " + enemyMove.getName());
-
-                    if (npcPokemon.isKO()) {
-
-                        textBubble.showMessage(npcPokemon.getName() + " is K.O ");
-
-                        int totalExp = playerPokemon.calculateEXP(npcPokemon);
-                        playerHPBar.updateExpBars(totalExp, null);
-                        textBubble.showMessage(playerPokemon.getName() + " earned " + totalExp + " exp");
-                    }
                 });
+
+                if (npcPokemon.isKO()) {
+
+                    textBubble.showMessage(npcPokemon.getName() + " is K.O ");
+
+                    int totalExp = playerPokemon.calculateEXP(npcPokemon);
+                    playerHPBar.updateExpBars(totalExp, null);
+                    textBubble.showMessage(playerPokemon.getName() + " earned " + totalExp + " exp");
+                }
 
                 textBubble.showMessage(playerPokemon.getName() + " uses " + move.getName());
 
@@ -196,13 +218,10 @@ public class FightButtons extends HBox {
 
                 this.requestFocus();
             } else {
-                vBox2.setVisible(true);
-                HBox1.setVisible(false);
-                HBox2.setVisible(false);
 
                 Move enemyMove = npcPokemon.chooseMove();
                 npcPokemon.attack(playerPokemon, enemyMove, terrain);
-
+                Thread.sleep(1000);
 
                 textBubble.showMessage(npcPokemon.getName() + " uses " + enemyMove.getName());
 
@@ -214,10 +233,11 @@ public class FightButtons extends HBox {
 
                     enemyHPBar.updateHPBars(null);
 
-                    if (playerPokemon.isKO()) {
-                        textBubble.showMessage(playerPokemon.getName() + " is K.0 ");
-                    }
                 });
+
+                if (playerPokemon.isKO()) {
+                    textBubble.showMessage(playerPokemon.getName() + " is K.0 ");
+                }
 
                 HBox1.setVisible(true);
                 HBox2.setVisible(true);

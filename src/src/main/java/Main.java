@@ -32,13 +32,18 @@ public class Main extends Application {
 
     public static void main(String[] args) {
         launch(args);
-//        Player player = initiatePlayer();
-//        NPC npc = initiateEnemy();
-//        Pokemon p = player.getFrontPokemon();
-//        System.out.println(player.getFrontPokemon().getName());
-//        Pokemon p2 = npc.getFrontPokemon();
-//        System.out.println(p.calculateEXP(p2));
-//        System.out.println(getBaseExperience(player.getFrontPokemon().getName(), "/Users/condreajason/Repositories/PokemonGame/src/src/main/resources/data/pokemon.csv"));
+        Player player = initiatePlayer();
+        NPC npc = initiateEnemy();
+
+        Pokemon p = player.getFrontPokemon();
+        Pokemon p2 = npc.getFrontPokemon();
+        Pokemon p3 = npc.getTeam().get(1);
+
+        System.out.println(p.getName() + " gets " + p.calculateEXP(p2) + " exp from " + p2.getName());
+//        System.out.println(getBaseExperience(p.getName(), "/Users/condreajason/Repositories/PokemonGame/src/src/main/resources/data/pokemon.csv"));
+        System.out.println(p.getName() + " " + getBaseExperience(p.getName(), "C:\\dev\\gitproject\\PokemonGame\\src\\src\\main\\resources\\data\\pokemon.csv"));
+        System.out.println(p2.getName() + " " + getBaseExperience(p2.getName(), "C:\\dev\\gitproject\\PokemonGame\\src\\src\\main\\resources\\data\\pokemon.csv"));
+
     }
     private static int generateIV(){
         Random rand = new Random();
