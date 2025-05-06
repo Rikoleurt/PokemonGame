@@ -4,19 +4,19 @@ import Pokemon.AttackEnum.AttackMode;
 import Pokemon.Attacks.Attack;
 import Pokemon.Attacks.StatusAttack;
 import Pokemon.Attacks.UpgradeMove;
+import Pokemon.PokemonEnum.Experience;
 import Pokemon.PokemonEnum.Status;
 import Pokemon.PokemonEnum.Nature;
 import Pokemon.PokemonEnum.Type;
 import Pokemon.Attacks.DebrisAttack;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
+import View.FightView.Text.TextBubble;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
-
 import java.io.FileReader;
 import java.io.IOException;
 
@@ -50,286 +50,316 @@ public class Pokemon {
     int baseDefSpe;
     int level;
     int exp;
+    int maxExp;
     String name;
     Type type;
     Type type1;
     Type type2;
     ArrayList<Move> moves;
+
     Nature nature;
     Status status;
     String gender;
+    Experience expType;
 
     int wakeUp = 0;
     int poisonCoefficient = 1;
     int healConfusion = 1;
     int healFear = 0;
 
-    int atkRaise = 0;
-    int defRaise = 0;
-    int speedRaise = 0;
-    int atkSpeRaise = 0;
-    int defSpeRaise = 0;
+    int atkRaise;
+    int defRaise;
+    int speedRaise;
+    int atkSpeRaise;
+    int defSpeRaise;
 
+    TextBubble bubble;
 
-    Nature[][] natures = {
-            {Nature.Hardy},  {Nature.Lonely},  {Nature.Adamant}, {Nature.Naughty},  {Nature.Brave},
-            {Nature.Bold},   {Nature.Docile},  {Nature.Impish},  {Nature.Lax},      {Nature.Relaxed},
-            {Nature.Modest}, {Nature.Mild},    {Nature.Bashful}, {Nature.Quiet},    {Nature.Rash},
-            {Nature.Calm},   {Nature.Gentle},  {Nature.Careful}, {Nature.Sassy},    {Nature.Quirky},
-            {Nature.Timid},  {Nature.Hasty},   {Nature.Jolly},   {Nature.Naive},    {Nature.Serious}
-    };
-
-    private Pokemon(int HP, int maxHP, int hpIV, int hpEV, int baseHP, int speed, int speedIV, int speedEV, int baseSpeed,
-                    int atk, int atkIV, int atkEV, int baseAtk, int def, int defIV, int defEV, int baseDef, int atkSpe, int atkSpeIV,
-                    int atkSpeEV, int baseAtkSpe, int defSpe, int defSpeIV, int defSpeEV, int baseDefSpe, int level, int exp,
-                    String name, Type type, Nature nature, ArrayList<Move> moves, Status status){
-        this.HP = HP;
+    public Pokemon(String name, int maxHP, int HP, int atk, int def, int atkSpe, int defSpe, int speed, int baseHP, int baseAtk, int baseDef, int baseAtkSpe, int baseDefSpe, int baseSpeed,
+                   int hpIV, int atkIV, int defIV, int atkSpeIV, int defSpeIV, int speedIV, int hpEV, int atkEV, int defEV, int atkSpeEV, int defSpeEV, int speedEV, int atkRaise, int
+                   defRaise, int atkSpeRaise, int defSpeRaise, int speedRaise, int level, Type type, ArrayList<Move> moves, String gender, int exp, int maxExp, Experience expType,
+                   Status status){
+        this.name = name;
         this.maxHP = maxHP;
-        this.hpIV = hpIV;
-        this.hpEV = hpEV;
+        this.HP = HP;
+        this.atk = atk;
+        this.def = def;
+        this.atkSpe = atkSpe;
+        this.defSpe = defSpe;
+        this.speed = speed;
         this.baseHP = baseHP;
-        this.speed = speed;
-        this.speedIV = speedIV;
-        this.speedEV = speedEV;
+        this.baseAtk = baseAtk;
+        this.baseDef = baseDef;
+        this.baseAtkSpe = baseAtkSpe;
+        this.baseDefSpe = baseDefSpe;
         this.baseSpeed = baseSpeed;
-        this.atk = atk;
+        this.hpIV = hpIV;
         this.atkIV = atkIV;
-        this.atkEV = atkEV;
-        this.baseAtk = baseAtk;
-        this.def = def;
         this.defIV = defIV;
-        this.defEV = defEV;
-        this.baseDef = baseDef;
-        this.atkSpe = atkSpe;
         this.atkSpeIV = atkSpeIV;
-        this.atkSpeEV = atkSpeEV;
-        this.baseAtkSpe = baseAtkSpe;
-        this.defSpe = defSpe;
         this.defSpeIV = defSpeIV;
+        this.speedIV = speedIV;
+        this.hpEV = hpEV;
+        this.atkEV = atkEV;
+        this.defEV = defEV;
+        this.atkSpeEV = atkSpeEV;
         this.defSpeEV = defSpeEV;
-        this.baseDefSpe = baseDefSpe;
-        this.level = level;
-        this.exp = exp;
-        this.name = name;
-        this.type = type;
-        this.moves = moves;
-        this.nature = nature;
-        this.status = status;
-    }
-
-    public Pokemon(int HP, int maxHP, int atk, int def, int atkSpe, int defSpe, int speed, int level, Type type, ArrayList<Move> moves, String name, Status status, String gender){
-        this.HP = HP;
-        this.maxHP = maxHP;
-        this.atk = atk;
-        this.def = def;
-        this.atkSpe = atkSpe;
-        this.defSpe = defSpe;
-        this.speed = speed;
-        this.type = type;
-        this.level = level;
-        this.moves = moves;
-        this.name = name;
-        this.status = status;
-        this.gender = gender;
-    }
-    public Pokemon(int HP, int maxHP, int atk, int def, int atkSpe, int defSpe, int speed, int level, Type type1, Type type2,
-                   ArrayList<Move> moves, Status status, String gender){
-        this.HP = HP;
-        this.maxHP = maxHP;
-        this.atk = atk;
-        this.def = def;
-        this.atkSpe = atkSpe;
-        this.defSpe = defSpe;
-        this.speed = speed;
-        this.type1 = type1;
-        this.type2 = type2;
-        this.level = level;
-        this.moves = moves;
-        this.status = status;
-        this.gender = gender;
-    }
-
-    public Pokemon(String name, int HP, int maxHP, int atk, int baseAtk, int def, int baseDef, int atkSpe, int baseAtkSpe, int defSpe, int baseDefSpe, int speed, int baseSpeed,
-                   int level, Type type, ArrayList<Move> moves, int atkRaise, int defRaise, int speedRaise, int atkSpeRaise, int defSpeRaise, Status status, String gender){
-        this.name = name;
-        this.HP = HP;
-        this.maxHP = maxHP;
-        this.atk = atk;
-        this.baseAtk = baseAtk;
-        this.def = def;
-        this.baseDef = baseDef;
-        this.atkSpe = atkSpe;
-        this.baseAtkSpe = baseAtkSpe;
-        this.defSpe = defSpe;
-        this.baseDefSpe = baseDefSpe;
-        this.speed = speed;
-        this.baseSpeed = baseSpeed;
-        this.level = level;
-        this.type = type;
-        this.moves = moves;
+        this.speedEV = speedEV;
         this.atkRaise = atkRaise;
         this.defRaise = defRaise;
-        this.speedRaise = speedRaise;
         this.atkSpeRaise = atkSpeRaise;
         this.defSpeRaise = defSpeRaise;
-        this.status = status;
+        this.speedRaise = speedRaise;
+        this.level = level;
+        this.type = type;
+        this.moves = moves;
         this.gender = gender;
+        this.exp = exp;
+        this.maxExp = maxExp;
+        this.expType = expType;
+        this.status = status;
+
     }
 
+
+    // ------------------------------------------------------------------------------------------------------------------
+    // Getter
+    // ------------------------------------------------------------------------------------------------------------------
+
+    public String getName() {
+        return name;
+    }
+    public Type getType() {
+        return type;
+    }
     public int getHP() {
         return HP;
     }
-
     public int getMaxHP() {
         return maxHP;
     }
-
-    public int getHpIV() {
-        return hpIV;
-    }
-
-    public int getHpEV() {
-        return hpEV;
-    }
-
-    public int getBaseHP() {
-        return baseHP;
-    }
-
-    public int getSpeed() {
-        return speed;
-    }
-
-    public int getSpeedIV() {
-        return speedIV;
-    }
-
-    public int getSpeedEV() {
-        return speedEV;
-    }
-
-    public int getBaseSpeed() {
-        return baseSpeed;
-    }
-
     public int getAtk() {
         return atk;
     }
+    public int getDef() {
+        return def;
+    }
+    public int getAtkSpe(){
+        return atkSpe;
+    }
+    public int getDefSpe() {
+        return defSpe;
+    }
+    public int getSpeed() {
+        return speed;
+    }
+    public int getLevel() { return level; }
+    public int getExp() {
+        return exp;
+    }
+    public int getMaxExp() { return maxExp; }
+    public String getGender() {
+        return gender;
+    }
+    public Status getStatus() {
+        return status;
+    }
+    public Experience getExpType() { return expType; }
+    public boolean isKO(){
+        return this.getHP() <= 0;
+    }
+    public Nature getNature() {
+        return nature;
+    }
+    public ArrayList<Move> getAttacks() {
+        return moves;
+    }
+    public Move getAttack(Move move){
+        return moves.get(moves.indexOf(move));
+    }
+    public void levelUp() {
+        level++;
 
-    public int getAtkIV() {
-        return atkIV;
+        int oldHP = HP;
+        int oldMaxHP = maxHP;
+        int oldAtk = atk;
+        int oldDef = def;
+        int oldAtkSpe = atkSpe;
+        int oldDefSpe = defSpe;
+        int oldSpeed = speed;
+
+        double atkNature = getNatureMultiplier("atk");
+        double defNature = getNatureMultiplier("def");
+        double atkSpeNature = getNatureMultiplier("atkSpe");
+        double defSpeNature = getNatureMultiplier("defSpe");
+        double speedNature = getNatureMultiplier("speed");
+
+        maxHP = (int) Math.floor(((2 * baseHP + hpIV + Math.floor(hpEV / 4.0)) * level) / 100) + level + 10;
+
+        atk = (int) Math.floor((Math.floor(((2 * baseAtk + atkIV + Math.floor(atkEV / 4.0)) * level) / 100) + 5) * atkNature);
+        def = (int) Math.floor((Math.floor(((2 * baseDef + defIV + Math.floor(defEV / 4.0)) * level) / 100) + 5) * defNature);
+        atkSpe = (int) Math.floor((Math.floor(((2 * baseAtkSpe + atkSpeIV + Math.floor(atkSpeEV / 4.0)) * level) / 100) + 5) * atkSpeNature);
+        defSpe = (int) Math.floor((Math.floor(((2 * baseDefSpe + defSpeIV + Math.floor(defSpeEV / 4.0)) * level) / 100) + 5) * defSpeNature);
+        speed = (int) Math.floor((Math.floor(((2 * baseSpeed + speedIV + Math.floor(speedEV / 4.0)) * level) / 100) + 5) * speedNature);
+
+        if(HP < maxHP) HP += maxHP-oldHP;
+        if(HP > maxHP) HP = maxHP;
+
+        System.out.println(name + " passe au niveau " + level + " !");
+        System.out.println("HP      : " + HP + "/" + maxHP);
+        System.out.println("Atk     : " + atk);
+        System.out.println("Def     : " + def);
+        System.out.println("AtkSpe  : " + atkSpe);
+        System.out.println("DefSpe  : " + defSpe);
+        System.out.println("Speed   : " + speed);
     }
 
-    public int getAtkEV() {
-        return atkEV;
+    private double getNatureMultiplier(String stat) {
+        if (nature == null) return 1.0;
+
+        switch (stat) {
+            case "atk":
+                if (nature == Nature.Adamant || nature == Nature.Brave || nature == Nature.Lonely || nature == Nature.Naughty)
+                    return 1.1;
+                if (nature == Nature.Bold || nature == Nature.Modest || nature == Nature.Timid || nature == Nature.Calm)
+                    return 0.9;
+                break;
+            case "def":
+                if (nature == Nature.Bold || nature == Nature.Relaxed || nature == Nature.Lax || nature == Nature.Impish)
+                    return 1.1;
+                if (nature == Nature.Lonely || nature == Nature.Mild || nature == Nature.Hasty || nature == Nature.Gentle)
+                    return 0.9;
+                break;
+            case "atkSpe":
+                if (nature == Nature.Modest || nature == Nature.Mild || nature == Nature.Rash || nature == Nature.Quiet)
+                    return 1.1;
+                if (nature == Nature.Adamant || nature == Nature.Careful || nature == Nature.Impish || nature == Nature.Jolly)
+                    return 0.9;
+                break;
+            case "defSpe":
+                if (nature == Nature.Calm || nature == Nature.Gentle || nature == Nature.Careful || nature == Nature.Sassy)
+                    return 1.1;
+                if (nature == Nature.Naughty || nature == Nature.Naive || nature == Nature.Lax || nature == Nature.Rash)
+                    return 0.9;
+                break;
+            case "speed":
+                if (nature == Nature.Timid || nature == Nature.Hasty || nature == Nature.Jolly || nature == Nature.Naive)
+                    return 1.1;
+                if (nature == Nature.Brave || nature == Nature.Quiet || nature == Nature.Relaxed || nature == Nature.Sassy)
+                    return 0.9;
+                break;
+        }
+
+        return 1.0;
+    }
+
+
+
+
+
+    public boolean isFirst(Pokemon opponent){ return speed >= opponent.getSpeed(); }
+
+    // Getter for base stats
+    public int getBaseHP() {
+        return baseHP;
     }
 
     public int getBaseAtk() {
         return baseAtk;
     }
 
-    public int getDef() {
-        return def;
-    }
-
-    public int getDefIV() {
-        return defIV;
-    }
-
-    public int getDefEV() {
-        return defEV;
-    }
-
-    public int getAtkSpe(){
-        return atkSpe;
-    }
-
     public int getBaseDef() {
         return baseDef;
     }
 
-    public int getDefSpe() {
-        return defSpe;
-    }
-
-    public int getDefSpeIV() {
-        return defSpeIV;
-    }
-
-    public int getDefSpeEV() {
-        return defSpeEV;
+    public int getBaseAtkSpe() {
+        return baseAtkSpe;
     }
 
     public int getBaseDefSpe() {
         return baseDefSpe;
     }
 
-    public int getLevel() {
-        return level;
+    public int getBaseSpeed() {
+        return baseSpeed;
     }
 
-    public int getExp() {
-        return exp;
+    //Getter for IV-EV
+    public int getHpIV() {
+        return hpIV;
     }
 
-    public String getName() {
-        return name;
+    public int getAtkIV() {
+        return atkIV;
     }
 
-    public Type getType() {
-        return type;
+    public int getDefIV() {
+        return defIV;
     }
 
-    public Nature getNature() {
-        return nature;
+    public int getAtkSpeIV() {
+        return atkSpeIV;
     }
 
-    public ArrayList<Move> getAttacks() {
-        return moves;
+    public int getDefSpeIV() {
+        return defSpeIV;
     }
 
-    public Move getAttack(Move move){
-        return moves.get(moves.indexOf(move));
+    public int getSpeedIV() {
+        return speedIV;
     }
 
-    public Status getStatus() {
-        return status;
+    public int getHpEV() {
+        return hpEV;
     }
+
+    public int getAtkEV() {
+        return atkEV;
+    }
+
+    public int getDefEV() {
+        return defEV;
+    }
+
+    public int getAtkSpeEV() {
+        return atkSpeEV;
+    }
+
+    public int getDefSpeEV() {
+        return defSpeEV;
+    }
+
+    public int getSpeedEV() {
+        return speedEV;
+    }
+
+    // ------------------------------------------------------------------------------------------------------------------
+    // Setter
+    // ------------------------------------------------------------------------------------------------------------------
 
     public void setStatus(Status status) {
         this.status = status;
     }
-
-    public int getEV(int stat){
-        return stat;
-    }
-
-    public int getIV(int stat){
-        return stat;
-    }
-
-    public int getBaseStat(int stat){
-        return stat;
-    }
-
-    public String getGender() {
-        return gender;
-    }
-
     public void setAttack(ArrayList<Move> moves, int position, Move move) {
         moves.set(position, move);
     }
 
-    public void setHP(int HP) {
-        this.HP = HP;
+    public void setExp(int exp) {
+        this.exp = exp;
     }
 
-    public boolean isKO(){
-        return this.getHP() <= 0;
-    }
+    // ------------------------------------------------------------------------------------------------------------------
+    // Attack
+    // ------------------------------------------------------------------------------------------------------------------
 
+    /**
+     * Verifies which instance is the player Pokémon's next move and applies the effect on the target according to the
+     * move category (i.e. physical/special attack, a debris attack, a status attack or an upgrade move)
+     * @param target The target of the player
+     * @param move The move it uses
+     * @param terrain The terrain the Pokémon are on
+     */
     public void attack(Pokemon target, Move move, Terrain terrain) {
-        //System.out.println(move.getClass());
         if(this.getAttack(move) instanceof Attack attack){
             statusEffect(target, move);
             if((this.getStatus() == Status.normal || this.getStatus() == Status.cursed || this.getStatus() == Status.burned
@@ -362,21 +392,18 @@ public class Pokemon {
                 case "atkSpe" -> atkSpeRaise += upgradeMove.getRaiseLevel();
                 case "defSpe" -> defSpeRaise += upgradeMove.getRaiseLevel();
             }
-            System.out.println("atkRaise : " + atkRaise);
-            System.out.println("defRaise : " + defRaise);
-            System.out.println("speedRaise : " + speedRaise);
-            System.out.println("atkSpeRaise : " + atkSpeRaise);
-            System.out.println("defSpeRaise : " + defSpeRaise);
             updateStat();
         }
         updateStatus();
     }
 
-
-    /// ------------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------------
     // Everything that touches to stat changes in fights
-    /// ------------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------------
 
+    /**
+     * Update the stat modifier each turn
+     */
     public void updateStat(){
         this.atk = applyStatModifier(this.baseAtk, atkRaise);
         this.def = applyStatModifier(this.baseDef, defRaise);
@@ -388,28 +415,32 @@ public class Pokemon {
     private int applyStatModifier(int baseStat, int stage){
         if (stage > 6) stage = 6;
         if (stage < -6) stage = -6;
-
         int[] multipliersNumerator = {2, 2, 2, 2, 2, 2, 2, 3, 4, 5, 6, 7, 8};
         int[] multipliersDenominator = {8, 7, 6, 5, 4, 3, 2, 2, 2, 2, 2, 2, 2};
-
         return (baseStat * multipliersNumerator[stage + 6]) / multipliersDenominator[stage + 6];
     }
 
+    // ------------------------------------------------------------------------------------------------------------------
+    // Everything that touches to terrain, debris and climate
+    // ------------------------------------------------------------------------------------------------------------------
 
-    /// ------------------------------------------------------------------------------------------------------------------
-    // Everything that touches to terrain, debris and meteo
-    /// ------------------------------------------------------------------------------------------------------------------
+    // In progress ...
 
+    // ------------------------------------------------------------------------------------------------------------------
+    // Everything that touches to status
+    // ------------------------------------------------------------------------------------------------------------------
 
-    /// ------------------------------------------------------------------------------------------------------------------
-    // Everything that touches to Pokemon's status
-    /// ------------------------------------------------------------------------------------------------------------------
-
+    /**
+     * Sets the status according to the element table
+     * @param target The target the player's Pokémon attacks
+     * @param statusMove The status attack it uses
+     * @return The status of the target
+     */
     public Status setStatus(Pokemon target, StatusAttack statusMove){
         if(target.getStatus() != Status.normal){
             System.out.println(target.getName() + " is already " + target.getStatus() + "! It won't have any effect.");
         }
-        if(checkImmunities(target).contains(statusMove.getType())){
+        if(immunitiesTable(target).contains(statusMove.getType())){
             System.out.println("This attack does not affect the pokemon");
             return null;
         }
@@ -418,6 +449,12 @@ public class Pokemon {
         }
         return target.getStatus();
     }
+
+    /**
+     * Applies the effect on the Pokémon before it attacks
+     * @param target The target the player's Pokémon attacks
+     * @param move Move it uses
+     */
 
     public void statusEffect(Pokemon target, Move move){
         Random random = new Random();
@@ -436,7 +473,6 @@ public class Pokemon {
         }
         if(this.getStatus() == Status.freeze){
             int randInt = random.nextInt(0,4);
-            System.out.println(randInt);
             if(randInt < 3){
                 System.out.println(this.getName() + " is frozen solid!");
                 return;
@@ -496,6 +532,10 @@ public class Pokemon {
         }
     }
 
+    /**
+     * Updates the status of the Pokémon
+     */
+
     public void updateStatus(){
         switch(this.getStatus()){
             case normal, attracted, asleep:
@@ -527,10 +567,17 @@ public class Pokemon {
         }
     }
 
-    /// ------------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------------
     // Total damages of special and physical attacks
-    /// ------------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------------
 
+    /**
+     * Calculates the total damage (includes critical hits and the stab)
+     * @param attack
+     * @param launcher
+     * @param target
+     * @return The total damage done to the target
+     */
     public double totalDamage(Attack attack, Pokemon launcher, Pokemon target) {
         float power = attack.getPower();
         double augmentedDamage;
@@ -545,53 +592,74 @@ public class Pokemon {
         return calculateEffectiveness(attack, launcher, target, power);
     }
 
+    /**
+     * Checks if the move is effective or not (only works for physical and special attakcs)
+     * @param move The move that is used
+     * @param launcher The Pokémon that launches the move
+     * @param target The Pokémon that will get attacked
+     * @param power The power of the move
+     * @return The attack damage without taking into account critical/stab hits
+     */
     private double calculateEffectiveness(Move move, Pokemon launcher, Pokemon target, float power) {
+        List<Type> targetWeaknesses =  weaknessesTable(target);
+        List<Type> targetResistances = resistancesTable(target);
+        List<Type> targetImmunities = immunitiesTable(target);
+
+        int launcherLevel = this.getLevel();
+        int launcherAtk = this.getAtk();
+        int launcherAtkSpe = this.getAtkSpe();
+
+        int targetDef = target.getDef();
+        int targetDefSpe = target.getDefSpe();
+
         float effectivenessCoefficient;
         switch (launcher.getAttack(move).getMode()) {
             case physical:
-                if (checkWeaknesses(target).contains(move.getType())) {
+                double physicalDamages = ((((launcherLevel * 0.4 + 2) * launcherAtk * power) / targetDef) / 50) + 2;
+                if (targetWeaknesses.contains(move.getType())) {
                     effectivenessCoefficient = 2;
                     System.out.println("The attack is super effective");
-                    return (((((launcher.level * 0.4 + 2) * launcher.getAtk() * power) / target.getDef()) / 50) + 2) * effectivenessCoefficient;
+                    return physicalDamages * effectivenessCoefficient;
                 }
-                if (checkImmunities(target).contains(move.getType())) {
+                if (targetImmunities.contains(move.getType())) {
                     System.out.println("This attack does not affect the pokemon");
                     return 0;
                 }
-                if (checkResistances(target).contains(move.getType())) {
+                if (targetResistances.contains(move.getType())) {
                     effectivenessCoefficient = 0.5f;
                     System.out.println("The attack is not very effective");
-                    return (((((launcher.level * 0.4 + 2) * launcher.getAtk() * power) / target.getDef()) / 50) + 2) * effectivenessCoefficient;
+                    return physicalDamages * effectivenessCoefficient;
                 } else {
-                    return (((((launcher.level * 0.4 + 2) * launcher.getAtk() * power) / target.getDef()) / 50) + 2);
+                    return physicalDamages;
                 }
             case special:
-                if (checkWeaknesses(target).contains(move.getType())) {
+                double specialDamages = ((((launcherLevel * 0.4 + 2) * launcherAtkSpe * power) / targetDefSpe) / 50) + 2;
+                if (targetWeaknesses.contains(move.getType())) {
                     effectivenessCoefficient = 2;
                     System.out.println("The attack is super effective");
-                    return (((((launcher.level * 0.4 + 2) * launcher.getAtkSpe() * power) / target.getDefSpe()) / 50) + 2) * effectivenessCoefficient;
+                    return specialDamages * effectivenessCoefficient;
                 }
-                if (checkImmunities(target).contains(move.getType())) {
+                if (targetImmunities.contains(move.getType())) {
                     System.out.println("This attack does not affect the pokemon");
                     return 0;
                 }
-                if (checkResistances(target).contains(move.getType())) {
+                if (targetResistances.contains(move.getType())) {
                     effectivenessCoefficient = 0.5f;
                     System.out.println("The attack is not very effective");
-                    return (((((launcher.level * 0.4 + 2) * launcher.getAtkSpe() * power) / target.getDefSpe()) / 50) + 2) * effectivenessCoefficient;
+                    return specialDamages * effectivenessCoefficient;
                 } else {
-                    return (((((launcher.level * 0.4 + 2) * launcher.getAtkSpe() * power) / target.getDefSpe()) / 50) + 2);
+                    return specialDamages;
                 }
             }
             return 0;
         }
 
 
-    /// ------------------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
     // Type table
-    /// ------------------------------------------------------------------------------------------------------------------
+    // ------------------------------------------------------------------------------------------------------------------
 
-    public List<Type> checkWeaknesses(Pokemon pokemon) {
+    public List<Type> weaknessesTable(Pokemon pokemon) {
 
         List<Type> weaknesses = new ArrayList<>();
 
@@ -690,7 +758,7 @@ public class Pokemon {
         return weaknesses;
     }
 
-    public List<Type> checkResistances(Pokemon pokemon) {
+    public List<Type> resistancesTable(Pokemon pokemon) {
 
         List<Type> resistances = new ArrayList<>();
 
@@ -766,8 +834,8 @@ public class Pokemon {
             case ghost:
                 resistances.add(Type.poison);
                 resistances.add(Type.bug);
-                resistances.add(Type.normal); // Immunité
-                resistances.add(Type.fighting); // Immunité
+                resistances.add(Type.normal);
+                resistances.add(Type.fighting);
                 break;
             case dragon:
                 resistances.add(Type.fire);
@@ -778,7 +846,7 @@ public class Pokemon {
             case dark:
                 resistances.add(Type.ghost);
                 resistances.add(Type.dark);
-                resistances.add(Type.psychic); // Immunité
+                resistances.add(Type.psychic);
                 break;
             case steel:
                 resistances.add(Type.normal);
@@ -806,8 +874,7 @@ public class Pokemon {
         return resistances;
     }
 
-
-    public  List<Type> checkImmunities(Pokemon pokemon) {
+    public  List<Type> immunitiesTable(Pokemon pokemon) {
 
         List<Type> immunities = new ArrayList<>();
 
@@ -815,19 +882,7 @@ public class Pokemon {
             case normal:
                 immunities.add(Type.ghost);
                 break;
-            case fire:
-                break;
-            case water:
-                break;
-            case grass:
-                break;
-            case electric:
-                break;
-            case ice:
-                break;
-            case fighting:
-                break;
-            case poison:
+            case fire, water, grass, electric, ice, fighting, poison, psychic, bug, rock, dragon:
                 break;
             case ground:
                 immunities.add(Type.electric);
@@ -835,17 +890,9 @@ public class Pokemon {
             case flying:
                 immunities.add(Type.ground);
                 break;
-            case psychic:
-                break;
-            case bug:
-                break;
-            case rock:
-                break;
             case ghost:
                 immunities.add(Type.normal);
                 immunities.add(Type.fighting);
-                break;
-            case dragon:
                 break;
             case dark:
                 immunities.add(Type.psychic);
@@ -864,19 +911,36 @@ public class Pokemon {
     }
 
     // ------------------------------------------------------------------------------------------------------------------
-    // IV
+    // IV - EV
     // ------------------------------------------------------------------------------------------------------------------
 
-    private int calculateIV (Pokemon pokemon, int stat) {
-        int IV = (stat * 100/pokemon.getLevel() - pokemon.getEV(stat)/4 - 2 * pokemon.getBaseStat(stat));
-        return IV;
+    private int generateIV(){
+        Random rand = new Random();
+        return rand.nextInt(0,32);
     }
+
+
+//    private int calculateIV (Pokemon pokemon, int stat) {
+//        return (stat * 100/pokemon.getLevel() - pokemon.getEV(stat)/4 - 2 * pokemon.getBaseStat(stat));
+//    }
+//
+//    private int calculatePVIV (Pokemon pokemon, int stat) {
+//        return ((100 * pokemon.getBaseStat(stat) - pokemon.getLevel() - 10) / pokemon.getLevel()) - pokemon.getEV(stat) / 4 - 2 * pokemon.getBaseStat(stat);
+//    }
+
     // ------------------------------------------------------------------------------------------------------------------
     // EXP
     // ------------------------------------------------------------------------------------------------------------------
 
+    /**
+     *
+     * Calculates the experience gain based on a formula, the base experience of the Pokémon can be got in the csv file
+     * @param defeatedPokemon The defeated Pokémon
+     * @return ((baseExperience * defeatedPokemon.getLevel()) / 7)
+     */
     public int calculateEXP(Pokemon defeatedPokemon) {
-        String filePath = "/Users/condreajason/Repositories/PokemonGame/src/src/main/resources/data/pokemon.csv";
+//        String filePath = "/Users/condreajason/Repositories/PokemonGame/src/src/main/resources/data/pokemon.csv";
+        String filePath = "C:\\dev\\gitproject\\PokemonGame\\src\\src\\main\\resources\\data\\pokemon.csv";
         int baseExperience = getBaseExperience(defeatedPokemon.getName(), filePath);
 
         if (baseExperience == -1) {
@@ -887,6 +951,12 @@ public class Pokemon {
         return ((baseExperience * defeatedPokemon.getLevel()) / 7);
     }
 
+    /**
+     * Get the base experience in the csv file
+     * @param pokemonName name of the Pokémon we have to search for
+     * @param filePath File path
+     * @return The base experience of the Pokémon
+     */
     public static int getBaseExperience(String pokemonName, String filePath) {
         try (CSVReader reader = new CSVReader(new FileReader(filePath))) {
             String[] nextLine;
@@ -922,11 +992,60 @@ public class Pokemon {
         return -1;
     }
 
+    /**
+     * Calculates the maximum experience to reach for each level
+     * @return The current maximum experience
+     */
+    public int calculateMaxExp() {
+        int currentMaxExp = 0;
+        int N = this.getLevel();
+        double nCubed = Math.pow(N,3);
+
+        switch (this.getExpType()) {
+            case Fast -> currentMaxExp = (int) (0.8 * nCubed);
+            case Medium -> currentMaxExp = (int) nCubed;
+            case Slow -> currentMaxExp = (int) (1.25 * nCubed);
+            case Parabolic -> currentMaxExp = (int) (1.2 * nCubed - 15 * Math.pow(N, 2) + 100 * N - 140);
+            case Erratic -> {
+                if (1 <= N && N <= 50) {
+                    currentMaxExp = (int) (nCubed * (100 - N) / 50);
+                } else if (51 <= N && N <= 68) {
+                    currentMaxExp = (int) (nCubed * (150 - N) / 100);
+                } else if (69 <= N && N <= 98) {
+                    currentMaxExp = (int) (nCubed * (
+                                                1.274 - (1.0 / 50) * Math.floor(N / 3.0) - calculateP()
+                                        ));
+                } else if (99 <= N && N <= 100) {
+                    currentMaxExp = (int) (nCubed * (160 - N) / 100);
+                }
+            }
+            case Fluctuating -> {
+                if (1 <= N && N <= 15) {
+                    currentMaxExp = (int) (nCubed * ((24 + Math.floor((N + 1) / 3.0)) / 50));
+                } else if (16 <= N && N <= 35) {
+                    currentMaxExp = (int) (nCubed * ((14 + N) / 50.0));
+                } else if (36 <= N && N <= 100) {
+                    currentMaxExp = (int) (nCubed * ((32 + Math.floor(N / 2.0)) / 50));
+                }
+            }
+        }
+
+        return currentMaxExp;
+    }
+
+    private double calculateP() {
+        double[] pValues = {0.0, 0.008, 0.014};
+        return pValues[this.getLevel() % 3];
+    }
 
     // ------------------------------------------------------------------------------------------------------------------
     // Pokemon AI
     // ------------------------------------------------------------------------------------------------------------------
 
+    /**
+     * Recursively choose a random move in the Pokémon's move pool
+     * @return A random move
+     */
     public Move chooseMove() {
         Random rand = new Random();
         int randomNumber = rand.nextInt(1,4);
@@ -965,7 +1084,6 @@ public class Pokemon {
                 chooseMove();
             }
         }
-        System.out.println(move);
         return move;
     }
 }

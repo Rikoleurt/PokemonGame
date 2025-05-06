@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import Pokemon.Move;
 import Pokemon.Pokemon;
+import Pokemon.PokemonEnum.Experience;
 import Pokemon.PokemonEnum.Status;
 import Pokemon.PokemonEnum.Type;
 
@@ -16,35 +17,53 @@ public class Pokemons {
     static ArrayList<Move> carapuceMoves = new ArrayList<>();
     static ArrayList<Move> salamecheMoves = new ArrayList<>();
 
-
     public static Pokemon initiateBulbizarre() {
         bulbizarreMoves.add(attacks.get(4));
         bulbizarreMoves.add(attacks.get(6));
-        return new Pokemon("Bulbizarre", 45, 45, 49, 49, 49, 49, 65, 65, 65, 65,
-                45, 45, 10, Type.grass, bulbizarreMoves, 0, 0, 0, 0, 0,
-                Status.normal, "female");
+        return new Pokemon("bulbasaur", 31, 31, 18, 18, 23, 23, 17,
+                45, 49, 49, 65, 65, 45,
+                10, 10, 10, 10, 10, 10,
+                0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0,
+                10, Type.grass, bulbizarreMoves, "female",
+                0, 100, Experience.Fast, Status.normal);
     }
+
     public static Pokemon initiatePikachu() {
         pikachuMoves.add(attacks.get(0));
         pikachuMoves.add(attacks.get(1));
         pikachuMoves.add(attacks.get(2));
-        return new Pokemon("Pikachu", 35, 35, 55, 55, 40, 40, 50, 50, 50, 50,
-                90, 90, 9, Type.electric, pikachuMoves, 0, 0, 0, 0, 0,
-                Status.normal, "male");
+        return new Pokemon("pikachu", 29, 29, 20, 16, 19, 19, 28,
+                35, 55, 40, 50, 50, 90,
+                31, 31, 31, 31, 31, 31,
+                0, 0, 0, 0, 0, 252,
+                0, 0, 0, 0, 0,
+                9, Type.electric, pikachuMoves, "male",
+                0, 100, Experience.Fast, Status.normal);
     }
+
     public static Pokemon initiateCarapuce() {
         carapuceMoves.add(attacks.get(5));
         carapuceMoves.add(attacks.get(7));
-        return new Pokemon("Carapuce", 44, 44, 48, 48, 65, 65, 50, 50, 64, 64,
-                43, 43, 10, Type.water, carapuceMoves, 0, 0, 0, 0, 0,
-                Status.normal, "female");
+        return new Pokemon("squirtle", 31, 31, 17, 23, 19, 22, 17,
+                44, 48, 65, 50, 64, 43,
+                10, 10, 10, 10, 10, 10,
+                0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0,
+                10, Type.water, carapuceMoves, "female",
+                0, 100, Experience.Fast, Status.normal);
     }
+
     public static Pokemon initiateSalameche(){
         salamecheMoves.add(attacks.get(0));
         salamecheMoves.add(attacks.get(3));
         salamecheMoves.add(attacks.get(6));
-        return new Pokemon("Salamèche", 39, 39, 52, 52, 43, 43, 60, 60, 50, 50,
-                65, 65, 11, Type.fire, salamecheMoves, 0, 0, 0, 0, 0,
-                Status.normal, "male");
+        return new Pokemon("charmander", 30, 30, 19, 17, 22, 19, 21,
+                39, 52, 43, 60, 50, 65,
+                10, 10, 10, 10, 10, 10,
+                0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0,
+                11, Type.fire, salamecheMoves, "male",
+                0, 100, Experience.Fast, Status.normal);
     }
 }

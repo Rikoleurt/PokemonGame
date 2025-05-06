@@ -7,6 +7,8 @@ import javafx.scene.Scene;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
+import java.util.Random;
+
 import static Pokemon.Pokemon.getBaseExperience;
 import static StaticObjects.NPC.initiateEnemy;
 import static StaticObjects.Player.initiatePlayer;
@@ -32,10 +34,19 @@ public class Main extends Application {
         launch(args);
         Player player = initiatePlayer();
         NPC npc = initiateEnemy();
+
         Pokemon p = player.getFrontPokemon();
-        System.out.println(player.getFrontPokemon().getName());
         Pokemon p2 = npc.getFrontPokemon();
-        System.out.println(p.calculateEXP(p2));
-        System.out.println(getBaseExperience(player.getFrontPokemon().getName(), "/Users/condreajason/Repositories/PokemonGame/src/src/main/resources/data/pokemon.csv"));
+        Pokemon p3 = npc.getTeam().get(1);
+
+        System.out.println(p.getName() + " gets " + p.calculateEXP(p2) + " exp from " + p2.getName());
+//        System.out.println(getBaseExperience(p.getName(), "/Users/condreajason/Repositories/PokemonGame/src/src/main/resources/data/pokemon.csv"));
+        System.out.println(p.getName() + " " + getBaseExperience(p.getName(), "C:\\dev\\gitproject\\PokemonGame\\src\\src\\main\\resources\\data\\pokemon.csv"));
+        System.out.println(p2.getName() + " " + getBaseExperience(p2.getName(), "C:\\dev\\gitproject\\PokemonGame\\src\\src\\main\\resources\\data\\pokemon.csv"));
+
+    }
+    private static int generateIV(){
+        Random rand = new Random();
+        return rand.nextInt(0,32);
     }
 }

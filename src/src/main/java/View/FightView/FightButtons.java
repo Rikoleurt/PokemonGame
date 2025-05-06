@@ -7,6 +7,8 @@ import Pokemon.Terrain;
 import Pokemon.TerrainEnum.Debris;
 import Pokemon.TerrainEnum.Meteo;
 
+import View.FightView.Text.StatBubble;
+import View.FightView.Text.TextBubble;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -28,7 +30,7 @@ public class FightButtons extends HBox {
     Move pAtk1 = playerPokemon.getAttacks().getFirst();
     Move pAtk2 = playerPokemon.getAttacks().get(1);
     Move pAtk3 = playerPokemon.getAttacks().get(2);
-    // Move pAtk4 = playerPokemon.getAttacks().get(3);
+    //Move pAtk4 = playerPokemon.getAttacks().get(3);
 
     Pokemon npcPokemon = npc.getFrontPokemon();
 
@@ -44,8 +46,8 @@ public class FightButtons extends HBox {
     Button atk1Button = createButton(playerPokemon.getAttacks().getFirst().getName());
     Button atk2Button = createButton(playerPokemon.getAttacks().get(1).getName());
     Button atk3Button = createButton(playerPokemon.getAttacks().get(2).getName());
-    Button atk4Button = createButton(null);
     //Button atk4Button = createButton(playerPokemon.getAttacks().get(3).getName());
+    Button atk4Button = createButton(" - ");
 
     private final EnemyHPBar enemyHPBar;
     private final PlayerHPBar playerHPBar;
@@ -84,8 +86,10 @@ public class FightButtons extends HBox {
 
            HBox1.getChildren().addAll(atk1Button, atk2Button);
            HBox2.getChildren().addAll(atk3Button, atk4Button);
+
            vBox.getChildren().addAll(textBubble, HBox1, HBox2);
            vBox2.getChildren().add(textBubble);
+
            vBox2.setVisible(false);
            components.addAll(vBox2, vBox);
 
@@ -99,6 +103,7 @@ public class FightButtons extends HBox {
 
         runButton.setOnAction(e -> {
         });
+
         atkButtonAction();
     }
 
@@ -115,25 +120,59 @@ public class FightButtons extends HBox {
                 "-fx-background-radius: 0px; " +
                 "-fx-font-weight: bold; " +
                 "-fx-text-fill: black; ");
+        if(text == null){
+            button.setText(" - ");
+            button.setFont(font);
+            button.setPrefSize(175, 75);
+            button.setStyle("-fx-background-color: white; " +
+                    "-fx-border-color: black; " +
+                    "-fx-border-width: 2px; " +
+                    "-fx-border-radius: 5px; " +
+                    "-fx-background-radius: 0px; " +
+                    "-fx-font-weight: bold; " +
+                    "-fx-text-fill: black; ");
+        }
         return button;
     }
 
     private void atkButtonAction() {
         atk1Button.setOnAction(e -> {
-            AtkButtonAction(pAtk1, terrain);
+            if(pAtk1 != null) {
+                try {
+                    AtkButtonAction(pAtk1, terrain);
+                } catch (InterruptedException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
         });
 
         atk2Button.setOnAction(e -> {
-            AtkButtonAction(pAtk2, terrain);
+            if(pAtk2 != null) {
+                try {
+                    AtkButtonAction(pAtk2, terrain);
+                } catch (InterruptedException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+
         });
 
         atk3Button.setOnAction(e -> {
-            AtkButtonAction(pAtk3, terrain);
+            if(pAtk3 != null) {
+                try {
+                    AtkButtonAction(pAtk3, terrain);
+                } catch (InterruptedException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+
+
         });
 
         atk4Button.setOnAction(e -> {
-            System.out.println("Atk4 pressé");
-            this.requestFocus();
+            //if(pAtk4 != null) {
+
+            //}
         });
     }
 
@@ -141,45 +180,65 @@ public class FightButtons extends HBox {
         return playerPokemon.getSpeed() > npcPokemon.getSpeed();
     }
 
-    private void AtkButtonAction(Move move, Terrain terrain) {
+    private void AtkButtonAction(Move move, Terrain terrain) throws InterruptedException {
         boolean priority = compareSpeed();
         if(!playerPokemon.getStatus().equals(Status.KO) || !npcPokemon.getStatus().equals(Status.KO)) {
+            vBox2.setVisible(true);
+            HBox1.setVisible(false);
+            HBox2.setVisible(false);
             if (priority) {
-                vBox2.setVisible(true);
-                HBox1.setVisible(false);
-                HBox2.setVisible(false);
                 playerPokemon.attack(npcPokemon, move, terrain);
+                Thread.sleep(1000);
+
                 enemyHPBar.updateHPBars(() -> {
                     Move enemyMove = npcPokemon.chooseMove();
                     npcPokemon.attack(playerPokemon, enemyMove, terrain);
-                    textBubble.showMessage(npcPokemon.getName() + " uses " + enemyMove.getName());
-                    System.out.println("textBubble : " + textBubble.getParent());
-                    playerHPBar.updateHPBars(null);
-                    if (npcPokemon.isKO()) {
-                        textBubble.showMessage(npcPokemon.getName() + " is K.0 ");
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
                     }
+
+                    textBubble.showMessage(npcPokemon.getName() + " uses " + enemyMove.getName());
                 });
+
+                if (npcPokemon.isKO()) {
+
+                    textBubble.showMessage(npcPokemon.getName() + " is K.O ");
+
+                    int totalExp = playerPokemon.calculateEXP(npcPokemon);
+                    playerHPBar.updateExpBars(totalExp, null);
+                    textBubble.showMessage(playerPokemon.getName() + " earned " + totalExp + " exp");
+                }
+
                 textBubble.showMessage(playerPokemon.getName() + " uses " + move.getName());
+
                 HBox1.setVisible(true);
                 HBox2.setVisible(true);
+
                 this.requestFocus();
             } else {
-                vBox2.setVisible(true);
-                HBox1.setVisible(false);
-                HBox2.setVisible(false);
+
                 Move enemyMove = npcPokemon.chooseMove();
                 npcPokemon.attack(playerPokemon, enemyMove, terrain);
+                Thread.sleep(1000);
+
                 textBubble.showMessage(npcPokemon.getName() + " uses " + enemyMove.getName());
 
                 playerHPBar.updateHPBars(() -> {
+
                     playerPokemon.attack(npcPokemon, move, terrain);
+
                     textBubble.showMessage(playerPokemon.getName() + " uses " + move.getName());
-                    System.out.println("textBubble : " + textBubble.getParent());
+
                     enemyHPBar.updateHPBars(null);
-                    if (playerPokemon.isKO()) {
-                        textBubble.showMessage(playerPokemon.getName() + " is K.0 ");
-                    }
+
                 });
+
+                if (playerPokemon.isKO()) {
+                    textBubble.showMessage(playerPokemon.getName() + " is K.0 ");
+                }
+
                 HBox1.setVisible(true);
                 HBox2.setVisible(true);
             }

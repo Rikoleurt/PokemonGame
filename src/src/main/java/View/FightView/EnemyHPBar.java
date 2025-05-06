@@ -1,7 +1,7 @@
 package View.FightView;
 
-import Person.NPC;
 import Pokemon.PokemonEnum.Status;
+import View.FightView.Text.TextBubble;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.geometry.Insets;
@@ -46,7 +46,7 @@ public class EnemyHPBar extends VBox {
         level.setFont(font);
         HPs.setFont(font);
 
-        npcBar.setPrefSize(150,20);
+        npcBar.setPrefSize(150,17);
         npcBar.setStyle("-fx-accent: #709f5e;");
 
         HBox HBox1 = new HBox(name, level);
@@ -72,6 +72,7 @@ public class EnemyHPBar extends VBox {
     }
 
     void updateHPBars(Runnable onFinish) {
+
         AtomicInteger currentHP = new AtomicInteger(Math.max(0, pokemon.getHP()));
         int maxHP = pokemon.getMaxHP();
 

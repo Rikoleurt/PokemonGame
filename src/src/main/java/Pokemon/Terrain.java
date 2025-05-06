@@ -1,6 +1,5 @@
 package Pokemon;
 
-import Person.NPC;
 import Person.Player;
 import Pokemon.PokemonEnum.Status;
 import Pokemon.PokemonEnum.Type;
@@ -107,31 +106,31 @@ public class Terrain {
                 }
             case stealthRock:
                 if(nbStealthRocks == 1) {
-                    if (pokemon.checkWeaknesses(pokemon).contains(Type.fighting) && pokemon.checkWeaknesses(pokemon).contains(Type.ground)) {
+                    if (pokemon.weaknessesTable(pokemon).contains(Type.fighting) && pokemon.weaknessesTable(pokemon).contains(Type.ground)) {
                         pokemon.HP -= pokemon.maxHP / 32;
                     }
-                    if (pokemon.checkWeaknesses(pokemon).contains(Type.fighting) || pokemon.checkWeaknesses(pokemon).contains(Type.ground)) {
+                    if (pokemon.weaknessesTable(pokemon).contains(Type.fighting) || pokemon.weaknessesTable(pokemon).contains(Type.ground)) {
                         pokemon.HP -= pokemon.maxHP / 16;
                     }
-                    if (!pokemon.checkWeaknesses(pokemon).contains(Type.fighting) || !pokemon.checkWeaknesses(pokemon).contains(Type.ground)
-                            || !pokemon.checkWeaknesses(pokemon).contains(Type.fire) || !pokemon.checkWeaknesses(pokemon).contains(Type.ice)
-                            || !pokemon.checkWeaknesses(pokemon).contains(Type.bug) || !pokemon.checkWeaknesses(pokemon).contains(Type.flying)) {
+                    if (!pokemon.weaknessesTable(pokemon).contains(Type.fighting) || !pokemon.weaknessesTable(pokemon).contains(Type.ground)
+                            || !pokemon.weaknessesTable(pokemon).contains(Type.fire) || !pokemon.weaknessesTable(pokemon).contains(Type.ice)
+                            || !pokemon.weaknessesTable(pokemon).contains(Type.bug) || !pokemon.weaknessesTable(pokemon).contains(Type.flying)) {
                         pokemon.HP -= pokemon.maxHP / 8;
                     }
-                    if (pokemon.checkWeaknesses(pokemon).contains(Type.fire) || pokemon.checkWeaknesses(pokemon).contains(Type.ice)
-                            || pokemon.checkWeaknesses(pokemon).contains(Type.bug) || pokemon.checkWeaknesses(pokemon).contains(Type.flying)
+                    if (pokemon.weaknessesTable(pokemon).contains(Type.fire) || pokemon.weaknessesTable(pokemon).contains(Type.ice)
+                            || pokemon.weaknessesTable(pokemon).contains(Type.bug) || pokemon.weaknessesTable(pokemon).contains(Type.flying)
                     ) {
                         pokemon.HP -= pokemon.maxHP / 4;
 
                     }
                     if (
-                            (pokemon.checkWeaknesses(pokemon).contains(Type.fire) && pokemon.checkWeaknesses(pokemon).contains(Type.ice)) ||
-                                    (pokemon.checkWeaknesses(pokemon).contains(Type.fire) && pokemon.checkWeaknesses(pokemon).contains(Type.bug)) ||
-                                    (pokemon.checkWeaknesses(pokemon).contains(Type.fire) && pokemon.checkWeaknesses(pokemon).contains(Type.flying)) ||
-                                    (pokemon.checkWeaknesses(pokemon).contains(Type.ice) && pokemon.checkWeaknesses(pokemon).contains(Type.bug)) ||
-                                    (pokemon.checkWeaknesses(pokemon).contains(Type.ice) && pokemon.checkWeaknesses(pokemon).contains(Type.flying)) ||
-                                    (pokemon.checkWeaknesses(pokemon).contains(Type.flying) && pokemon.checkWeaknesses(pokemon).contains(Type.ice)) ||
-                                    (pokemon.checkWeaknesses(pokemon).contains(Type.flying) && pokemon.checkWeaknesses(pokemon).contains(Type.bug))
+                            (pokemon.weaknessesTable(pokemon).contains(Type.fire) && pokemon.weaknessesTable(pokemon).contains(Type.ice)) ||
+                                    (pokemon.weaknessesTable(pokemon).contains(Type.fire) && pokemon.weaknessesTable(pokemon).contains(Type.bug)) ||
+                                    (pokemon.weaknessesTable(pokemon).contains(Type.fire) && pokemon.weaknessesTable(pokemon).contains(Type.flying)) ||
+                                    (pokemon.weaknessesTable(pokemon).contains(Type.ice) && pokemon.weaknessesTable(pokemon).contains(Type.bug)) ||
+                                    (pokemon.weaknessesTable(pokemon).contains(Type.ice) && pokemon.weaknessesTable(pokemon).contains(Type.flying)) ||
+                                    (pokemon.weaknessesTable(pokemon).contains(Type.flying) && pokemon.weaknessesTable(pokemon).contains(Type.ice)) ||
+                                    (pokemon.weaknessesTable(pokemon).contains(Type.flying) && pokemon.weaknessesTable(pokemon).contains(Type.bug))
                     ) {
                         pokemon.HP -= pokemon.maxHP / 2;
                     }
