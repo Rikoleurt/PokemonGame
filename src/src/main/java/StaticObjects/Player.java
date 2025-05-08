@@ -38,9 +38,9 @@ public class Player {
         Pokemon Bulbizarre = initiateBulbizarre();
         Pokemon Salameche = initiateSalameche();
 
+        team.add(Salameche);
         team.add(Pikachu);
         team.add(Bulbizarre);
-        team.add(Salameche);
 
         return new Person.Player("Jason", bag, team);
     }

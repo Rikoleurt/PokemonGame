@@ -72,7 +72,6 @@ public class EnemyHPBar extends VBox {
     }
 
     void updateHPBars(Runnable onFinish) {
-
         AtomicInteger currentHP = new AtomicInteger(Math.max(0, pokemon.getHP()));
         int maxHP = pokemon.getMaxHP();
 
@@ -85,34 +84,21 @@ public class EnemyHPBar extends VBox {
                 e -> {
                     double progress = npcBar.getProgress();
                     if (progress > endProgress) {
-                        npcBar.setProgress(Math.max(progress - 0.02, endProgress));
+                        double newProgress = Math.max(progress - 0.02, endProgress);
+                        npcBar.setProgress(newProgress);
 
-                        int displayedHP = (int) Math.round(npcBar.getProgress() * maxHP);
+                        int displayedHP = (int) Math.round(newProgress * maxHP);
                         currentHP.set(Math.max(0, displayedHP));
-
                         HPs.setText(currentHP.get() + "/" + maxHP);
 
-                        if (currentHP.get() > maxHP / 2) {
-                            npcBar.setStyle("-fx-accent: #709f5e;");
-                        } else if (currentHP.get() > maxHP / 4) {
-                            npcBar.setStyle("-fx-accent: #f68524;");
-                        } else {
-                            npcBar.setStyle("-fx-accent: #d81e1e;");
-                        }
+                        PlayerBars.ApplyColor(onFinish, currentHP, maxHP, endProgress, newProgress, npcBar);
                     }
                 });
 
+        int steps = (int) Math.ceil((startProgress - endProgress) / 0.02);
         timeline.getKeyFrames().add(keyFrame);
-        timeline.setCycleCount((int) ((startProgress - endProgress) / 0.02));
-
-        timeline.setOnFinished(e -> {
-            npcBar.setProgress(endProgress);
-            HPs.setText(currentHP.get() + "/" + maxHP);
-            if (onFinish != null) {
-                onFinish.run();
-            }
-        });
-
+        timeline.setCycleCount(steps);
         timeline.play();
     }
+
 }

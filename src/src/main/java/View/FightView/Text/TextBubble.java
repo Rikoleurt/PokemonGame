@@ -6,7 +6,17 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
 
+import javafx.animation.PauseTransition;
+import javafx.util.Duration;
+
+import java.util.LinkedList;
+import java.util.Queue;
+
+
 public class TextBubble extends HBox implements Bubble {
+
+    private final Queue<String> messageQueue = new LinkedList<>();
+    private boolean isDisplayingQueue = false;
 
     static Font font = Font.loadFont(TextBubble.class.getResource("/font/pokemonFont.ttf").toExternalForm(), 18);
 
@@ -33,6 +43,7 @@ public class TextBubble extends HBox implements Bubble {
         this.getChildren().addAll(message);
 
     }
+
 
     @Override
     public void showMessage(String message) {
@@ -68,4 +79,38 @@ public class TextBubble extends HBox implements Bubble {
     public void showBubble() {
         this.setVisible(true);
     }
+
+    public boolean isDisplayingQueue() {
+        return isDisplayingQueue;
+    }
+
+    public void setDisplayingQueue(boolean displayingQueue) {
+        isDisplayingQueue = displayingQueue;
+    }
+
+    public void showMessages(String... messages) {
+        for (String msg : messages) {
+            messageQueue.offer(msg);
+        }
+
+        if (!isDisplayingQueue) {
+            displayNextMessage();
+        }
+    }
+
+    private void displayNextMessage() {
+        String next = messageQueue.poll();
+        if (next == null) {
+            isDisplayingQueue = false;
+            return;
+        }
+
+        isDisplayingQueue = true;
+        showMessage(next);
+
+        PauseTransition pause = new PauseTransition(Duration.seconds(1.5));
+        pause.setOnFinished(e -> displayNextMessage());
+        pause.play();
+    }
+
 }

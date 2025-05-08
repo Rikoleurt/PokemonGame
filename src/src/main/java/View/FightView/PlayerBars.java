@@ -19,9 +19,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static View.FightView.FightView.player;
 
-public class PlayerHPBar extends VBox {
+public class PlayerBars extends VBox {
 
-    static Font font = Font.loadFont(PlayerHPBar.class.getResource("/font/pokemonFont.ttf").toExternalForm(), 18);
+    static Font font = Font.loadFont(PlayerBars.class.getResource("/font/pokemonFont.ttf").toExternalForm(), 18);
 
     Pokemon pokemon = player.getFrontPokemon();
     TextBubble textBubble;
@@ -46,7 +46,7 @@ public class PlayerHPBar extends VBox {
     ProgressBar playerBar = new ProgressBar(1);
     ProgressBar expBar = new ProgressBar(1);
 
-    protected PlayerHPBar(double spacing, TextBubble textBubble, StatBubble statBubble) {
+    protected PlayerBars(double spacing, TextBubble textBubble, StatBubble statBubble) {
 
         this.textBubble = textBubble;
         this.statBubble = statBubble;
@@ -102,58 +102,51 @@ public class PlayerHPBar extends VBox {
                 e -> {
                     double progress = playerBar.getProgress();
                     if (progress > endProgress) {
-                        playerBar.setProgress(Math.max(progress - 0.02, endProgress));
+                        double newProgress = Math.max(progress - 0.02, endProgress);
+                        playerBar.setProgress(newProgress);
 
-                        int displayedHP = (int) Math.round(playerBar.getProgress() * maxHP);
+                        int displayedHP = (int) Math.round(newProgress * maxHP);
                         currentHP.set(Math.max(0, displayedHP));
-
                         HPsLabel.setText(currentHP.get() + "/" + maxHP);
 
-                        if (currentHP.get() > maxHP / 2) {
-                            playerBar.setStyle("-fx-accent: #709f5e;");
-                        } else if (currentHP.get() > maxHP / 4) {
-                            playerBar.setStyle("-fx-accent: #f68524;");
-                        } else {
-                            playerBar.setStyle("-fx-accent: #d81e1e;");
-                        }
+                        ApplyColor(onFinish, currentHP, maxHP, endProgress, newProgress, playerBar);
                     }
                 });
 
+        int steps = (int) Math.ceil((startProgress - endProgress) / 0.02);
         timeline.getKeyFrames().add(keyFrame);
-        timeline.setCycleCount((int) ((startProgress - endProgress) / 0.02));
-
-        timeline.setOnFinished(e -> {
-            playerBar.setProgress(endProgress);
-            HPsLabel.setText(currentHP.get() + "/" + maxHP);
-
-            if (currentHP.get() <= 0) {
-                textBubble.showMessage(pokemon.getName() + " is K.O");
-
-            }
-            if (onFinish != null) {
-                onFinish.run();
-            }
-        });
-
+        timeline.setCycleCount(steps);
         timeline.play();
     }
 
-    void updateExpBars(int expGain, Runnable onFinish) {
-        applyExpGain(expGain, onFinish);
+    static void ApplyColor(Runnable onFinish, AtomicInteger currentHP, int maxHP, double endProgress, double newProgress, ProgressBar playerBar) {
+        if (currentHP.get() > maxHP / 2) {
+            playerBar.setStyle("-fx-accent: #709f5e;");
+        } else if (currentHP.get() > maxHP / 4) {
+            playerBar.setStyle("-fx-accent: #f68524;");
+        } else {
+            playerBar.setStyle("-fx-accent: #d81e1e;");
+        }
+
+        if (Math.abs(newProgress - endProgress) < 0.01 && onFinish != null) {
+            onFinish.run();
+        }
+    }
+
+    void updateExpBar(int expGain) {
+        applyExpGain(expGain, null);
     }
 
     private void applyExpGain(int remainingExp, Runnable onFinish) {
-
         int currentExp = pokemon.getExp();
         int currentMaxExp = pokemon.calculateMaxExp();
+        System.out.println(currentMaxExp);
         int expToNextLevel = currentMaxExp - currentExp;
         int appliedExp = Math.min(remainingExp, expToNextLevel);
         int finalExp = currentExp + appliedExp;
 
         double startProgress = (double) currentExp / currentMaxExp;
         double endProgress = (double) finalExp / currentMaxExp;
-
-        pokemon.setExp(finalExp);
 
         AtomicInteger displayedExp = new AtomicInteger(currentExp);
 
@@ -164,7 +157,8 @@ public class PlayerHPBar extends VBox {
                 double nextProgress = Math.min(progress + 0.01, endProgress);
                 expBar.setProgress(nextProgress);
 
-                int shownExp = (int) Math.round(nextProgress * currentMaxExp);
+                // Utiliser calculateMaxExp dynamiquement pour garder la cohérence
+                int shownExp = (int) Math.round(nextProgress * pokemon.calculateMaxExp());
                 displayedExp.set(shownExp);
             }
         });
@@ -176,19 +170,20 @@ public class PlayerHPBar extends VBox {
             expBar.setProgress(endProgress);
 
             if (finalExp >= currentMaxExp) {
+                pokemon.setExp(finalExp);
+
                 pokemon.levelUp();
                 pokemon.setExp(0);
+
                 expBar.setProgress(0);
-
-                int newMaxExp = pokemon.getMaxExp();
-
                 LvlLabel.setText("Lvl : " + pokemon.getLevel());
+
                 textBubble.showMessage(pokemon.getName() + " upgrades to level " + pokemon.getLevel() + " !");
+                statBubble.showMessage("test");
 
                 applyExpGain(remainingExp - appliedExp, onFinish);
-
-                statBubble.showMessage("test");
             } else {
+                pokemon.setExp(finalExp);
                 if (onFinish != null) {
                     onFinish.run();
                 }
@@ -197,5 +192,4 @@ public class PlayerHPBar extends VBox {
 
         timeline.play();
     }
-
 }

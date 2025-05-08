@@ -9,6 +9,8 @@ import Pokemon.PokemonEnum.Status;
 import Pokemon.PokemonEnum.Nature;
 import Pokemon.PokemonEnum.Type;
 import Pokemon.Attacks.DebrisAttack;
+
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -17,8 +19,6 @@ import java.util.Random;
 import View.FightView.Text.TextBubble;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
-import java.io.FileReader;
-import java.io.IOException;
 
 
 public class Pokemon {
@@ -348,6 +348,14 @@ public class Pokemon {
         this.exp = exp;
     }
 
+    public void setHP(int hp) {
+        this.HP = hp;
+        if (this.HP <= 0) {
+            this.HP = 0;
+            this.status = Status.KO;
+        }
+    }
+
     // ------------------------------------------------------------------------------------------------------------------
     // Attack
     // ------------------------------------------------------------------------------------------------------------------
@@ -360,31 +368,32 @@ public class Pokemon {
      * @param terrain The terrain the Pokémon are on
      */
     public void attack(Pokemon target, Move move, Terrain terrain) {
-        if(this.getAttack(move) instanceof Attack attack){
+        Move m = this.getAttack(move);
+        if(m instanceof Attack attack){
             statusEffect(target, move);
             if((this.getStatus() == Status.normal || this.getStatus() == Status.cursed || this.getStatus() == Status.burned
                     || this.getStatus() == Status.paralyzed || this.getStatus() == Status.freeze || this.getStatus() == Status.attracted
                     || this.getStatus() == Status.confused || this.getStatus() == Status.asleep || this.getStatus() == Status.poisoned
                     || this.getStatus() == Status.badlyPoisoned)){
                 System.out.println(this.getName() + " uses " + move.getName());
-                target.HP -= (int) totalDamage((Attack) this.getAttack(attack), this, target);
+                int damage = (int) totalDamage((Attack) this.getAttack(attack), this, target);
+                target.setHP(Math.max(0, target.getHP() - damage));
                 System.out.println(target.getName() + " HP : " + target.HP + "/" + target.getMaxHP());
             }
         }
-        if(this.getAttack(move) instanceof DebrisAttack debrisAttack){
+        if(m instanceof DebrisAttack debrisAttack){
             statusEffect(target, move);
             System.out.println(this.getName() + " uses " + move.getName());
             terrain.setDebris(debrisAttack.getDebris());
         }
-        if(this.getAttack(move) instanceof StatusAttack statusAttack){
+        if(m instanceof StatusAttack statusAttack){
             statusEffect(target, statusAttack);
             System.out.println(this.getName() + " uses " + move.getName());
             target.status = setStatus(target, statusAttack);
             System.out.println(target.getName() + " is " + target.getStatus() + "!");
         }
-        if(this.getAttack(move) instanceof UpgradeMove upgradeMove){
+        if(m instanceof UpgradeMove upgradeMove){
             statusEffect(target, upgradeMove);
-            System.out.println(upgradeMove.getRaiseLevel());
             switch (upgradeMove.getStat()) {
                 case "atk"    -> atkRaise += upgradeMove.getRaiseLevel();
                 case "def"    -> defRaise += upgradeMove.getRaiseLevel();
@@ -395,6 +404,9 @@ public class Pokemon {
             updateStat();
         }
         updateStatus();
+        if (target.HP <= 0) {
+            target.setStatus(Status.KO);
+        }
     }
 
     // ------------------------------------------------------------------------------------------------------------------
@@ -405,11 +417,11 @@ public class Pokemon {
      * Update the stat modifier each turn
      */
     public void updateStat(){
-        this.atk = applyStatModifier(this.baseAtk, atkRaise);
-        this.def = applyStatModifier(this.baseDef, defRaise);
-        this.speed = applyStatModifier(this.baseSpeed, speedRaise);
-        this.atkSpe = applyStatModifier(this.baseAtkSpe, atkSpeRaise);
-        this.defSpe = applyStatModifier(this.baseDefSpe, defSpeRaise);
+        this.atk = applyStatModifier(this.atk, atkRaise);
+        this.def = applyStatModifier(this.def, defRaise);
+        this.speed = applyStatModifier(this.speed, speedRaise);
+        this.atkSpe = applyStatModifier(this.atkSpe, atkSpeRaise);
+        this.defSpe = applyStatModifier(this.defSpe, defSpeRaise);
     }
 
     private int applyStatModifier(int baseStat, int stage){
@@ -939,26 +951,41 @@ public class Pokemon {
      * @return ((baseExperience * defeatedPokemon.getLevel()) / 7)
      */
     public int calculateEXP(Pokemon defeatedPokemon) {
-//        String filePath = "/Users/condreajason/Repositories/PokemonGame/src/src/main/resources/data/pokemon.csv";
-        String filePath = "C:\\dev\\gitproject\\PokemonGame\\src\\src\\main\\resources\\data\\pokemon.csv";
-        int baseExperience = getBaseExperience(defeatedPokemon.getName(), filePath);
+        String fileName = "data/pokemon.csv";
+        System.out.println(this.getMaxExp());
+        int a = 1; // if the Pokémon has been captured by a trainer, then a = 1.5;
+        int e = 1; // if the Pokémon has a lucky egg, then e = 1.5;
+        int t = 1; // if the Pokémon has been exchanged before, then t = 1.5 and 1.7 if it comes from another region from the player
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(fileName)) {
+            if (inputStream == null) {
+                System.out.println("File not found in resources: " + fileName);
+                return 0;
+            }
 
-        if (baseExperience == -1) {
-            System.out.println("Can't find base exp for : " + defeatedPokemon.getName());
+            int baseExperience = getBaseExperience(defeatedPokemon.getName(), inputStream);
+
+            if (baseExperience == -1) {
+                System.out.println("Can't find base exp for: " + defeatedPokemon.getName());
+                return 0;
+            }
+
+            return ((a * e * t * baseExperience * defeatedPokemon.getLevel()) / 7);
+        } catch (IOException ex) {
+            ex.printStackTrace();
             return 0;
         }
-
-        return ((baseExperience * defeatedPokemon.getLevel()) / 7);
     }
+
+
 
     /**
      * Get the base experience in the csv file
      * @param pokemonName name of the Pokémon we have to search for
-     * @param filePath File path
      * @return The base experience of the Pokémon
      */
-    public static int getBaseExperience(String pokemonName, String filePath) {
-        try (CSVReader reader = new CSVReader(new FileReader(filePath))) {
+
+    public static int getBaseExperience(String pokemonName, InputStream inputStream) {
+        try (CSVReader reader = new CSVReader(new BufferedReader(new InputStreamReader(inputStream)))) {
             String[] nextLine;
             boolean isHeader = true;
             int expIndex = -1, nameIndex = -1;
@@ -966,7 +993,7 @@ public class Pokemon {
             while ((nextLine = reader.readNext()) != null) {
                 if (isHeader) {
                     for (int i = 0; i < nextLine.length; i++) {
-                        if (nextLine[i].equalsIgnoreCase("identifier")) { 
+                        if (nextLine[i].equalsIgnoreCase("identifier")) {
                             nameIndex = i;
                         } else if (nextLine[i].equalsIgnoreCase("base_experience")) {
                             expIndex = i;
@@ -975,7 +1002,7 @@ public class Pokemon {
                     isHeader = false;
 
                     if (nameIndex == -1 || expIndex == -1) {
-                        System.err.println("Error : can't find columns 'indentifier' or 'base_experience'.");
+                        System.err.println("Erreur : colonnes 'identifier' ou 'base_experience' non trouvées.");
                         return -1;
                     }
                     continue;
@@ -988,6 +1015,7 @@ public class Pokemon {
         } catch (IOException | NumberFormatException | CsvValidationException e) {
             e.printStackTrace();
         }
+
         System.err.println("Erreur : Pokémon '" + pokemonName + "' non trouvé dans le fichier CSV.");
         return -1;
     }
