@@ -24,11 +24,11 @@ public class StatBubble extends HBox implements Bubble {
 
         message.setFont(font);
         message.setStyle("-fx-text-fill: white;" +    // Couleur du texte en blanc
-                "-fx-padding: 15px;" +       // Espacement interne
+                "-fx-padding: 5px;" +       // Espacement interne
                 "-fx-alignment: center-left;" + // Alignement du texte
                 "-fx-wrap-text: true;");     // Gestion des retours à la ligne
         message.setVisible(false);
-        message.setPrefSize(150,175);
+        message.setPrefSize(200,225);
         this.getChildren().addAll(message);
     }
 

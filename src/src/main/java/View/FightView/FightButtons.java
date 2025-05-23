@@ -1,11 +1,11 @@
 package View.FightView;
 
-import Pokemon.Pokemon;
-import Pokemon.Move;
-import Pokemon.PokemonEnum.Status;
-import Pokemon.Terrain;
-import Pokemon.TerrainEnum.Debris;
-import Pokemon.TerrainEnum.Meteo;
+import Model.Pokemon.Pokemon;
+import Model.Pokemon.Move;
+import Model.Pokemon.PokemonEnum.Status;
+import Model.Pokemon.Terrain;
+import Model.Pokemon.TerrainEnum.Debris;
+import Model.Pokemon.TerrainEnum.Meteo;
 
 import View.FightView.Text.TextBubble;
 import javafx.collections.ObservableList;
@@ -65,9 +65,15 @@ public class FightButtons extends HBox {
         ObservableList<Node> components = this.getChildren();
 
         vBox.getChildren().addAll(HBox1, HBox2);
-        components.add(vBox);
         vBox.setAlignment(Pos.CENTER);
+        vBox2.getChildren().add(textBubble);
 
+        components.addAll(vBox2, vBox);
+
+        textBubble.showMessage("What will " + playerPokemon.getName() + " do?");
+
+
+        vBox2.setVisible(true);
         HBox1.setSpacing(5);
         HBox2.setSpacing(5);
         vBox.setSpacing(5);
@@ -86,10 +92,8 @@ public class FightButtons extends HBox {
            HBox1.getChildren().addAll(atk1Button, atk2Button);
            HBox2.getChildren().addAll(atk3Button, atk4Button);
 
-           vBox.getChildren().addAll(textBubble, HBox1, HBox2);
-           vBox2.getChildren().add(textBubble);
+           vBox.getChildren().addAll(HBox1, HBox2);
 
-           vBox2.setVisible(false);
            components.addAll(vBox2, vBox);
 
         });
@@ -178,25 +182,26 @@ public class FightButtons extends HBox {
             if (priority) {
 
                 playerPokemon.attack(npcPokemon, move, terrain);
-                textBubble.showMessage(playerPokemon.getName() + " uses " + move.getName());
+
+                textBubble.showMessages(playerPokemon.getName() + " uses " + move.getName());
 
                 enemyHPBar.updateHPBars(() -> {
-                    textBubble.showMessage(playerPokemon.getName() + " uses " + move.getName());
+                    textBubble.showMessages(playerPokemon.getName() + " uses " + move.getName());
 
                     if (npcPokemon.getHP() <= 0 && !npcPokemon.getStatus().equals(Status.KO)) {
                         npcPokemon.setStatus(Status.KO);
                     }
 
                     if (npcPokemon.isKO()) {
-                        textBubble.showMessage(npcPokemon.getName() + " is K.O ");
+                        textBubble.showMessages(npcPokemon.getName() + " is K.O ");
                         int totalExp = playerPokemon.calculateEXP(npcPokemon);
                         playerBars.updateExpBar(totalExp);
-                        textBubble.showMessage(playerPokemon.getName() + " earned " + totalExp + " exp");
+                        textBubble.showMessages(playerPokemon.getName() + " earned " + totalExp + " exp");
                     } else {
                         Move enemyMove = npcPokemon.chooseMove();
                         npcPokemon.attack(playerPokemon, enemyMove, terrain);
 
-                        textBubble.showMessage(npcPokemon.getName() + " uses " + enemyMove.getName());
+                        textBubble.showMessages(npcPokemon.getName() + " uses " + enemyMove.getName());
                         playerBars.updateHPBars(null);
                     }
 
@@ -209,12 +214,12 @@ public class FightButtons extends HBox {
                 // The foe uses an attack
                 Move enemyMove = npcPokemon.chooseMove();
                 npcPokemon.attack(playerPokemon, enemyMove, terrain);
-                textBubble.showMessage(npcPokemon.getName() + " uses " + enemyMove.getName()); // inform the player
+                textBubble.showMessages(npcPokemon.getName() + " uses " + enemyMove.getName()); // inform the player
 
                 playerBars.updateHPBars(() -> { // Update the HP bar of the player's Pokémon
 
                     playerPokemon.attack(npcPokemon, move, terrain);
-                    textBubble.showMessage(playerPokemon.getName() + " uses " + move.getName());
+                    textBubble.showMessages(playerPokemon.getName() + " uses " + move.getName());
 
                     enemyHPBar.updateHPBars(() -> {
                         if (npcPokemon.isKO()) {
@@ -225,6 +230,7 @@ public class FightButtons extends HBox {
                                     npcPokemon.getName() + " is K.O",
                                     playerPokemon.getName() + " earned " + totalExp + " exp"
                             );
+
                         }
 
                     });

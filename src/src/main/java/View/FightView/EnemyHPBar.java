@@ -1,6 +1,6 @@
 package View.FightView;
 
-import Pokemon.PokemonEnum.Status;
+import Model.Pokemon.PokemonEnum.Status;
 import View.FightView.Text.TextBubble;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -11,7 +11,7 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-import Pokemon.Pokemon;
+import Model.Pokemon.Pokemon;
 import javafx.util.Duration;
 
 import java.util.concurrent.atomic.AtomicInteger;

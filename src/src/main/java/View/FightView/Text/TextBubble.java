@@ -1,5 +1,6 @@
 package View.FightView.Text;
 
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -16,7 +17,7 @@ import java.util.Queue;
 public class TextBubble extends HBox implements Bubble {
 
     private final Queue<String> messageQueue = new LinkedList<>();
-    private boolean isDisplayingQueue = false;
+    private volatile boolean isDisplayingQueue = false;
 
     static Font font = Font.loadFont(TextBubble.class.getResource("/font/pokemonFont.ttf").toExternalForm(), 18);
 
@@ -89,14 +90,17 @@ public class TextBubble extends HBox implements Bubble {
     }
 
     public void showMessages(String... messages) {
-        for (String msg : messages) {
-            messageQueue.offer(msg);
-        }
+        Platform.runLater(() -> {
+            for (String msg : messages) {
+                messageQueue.offer(msg);
+            }
 
-        if (!isDisplayingQueue) {
-            displayNextMessage();
-        }
+            if (!isDisplayingQueue) {
+                displayNextMessage();
+            }
+        });
     }
+
 
     private void displayNextMessage() {
         String next = messageQueue.poll();
@@ -108,7 +112,7 @@ public class TextBubble extends HBox implements Bubble {
         isDisplayingQueue = true;
         showMessage(next);
 
-        PauseTransition pause = new PauseTransition(Duration.seconds(1.5));
+        PauseTransition pause = new PauseTransition(Duration.seconds(2));
         pause.setOnFinished(e -> displayNextMessage());
         pause.play();
     }

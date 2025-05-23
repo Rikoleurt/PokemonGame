@@ -1,7 +1,7 @@
 package View.FightView;
 
-import Pokemon.Pokemon;
-import Pokemon.PokemonEnum.Status;
+import Model.Pokemon.Pokemon;
+import Model.Pokemon.PokemonEnum.Status;
 import View.FightView.Text.StatBubble;
 import View.FightView.Text.TextBubble;
 import javafx.animation.KeyFrame;
@@ -35,7 +35,6 @@ public class PlayerBars extends VBox {
     Status pokemonStatus = pokemon.getStatus();
     String statusString = pokemon.getStatus().toString();
 
-
     // Player Labels
     Label pokemonNameLabel = new Label(pokemonName);
     Label HPLabel = new Label("HP :");
@@ -62,7 +61,7 @@ public class PlayerBars extends VBox {
         expBar.setPrefSize(182,15);
         expBar.setStyle("-fx-accent: #9642c1;");
         expBar.setProgress(pokemon.getExp());
-        HBox statBox = new HBox(statBubble);
+
         HBox HBox1 = new HBox(pokemonNameLabel, LvlLabel);
         HBox HBox1b = new HBox(expBar);
         HBox HBox2 = new HBox(HPLabel, playerBar);
@@ -157,7 +156,6 @@ public class PlayerBars extends VBox {
                 double nextProgress = Math.min(progress + 0.01, endProgress);
                 expBar.setProgress(nextProgress);
 
-                // Utiliser calculateMaxExp dynamiquement pour garder la cohérence
                 int shownExp = (int) Math.round(nextProgress * pokemon.calculateMaxExp());
                 displayedExp.set(shownExp);
             }
@@ -178,8 +176,8 @@ public class PlayerBars extends VBox {
                 expBar.setProgress(0);
                 LvlLabel.setText("Lvl : " + pokemon.getLevel());
 
-                textBubble.showMessage(pokemon.getName() + " upgrades to level " + pokemon.getLevel() + " !");
-                statBubble.showMessage("test");
+                textBubble.showMessage(pokemon.getName() + " levels up !");
+                statBubble.showMessage(statMessage(pokemon));
 
                 applyExpGain(remainingExp - appliedExp, onFinish);
             } else {
@@ -192,4 +190,13 @@ public class PlayerBars extends VBox {
 
         timeline.play();
     }
+
+    private String statMessage(Pokemon p) {
+        return String.format(
+                "%s levels up %d !\nHP: %d/%d\nAtk: %d\nDef: %d\nAtkSpe: %d\nDefSpe: %d\nSpeed: %d",
+                p.getName(), p.getLevel(), p.getHP(), p.getMaxHP(),
+                p.getAtk(), p.getDef(), p.getAtkSpe(), p.getDefSpe(), p.getSpeed()
+        );
+    }
+
 }
