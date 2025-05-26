@@ -1,6 +1,5 @@
 package Controller.Log;
 
-
 import View.FightView.Text.TextBubble;
 
 public class FightLogger implements Logger {
@@ -14,5 +13,4 @@ public class FightLogger implements Logger {
     public void printLog(String message) {
         bubble.showMessages(message);
     }
-
 }

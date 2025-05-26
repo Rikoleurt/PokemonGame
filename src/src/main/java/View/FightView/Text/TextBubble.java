@@ -92,6 +92,7 @@ public class TextBubble extends HBox implements Bubble {
     public void showMessages(String... messages) {
         Platform.runLater(() -> {
             for (String msg : messages) {
+                System.out.println("New message : " + msg);
                 messageQueue.offer(msg);
             }
 
@@ -100,7 +101,6 @@ public class TextBubble extends HBox implements Bubble {
             }
         });
     }
-
 
     private void displayNextMessage() {
         String next = messageQueue.poll();
@@ -112,7 +112,7 @@ public class TextBubble extends HBox implements Bubble {
         isDisplayingQueue = true;
         showMessage(next);
 
-        PauseTransition pause = new PauseTransition(Duration.seconds(2));
+        PauseTransition pause = new PauseTransition(Duration.seconds(1.5));
         pause.setOnFinished(e -> displayNextMessage());
         pause.play();
     }

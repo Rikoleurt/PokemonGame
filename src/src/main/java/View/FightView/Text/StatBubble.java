@@ -1,15 +1,23 @@
 package View.FightView.Text;
 
+import javafx.animation.PauseTransition;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
+import javafx.util.Duration;
+
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class StatBubble extends HBox implements Bubble {
     static Font font = Font.loadFont(StatBubble.class.getResource("/font/pokemonFont.ttf").toExternalForm(), 18);
     Label message = new Label(null);
     private boolean isMessageVisible = false;
+    private final Queue<String> messageQueue = new LinkedList<>();
+    private volatile boolean isDisplayingQueue = false;
 
     public StatBubble() {
         hideBubble();
@@ -65,5 +73,33 @@ public class StatBubble extends HBox implements Bubble {
     @Override
     public void showBubble() {
         this.setVisible(true);
+    }
+
+    public void showMessages(String... messages) {
+        Platform.runLater(() -> {
+            for (String msg : messages) {
+                System.out.println("New message : " + msg);
+                messageQueue.offer(msg);
+            }
+
+            if (!isDisplayingQueue) {
+                displayNextMessage();
+            }
+        });
+    }
+
+    private void displayNextMessage() {
+        String next = messageQueue.poll();
+        if (next == null) {
+            isDisplayingQueue = false;
+            return;
+        }
+
+        isDisplayingQueue = true;
+        showMessage(next);
+
+        PauseTransition pause = new PauseTransition(Duration.seconds(1.5));
+        pause.setOnFinished(e -> displayNextMessage());
+        pause.play();
     }
 }

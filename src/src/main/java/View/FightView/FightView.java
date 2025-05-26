@@ -1,10 +1,17 @@
 package View.FightView;
 
 import Controller.Log.FightLogger;
+
 import Model.Person.NPC;
 import Model.Person.Player;
+import Model.Pokemon.Pokemon;
+
+import View.FightView.InfoBars.Bar;
+import View.FightView.InfoBars.OpponentBar;
+import View.FightView.InfoBars.PlayerBar;
 import View.FightView.Text.StatBubble;
 import View.FightView.Text.TextBubble;
+
 import javafx.geometry.Pos;
 import javafx.scene.layout.BorderPane;
 
@@ -14,24 +21,31 @@ import static Model.StaticObjects.Player.initiatePlayer;
 public class FightView extends BorderPane {
 
     TextBubble textBubble = new TextBubble();
-    StatBubble statBubble = new StatBubble();
-    PlayerBars playerBar = new PlayerBars(10, textBubble, statBubble);
-    EnemyHPBar enemyHPBar = new EnemyHPBar(10, textBubble);
-    FightButtons fightButtons = new FightButtons(enemyHPBar, playerBar, textBubble);
+    StatBubble statBubble = new StatBubble();;
     FightLogger logger = new FightLogger(textBubble);
 
+    public static Player player = initiatePlayer();
+    public static NPC npc = initiateEnemy();
 
-    protected static Player player = initiatePlayer();
-    protected static NPC npc = initiateEnemy();
+    public static Pokemon playerPokemon = player.getFrontPokemon();
+    public static Pokemon npcPokemon = npc.getFrontPokemon();
+
+    Bar opponentBar = new OpponentBar(5, textBubble, npcPokemon);
+    Bar playerBar = new PlayerBar(5, textBubble, playerPokemon );
+
+    FightButtons fightButtons = new FightButtons(textBubble, opponentBar, playerBar);
+
 
     public FightView() {
 
         player.getFrontPokemon().setLogger(logger);
+        npc.getFrontPokemon().setLogger(logger);
+
         setBottom(fightButtons);
         setRight(playerBar);
-        setTop(enemyHPBar);
+        setTop(opponentBar);
 
-        setAlignment(enemyHPBar, Pos.TOP_LEFT);
+        setAlignment(opponentBar, Pos.TOP_LEFT);
         setAlignment(playerBar, Pos.BOTTOM_CENTER);
         setAlignment(fightButtons, Pos.BOTTOM_RIGHT);
     }

@@ -1,12 +1,13 @@
 package View.FightView;
 
+import Controller.Turns.Turn;
 import Model.Pokemon.Pokemon;
 import Model.Pokemon.Move;
-import Model.Pokemon.PokemonEnum.Status;
 import Model.Pokemon.Terrain;
 import Model.Pokemon.TerrainEnum.Debris;
 import Model.Pokemon.TerrainEnum.Meteo;
 
+import View.FightView.InfoBars.Bar;
 import View.FightView.Text.TextBubble;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -42,25 +43,26 @@ public class FightButtons extends HBox {
     Button pokemonButton = createButton("Pokemon");
 
     // Attack buttons
-    Button atk1Button = createButton(playerPokemon.getAttacks().getFirst().getName());
-    Button atk2Button = createButton(playerPokemon.getAttacks().get(1).getName());
-    Button atk3Button = createButton(playerPokemon.getAttacks().get(2).getName());
-    //Button atk4Button = createButton(playerPokemon.getAttacks().get(3).getName());
-    Button atk4Button = createButton(" - ");
+    Button atk1Button = createButton(getAttackName(0));
+    Button atk2Button = createButton(getAttackName(1));
+    Button atk3Button = createButton(getAttackName(2));
+    Button atk4Button = createButton(getAttackName(3));
 
-    private final EnemyHPBar enemyHPBar;
-    private final PlayerBars playerBars;
-    private TextBubble textBubble;
+    private Bar opponentBar;
+    private final Bar playerBar;
+    private final TextBubble textBubble;
 
     VBox vBox = new VBox();
     VBox vBox2 = new VBox();
     HBox HBox1 = new HBox(fightButton, bagButton);
     HBox HBox2 = new HBox(runButton, pokemonButton);
 
-    public FightButtons(EnemyHPBar enemyHPBar, PlayerBars playerBars, TextBubble textBubble) {
-        this.enemyHPBar = enemyHPBar;
-        this.playerBars = playerBars;
+    Turn turn = new Turn(playerPokemon, npcPokemon);
+
+    public FightButtons(TextBubble textBubble, Bar opponentBar, Bar playerBar) {
         this.textBubble = textBubble;
+        this.opponentBar = opponentBar;
+        this.playerBar = playerBar;
 
         ObservableList<Node> components = this.getChildren();
 
@@ -71,7 +73,6 @@ public class FightButtons extends HBox {
         components.addAll(vBox2, vBox);
 
         textBubble.showMessage("What will " + playerPokemon.getName() + " do?");
-
 
         vBox2.setVisible(true);
         HBox1.setSpacing(5);
@@ -167,79 +168,43 @@ public class FightButtons extends HBox {
         });
     }
 
-    private boolean compareSpeed(){
-        return playerPokemon.getSpeed() > npcPokemon.getSpeed();
+    private void AtkButtonAction(Move move, Terrain terrain) {
+        HBox1.setVisible(false);
+        HBox2.setVisible(false);
+        if(turn.isPlayerTurn()) {
+            playerPokemon.attack(npcPokemon, move, terrain);
+            opponentBar.updateHPBars(opponentBar.getHealth(), () -> {
+                if (npcPokemon.isKO()) {
+                    textBubble.showMessages(npcPokemon.getName() + " fainted!");
+                    int totalExp = playerPokemon.calculateEXP(npcPokemon);
+                    playerBar.updateExpBar(totalExp, playerBar.getLevel(), () -> textBubble.showMessages(playerPokemon.getName() + " earned " + totalExp));
+                }
+                turn.toggleTurn();
+            });
+        }
+
+        if(!turn.isPlayerTurn()){
+            Move npcMove = npcPokemon.chooseMove();
+            npcPokemon.attack(playerPokemon, npcMove, terrain);
+            playerBar.updateHPBars(playerBar.getHealth(), () -> {
+                if(playerPokemon.isKO()){
+                    textBubble.showMessages(
+                            playerPokemon.getName() + " fainted!",
+                            "fight lost");
+                }
+                turn.toggleTurn();
+            });
+        }
+        HBox1.setVisible(true);
+        HBox2.setVisible(true);
+        requestFocus();
     }
 
-    private void AtkButtonAction(Move move, Terrain terrain) {
-        boolean priority = compareSpeed();
-        if(!playerPokemon.getStatus().equals(Status.KO) || !npcPokemon.getStatus().equals(Status.KO)) {
-
-            vBox2.setVisible(true);
-            HBox1.setVisible(false);
-            HBox2.setVisible(false);
-
-            if (priority) {
-
-                playerPokemon.attack(npcPokemon, move, terrain);
-
-                textBubble.showMessages(playerPokemon.getName() + " uses " + move.getName());
-
-                enemyHPBar.updateHPBars(() -> {
-                    textBubble.showMessages(playerPokemon.getName() + " uses " + move.getName());
-
-                    if (npcPokemon.getHP() <= 0 && !npcPokemon.getStatus().equals(Status.KO)) {
-                        npcPokemon.setStatus(Status.KO);
-                    }
-
-                    if (npcPokemon.isKO()) {
-                        textBubble.showMessages(npcPokemon.getName() + " is K.O ");
-                        int totalExp = playerPokemon.calculateEXP(npcPokemon);
-                        playerBars.updateExpBar(totalExp);
-                        textBubble.showMessages(playerPokemon.getName() + " earned " + totalExp + " exp");
-                    } else {
-                        Move enemyMove = npcPokemon.chooseMove();
-                        npcPokemon.attack(playerPokemon, enemyMove, terrain);
-
-                        textBubble.showMessages(npcPokemon.getName() + " uses " + enemyMove.getName());
-                        playerBars.updateHPBars(null);
-                    }
-
-                    HBox1.setVisible(true);
-                    HBox2.setVisible(true);
-                });
-
-                this.requestFocus();
-            } else { // foe's turn
-                // The foe uses an attack
-                Move enemyMove = npcPokemon.chooseMove();
-                npcPokemon.attack(playerPokemon, enemyMove, terrain);
-                textBubble.showMessages(npcPokemon.getName() + " uses " + enemyMove.getName()); // inform the player
-
-                playerBars.updateHPBars(() -> { // Update the HP bar of the player's Pokémon
-
-                    playerPokemon.attack(npcPokemon, move, terrain);
-                    textBubble.showMessages(playerPokemon.getName() + " uses " + move.getName());
-
-                    enemyHPBar.updateHPBars(() -> {
-                        if (npcPokemon.isKO()) {
-                            int totalExp = playerPokemon.calculateEXP(npcPokemon);
-                            playerBars.updateExpBar(totalExp);
-
-                            textBubble.showMessages(
-                                    npcPokemon.getName() + " is K.O",
-                                    playerPokemon.getName() + " earned " + totalExp + " exp"
-                            );
-
-                        }
-
-                    });
-
-                    HBox1.setVisible(true);
-                    HBox2.setVisible(true);
-                    this.requestFocus();
-                });
-            }
+    private String getAttackName(int index){
+        if(index < playerPokemon.getAttacks().size()){
+            return playerPokemon.getAttacks().get(index).getName();
+        } else{
+            return " - ";
         }
     }
 }
