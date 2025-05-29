@@ -30,14 +30,12 @@ public class FightView extends BorderPane {
     public static Pokemon playerPokemon = player.getFrontPokemon();
     public static Pokemon npcPokemon = npc.getFrontPokemon();
 
-    Bar opponentBar = new OpponentBar(5, textBubble, npcPokemon);
-    Bar playerBar = new PlayerBar(5, textBubble, playerPokemon );
+    Bar opponentBar = new OpponentBar(5, npcPokemon);
+    Bar playerBar = new PlayerBar(5, playerPokemon );
 
     FightButtons fightButtons = new FightButtons(textBubble, opponentBar, playerBar);
 
-
-    public FightView() {
-
+    public FightView(){
         player.getFrontPokemon().setLogger(logger);
         npc.getFrontPokemon().setLogger(logger);
 

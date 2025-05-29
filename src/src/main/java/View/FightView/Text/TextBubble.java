@@ -1,7 +1,6 @@
 package View.FightView.Text;
 
 import javafx.application.Platform;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
@@ -108,13 +107,13 @@ public class TextBubble extends HBox implements Bubble {
             isDisplayingQueue = false;
             return;
         }
-
         isDisplayingQueue = true;
         showMessage(next);
-
         PauseTransition pause = new PauseTransition(Duration.seconds(1.5));
         pause.setOnFinished(e -> displayNextMessage());
         pause.play();
     }
+
+
 
 }

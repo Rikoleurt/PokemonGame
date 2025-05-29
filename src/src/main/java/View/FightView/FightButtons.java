@@ -27,10 +27,10 @@ public class FightButtons extends HBox {
 
     Pokemon playerPokemon = player.getFrontPokemon();
 
-    Move pAtk1 = playerPokemon.getAttacks().getFirst();
-    Move pAtk2 = playerPokemon.getAttacks().get(1);
-    Move pAtk3 = playerPokemon.getAttacks().get(2);
-    //Move pAtk4 = playerPokemon.getAttacks().get(3);
+    Move pAtk1 = getMove(0);
+    Move pAtk2 = getMove(1);
+    Move pAtk3 = getMove(2);
+    Move pAtk4 = getMove(3);
 
     Pokemon npcPokemon = npc.getFrontPokemon();
 
@@ -177,10 +177,10 @@ public class FightButtons extends HBox {
                 if (npcPokemon.isKO()) {
                     textBubble.showMessages(npcPokemon.getName() + " fainted!");
                     int totalExp = playerPokemon.calculateEXP(npcPokemon);
-                    playerBar.updateExpBar(totalExp, playerBar.getLevel(), () -> textBubble.showMessages(playerPokemon.getName() + " earned " + totalExp));
+                    playerBar.updateExpBar(totalExp, playerBar.getLevel(), () -> textBubble.showMessages(playerPokemon.getName() + " earned " + totalExp + "exp"));
                 }
-                turn.toggleTurn();
             });
+            turn.toggleTurn();
         }
 
         if(!turn.isPlayerTurn()){
@@ -188,12 +188,10 @@ public class FightButtons extends HBox {
             npcPokemon.attack(playerPokemon, npcMove, terrain);
             playerBar.updateHPBars(playerBar.getHealth(), () -> {
                 if(playerPokemon.isKO()){
-                    textBubble.showMessages(
-                            playerPokemon.getName() + " fainted!",
-                            "fight lost");
+                    textBubble.showMessages(playerPokemon.getName() + " fainted!");
                 }
-                turn.toggleTurn();
             });
+            turn.toggleTurn();
         }
         HBox1.setVisible(true);
         HBox2.setVisible(true);
@@ -203,8 +201,16 @@ public class FightButtons extends HBox {
     private String getAttackName(int index){
         if(index < playerPokemon.getAttacks().size()){
             return playerPokemon.getAttacks().get(index).getName();
-        } else{
+        } else {
             return " - ";
+        }
+    }
+
+    private Move getMove(int index){
+        if(index < playerPokemon.getAttacks().size()){
+            return playerPokemon.getAttacks().get(index);
+        } else {
+            return null;
         }
     }
 }

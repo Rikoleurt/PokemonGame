@@ -9,8 +9,8 @@ import java.util.Collection;
 
 public class PlayerBar extends Bar {
 
-    public PlayerBar(double spacing, TextBubble bubble, Pokemon p) {
-        super(spacing, bubble, p);
+    public PlayerBar(double spacing, Pokemon p) {
+        super(spacing, p);
         setAlignment(Pos.BOTTOM_LEFT);
 
     }

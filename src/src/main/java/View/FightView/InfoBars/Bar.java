@@ -29,8 +29,8 @@ public class Bar extends VBox {
     Label health = new Label();
     Label status = new Label();
 
-    Bar(double spacing, TextBubble bubble, Pokemon p) {
-        this.bubble = bubble;
+    Bar(double spacing, Pokemon p) {
+
         this.p = p;
         this.setSpacing(spacing);
 
@@ -150,7 +150,7 @@ public class Bar extends VBox {
     }
 
     public void updateExpBar(int expGain, Label levelLabel, Runnable onFinish) {
-        applyExpGain(expGain, levelLabel, null);
+        applyExpGain(expGain, levelLabel, onFinish);
     }
 
     private void applyExpGain(int remainingExp, Label levelLabel,  Runnable onFinish) {

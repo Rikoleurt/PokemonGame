@@ -1,18 +1,16 @@
-import Model.Person.Player;
 import View.FightView.FightView;
+
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.text.Font;
+import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 
-import java.util.Random;
-
-
 public class Main extends Application {
-    
-    static Font font = Font.loadFont(Main.class.getResource("/font/pokemonFont.ttf").toExternalForm(), 12);
+
     FightView fightView = new FightView();
     Scene scene = new Scene(fightView, 1980, 1080);
+
+
     @Override
     public void start(Stage stage){
 
@@ -22,13 +20,16 @@ public class Main extends Application {
         stage.setWidth(1920);
         stage.setHeight(1080);
         stage.show();
+
+//        fightView.requestFocus();
+//        scene.setOnKeyPressed(event -> {
+//            if (event.getCode() == KeyCode.A) {
+//                fightView.displayNextMessage();
+//            }
+//        });
     }
 
     public static void main(String[] args) {
         launch(args);
-    }
-    private static int generateIV(){
-        Random rand = new Random();
-        return rand.nextInt(0,32);
     }
 }

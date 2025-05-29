@@ -6,8 +6,8 @@ import javafx.scene.control.Label;
 
 public class OpponentBar extends Bar {
 
-    public OpponentBar(double spacing, TextBubble bubble, Pokemon p) {
-        super(spacing, bubble, p);
+    public OpponentBar(double spacing, Pokemon p) {
+        super(spacing, p);
 
         String pName = p.getName();
         int pLevel = p.getLevel();
