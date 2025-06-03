@@ -1,4 +1,4 @@
-package Controller.Turns;
+package Controller.Fight.Turns;
 
 import Model.Pokemon.Pokemon;
 

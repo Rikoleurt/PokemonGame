@@ -1,8 +1,11 @@
 package View.FightView.Text;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
 
@@ -17,6 +20,12 @@ public class TextBubble extends HBox implements Bubble {
 
     private final Queue<String> messageQueue = new LinkedList<>();
     private volatile boolean isDisplayingQueue = false;
+
+    private static final int TYPING_SPEED_MS = 40;
+    private boolean isTyping = false;
+    private String fullMessage = "";  // Message complet en cours
+    private Timeline typingTimeline;
+
 
     static Font font = Font.loadFont(TextBubble.class.getResource("/font/pokemonFont.ttf").toExternalForm(), 18);
 
@@ -101,19 +110,47 @@ public class TextBubble extends HBox implements Bubble {
         });
     }
 
+    public void addMessage(String messageText) {
+        messageQueue.add(messageText);
+        if (!isDisplayingQueue) {
+            displayNextMessage();
+        }
+    }
+
     private void displayNextMessage() {
-        String next = messageQueue.poll();
-        if (next == null) {
+        if (messageQueue.isEmpty()) {
             isDisplayingQueue = false;
             return;
         }
+
         isDisplayingQueue = true;
-        showMessage(next);
-        PauseTransition pause = new PauseTransition(Duration.seconds(1.5));
-        pause.setOnFinished(e -> displayNextMessage());
-        pause.play();
+        fullMessage = messageQueue.poll();
+        message.setText("");
+        isTyping = true;
+
+        typingTimeline = new Timeline();
+        for (int i = 0; i <= fullMessage.length(); i++) {
+            final int index = i;
+            typingTimeline.getKeyFrames().add(
+                    new KeyFrame(Duration.millis(i * TYPING_SPEED_MS), e -> {
+                        message.setText(fullMessage.substring(0, index));
+                    })
+            );
+        }
+
+        typingTimeline.setOnFinished(e -> isTyping = false);
+        typingTimeline.play();
     }
 
-
-
+    public void handleKeyPress(KeyCode code) {
+        if (code == KeyCode.SPACE || code == KeyCode.ENTER) {
+            if (isTyping) {
+                typingTimeline.stop();
+                message.setText(fullMessage);
+                isTyping = false;
+            } else {
+                displayNextMessage();
+            }
+        }
+    }
 }

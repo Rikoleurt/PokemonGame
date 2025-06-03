@@ -1,4 +1,4 @@
-package Controller.Log;
+package Controller.Fight.Log;
 
 import View.FightView.Text.TextBubble;
 

@@ -1,6 +1,7 @@
 package View.FightView;
 
-import Controller.Log.FightLogger;
+import Controller.Fight.FightController;
+import Controller.Fight.Log.FightLogger;
 
 import Model.Person.NPC;
 import Model.Person.Player;
@@ -46,5 +47,9 @@ public class FightView extends BorderPane {
         setAlignment(opponentBar, Pos.TOP_LEFT);
         setAlignment(playerBar, Pos.BOTTOM_CENTER);
         setAlignment(fightButtons, Pos.BOTTOM_RIGHT);
+    }
+
+    public TextBubble getTextBubble() {
+        return textBubble;
     }
 }

@@ -1,6 +1,6 @@
 package Model.Pokemon;
 
-import Controller.Log.Logger;
+import Controller.Fight.Log.Logger;
 import Model.Pokemon.AttackEnum.AttackMode;
 import Model.Pokemon.Attacks.Attack;
 import Model.Pokemon.Attacks.StatusAttack;
@@ -606,12 +606,10 @@ public class Pokemon {
         float power = attack.getPower();
         double augmentedDamage;
         if(attack.isStab(launcher)) {
-
             power *= 1.5f;
         }
         if(attack.isCritical(launcher)){
             augmentedDamage = launcher.getAttack(attack).criticalDamage(launcher);
-            System.out.println("Critical hit !");
             log("Critical hit !");
             return calculateEffectiveness(attack, launcher, target, power) * augmentedDamage;
         }

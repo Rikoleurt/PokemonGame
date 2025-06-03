@@ -1,6 +1,6 @@
 package View.FightView;
 
-import Controller.Turns.Turn;
+import Controller.Fight.Turns.Turn;
 import Model.Pokemon.Pokemon;
 import Model.Pokemon.Move;
 import Model.Pokemon.Terrain;
@@ -177,7 +177,7 @@ public class FightButtons extends HBox {
                 if (npcPokemon.isKO()) {
                     textBubble.showMessages(npcPokemon.getName() + " fainted!");
                     int totalExp = playerPokemon.calculateEXP(npcPokemon);
-                    playerBar.updateExpBar(totalExp, playerBar.getLevel(), () -> textBubble.showMessages(playerPokemon.getName() + " earned " + totalExp + "exp"));
+                    playerBar.updateExpBar(totalExp, playerBar.getLevel(), () -> textBubble.showMessages(playerPokemon.getName() + " earned " + totalExp + " exp"));
                 }
             });
             turn.toggleTurn();
