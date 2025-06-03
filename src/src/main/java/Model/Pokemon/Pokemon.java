@@ -1,5 +1,7 @@
 package Model.Pokemon;
 
+import Controller.Fight.Battle.Event;
+import Controller.Fight.Battle.MoveEvent.MoveEvent;
 import Controller.Fight.Log.Logger;
 import Model.Pokemon.AttackEnum.AttackMode;
 import Model.Pokemon.Attacks.Attack;
@@ -70,7 +72,6 @@ public class Pokemon {
     int speedRaise;
     int atkSpeRaise;
     int defSpeRaise;
-
 
     private transient Logger logger;
 
@@ -383,7 +384,8 @@ public class Pokemon {
      * @param terrain The terrain the Pokémon are on
      */
     public void attack(Pokemon target, Move move, Terrain terrain) {
-        Move m = this.getAttack(move);
+
+        Move m = getAttack(move);
         log(getName() + " uses " + move.getName());
         if(m instanceof Attack attack){
             statusEffect(target, move);
@@ -392,7 +394,7 @@ public class Pokemon {
                     || this.getStatus() == Status.confused || this.getStatus() == Status.asleep || this.getStatus() == Status.poisoned
                     || this.getStatus() == Status.badlyPoisoned)){
 
-                int damage = (int) totalDamage((Attack) this.getAttack(attack), this, target);
+                int damage = (int) totalDamage((Attack) getAttack(attack), this, target);
                 target.setHP(Math.max(0, target.getHP() - damage));
                 System.out.println(target.getName() + " HP : " + target.HP + "/" + target.getMaxHP());
             }

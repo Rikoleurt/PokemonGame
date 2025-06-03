@@ -3,7 +3,9 @@ package Controller.Fight.Battle;
 import View.FightView.Text.TextBubble;
 import javafx.application.Platform;
 
-public class MessageEvent implements BattleEvent {
+import java.util.Queue;
+
+public class MessageEvent extends BattleEvent {
 
     private String message;
     private TextBubble bubble;

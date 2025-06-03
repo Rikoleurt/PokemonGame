@@ -1,5 +1,8 @@
 package Controller.Fight.Battle;
 
-public interface BattleEvent {
-    void execute();
+import java.util.Queue;
+
+public abstract class BattleEvent implements Event {
+    public void execute(){}
+    public BattleEvent() {}
 }
