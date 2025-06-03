@@ -1,12 +1,13 @@
 package Controller.Fight.Battle;
 
-import java.util.LinkedList;
+import Controller.Fight.Battle.Events.BattleEvent;
+
 import java.util.Queue;
 
 public class BattleExecutor {
     private final Queue<BattleEvent> battleEvents;
 
-    BattleExecutor(Queue<BattleEvent> battleEvents) {
+    public BattleExecutor(Queue<BattleEvent> battleEvents) {
         this.battleEvents = battleEvents;
     }
 
@@ -14,11 +15,20 @@ public class BattleExecutor {
         return battleEvents;
     }
 
+    public void getEveryBattleEvent() {
+        for (BattleEvent battleEvent : battleEvents) {
+            System.out.println(battleEvent.getEventName());
+        }
+    }
+
     public void addEvent(BattleEvent battleEvent) {
         battleEvents.add(battleEvent);
     }
 
-    public void executeEvents() {
-        battleEvents.forEach(BattleEvent::execute);
+    public void executeNextEvent(){
+        BattleEvent battleEvent = battleEvents.poll();
+        if (battleEvent != null) {
+            battleEvent.execute(this::executeNextEvent);
+        }
     }
 }
