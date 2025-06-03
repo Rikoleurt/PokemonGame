@@ -1,13 +1,8 @@
-package Controller.Fight.Battle.MoveEvent;
-
-import Controller.Fight.Battle.BattleEvent;
-import Controller.Fight.Battle.Event;
+package Controller.Fight.Battle.Events;
 
 import Model.Pokemon.Move;
 import Model.Pokemon.Pokemon;
 import Model.Pokemon.Terrain;
-
-import java.util.Queue;
 
 public class MoveEvent extends BattleEvent {
     private Pokemon attacker, target;
@@ -34,7 +29,7 @@ public class MoveEvent extends BattleEvent {
     }
 
     @Override
-    public void execute() {
+    public void execute(Runnable onFinished) {
         // Execute what should be executed when a Pokémon attacks i.e. if the Pokémon uses an attack -> check status
         // -> if status apply status effect -> if not canceled attack -> update target HP's
         attacker.attack(target, move, terrain);
