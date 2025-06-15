@@ -1,5 +1,10 @@
 package View.FightView;
 
+import Controller.Fight.Battle.BattleExecutor;
+import Controller.Fight.Battle.Events.BattleEvent;
+import Controller.Fight.Battle.Events.DamageEvent;
+import Controller.Fight.Battle.Events.MessageEvent;
+import Controller.Fight.Battle.Events.UpdateBarEvent;
 import Controller.Fight.Turns.Turn;
 import Model.Pokemon.Pokemon;
 import Model.Pokemon.Move;
@@ -17,6 +22,9 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+
+import java.util.LinkedList;
+import java.util.Queue;
 
 import static View.FightView.FightView.npc;
 import static View.FightView.FightView.player;
@@ -58,6 +66,8 @@ public class FightButtons extends HBox {
     HBox HBox2 = new HBox(runButton, pokemonButton);
 
     Turn turn = new Turn(playerPokemon, npcPokemon);
+    Queue<BattleEvent> queue = new LinkedList<>();
+    BattleExecutor executor = new BattleExecutor(queue);
 
     public FightButtons(TextBubble textBubble, Bar opponentBar, Bar playerBar) {
         this.textBubble = textBubble;
@@ -171,28 +181,11 @@ public class FightButtons extends HBox {
     private void AtkButtonAction(Move move, Terrain terrain) {
         HBox1.setVisible(false);
         HBox2.setVisible(false);
-        if(turn.isPlayerTurn()) {
-            playerPokemon.attack(npcPokemon, move, terrain);
-            opponentBar.updateHPBars(opponentBar.getHealth(), () -> {
-                if (npcPokemon.isKO()) {
-                    textBubble.showMessages(npcPokemon.getName() + " fainted!");
-                    int totalExp = playerPokemon.calculateEXP(npcPokemon);
-                    playerBar.updateExpBar(totalExp, playerBar.getLevel(), () -> textBubble.showMessages(playerPokemon.getName() + " earned " + totalExp + " exp"));
-                }
-            });
-            turn.toggleTurn();
-        }
-
-        if(!turn.isPlayerTurn()){
-            Move npcMove = npcPokemon.chooseMove();
-            npcPokemon.attack(playerPokemon, npcMove, terrain);
-            playerBar.updateHPBars(playerBar.getHealth(), () -> {
-                if(playerPokemon.isKO()){
-                    textBubble.showMessages(playerPokemon.getName() + " fainted!");
-                }
-            });
-            turn.toggleTurn();
-        }
+        queue.add(new MessageEvent(textBubble, playerPokemon.getName() + " uses " + move.getName()));
+        queue.add(new DamageEvent(playerPokemon, npcPokemon, move, terrain));
+        queue.add(new MessageEvent(textBubble, "damage event done"));
+        executor.executeNext();
+        
         HBox1.setVisible(true);
         HBox2.setVisible(true);
         requestFocus();

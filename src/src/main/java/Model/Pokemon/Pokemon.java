@@ -2,7 +2,6 @@ package Model.Pokemon;
 
 import Controller.Fight.Battle.BattleExecutor;
 import Controller.Fight.Battle.Events.BattleEvent;
-import Controller.Fight.Battle.Events.MessageEvent;
 import Controller.Fight.Log.Logger;
 import Model.Pokemon.AttackEnum.AttackMode;
 import Model.Pokemon.Attacks.Attack;
@@ -394,8 +393,7 @@ public class Pokemon {
     public void attack(Pokemon target, Move move, Terrain terrain) {
 
         Move m = getAttack(move);
-        executor.addEvent(new MessageEvent(getName() + " uses " + move.getName(), logger));
-        executor.executeNextEvent();
+
         log(getName() + " uses " + move.getName());
         if(m instanceof Attack attack){
             statusEffect(target, move);

@@ -1,9 +1,17 @@
 package Controller.Fight.Battle.Events;
 
 public abstract class BattleEvent implements Event {
-    public void execute(){}
-    public String getEventName() {
-        return getClass().getName();
+    private Runnable onFinish;
+
+    public void setOnFinish(Runnable onFinish) {
+        this.onFinish = onFinish;
     }
-    public BattleEvent() {}
+
+    protected void onFinish() {
+        if (onFinish != null) onFinish.run();
+    }
+
+    @Override
+    public void execute() {
+    }
 }
