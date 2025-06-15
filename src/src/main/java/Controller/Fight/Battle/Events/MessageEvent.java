@@ -17,5 +17,8 @@ public class MessageEvent extends BattleEvent {
     @Override
     public void execute(Runnable onFinished) {
         Platform.runLater(() -> log.printLog(message));
+
+
+        
     }
 }
