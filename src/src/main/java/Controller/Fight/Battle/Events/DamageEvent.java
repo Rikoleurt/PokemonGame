@@ -1,4 +1,4 @@
 package Controller.Fight.Battle.Events;
 
-public class MessageEvent {
+public class DamageEvent {
 }
