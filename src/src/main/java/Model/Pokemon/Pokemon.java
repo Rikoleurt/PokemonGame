@@ -394,7 +394,6 @@ public class Pokemon {
 
         Move m = getAttack(move);
 
-        log(getName() + " uses " + move.getName());
         if(m instanceof Attack attack){
             statusEffect(target, move);
             if((this.getStatus() == Status.normal || this.getStatus() == Status.cursed || this.getStatus() == Status.burned

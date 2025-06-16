@@ -8,10 +8,17 @@ public abstract class BattleEvent implements Event {
     }
 
     protected void onFinish() {
-        if (onFinish != null) onFinish.run();
+        if (onFinish != null) {
+            System.out.println("On finish");
+            onFinish.run();
+        }
     }
 
     @Override
     public void execute() {
+    }
+
+    public String getName(){
+        return getClass().getSimpleName();
     }
 }

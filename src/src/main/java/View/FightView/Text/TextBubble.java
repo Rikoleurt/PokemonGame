@@ -21,6 +21,8 @@ public class TextBubble extends HBox implements Bubble {
     private final Queue<String> messageQueue = new LinkedList<>();
     private volatile boolean isDisplayingQueue = false;
 
+    private Runnable onMessageComplete;
+
     private static final int TYPING_SPEED_MS = 40;
     private boolean isTyping = false;
     private String fullMessage = "";  // Message complet en cours
@@ -149,8 +151,20 @@ public class TextBubble extends HBox implements Bubble {
                 message.setText(fullMessage);
                 isTyping = false;
             } else {
+                if (onMessageComplete != null) {
+                    Runnable callback = onMessageComplete;
+                    onMessageComplete = null;
+                    callback.run();
+                }
                 displayNextMessage();
             }
         }
     }
+
+
+
+    public void setOnMessageComplete(Runnable onMessageComplete) {
+        this.onMessageComplete = onMessageComplete;
+    }
+
 }

@@ -20,5 +20,6 @@ public class DamageEvent extends BattleEvent {
     @Override
     public void execute() {
         launcher.attack(target, move, terrain);
+        onFinish();
     }
 }

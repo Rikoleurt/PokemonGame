@@ -7,6 +7,11 @@ import java.util.Queue;
 
 public record BattleExecutor(Queue<BattleEvent> battleEvents) {
 
+    public void addEvent(BattleEvent event) {
+        System.out.println("Added Event : " + event);
+        battleEvents.add(event);
+    }
+
     public void executeEvents() {
         battleEvents.forEach(BattleEvent::execute);
     }
@@ -14,6 +19,7 @@ public record BattleExecutor(Queue<BattleEvent> battleEvents) {
     public void executeNext() {
         if (!battleEvents.isEmpty()) {
             BattleEvent event = battleEvents.poll();
+            System.out.println("Executing next event : " + event.getName());
             event.setOnFinish(this::executeNext);
             event.execute();
         } else {

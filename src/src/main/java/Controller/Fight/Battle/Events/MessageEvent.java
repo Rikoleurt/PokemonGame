@@ -14,6 +14,8 @@ public class MessageEvent extends BattleEvent {
 
     @Override
     public void execute() {
+        bubble.setOnMessageComplete(this::onFinish);
         bubble.addMessage(message);
     }
+
 }

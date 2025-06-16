@@ -181,11 +181,13 @@ public class FightButtons extends HBox {
     private void AtkButtonAction(Move move, Terrain terrain) {
         HBox1.setVisible(false);
         HBox2.setVisible(false);
-        queue.add(new MessageEvent(textBubble, playerPokemon.getName() + " uses " + move.getName()));
-        queue.add(new DamageEvent(playerPokemon, npcPokemon, move, terrain));
-        queue.add(new MessageEvent(textBubble, "damage event done"));
+
+        executor.addEvent(new MessageEvent(textBubble, playerPokemon.getName() + " uses " + move.getName()));
+        executor.addEvent(new DamageEvent(playerPokemon, npcPokemon, move, terrain));
+        executor.addEvent(new UpdateBarEvent(opponentBar, opponentBar.getHealth()));
+
         executor.executeNext();
-        
+
         HBox1.setVisible(true);
         HBox2.setVisible(true);
         requestFocus();

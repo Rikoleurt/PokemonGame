@@ -208,6 +208,5 @@ public class Bar extends VBox {
 
         timeline.play();
     }
-
 }
 
