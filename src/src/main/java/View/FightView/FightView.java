@@ -16,14 +16,18 @@ import View.FightView.Text.TextBubble;
 import javafx.geometry.Pos;
 import javafx.scene.layout.BorderPane;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static Model.StaticObjects.NPC.initiateEnemy;
 import static Model.StaticObjects.Player.initiatePlayer;
 
 public class FightView extends BorderPane {
 
     TextBubble textBubble = new TextBubble();
-    StatBubble statBubble = new StatBubble();;
-    FightLogger logger = new FightLogger(textBubble);
+    StatBubble statBubble = new StatBubble();
+    List<String> messages = new ArrayList<>();
+    FightLogger logger = new FightLogger(textBubble, messages);
 
     public static Player player = initiatePlayer();
     public static NPC npc = initiateEnemy();

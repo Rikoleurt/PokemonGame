@@ -1,8 +1,7 @@
 package Model.Pokemon;
 
-import Controller.Fight.Battle.BattleExecutor;
-import Controller.Fight.Battle.Events.BattleEvent;
 import Controller.Fight.Log.Logger;
+
 import Model.Pokemon.AttackEnum.AttackMode;
 import Model.Pokemon.Attacks.Attack;
 import Model.Pokemon.Attacks.StatusAttack;
@@ -73,8 +72,6 @@ public class Pokemon {
     int atkSpeRaise;
     int defSpeRaise;
 
-    Queue<BattleEvent> battleEvents = new LinkedList<>();
-    BattleExecutor executor = new BattleExecutor(battleEvents);
 
     private transient Logger logger;
 
@@ -183,6 +180,10 @@ public class Pokemon {
 
     public void setLogger(Logger logger) {
         this.logger = logger;
+    }
+
+    public Logger getLogger() {
+        return logger;
     }
 
     private void log(String message) {
@@ -352,10 +353,6 @@ public class Pokemon {
         return speedEV;
     }
 
-    public BattleExecutor getBattleExecutor() {
-        return executor;
-    }
-
     // ------------------------------------------------------------------------------------------------------------------
     // Setter
     // ------------------------------------------------------------------------------------------------------------------
@@ -391,9 +388,7 @@ public class Pokemon {
      * @param terrain The terrain the Pokémon are on
      */
     public void attack(Pokemon target, Move move, Terrain terrain) {
-
         Move m = getAttack(move);
-
         if(m instanceof Attack attack){
             statusEffect(target, move);
             if((this.getStatus() == Status.normal || this.getStatus() == Status.cursed || this.getStatus() == Status.burned
@@ -413,7 +408,7 @@ public class Pokemon {
         if(m instanceof StatusAttack statusAttack){
             statusEffect(target, statusAttack);
             target.status = setStatus(target, statusAttack);
-            log(target.getName() + " is " + target.getStatus() + "!");
+            logger.addLog(target.getName() + " is " + target.getStatus() + "!");
         }
         if(m instanceof UpgradeMove upgradeMove){
             statusEffect(target, upgradeMove);
@@ -473,10 +468,10 @@ public class Pokemon {
      */
     public Status setStatus(Pokemon target, StatusAttack statusMove){
         if(target.getStatus() != Status.normal){
-            log(target.getName() + " is already " + target.getStatus() + "! It won't have any effect.");
+            logger.addLog(target.getName() + " is already " + target.getStatus() + "! It won't have any effect.");
         }
         if(immunitiesTable(target).contains(statusMove.getType())){
-            log("This attack does not affect " + getName());
+            logger.addLog("This attack does not affect " + getName());
             return null;
         }
         if(target.getStatus() == Status.normal){
@@ -495,39 +490,38 @@ public class Pokemon {
         Random random = new Random();
         if(this.getAttack(move).getMode() == AttackMode.physical && this.getStatus() == Status.burned){
             target.HP -= (int) totalDamage((Attack) this.getAttack(move), this, target)/2;
-            log(getName() + " uses " + move.getName());
-
+            logger.addLog(getName() + " uses " + move.getName());
             System.out.println(target.getName() + " HP : " + target.HP + "/" + target.getMaxHP());
             return;
         }
         if(this.getStatus() == Status.paralyzed){
             int randInt = random.nextInt(0,4);
             if(randInt == 1){
-                log(getName() + " is paralyzed! It can't move!");
+                logger.addLog(getName() + " is paralyzed! It can't move!");
                 return;
             }
         }
         if(this.getStatus() == Status.freeze){
             int randInt = random.nextInt(0,4);
             if(randInt < 3){
-                log(getName() + " is frozen solid!");
+                logger.addLog(getName() + " is frozen solid!");
                 return;
             } else {
-                log(getName() + " is not frozen anymore!");
+                logger.addLog(getName() + " is not frozen anymore!");
                 this.setStatus(null);
             }
         }
         if(this.getStatus() == Status.asleep){
             int randInt = random.nextInt(0,3);
             if(randInt == 0){
-                log(getName() + " woke up!");
+                logger.addLog(getName() + " woke up!");
                 this.setStatus(Status.normal);
             }
             if(randInt > 0){
-                log(getName() + " is asleep!");
+                logger.addLog(getName() + " is asleep!");
                 ++wakeUp;
                 if(wakeUp == 4){
-                    log(getName() + " woke up!");
+                    logger.addLog(getName() + " woke up!");
                     this.status = Status.normal;
                 }
                 if(wakeUp != 4) {
@@ -538,7 +532,7 @@ public class Pokemon {
         if(this.getStatus() == Status.attracted && !Objects.equals(this.getGender(), target.getGender())){
             int randInt = random.nextInt(0,2);
             if(randInt == 1){
-                log(getName() + " is attracted to " + target.getName());
+                logger.addLog(getName() + " is attracted to " + target.getName());
                 return;
             }
         }
@@ -547,23 +541,24 @@ public class Pokemon {
             ++healConfusion;
             if(randInt == 0){
                 if(healConfusion < 4) {
-                    log(getName() + " is confused!");
+                    logger.addLog(getName() + " is confused!");
                 }
             }
             if(randInt == 1){
-                log(getName() + " is confused!");
-                log(getName() + " hurt itself in its confusion!");
+                logger.addLog(getName() + " is confused!");
+                logger.addLog(getName() + " hurt itself in its confusion!");
                 this.HP -= (int) (((((this.getLevel() * 0.4 + 2) * this.getAtk() * 40) / target.getDef()) / 50) + 2);
                 return;
             }
             if(healConfusion > 4){
-                log(getName() + " snapped out of confusion!");
+                logger.addLog(getName() + " snapped out of confusion!");
                 this.setStatus(Status.normal);
                 healConfusion = 0;
             }
         }
-        if(this.getStatus() == Status.fear){
-            log(getName() + " is feared! It can't move!");
+        // To implement
+        if(getStatus() == Status.fear){
+            logger.addLog(getName() + " is feared! It can't move!");
         }
     }
 
@@ -575,15 +570,16 @@ public class Pokemon {
             case normal, attracted, asleep:
                 break;
             case burned:
-                log(getName() + " is burned!");
+
+                logger.addLog(getName() + " is burned!");
                 this.HP = this.HP - (this.maxHP/16);
                 break;
             case poisoned:
-                log(getName() + " is poisoned!");
+                logger.addLog(getName() + " is poisoned!");
                 this.HP = this.HP - (this.maxHP/8);
                 break;
             case badlyPoisoned:
-                log(getName() + " is badly poisoned!");
+                logger.addLog(getName() + " is badly poisoned!");
                 this.HP = this.HP - (this.maxHP/16 * poisonCoefficient);
                 ++poisonCoefficient;
                 break;
@@ -619,7 +615,8 @@ public class Pokemon {
         }
         if(attack.isCritical(launcher)){
             augmentedDamage = launcher.getAttack(attack).criticalDamage(launcher);
-            log("Critical hit !");
+            System.out.println("Adding log");
+            logger.addLog("Critical hit !");
             return calculateEffectiveness(attack, launcher, target, power) * augmentedDamage;
         }
         return calculateEffectiveness(attack, launcher, target, power);
@@ -651,16 +648,16 @@ public class Pokemon {
                 double physicalDamages = ((((launcherLevel * 0.4 + 2) * launcherAtk * power) / targetDef) / 50) + 2;
                 if (targetWeaknesses.contains(move.getType())) {
                     effectivenessCoefficient = 2;
-                    log("The attack is super effective !");
+                    logger.addLog("The attack is super effective !");
                     return physicalDamages * effectivenessCoefficient;
                 }
                 if (targetImmunities.contains(move.getType())) {
-                    log("This attack does not affect the pokemon");
+                    logger.addLog("This attack does not affect the pokemon");
                     return 0;
                 }
                 if (targetResistances.contains(move.getType())) {
                     effectivenessCoefficient = 0.5f;
-                    log("The attack is not very effective");
+                    logger.addLog("The attack is not very effective");
                     return physicalDamages * effectivenessCoefficient;
                 } else {
                     return physicalDamages;
@@ -669,17 +666,16 @@ public class Pokemon {
                 double specialDamages = ((((launcherLevel * 0.4 + 2) * launcherAtkSpe * power) / targetDefSpe) / 50) + 2;
                 if (targetWeaknesses.contains(move.getType())) {
                     effectivenessCoefficient = 2;
-                    log("The attack is super effective !");
+                    logger.addLog("The attack is super effective !");
                     return specialDamages * effectivenessCoefficient;
                 }
                 if (targetImmunities.contains(move.getType())) {
-
-                    log("This attack does not affect the pokemon");
+                    logger.addLog("This attack does not affect the pokemon");
                     return 0;
                 }
                 if (targetResistances.contains(move.getType())) {
                     effectivenessCoefficient = 0.5f;
-                    log("The attack is not very effective");
+                    logger.addLog("The attack is not very effective !");
                     return specialDamages * effectivenessCoefficient;
                 } else {
                     return specialDamages;

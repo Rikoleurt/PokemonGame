@@ -1,5 +1,10 @@
 package Controller.Fight.Battle.Events;
 
+/**
+ * This class represents the battle events available, the method execute has to contain a onFinish call to
+ * respect the chaining.
+ */
+
 public abstract class BattleEvent implements Event {
     private Runnable onFinish;
 
@@ -9,11 +14,14 @@ public abstract class BattleEvent implements Event {
 
     protected void onFinish() {
         if (onFinish != null) {
-            System.out.println("On finish");
             onFinish.run();
         }
     }
 
+    /**
+     * Executes the event with a certain implementation. One must use onFinish() to respect the chaining
+     * (mandatory in the body of execute())
+     */
     @Override
     public void execute() {
     }

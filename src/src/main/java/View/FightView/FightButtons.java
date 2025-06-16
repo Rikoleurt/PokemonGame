@@ -184,6 +184,7 @@ public class FightButtons extends HBox {
 
         executor.addEvent(new MessageEvent(textBubble, playerPokemon.getName() + " uses " + move.getName()));
         executor.addEvent(new DamageEvent(playerPokemon, npcPokemon, move, terrain));
+        executor.addEvent(new MessageEvent(textBubble, playerPokemon.getLogger().getLog()));
         executor.addEvent(new UpdateBarEvent(opponentBar, opponentBar.getHealth()));
 
         executor.executeNext();
