@@ -1,7 +1,8 @@
 package Model.Pokemon;
 
-import Controller.Fight.Log.Logger;
-
+import Controller.Fight.Battle.BattleExecutor;
+import Controller.Fight.Battle.Events.MessageEvent;
+import Controller.Fight.Battle.Events.UpdateBarEvent;
 import Model.Pokemon.AttackEnum.AttackMode;
 import Model.Pokemon.Attacks.Attack;
 import Model.Pokemon.Attacks.StatusAttack;
@@ -71,9 +72,6 @@ public class Pokemon {
     int speedRaise;
     int atkSpeRaise;
     int defSpeRaise;
-
-
-    private transient Logger logger;
 
     public Pokemon(String name, int maxHP, int HP, int atk, int def, int atkSpe, int defSpe, int speed, int baseHP, int baseAtk, int baseDef, int baseAtkSpe, int baseDefSpe, int baseSpeed,
                    int hpIV, int atkIV, int defIV, int atkSpeIV, int defSpeIV, int speedIV, int hpEV, int atkEV, int defEV, int atkSpeEV, int defSpeEV, int speedEV, int atkRaise, int
@@ -153,18 +151,24 @@ public class Pokemon {
     public int getSpeed() {
         return speed;
     }
-    public int getLevel() { return level; }
+    public int getLevel() {
+        return level;
+    }
     public int getExp() {
         return exp;
     }
-    public int getMaxExp() { return maxExp; }
+    public int getMaxExp() {
+        return maxExp;
+    }
     public String getGender() {
         return gender;
     }
     public Status getStatus() {
         return status;
     }
-    public Experience getExpType() { return expType; }
+    public Experience getExpType() {
+        return expType;
+    }
     public boolean isKO(){
         return this.getHP() <= 0;
     }
@@ -176,22 +180,6 @@ public class Pokemon {
     }
     public Move getAttack(Move move){
         return moves.get(moves.indexOf(move));
-    }
-
-    public void setLogger(Logger logger) {
-        this.logger = logger;
-    }
-
-    public Logger getLogger() {
-        return logger;
-    }
-
-    private void log(String message) {
-        if (logger != null) {
-            logger.printLog(message);
-        } else {
-            System.out.println(message);
-        }
     }
 
 
@@ -388,6 +376,7 @@ public class Pokemon {
      * @param terrain The terrain the Pokémon are on
      */
     public void attack(Pokemon target, Move move, Terrain terrain) {
+        BattleExecutor executor = BattleExecutor.getInstance();
         Move m = getAttack(move);
         if(m instanceof Attack attack){
             statusEffect(target, move);
@@ -395,7 +384,6 @@ public class Pokemon {
                     || this.getStatus() == Status.paralyzed || this.getStatus() == Status.freeze || this.getStatus() == Status.attracted
                     || this.getStatus() == Status.confused || this.getStatus() == Status.asleep || this.getStatus() == Status.poisoned
                     || this.getStatus() == Status.badlyPoisoned)){
-
                 int damage = (int) totalDamage((Attack) getAttack(attack), this, target);
                 target.setHP(Math.max(0, target.getHP() - damage));
                 System.out.println(target.getName() + " HP : " + target.HP + "/" + target.getMaxHP());
@@ -408,7 +396,7 @@ public class Pokemon {
         if(m instanceof StatusAttack statusAttack){
             statusEffect(target, statusAttack);
             target.status = setStatus(target, statusAttack);
-            logger.addLog(target.getName() + " is " + target.getStatus() + "!");
+            System.out.println(target.getName() + " is " + target.getStatus() + "!");
         }
         if(m instanceof UpgradeMove upgradeMove){
             statusEffect(target, upgradeMove);
@@ -468,10 +456,10 @@ public class Pokemon {
      */
     public Status setStatus(Pokemon target, StatusAttack statusMove){
         if(target.getStatus() != Status.normal){
-            logger.addLog(target.getName() + " is already " + target.getStatus() + "! It won't have any effect.");
+            System.out.println(target.getName() + " is already " + target.getStatus() + "! It won't have any effect.");
         }
         if(immunitiesTable(target).contains(statusMove.getType())){
-            logger.addLog("This attack does not affect " + getName());
+            System.out.println("This attack does not affect " + getName());
             return null;
         }
         if(target.getStatus() == Status.normal){
@@ -490,38 +478,38 @@ public class Pokemon {
         Random random = new Random();
         if(this.getAttack(move).getMode() == AttackMode.physical && this.getStatus() == Status.burned){
             target.HP -= (int) totalDamage((Attack) this.getAttack(move), this, target)/2;
-            logger.addLog(getName() + " uses " + move.getName());
+            System.out.println(getName() + " uses " + move.getName());
             System.out.println(target.getName() + " HP : " + target.HP + "/" + target.getMaxHP());
             return;
         }
         if(this.getStatus() == Status.paralyzed){
             int randInt = random.nextInt(0,4);
             if(randInt == 1){
-                logger.addLog(getName() + " is paralyzed! It can't move!");
+                System.out.println(getName() + " is paralyzed! It can't move!");
                 return;
             }
         }
         if(this.getStatus() == Status.freeze){
             int randInt = random.nextInt(0,4);
             if(randInt < 3){
-                logger.addLog(getName() + " is frozen solid!");
+                System.out.println(getName() + " is frozen solid!");
                 return;
             } else {
-                logger.addLog(getName() + " is not frozen anymore!");
+                System.out.println(getName() + " is not frozen anymore!");
                 this.setStatus(null);
             }
         }
         if(this.getStatus() == Status.asleep){
             int randInt = random.nextInt(0,3);
             if(randInt == 0){
-                logger.addLog(getName() + " woke up!");
+                System.out.println(getName() + " woke up!");
                 this.setStatus(Status.normal);
             }
             if(randInt > 0){
-                logger.addLog(getName() + " is asleep!");
+                System.out.println(getName() + " is asleep!");
                 ++wakeUp;
                 if(wakeUp == 4){
-                    logger.addLog(getName() + " woke up!");
+                    System.out.println(getName() + " woke up!");
                     this.status = Status.normal;
                 }
                 if(wakeUp != 4) {
@@ -532,7 +520,7 @@ public class Pokemon {
         if(this.getStatus() == Status.attracted && !Objects.equals(this.getGender(), target.getGender())){
             int randInt = random.nextInt(0,2);
             if(randInt == 1){
-                logger.addLog(getName() + " is attracted to " + target.getName());
+                System.out.println(getName() + " is attracted to " + target.getName());
                 return;
             }
         }
@@ -541,24 +529,24 @@ public class Pokemon {
             ++healConfusion;
             if(randInt == 0){
                 if(healConfusion < 4) {
-                    logger.addLog(getName() + " is confused!");
+                    System.out.println(getName() + " is confused!");
                 }
             }
             if(randInt == 1){
-                logger.addLog(getName() + " is confused!");
-                logger.addLog(getName() + " hurt itself in its confusion!");
+                System.out.println(getName() + " is confused!");
+                System.out.println(getName() + " hurt itself in its confusion!");
                 this.HP -= (int) (((((this.getLevel() * 0.4 + 2) * this.getAtk() * 40) / target.getDef()) / 50) + 2);
                 return;
             }
             if(healConfusion > 4){
-                logger.addLog(getName() + " snapped out of confusion!");
+                System.out.println(getName() + " snapped out of confusion!");
                 this.setStatus(Status.normal);
                 healConfusion = 0;
             }
         }
         // To implement
         if(getStatus() == Status.fear){
-            logger.addLog(getName() + " is feared! It can't move!");
+            System.out.println(getName() + " is feared! It can't move!");
         }
     }
 
@@ -570,16 +558,15 @@ public class Pokemon {
             case normal, attracted, asleep:
                 break;
             case burned:
-
-                logger.addLog(getName() + " is burned!");
+                System.out.println(getName() + " is burned!");
                 this.HP = this.HP - (this.maxHP/16);
                 break;
             case poisoned:
-                logger.addLog(getName() + " is poisoned!");
+                System.out.println(getName() + " is poisoned!");
                 this.HP = this.HP - (this.maxHP/8);
                 break;
             case badlyPoisoned:
-                logger.addLog(getName() + " is badly poisoned!");
+                System.out.println(getName() + " is badly poisoned!");
                 this.HP = this.HP - (this.maxHP/16 * poisonCoefficient);
                 ++poisonCoefficient;
                 break;
@@ -615,8 +602,7 @@ public class Pokemon {
         }
         if(attack.isCritical(launcher)){
             augmentedDamage = launcher.getAttack(attack).criticalDamage(launcher);
-            System.out.println("Adding log");
-            logger.addLog("Critical hit !");
+            System.out.println("Critical hit !");
             return calculateEffectiveness(attack, launcher, target, power) * augmentedDamage;
         }
         return calculateEffectiveness(attack, launcher, target, power);
@@ -648,16 +634,16 @@ public class Pokemon {
                 double physicalDamages = ((((launcherLevel * 0.4 + 2) * launcherAtk * power) / targetDef) / 50) + 2;
                 if (targetWeaknesses.contains(move.getType())) {
                     effectivenessCoefficient = 2;
-                    logger.addLog("The attack is super effective !");
+                    System.out.println("The attack is super effective !");
                     return physicalDamages * effectivenessCoefficient;
                 }
                 if (targetImmunities.contains(move.getType())) {
-                    logger.addLog("This attack does not affect the pokemon");
+                    System.out.println("This attack does not affect the pokemon");
                     return 0;
                 }
                 if (targetResistances.contains(move.getType())) {
                     effectivenessCoefficient = 0.5f;
-                    logger.addLog("The attack is not very effective");
+                    System.out.println("The attack is not very effective");
                     return physicalDamages * effectivenessCoefficient;
                 } else {
                     return physicalDamages;
@@ -666,16 +652,16 @@ public class Pokemon {
                 double specialDamages = ((((launcherLevel * 0.4 + 2) * launcherAtkSpe * power) / targetDefSpe) / 50) + 2;
                 if (targetWeaknesses.contains(move.getType())) {
                     effectivenessCoefficient = 2;
-                    logger.addLog("The attack is super effective !");
+                    System.out.println("The attack is super effective !");
                     return specialDamages * effectivenessCoefficient;
                 }
                 if (targetImmunities.contains(move.getType())) {
-                    logger.addLog("This attack does not affect the pokemon");
+                    System.out.println("This attack does not affect the pokemon");
                     return 0;
                 }
                 if (targetResistances.contains(move.getType())) {
                     effectivenessCoefficient = 0.5f;
-                    logger.addLog("The attack is not very effective !");
+                    System.out.println("The attack is not very effective !");
                     return specialDamages * effectivenessCoefficient;
                 } else {
                     return specialDamages;

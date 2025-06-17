@@ -67,7 +67,7 @@ public class FightButtons extends HBox {
 
     Turn turn = new Turn(playerPokemon, npcPokemon);
     Queue<BattleEvent> queue = new LinkedList<>();
-    BattleExecutor executor = new BattleExecutor(queue);
+    BattleExecutor executor = BattleExecutor.getInstance();
 
     public FightButtons(TextBubble textBubble, Bar opponentBar, Bar playerBar) {
         this.textBubble = textBubble;
@@ -184,7 +184,6 @@ public class FightButtons extends HBox {
 
         executor.addEvent(new MessageEvent(textBubble, playerPokemon.getName() + " uses " + move.getName()));
         executor.addEvent(new DamageEvent(playerPokemon, npcPokemon, move, terrain));
-        executor.addEvent(new MessageEvent(textBubble, playerPokemon.getLogger().getLog()));
         executor.addEvent(new UpdateBarEvent(opponentBar, opponentBar.getHealth()));
 
         executor.executeNext();

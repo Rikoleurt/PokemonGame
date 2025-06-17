@@ -1,7 +1,7 @@
 package View.FightView;
 
 import Controller.Fight.FightController;
-import Controller.Fight.Log.FightLogger;
+
 
 import Model.Person.NPC;
 import Model.Person.Player;
@@ -27,7 +27,6 @@ public class FightView extends BorderPane {
     TextBubble textBubble = new TextBubble();
     StatBubble statBubble = new StatBubble();
     List<String> messages = new ArrayList<>();
-    FightLogger logger = new FightLogger(textBubble, messages);
 
     public static Player player = initiatePlayer();
     public static NPC npc = initiateEnemy();
@@ -41,8 +40,6 @@ public class FightView extends BorderPane {
     FightButtons fightButtons = new FightButtons(textBubble, opponentBar, playerBar);
 
     public FightView(){
-        player.getFrontPokemon().setLogger(logger);
-        npc.getFrontPokemon().setLogger(logger);
 
         setBottom(fightButtons);
         setRight(playerBar);
