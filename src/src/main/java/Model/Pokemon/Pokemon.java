@@ -182,6 +182,7 @@ public class Pokemon {
         return moves;
     }
     public Move getAttack(Move move){
+        System.out.println(move.getName() + " : " + moves.size());
         return moves.get(moves.indexOf(move));
     }
 
@@ -380,6 +381,7 @@ public class Pokemon {
      */
     public void attack(Pokemon target, Move move, Terrain terrain, TextBubble bubble) {
         Move m = getAttack(move);
+        executor.addEvent(new MessageEvent(bubble, getName() + " uses " + m.getName()));
         if(m instanceof Attack attack){
             statusEffect(target, move, bubble);
             if((this.getStatus() == Status.normal || this.getStatus() == Status.cursed || this.getStatus() == Status.burned || this.getStatus() == Status.paralyzed || this.getStatus() == Status.freeze || this.getStatus() == Status.attracted || this.getStatus() == Status.confused || this.getStatus() == Status.asleep || this.getStatus() == Status.poisoned || this.getStatus() == Status.badlyPoisoned)){
@@ -406,7 +408,7 @@ public class Pokemon {
                 case "atkSpe" -> atkSpeRaise += upgradeMove.getRaiseLevel();
                 case "defSpe" -> defSpeRaise += upgradeMove.getRaiseLevel();
             }
-            updateStat();
+            updateStat(bubble, target);
         }
         updateStatus();
         if (target.HP <= 0) {
@@ -421,21 +423,36 @@ public class Pokemon {
     /**
      * Update the stat modifier each turn
      */
-    public void updateStat(){
-        this.atk = applyStatModifier(this.atk, atkRaise);
-        this.def = applyStatModifier(this.def, defRaise);
-        this.speed = applyStatModifier(this.speed, speedRaise);
-        this.atkSpe = applyStatModifier(this.atkSpe, atkSpeRaise);
-        this.defSpe = applyStatModifier(this.defSpe, defSpeRaise);
+    public void updateStat(TextBubble bubble, Pokemon target){
+        this.atk = applyStatModifier(this.atk, atkRaise," attack", bubble, target);
+        this.def = applyStatModifier(this.def, defRaise, " defense", bubble, target);
+        this.speed = applyStatModifier(this.speed, speedRaise, " speed", bubble, target);
+        this.atkSpe = applyStatModifier(this.atkSpe, atkSpeRaise," special attack", bubble, target);
+        this.defSpe = applyStatModifier(this.defSpe, defSpeRaise," special defense", bubble, target);
     }
 
-    private int applyStatModifier(int baseStat, int stage){
+    private int applyStatModifier(int baseStat, int stage, String statName, TextBubble bubble, Pokemon target){
+        int originalStage = stage;
+
         if (stage > 6) stage = 6;
         if (stage < -6) stage = -6;
+
+        if (originalStage == 1) {
+            executor.addEvent(new MessageEvent(bubble, target.getName() + " raises its " + statName));
+        } else if (originalStage == 2) {
+            executor.addEvent(new MessageEvent(bubble, target.getName() + " sharply raises its " + statName));
+        } else if (originalStage == -1) {
+            executor.addEvent(new MessageEvent(bubble, target.getName() + "'s" + statName + " decreased"));
+        } else if (originalStage == -2) {
+            executor.addEvent(new MessageEvent(bubble, target.getName() + "'s" + statName + " sharply decreased"));
+        }
+
         int[] multipliersNumerator = {2, 2, 2, 2, 2, 2, 2, 3, 4, 5, 6, 7, 8};
         int[] multipliersDenominator = {8, 7, 6, 5, 4, 3, 2, 2, 2, 2, 2, 2, 2};
+
         return (baseStat * multipliersNumerator[stage + 6]) / multipliersDenominator[stage + 6];
     }
+
 
     // ------------------------------------------------------------------------------------------------------------------
     // Everything that touches to terrain, debris and climate

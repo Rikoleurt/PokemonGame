@@ -6,11 +6,11 @@ import Model.Pokemon.Terrain;
 import View.FightView.Text.TextBubble;
 
 public class DamageEvent extends BattleEvent {
-    private Pokemon launcher;
-    private Pokemon target;
-    private Move move;
-    private Terrain terrain;
-    private TextBubble bubble;
+    private final Pokemon launcher;
+    private final Pokemon target;
+    private final Move move;
+    private final Terrain terrain;
+    private final TextBubble bubble;
 
     public DamageEvent(Pokemon launcher, Pokemon target, Move move, Terrain terrain, TextBubble bubble) {
         this.launcher = launcher;
