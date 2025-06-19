@@ -17,6 +17,7 @@ import java.io.*;
 import java.util.*;
 
 import View.FightView.Text.StatBubble;
+import View.FightView.Text.TextBubble;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
 
@@ -72,6 +73,8 @@ public class Pokemon {
     int speedRaise;
     int atkSpeRaise;
     int defSpeRaise;
+
+    BattleExecutor executor = BattleExecutor.getInstance();
 
     public Pokemon(String name, int maxHP, int HP, int atk, int def, int atkSpe, int defSpe, int speed, int baseHP, int baseAtk, int baseDef, int baseAtkSpe, int baseDefSpe, int baseSpeed,
                    int hpIV, int atkIV, int defIV, int atkSpeIV, int defSpeIV, int speedIV, int hpEV, int atkEV, int defEV, int atkSpeEV, int defSpeEV, int speedEV, int atkRaise, int
@@ -375,31 +378,27 @@ public class Pokemon {
      * @param move The move it uses
      * @param terrain The terrain the Pokémon are on
      */
-    public void attack(Pokemon target, Move move, Terrain terrain) {
-        BattleExecutor executor = BattleExecutor.getInstance();
+    public void attack(Pokemon target, Move move, Terrain terrain, TextBubble bubble) {
         Move m = getAttack(move);
         if(m instanceof Attack attack){
-            statusEffect(target, move);
-            if((this.getStatus() == Status.normal || this.getStatus() == Status.cursed || this.getStatus() == Status.burned
-                    || this.getStatus() == Status.paralyzed || this.getStatus() == Status.freeze || this.getStatus() == Status.attracted
-                    || this.getStatus() == Status.confused || this.getStatus() == Status.asleep || this.getStatus() == Status.poisoned
-                    || this.getStatus() == Status.badlyPoisoned)){
-                int damage = (int) totalDamage((Attack) getAttack(attack), this, target);
+            statusEffect(target, move, bubble);
+            if((this.getStatus() == Status.normal || this.getStatus() == Status.cursed || this.getStatus() == Status.burned || this.getStatus() == Status.paralyzed || this.getStatus() == Status.freeze || this.getStatus() == Status.attracted || this.getStatus() == Status.confused || this.getStatus() == Status.asleep || this.getStatus() == Status.poisoned || this.getStatus() == Status.badlyPoisoned)){
+                int damage = (int) totalDamage((Attack) getAttack(attack), this, target, bubble);
                 target.setHP(Math.max(0, target.getHP() - damage));
                 System.out.println(target.getName() + " HP : " + target.HP + "/" + target.getMaxHP());
             }
         }
         if(m instanceof DebrisAttack debrisAttack){
-            statusEffect(target, move);
+            statusEffect(target, move, bubble);
             terrain.setDebris(debrisAttack.getDebris());
         }
         if(m instanceof StatusAttack statusAttack){
-            statusEffect(target, statusAttack);
-            target.status = setStatus(target, statusAttack);
+            statusEffect(target, statusAttack, bubble);
+            target.status = setStatus(target, statusAttack, bubble);
             System.out.println(target.getName() + " is " + target.getStatus() + "!");
         }
         if(m instanceof UpgradeMove upgradeMove){
-            statusEffect(target, upgradeMove);
+            statusEffect(target, upgradeMove, bubble);
             switch (upgradeMove.getStat()) {
                 case "atk"    -> atkRaise += upgradeMove.getRaiseLevel();
                 case "def"    -> defRaise += upgradeMove.getRaiseLevel();
@@ -454,12 +453,14 @@ public class Pokemon {
      * @param statusMove The status attack it uses
      * @return The status of the target
      */
-    public Status setStatus(Pokemon target, StatusAttack statusMove){
+    public Status setStatus(Pokemon target, StatusAttack statusMove, TextBubble bubble) {
         if(target.getStatus() != Status.normal){
             System.out.println(target.getName() + " is already " + target.getStatus() + "! It won't have any effect.");
+            executor.addEvent(new MessageEvent(bubble,target.getName() + " is already " + target.getStatus() + "! It won't have any effect."));
         }
         if(immunitiesTable(target).contains(statusMove.getType())){
             System.out.println("This attack does not affect " + getName());
+            executor.addEvent(new MessageEvent(bubble,"This attack does not affect " + getName()));
             return null;
         }
         if(target.getStatus() == Status.normal){
@@ -474,11 +475,12 @@ public class Pokemon {
      * @param move Move it uses
      */
 
-    public void statusEffect(Pokemon target, Move move){
+    public void statusEffect(Pokemon target, Move move, TextBubble bubble){
         Random random = new Random();
         if(this.getAttack(move).getMode() == AttackMode.physical && this.getStatus() == Status.burned){
-            target.HP -= (int) totalDamage((Attack) this.getAttack(move), this, target)/2;
+            target.HP -= (int) totalDamage((Attack) this.getAttack(move), this, target, bubble)/2;
             System.out.println(getName() + " uses " + move.getName());
+            executor.addEvent(new MessageEvent(bubble,getName() + " uses " + move.getName()));
             System.out.println(target.getName() + " HP : " + target.HP + "/" + target.getMaxHP());
             return;
         }
@@ -486,6 +488,7 @@ public class Pokemon {
             int randInt = random.nextInt(0,4);
             if(randInt == 1){
                 System.out.println(getName() + " is paralyzed! It can't move!");
+                executor.addEvent(new MessageEvent(bubble,getName() + " is paralyzed! It can't move!"));
                 return;
             }
         }
@@ -493,9 +496,12 @@ public class Pokemon {
             int randInt = random.nextInt(0,4);
             if(randInt < 3){
                 System.out.println(getName() + " is frozen solid!");
+                executor.addEvent(new MessageEvent(bubble,getName() + " is frozen solid!"));
+
                 return;
             } else {
                 System.out.println(getName() + " is not frozen anymore!");
+                executor.addEvent(new MessageEvent(bubble,getName() + " is not frozen anymore!"));
                 this.setStatus(null);
             }
         }
@@ -503,13 +509,17 @@ public class Pokemon {
             int randInt = random.nextInt(0,3);
             if(randInt == 0){
                 System.out.println(getName() + " woke up!");
+                executor.addEvent(new MessageEvent(bubble,getName() + " woke up!"));
                 this.setStatus(Status.normal);
             }
             if(randInt > 0){
                 System.out.println(getName() + " is asleep!");
+                executor.addEvent(new MessageEvent(bubble,getName() + " is asleep!"));
+
                 ++wakeUp;
                 if(wakeUp == 4){
                     System.out.println(getName() + " woke up!");
+                    executor.addEvent(new MessageEvent(bubble,getName() + " woke up!"));
                     this.status = Status.normal;
                 }
                 if(wakeUp != 4) {
@@ -521,6 +531,7 @@ public class Pokemon {
             int randInt = random.nextInt(0,2);
             if(randInt == 1){
                 System.out.println(getName() + " is attracted to " + target.getName());
+                executor.addEvent(new MessageEvent(bubble,getName() + " is attracted to " + target.getName()));
                 return;
             }
         }
@@ -529,17 +540,21 @@ public class Pokemon {
             ++healConfusion;
             if(randInt == 0){
                 if(healConfusion < 4) {
+                    executor.addEvent(new MessageEvent(bubble,getName() + " is confused!"));
                     System.out.println(getName() + " is confused!");
                 }
             }
             if(randInt == 1){
                 System.out.println(getName() + " is confused!");
+                executor.addEvent(new MessageEvent(bubble,getName() + " is confused!"));
+                executor.addEvent(new MessageEvent(bubble,getName() + " hurt itself in its confusion!"));
                 System.out.println(getName() + " hurt itself in its confusion!");
                 this.HP -= (int) (((((this.getLevel() * 0.4 + 2) * this.getAtk() * 40) / target.getDef()) / 50) + 2);
                 return;
             }
             if(healConfusion > 4){
                 System.out.println(getName() + " snapped out of confusion!");
+                executor.addEvent(new MessageEvent(bubble,getName() + " snapped out of confusion!"));
                 this.setStatus(Status.normal);
                 healConfusion = 0;
             }
@@ -547,6 +562,7 @@ public class Pokemon {
         // To implement
         if(getStatus() == Status.fear){
             System.out.println(getName() + " is feared! It can't move!");
+            executor.addEvent(new MessageEvent(bubble,getName() + " is feared! It can't move!"));
         }
     }
 
@@ -594,7 +610,7 @@ public class Pokemon {
      * @param target
      * @return The total damage done to the target
      */
-    public double totalDamage(Attack attack, Pokemon launcher, Pokemon target) {
+    public double totalDamage(Attack attack, Pokemon launcher, Pokemon target, TextBubble bubble) {
         float power = attack.getPower();
         double augmentedDamage;
         if(attack.isStab(launcher)) {
@@ -602,10 +618,11 @@ public class Pokemon {
         }
         if(attack.isCritical(launcher)){
             augmentedDamage = launcher.getAttack(attack).criticalDamage(launcher);
+            executor.addEvent(new MessageEvent(bubble, "Critical hit !"));
             System.out.println("Critical hit !");
-            return calculateEffectiveness(attack, launcher, target, power) * augmentedDamage;
+            return calculateEffectiveness(attack, launcher, target, power, bubble) * augmentedDamage;
         }
-        return calculateEffectiveness(attack, launcher, target, power);
+        return calculateEffectiveness(attack, launcher, target, power, bubble);
     }
 
     /**
@@ -616,7 +633,7 @@ public class Pokemon {
      * @param power The power of the move
      * @return The attack damage without taking into account critical/stab hits
      */
-    private double calculateEffectiveness(Move move, Pokemon launcher, Pokemon target, float power) {
+    private double calculateEffectiveness(Move move, Pokemon launcher, Pokemon target, float power, TextBubble bubble) {
         List<Type> targetWeaknesses =  weaknessesTable(target);
         List<Type> targetResistances = resistancesTable(target);
         List<Type> targetImmunities = immunitiesTable(target);
@@ -634,15 +651,18 @@ public class Pokemon {
                 double physicalDamages = ((((launcherLevel * 0.4 + 2) * launcherAtk * power) / targetDef) / 50) + 2;
                 if (targetWeaknesses.contains(move.getType())) {
                     effectivenessCoefficient = 2;
+                    executor.addEvent(new MessageEvent(bubble, "The attack is super effective !"));
                     System.out.println("The attack is super effective !");
                     return physicalDamages * effectivenessCoefficient;
                 }
                 if (targetImmunities.contains(move.getType())) {
+                    executor.addEvent(new MessageEvent(bubble, "The attack does not affect " + target.getName()));
                     System.out.println("This attack does not affect the pokemon");
                     return 0;
                 }
                 if (targetResistances.contains(move.getType())) {
                     effectivenessCoefficient = 0.5f;
+                    executor.addEvent(new MessageEvent(bubble, "The attack is not very effective"));
                     System.out.println("The attack is not very effective");
                     return physicalDamages * effectivenessCoefficient;
                 } else {
@@ -652,15 +672,18 @@ public class Pokemon {
                 double specialDamages = ((((launcherLevel * 0.4 + 2) * launcherAtkSpe * power) / targetDefSpe) / 50) + 2;
                 if (targetWeaknesses.contains(move.getType())) {
                     effectivenessCoefficient = 2;
+                    executor.addEvent(new MessageEvent(bubble, "The attack is super effective !"));
                     System.out.println("The attack is super effective !");
                     return specialDamages * effectivenessCoefficient;
                 }
                 if (targetImmunities.contains(move.getType())) {
+                    executor.addEvent(new MessageEvent(bubble, "The attack does not affect " + target.getName()));
                     System.out.println("This attack does not affect the pokemon");
                     return 0;
                 }
                 if (targetResistances.contains(move.getType())) {
                     effectivenessCoefficient = 0.5f;
+                    executor.addEvent(new MessageEvent(bubble, "The attack is not very effective"));
                     System.out.println("The attack is not very effective !");
                     return specialDamages * effectivenessCoefficient;
                 } else {
