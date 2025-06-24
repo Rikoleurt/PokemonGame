@@ -3,7 +3,9 @@ package Controller.Fight.Battle.Events;
 import Model.Pokemon.Move;
 import Model.Pokemon.Pokemon;
 import Model.Pokemon.Terrain;
+import View.FightView.InfoBars.Bar;
 import View.FightView.Text.TextBubble;
+import javafx.scene.control.Label;
 
 public class DamageEvent extends BattleEvent {
     private final Pokemon launcher;
@@ -11,18 +13,22 @@ public class DamageEvent extends BattleEvent {
     private final Move move;
     private final Terrain terrain;
     private final TextBubble bubble;
+    private final Bar targetBar;
 
-    public DamageEvent(Pokemon launcher, Pokemon target, Move move, Terrain terrain, TextBubble bubble) {
+
+    public DamageEvent(Pokemon launcher, Pokemon target, Move move, Terrain terrain, TextBubble bubble, Bar targetBar) {
         this.launcher = launcher;
         this.target = target;
         this.move = move;
         this.terrain = terrain;
         this.bubble = bubble;
+        this.targetBar = targetBar;
+
     }
 
     @Override
     public void execute() {
-        launcher.attack(target, move, terrain, bubble);
+        launcher.attack(target, move, terrain, bubble, targetBar);
         onFinish();
     }
 }

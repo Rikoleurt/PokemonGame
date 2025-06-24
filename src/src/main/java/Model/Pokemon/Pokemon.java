@@ -16,10 +16,12 @@ import Model.Pokemon.Attacks.DebrisAttack;
 import java.io.*;
 import java.util.*;
 
+import View.FightView.InfoBars.Bar;
 import View.FightView.Text.StatBubble;
 import View.FightView.Text.TextBubble;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
+import javafx.scene.control.Label;
 
 
 public class Pokemon {
@@ -379,15 +381,17 @@ public class Pokemon {
      * @param move The move it uses
      * @param terrain The terrain the Pokémon are on
      */
-    public void attack(Pokemon target, Move move, Terrain terrain, TextBubble bubble) {
+    public void attack(Pokemon target, Move move, Terrain terrain, TextBubble bubble, Bar targetBar) {
         Move m = getAttack(move);
-        executor.addEvent(new MessageEvent(bubble, getName() + " uses " + m.getName()));
         if(m instanceof Attack attack){
             statusEffect(target, move, bubble);
             if((this.getStatus() == Status.normal || this.getStatus() == Status.cursed || this.getStatus() == Status.burned || this.getStatus() == Status.paralyzed || this.getStatus() == Status.freeze || this.getStatus() == Status.attracted || this.getStatus() == Status.confused || this.getStatus() == Status.asleep || this.getStatus() == Status.poisoned || this.getStatus() == Status.badlyPoisoned)){
+                executor.addEvent(new MessageEvent(bubble,getName() + " uses " + move.getName()));
+                executor.addEvent(new UpdateBarEvent(targetBar, targetBar.getHealth()));
                 int damage = (int) totalDamage((Attack) getAttack(attack), this, target, bubble);
                 target.setHP(Math.max(0, target.getHP() - damage));
                 System.out.println(target.getName() + " HP : " + target.HP + "/" + target.getMaxHP());
+
             }
         }
         if(m instanceof DebrisAttack debrisAttack){

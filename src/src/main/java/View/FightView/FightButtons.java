@@ -118,7 +118,7 @@ public class FightButtons extends HBox {
         runButton.setOnAction(e -> {
         });
 
-        atkButtonAction();
+        atkButton();
     }
 
 
@@ -149,23 +149,23 @@ public class FightButtons extends HBox {
         return button;
     }
 
-    private void atkButtonAction() {
+    private void atkButton() {
         atk1Button.setOnAction(e -> {
             if(pAtk1 != null) {
-                AtkButtonAction(pAtk1, terrain);
+                atkButtonAction(pAtk1, terrain);
             }
         });
 
         atk2Button.setOnAction(e -> {
             if(pAtk2 != null) {
-                AtkButtonAction(pAtk2, terrain);
+                atkButtonAction(pAtk2, terrain);
             }
 
         });
 
         atk3Button.setOnAction(e -> {
             if(pAtk3 != null) {
-                AtkButtonAction(pAtk3, terrain);
+                atkButtonAction(pAtk3, terrain);
             }
 
 
@@ -178,29 +178,25 @@ public class FightButtons extends HBox {
         });
     }
 
-    private void AtkButtonAction(Move move, Terrain terrain) {
+    private void atkButtonAction(Move move, Terrain terrain) {
         HBox1.setVisible(false);
         HBox2.setVisible(false);
         boolean isPlayerTurnFinished = false;
         boolean isNpcTurnFinished = false;
         if(turn.isPlayerTurn()) {
-            executor.addEvent(new DamageEvent(playerPokemon, npcPokemon, move, terrain, textBubble));
-            executor.addEvent(new UpdateBarEvent(opponentBar, opponentBar.getHealth()));
+            executor.addEvent(new DamageEvent(playerPokemon, npcPokemon, move, terrain, textBubble, opponentBar)); // Adds the message event only at the call of execute()
             turn.toggleTurn();
             isPlayerTurnFinished = true;
         }
         if(!turn.isPlayerTurn()) {
             Move enemyMove = npcPokemon.chooseMove();
-            executor.addEvent(new DamageEvent(npcPokemon, playerPokemon, enemyMove, terrain, textBubble));
-            executor.addEvent(new UpdateBarEvent(playerBar, playerBar.getHealth()));
+            executor.addEvent(new DamageEvent(npcPokemon, playerPokemon, enemyMove, terrain, textBubble, playerBar));
             turn.toggleTurn();
             isNpcTurnFinished = true;
         }
         if(isNpcTurnFinished && isPlayerTurnFinished) {
-            executor.executeNext();
-            textBubble.showMessage("What will " + playerPokemon.getName() + " do ?");
+            executor.executeNext(); // <- DamageEvent will register the MessageEvents
         }
-
         HBox1.setVisible(true);
         HBox2.setVisible(true);
         requestFocus();
