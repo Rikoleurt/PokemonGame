@@ -181,20 +181,19 @@ public class FightButtons extends HBox {
     private void atkButtonAction(Move move, Terrain terrain) {
         HBox1.setVisible(false);
         HBox2.setVisible(false);
-        boolean isPlayerTurnFinished = false;
-        boolean isNpcTurnFinished = false;
+        Move enemyMove = npcPokemon.chooseMove();
+        boolean isTurnFinished = false;
         if(turn.isPlayerTurn()) {
-            executor.addEvent(new DamageEvent(playerPokemon, npcPokemon, move, terrain, textBubble, opponentBar)); // Adds the message event only at the call of execute()
-            turn.toggleTurn();
-            isPlayerTurnFinished = true;
+            executor.addEvent(new DamageEvent(playerPokemon, npcPokemon, move, terrain, textBubble, opponentBar));
+            executor.addEvent(new DamageEvent(npcPokemon, playerPokemon, enemyMove, terrain, textBubble, playerBar));
+            isTurnFinished = true;
         }
         if(!turn.isPlayerTurn()) {
-            Move enemyMove = npcPokemon.chooseMove();
             executor.addEvent(new DamageEvent(npcPokemon, playerPokemon, enemyMove, terrain, textBubble, playerBar));
-            turn.toggleTurn();
-            isNpcTurnFinished = true;
+            executor.addEvent(new DamageEvent(playerPokemon, npcPokemon, move, terrain, textBubble, opponentBar));
+            isTurnFinished = true;
         }
-        if(isNpcTurnFinished && isPlayerTurnFinished) {
+        if(isTurnFinished) {
             executor.executeNext(); // <- DamageEvent will register the MessageEvents
         }
         HBox1.setVisible(true);

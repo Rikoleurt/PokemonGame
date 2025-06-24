@@ -1,6 +1,7 @@
 package Controller.Fight.Battle;
 
 import Controller.Fight.Battle.Events.BattleEvent;
+import Controller.Fight.Battle.Events.MessageEvent;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -22,7 +23,7 @@ public class BattleExecutor {
     }
 
     public void addEvent(BattleEvent event) {
-        System.out.println("Added Event : " + event);
+        System.out.println("Added Event : " + event.getName());
         battleEvents.add(event);
     }
 

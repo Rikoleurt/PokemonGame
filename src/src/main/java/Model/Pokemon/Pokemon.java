@@ -184,7 +184,6 @@ public class Pokemon {
         return moves;
     }
     public Move getAttack(Move move){
-        System.out.println(move.getName() + " : " + moves.size());
         return moves.get(moves.indexOf(move));
     }
 
@@ -390,8 +389,6 @@ public class Pokemon {
                 executor.addEvent(new UpdateBarEvent(targetBar, targetBar.getHealth()));
                 int damage = (int) totalDamage((Attack) getAttack(attack), this, target, bubble);
                 target.setHP(Math.max(0, target.getHP() - damage));
-                System.out.println(target.getName() + " HP : " + target.HP + "/" + target.getMaxHP());
-
             }
         }
         if(m instanceof DebrisAttack debrisAttack){
