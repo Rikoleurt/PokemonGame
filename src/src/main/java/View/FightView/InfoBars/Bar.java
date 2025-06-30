@@ -125,14 +125,13 @@ public class Bar extends VBox {
         int steps = (int) Math.ceil((startProgress - endProgress) / 0.02);
         timeline.getKeyFrames().add(keyFrame);
         timeline.setCycleCount(steps);
-
+        timeline.play();
         timeline.setOnFinished(e -> {
             if (onFinish != null) {
+                System.out.println("Starting another animation");
                 onFinish.run();
             }
         });
-
-        timeline.play();
     }
 
     private static void ApplyColor(Runnable onFinish, AtomicInteger currentHP, int maxHP, double endProgress, double newProgress, ProgressBar playerBar) {

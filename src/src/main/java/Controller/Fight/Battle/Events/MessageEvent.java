@@ -17,5 +17,4 @@ public class MessageEvent extends BattleEvent {
         bubble.setOnMessageComplete(this::onFinish);
         bubble.addMessage(message);
     }
-
 }

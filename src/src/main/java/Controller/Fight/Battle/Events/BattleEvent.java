@@ -23,8 +23,7 @@ public abstract class BattleEvent implements Event {
      * (mandatory in the body of execute())
      */
     @Override
-    public void execute() {
-    }
+    public void execute() {}
 
     public String getName(){
         return getClass().getSimpleName();

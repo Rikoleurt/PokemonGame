@@ -1,10 +1,8 @@
 package View.FightView;
 
 import Controller.Fight.Battle.BattleExecutor;
-import Controller.Fight.Battle.Events.BattleEvent;
 import Controller.Fight.Battle.Events.DamageEvent;
-import Controller.Fight.Battle.Events.MessageEvent;
-import Controller.Fight.Battle.Events.UpdateBarEvent;
+
 import Controller.Fight.Turns.Turn;
 import Model.Pokemon.Pokemon;
 import Model.Pokemon.Move;
@@ -14,6 +12,7 @@ import Model.Pokemon.TerrainEnum.Meteo;
 
 import View.FightView.InfoBars.Bar;
 import View.FightView.Text.TextBubble;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -22,9 +21,6 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-
-import java.util.LinkedList;
-import java.util.Queue;
 
 import static View.FightView.FightView.npc;
 import static View.FightView.FightView.player;
@@ -66,7 +62,6 @@ public class FightButtons extends HBox {
     HBox HBox2 = new HBox(runButton, pokemonButton);
 
     Turn turn = new Turn(playerPokemon, npcPokemon);
-    Queue<BattleEvent> queue = new LinkedList<>();
     BattleExecutor executor = BattleExecutor.getInstance();
 
     public FightButtons(TextBubble textBubble, Bar opponentBar, Bar playerBar) {
@@ -119,9 +114,8 @@ public class FightButtons extends HBox {
         });
 
         atkButton();
+
     }
-
-
 
     private Button createButton(String text) {
         Button button = new Button(text);
@@ -182,22 +176,16 @@ public class FightButtons extends HBox {
         HBox1.setVisible(false);
         HBox2.setVisible(false);
         Move enemyMove = npcPokemon.chooseMove();
-        boolean isTurnFinished = false;
         if(turn.isPlayerTurn()) {
             executor.addEvent(new DamageEvent(playerPokemon, npcPokemon, move, terrain, textBubble, opponentBar));
             executor.addEvent(new DamageEvent(npcPokemon, playerPokemon, enemyMove, terrain, textBubble, playerBar));
-            isTurnFinished = true;
+
         }
         if(!turn.isPlayerTurn()) {
             executor.addEvent(new DamageEvent(npcPokemon, playerPokemon, enemyMove, terrain, textBubble, playerBar));
             executor.addEvent(new DamageEvent(playerPokemon, npcPokemon, move, terrain, textBubble, opponentBar));
-            isTurnFinished = true;
         }
-        if(isTurnFinished) {
-            executor.executeNext(); // <- DamageEvent will register the MessageEvents
-        }
-        HBox1.setVisible(true);
-        HBox2.setVisible(true);
+        executor.executeNext(() -> Platform.runLater(this::resetFightButtons));
         requestFocus();
     }
 
@@ -216,4 +204,26 @@ public class FightButtons extends HBox {
             return null;
         }
     }
+
+    private void resetFightButtons() {
+        ObservableList<Node> components = this.getChildren();
+
+        HBox1.getChildren().clear();
+        HBox2.getChildren().clear();
+        vBox.getChildren().clear();
+        components.clear();
+
+        HBox1.getChildren().addAll(fightButton, bagButton);
+        HBox2.getChildren().addAll(runButton, pokemonButton);
+        vBox.getChildren().addAll(HBox1, HBox2);
+
+        components.addAll(vBox2, vBox);
+
+        HBox1.setVisible(true);
+        HBox2.setVisible(true);
+        vBox.setVisible(true);
+
+        textBubble.showMessage("What will " + playerPokemon.getName() + " do?");
+    }
+
 }

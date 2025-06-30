@@ -29,6 +29,6 @@ public class DamageEvent extends BattleEvent {
     @Override
     public void execute() {
         launcher.attack(target, move, terrain, bubble, targetBar);
-        onFinish();
+        onFinish(); // <- Creates bugs as we call attack method
     }
 }

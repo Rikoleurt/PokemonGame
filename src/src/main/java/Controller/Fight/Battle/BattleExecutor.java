@@ -31,14 +31,17 @@ public class BattleExecutor {
         battleEvents.forEach(BattleEvent::execute);
     }
 
-    public void executeNext() {
+    public void executeNext(Runnable onAllEventsFinished) {
         if (!battleEvents.isEmpty()) {
             BattleEvent event = battleEvents.poll();
             System.out.println("Executing next event : " + event.getName());
-            event.setOnFinish(this::executeNext);
+            event.setOnFinish(() -> executeNext(onAllEventsFinished));
             event.execute();
         } else {
             System.out.println("Every events were executed.");
+            if (onAllEventsFinished != null) {
+                onAllEventsFinished.run();
+            }
         }
     }
 }

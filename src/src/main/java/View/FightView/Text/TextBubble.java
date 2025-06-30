@@ -25,7 +25,7 @@ public class TextBubble extends HBox implements Bubble {
 
     private static final int TYPING_SPEED_MS = 40;
     private boolean isTyping = false;
-    private String fullMessage = "";  // Message complet en cours
+    private String fullMessage = "";
     private Timeline typingTimeline;
 
 
@@ -91,27 +91,6 @@ public class TextBubble extends HBox implements Bubble {
         this.setVisible(true);
     }
 
-    public boolean isDisplayingQueue() {
-        return isDisplayingQueue;
-    }
-
-    public void setDisplayingQueue(boolean displayingQueue) {
-        isDisplayingQueue = displayingQueue;
-    }
-
-    public void showMessages(String... messages) {
-        Platform.runLater(() -> {
-            for (String msg : messages) {
-                System.out.println("New message : " + msg);
-                messageQueue.offer(msg);
-            }
-
-            if (!isDisplayingQueue) {
-                displayNextMessage();
-            }
-        });
-    }
-
     public void addMessage(String messageText) {
         messageQueue.add(messageText);
         if (!isDisplayingQueue) {
@@ -122,13 +101,21 @@ public class TextBubble extends HBox implements Bubble {
     private void displayNextMessage() {
         if (messageQueue.isEmpty()) {
             isDisplayingQueue = false;
+
+            if (!isTyping && onMessageComplete != null) {
+                Runnable callback = onMessageComplete;
+                onMessageComplete = null;
+                callback.run();
+            }
+
             return;
         }
 
-        isDisplayingQueue = true;
         fullMessage = messageQueue.poll();
+
         message.setText("");
         isTyping = true;
+        isDisplayingQueue = true;
 
         typingTimeline = new Timeline();
         for (int i = 0; i <= fullMessage.length(); i++) {
@@ -140,9 +127,14 @@ public class TextBubble extends HBox implements Bubble {
             );
         }
 
-        typingTimeline.setOnFinished(e -> isTyping = false);
+        typingTimeline.setOnFinished(e -> {
+            isTyping = false;
+        });
+
         typingTimeline.play();
     }
+
+
 
     public void handleKeyPress(KeyCode code) {
         if (code == KeyCode.SPACE || code == KeyCode.ENTER) {
@@ -162,9 +154,7 @@ public class TextBubble extends HBox implements Bubble {
     }
 
 
-
     public void setOnMessageComplete(Runnable onMessageComplete) {
         this.onMessageComplete = onMessageComplete;
     }
-
 }
