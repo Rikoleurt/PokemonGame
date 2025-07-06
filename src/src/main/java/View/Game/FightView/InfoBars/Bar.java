@@ -1,7 +1,7 @@
-package View.FightView.InfoBars;
+package View.Game.FightView.InfoBars;
 
 import Model.Pokemon.Pokemon;
-import View.FightView.Text.TextBubble;
+import View.Game.FightView.Text.TextBubble;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.geometry.Insets;

@@ -3,9 +3,8 @@ package Controller.Fight.Battle.Events;
 import Model.Pokemon.Move;
 import Model.Pokemon.Pokemon;
 import Model.Pokemon.Terrain;
-import View.FightView.InfoBars.Bar;
-import View.FightView.Text.TextBubble;
-import javafx.scene.control.Label;
+import View.Game.FightView.InfoBars.Bar;
+import View.Game.FightView.Text.TextBubble;
 
 public class DamageEvent extends BattleEvent {
     private final Pokemon launcher;

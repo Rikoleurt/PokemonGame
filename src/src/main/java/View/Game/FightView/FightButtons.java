@@ -1,4 +1,4 @@
-package View.FightView;
+package View.Game.FightView;
 
 import Controller.Fight.Battle.BattleExecutor;
 import Controller.Fight.Battle.Events.DamageEvent;
@@ -10,8 +10,8 @@ import Model.Pokemon.Terrain;
 import Model.Pokemon.TerrainEnum.Debris;
 import Model.Pokemon.TerrainEnum.Meteo;
 
-import View.FightView.InfoBars.Bar;
-import View.FightView.Text.TextBubble;
+import View.Game.FightView.InfoBars.Bar;
+import View.Game.FightView.Text.TextBubble;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -22,8 +22,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 
-import static View.FightView.FightView.npc;
-import static View.FightView.FightView.player;
+import static View.Game.FightView.FightView.npc;
+import static View.Game.FightView.FightView.player;
 
 public class FightButtons extends HBox {
 

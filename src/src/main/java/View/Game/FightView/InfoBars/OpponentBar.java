@@ -1,6 +1,5 @@
-package View.FightView.InfoBars;
+package View.Game.FightView.InfoBars;
 
-import View.FightView.Text.TextBubble;
 import Model.Pokemon.Pokemon;
 import javafx.scene.control.Label;
 

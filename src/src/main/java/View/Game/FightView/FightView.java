@@ -1,17 +1,15 @@
-package View.FightView;
-
-import Controller.Fight.FightController;
+package View.Game.FightView;
 
 
 import Model.Person.NPC;
 import Model.Person.Player;
 import Model.Pokemon.Pokemon;
 
-import View.FightView.InfoBars.Bar;
-import View.FightView.InfoBars.OpponentBar;
-import View.FightView.InfoBars.PlayerBar;
-import View.FightView.Text.StatBubble;
-import View.FightView.Text.TextBubble;
+import View.Game.FightView.InfoBars.Bar;
+import View.Game.FightView.InfoBars.OpponentBar;
+import View.Game.FightView.InfoBars.PlayerBar;
+import View.Game.FightView.Text.StatBubble;
+import View.Game.FightView.Text.TextBubble;
 
 import javafx.geometry.Pos;
 import javafx.scene.layout.BorderPane;
@@ -35,7 +33,7 @@ public class FightView extends BorderPane {
     public static Pokemon npcPokemon = npc.getFrontPokemon();
 
     Bar opponentBar = new OpponentBar(5, npcPokemon);
-    Bar playerBar = new PlayerBar(5, playerPokemon );
+    Bar playerBar = new PlayerBar(5, playerPokemon);
 
     FightButtons fightButtons = new FightButtons(textBubble, opponentBar, playerBar);
 

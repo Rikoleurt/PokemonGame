@@ -1,15 +1,13 @@
-package View.FightView.Text;
+package View.Game.FightView.Text;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
 
-import javafx.animation.PauseTransition;
 import javafx.util.Duration;
 
 import java.util.LinkedList;

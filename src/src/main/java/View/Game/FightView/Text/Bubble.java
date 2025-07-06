@@ -1,4 +1,4 @@
-package View.FightView.Text;
+package View.Game.FightView.Text;
 
 
 public interface Bubble {

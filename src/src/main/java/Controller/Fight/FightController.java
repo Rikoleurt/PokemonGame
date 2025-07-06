@@ -1,6 +1,6 @@
 package Controller.Fight;
 
-import View.FightView.Text.TextBubble;
+import View.Game.FightView.Text.TextBubble;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 

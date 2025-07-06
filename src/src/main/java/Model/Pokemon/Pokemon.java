@@ -16,12 +16,12 @@ import Model.Pokemon.Attacks.DebrisAttack;
 import java.io.*;
 import java.util.*;
 
-import View.FightView.InfoBars.Bar;
-import View.FightView.Text.StatBubble;
-import View.FightView.Text.TextBubble;
+import View.Console.BattleLayout.BattleConsole;
+import View.Game.FightView.InfoBars.Bar;
+import View.Game.FightView.Text.StatBubble;
+import View.Game.FightView.Text.TextBubble;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
-import javafx.scene.control.Label;
 
 
 public class Pokemon {
@@ -77,6 +77,8 @@ public class Pokemon {
     int defSpeRaise;
 
     BattleExecutor executor = BattleExecutor.getInstance();
+
+    BattleConsole console = BattleConsole.getInstance();
 
     public Pokemon(String name, int maxHP, int HP, int atk, int def, int atkSpe, int defSpe, int speed, int baseHP, int baseAtk, int baseDef, int baseAtkSpe, int baseDefSpe, int baseSpeed,
                    int hpIV, int atkIV, int defIV, int atkSpeIV, int defSpeIV, int speedIV, int hpEV, int atkEV, int defEV, int atkSpeEV, int defSpeEV, int speedEV, int atkRaise, int
@@ -382,6 +384,8 @@ public class Pokemon {
      */
     public void attack(Pokemon target, Move move, Terrain terrain, TextBubble bubble, Bar targetBar) {
         Move m = getAttack(move);
+        console.log("--------------- Beginning of " + getName() + "'s turn ---------------");
+        console.log(getName() + " uses " + move.getName());
         if(m instanceof Attack attack){
             statusEffect(target, move, bubble);
             if((this.getStatus() == Status.normal || this.getStatus() == Status.cursed || this.getStatus() == Status.burned || this.getStatus() == Status.paralyzed || this.getStatus() == Status.freeze || this.getStatus() == Status.attracted || this.getStatus() == Status.confused || this.getStatus() == Status.asleep || this.getStatus() == Status.poisoned || this.getStatus() == Status.badlyPoisoned)){
@@ -412,7 +416,9 @@ public class Pokemon {
             updateStat(bubble, target);
         }
         updateStatus();
+        console.log(target.getName() + " : " + target.getHP() + "/" + target.getMaxHP());
         if (target.HP <= 0) {
+            console.log(target.getName() + " is " + target.getStatus());
             target.setStatus(Status.KO);
         }
     }
@@ -439,12 +445,16 @@ public class Pokemon {
         if (stage < -6) stage = -6;
 
         if (originalStage == 1) {
+            console.log(target.getName() + " raises its " + statName);
             executor.addEvent(new MessageEvent(bubble, target.getName() + " raises its " + statName));
         } else if (originalStage == 2) {
+            console.log(target.getName() + " sharply raises its " + statName);
             executor.addEvent(new MessageEvent(bubble, target.getName() + " sharply raises its " + statName));
         } else if (originalStage == -1) {
+            console.log(target.getName() + "'s" + statName + " decreased");
             executor.addEvent(new MessageEvent(bubble, target.getName() + "'s" + statName + " decreased"));
         } else if (originalStage == -2) {
+            console.log(target.getName() + "'s" + statName + " sharply decreased");
             executor.addEvent(new MessageEvent(bubble, target.getName() + "'s" + statName + " sharply decreased"));
         }
 
@@ -473,10 +483,12 @@ public class Pokemon {
      */
     public Status setStatus(Pokemon target, StatusAttack statusMove, TextBubble bubble) {
         if(target.getStatus() != Status.normal){
+            console.log(target.getName() + " is already " + target.getStatus() + "! It won't have any effect.");
             System.out.println(target.getName() + " is already " + target.getStatus() + "! It won't have any effect.");
             executor.addEvent(new MessageEvent(bubble,target.getName() + " is already " + target.getStatus() + "! It won't have any effect."));
         }
         if(immunitiesTable(target).contains(statusMove.getType())){
+            console.log("This attack does not affect " + getName());
             System.out.println("This attack does not affect " + getName());
             executor.addEvent(new MessageEvent(bubble,"This attack does not affect " + getName()));
             return null;
@@ -497,14 +509,15 @@ public class Pokemon {
         Random random = new Random();
         if(this.getAttack(move).getMode() == AttackMode.physical && this.getStatus() == Status.burned){
             target.HP -= (int) totalDamage((Attack) this.getAttack(move), this, target, bubble)/2;
-            System.out.println(getName() + " uses " + move.getName());
-            executor.addEvent(new MessageEvent(bubble,getName() + " uses " + move.getName()));
+//            System.out.println(getName() + " uses " + move.getName());
+//            executor.addEvent(new MessageEvent(bubble,getName() + " uses " + move.getName()));
             System.out.println(target.getName() + " HP : " + target.HP + "/" + target.getMaxHP());
             return;
         }
         if(this.getStatus() == Status.paralyzed){
             int randInt = random.nextInt(0,4);
             if(randInt == 1){
+                console.log(getName() + " is paralyzed! It can't move!");
                 System.out.println(getName() + " is paralyzed! It can't move!");
                 executor.addEvent(new MessageEvent(bubble,getName() + " is paralyzed! It can't move!"));
                 return;
@@ -513,29 +526,32 @@ public class Pokemon {
         if(this.getStatus() == Status.freeze){
             int randInt = random.nextInt(0,4);
             if(randInt < 3){
+                console.log(getName() + " is frozen solid!");
                 System.out.println(getName() + " is frozen solid!");
                 executor.addEvent(new MessageEvent(bubble,getName() + " is frozen solid!"));
-
                 return;
             } else {
+                console.log(getName() + " is not frozen anymore!");
                 System.out.println(getName() + " is not frozen anymore!");
                 executor.addEvent(new MessageEvent(bubble,getName() + " is not frozen anymore!"));
-                this.setStatus(null);
+                setStatus(null);
             }
         }
         if(this.getStatus() == Status.asleep){
             int randInt = random.nextInt(0,3);
             if(randInt == 0){
+                console.log(getName() + " woke up!");
                 System.out.println(getName() + " woke up!");
                 executor.addEvent(new MessageEvent(bubble,getName() + " woke up!"));
-                this.setStatus(Status.normal);
+                setStatus(Status.normal);
             }
             if(randInt > 0){
+                console.log(getName() + " is asleep!");
                 System.out.println(getName() + " is asleep!");
                 executor.addEvent(new MessageEvent(bubble,getName() + " is asleep!"));
-
                 ++wakeUp;
                 if(wakeUp == 4){
+                    console.log(getName() + " woke up!");
                     System.out.println(getName() + " woke up!");
                     executor.addEvent(new MessageEvent(bubble,getName() + " woke up!"));
                     this.status = Status.normal;
@@ -548,6 +564,7 @@ public class Pokemon {
         if(this.getStatus() == Status.attracted && !Objects.equals(this.getGender(), target.getGender())){
             int randInt = random.nextInt(0,2);
             if(randInt == 1){
+                console.log(getName() + " is attracted to " + target.getName());
                 System.out.println(getName() + " is attracted to " + target.getName());
                 executor.addEvent(new MessageEvent(bubble,getName() + " is attracted to " + target.getName()));
                 return;
@@ -558,11 +575,14 @@ public class Pokemon {
             ++healConfusion;
             if(randInt == 0){
                 if(healConfusion < 4) {
+                    console.log(getName() + " is confused!");
                     executor.addEvent(new MessageEvent(bubble,getName() + " is confused!"));
                     System.out.println(getName() + " is confused!");
                 }
             }
             if(randInt == 1){
+                console.log(getName() + " is confused!");
+                console.log(getName() + " hurt itself in its confusion!");
                 System.out.println(getName() + " is confused!");
                 executor.addEvent(new MessageEvent(bubble,getName() + " is confused!"));
                 executor.addEvent(new MessageEvent(bubble,getName() + " hurt itself in its confusion!"));
@@ -571,6 +591,7 @@ public class Pokemon {
                 return;
             }
             if(healConfusion > 4){
+                console.log(getName() + " snapped out of confusion!");
                 System.out.println(getName() + " snapped out of confusion!");
                 executor.addEvent(new MessageEvent(bubble,getName() + " snapped out of confusion!"));
                 this.setStatus(Status.normal);
@@ -579,6 +600,7 @@ public class Pokemon {
         }
         // To implement
         if(getStatus() == Status.fear){
+            console.log(getName() + " is feared! It can't move!");
             System.out.println(getName() + " is feared! It can't move!");
             executor.addEvent(new MessageEvent(bubble,getName() + " is feared! It can't move!"));
         }
@@ -592,14 +614,17 @@ public class Pokemon {
             case normal, attracted, asleep:
                 break;
             case burned:
+                console.log(getName() + " is burned!");
                 System.out.println(getName() + " is burned!");
                 this.HP = this.HP - (this.maxHP/16);
                 break;
             case poisoned:
+                console.log(getName() + " is poisoned!");
                 System.out.println(getName() + " is poisoned!");
                 this.HP = this.HP - (this.maxHP/8);
                 break;
             case badlyPoisoned:
+                console.log(getName() + " is badly poisoned!");
                 System.out.println(getName() + " is badly poisoned!");
                 this.HP = this.HP - (this.maxHP/16 * poisonCoefficient);
                 ++poisonCoefficient;
@@ -636,6 +661,7 @@ public class Pokemon {
         }
         if(attack.isCritical(launcher)){
             augmentedDamage = launcher.getAttack(attack).criticalDamage(launcher);
+            console.log("Critical hit !");
             executor.addEvent(new MessageEvent(bubble, "Critical hit !"));
             System.out.println("Critical hit !");
             return calculateEffectiveness(attack, launcher, target, power, bubble) * augmentedDamage;
@@ -652,7 +678,7 @@ public class Pokemon {
      * @return The attack damage without taking into account critical/stab hits
      */
     private double calculateEffectiveness(Move move, Pokemon launcher, Pokemon target, float power, TextBubble bubble) {
-        List<Type> targetWeaknesses =  weaknessesTable(target);
+        List<Type> targetWeaknesses = weaknessesTable(target);
         List<Type> targetResistances = resistancesTable(target);
         List<Type> targetImmunities = immunitiesTable(target);
 
@@ -670,10 +696,12 @@ public class Pokemon {
                 if (targetWeaknesses.contains(move.getType())) {
                     effectivenessCoefficient = 2;
                     executor.addEvent(new MessageEvent(bubble, "The attack is super effective !"));
+                    console.log("The attack is super effective !");
                     System.out.println("The attack is super effective !");
                     return physicalDamages * effectivenessCoefficient;
                 }
                 if (targetImmunities.contains(move.getType())) {
+                    console.log("This attack does not affect the pokemon");
                     executor.addEvent(new MessageEvent(bubble, "The attack does not affect " + target.getName()));
                     System.out.println("This attack does not affect the pokemon");
                     return 0;
@@ -682,6 +710,7 @@ public class Pokemon {
                     effectivenessCoefficient = 0.5f;
                     executor.addEvent(new MessageEvent(bubble, "The attack is not very effective"));
                     System.out.println("The attack is not very effective");
+                    console.log("The attack is not very effective");
                     return physicalDamages * effectivenessCoefficient;
                 } else {
                     return physicalDamages;
@@ -690,6 +719,7 @@ public class Pokemon {
                 double specialDamages = ((((launcherLevel * 0.4 + 2) * launcherAtkSpe * power) / targetDefSpe) / 50) + 2;
                 if (targetWeaknesses.contains(move.getType())) {
                     effectivenessCoefficient = 2;
+                    console.log("The attack is super effective !");
                     executor.addEvent(new MessageEvent(bubble, "The attack is super effective !"));
                     System.out.println("The attack is super effective !");
                     return specialDamages * effectivenessCoefficient;
@@ -697,20 +727,21 @@ public class Pokemon {
                 if (targetImmunities.contains(move.getType())) {
                     executor.addEvent(new MessageEvent(bubble, "The attack does not affect " + target.getName()));
                     System.out.println("This attack does not affect the pokemon");
+                    console.log("This attack does not affect the pokemon");
                     return 0;
                 }
                 if (targetResistances.contains(move.getType())) {
                     effectivenessCoefficient = 0.5f;
                     executor.addEvent(new MessageEvent(bubble, "The attack is not very effective"));
                     System.out.println("The attack is not very effective !");
+                    console.log("The attack is not very effective");
                     return specialDamages * effectivenessCoefficient;
                 } else {
                     return specialDamages;
                 }
-            }
-            return 0;
         }
-
+        return 0;
+    }
 
     //------------------------------------------------------------------------------------------------------------------
     // Type table

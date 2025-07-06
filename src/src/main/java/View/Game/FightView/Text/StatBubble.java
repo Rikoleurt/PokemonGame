@@ -1,8 +1,7 @@
-package View.FightView.Text;
+package View.Game.FightView.Text;
 
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
