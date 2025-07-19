@@ -17,13 +17,11 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        // === Obtenir les dimensions de l'écran ===
         Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
         double screenWidth = screenBounds.getWidth();
         double screenHeight = screenBounds.getHeight();
 
-        // === Dimensions proportionnelles ===
-        double consoleWidth = screenWidth * 0.25;   // 25% de la largeur
+        double consoleWidth = screenWidth * 0.25;
         double gameWidth = screenWidth - consoleWidth;
 
         Scene gameScene = new Scene(fightView, gameWidth, screenHeight);
@@ -31,7 +29,7 @@ public class Main extends Application {
 
         fightView.setStyle("-fx-alignment: center;");
         primaryStage.setTitle("Pokémon Game");
-        controller.attachKeyHandlers(gameScene);
+//        controller.attachKeyHandlers(gameScene);
         primaryStage.setScene(gameScene);
         primaryStage.setX(consoleWidth);
         primaryStage.setY(0);

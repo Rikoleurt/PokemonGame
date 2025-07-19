@@ -3,6 +3,10 @@ package View.Console.BattleLayout;
 import View.Game.FightView.FightButtons;
 import javafx.scene.control.TextArea;
 import javafx.scene.text.Font;
+
+/**
+ * This console allows the user to see what data the AI will use to make decisions
+ */
 public class BattleConsole extends TextArea {
 
     private static BattleConsole instance;
@@ -24,6 +28,10 @@ public class BattleConsole extends TextArea {
         return instance;
     }
 
+    /**
+     * Prints onto the console the chosen message
+     * @param message The message to print
+     */
     public void log(String message) {
         appendText(message + "\n");
         positionCaret(getLength());

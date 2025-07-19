@@ -23,7 +23,6 @@ public class BattleExecutor {
     }
 
     public void addEvent(BattleEvent event) {
-        System.out.println("Added Event : " + event.getName());
         battleEvents.add(event);
     }
 
@@ -32,16 +31,26 @@ public class BattleExecutor {
     }
 
     public void executeNext(Runnable onAllEventsFinished) {
+        getEventsFromQueue();
         if (!battleEvents.isEmpty()) {
             BattleEvent event = battleEvents.poll();
-            System.out.println("Executing next event : " + event.getName());
             event.setOnFinish(() -> executeNext(onAllEventsFinished));
             event.execute();
         } else {
-            System.out.println("Every events were executed.");
             if (onAllEventsFinished != null) {
                 onAllEventsFinished.run();
             }
         }
+    }
+
+    public void getEventsFromQueue() {
+        for(BattleEvent event : battleEvents) {
+            System.out.println("Battle Event : " + event.getName() + " size : " + battleEvents.size());
+        }
+        System.out.println();
+    }
+
+    public Queue<BattleEvent> getBattleEvents() {
+        return battleEvents;
     }
 }

@@ -99,13 +99,11 @@ public class TextBubble extends HBox implements Bubble {
     private void displayNextMessage() {
         if (messageQueue.isEmpty()) {
             isDisplayingQueue = false;
-
             if (!isTyping && onMessageComplete != null) {
                 Runnable callback = onMessageComplete;
                 onMessageComplete = null;
                 callback.run();
             }
-
             return;
         }
 

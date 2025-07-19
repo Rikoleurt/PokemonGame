@@ -3,9 +3,11 @@ package View.Game.FightView;
 import Controller.Fight.Battle.BattleExecutor;
 import Controller.Fight.Battle.Events.DamageEvent;
 
+import Controller.Fight.Battle.Events.MessageEvent;
 import Controller.Fight.Turns.Turn;
 import Model.Pokemon.Pokemon;
 import Model.Pokemon.Move;
+import Model.Pokemon.PokemonEnum.Status;
 import Model.Pokemon.Terrain;
 import Model.Pokemon.TerrainEnum.Debris;
 import Model.Pokemon.TerrainEnum.Meteo;
@@ -161,32 +163,48 @@ public class FightButtons extends HBox {
             if(pAtk3 != null) {
                 atkButtonAction(pAtk3, terrain);
             }
-
-
         });
 
         atk4Button.setOnAction(e -> {
-            //if(pAtk4 != null) {
-
-            //}
+//            if(pAtk4 != null) {
+//                atkButtonAction(pAtk4, terrain);
+//            }
         });
     }
 
     private void atkButtonAction(Move move, Terrain terrain) {
         HBox1.setVisible(false);
         HBox2.setVisible(false);
-        Move enemyMove = npcPokemon.chooseMove();
-        if(turn.isPlayerTurn()) {
-            executor.addEvent(new DamageEvent(playerPokemon, npcPokemon, move, terrain, textBubble, opponentBar));
-            executor.addEvent(new DamageEvent(npcPokemon, playerPokemon, enemyMove, terrain, textBubble, playerBar));
+        Move npcMove = npcPokemon.chooseMove();
+        // Problem : If one of the Pokémon are KO within the turn, then it'll still attack
 
+        if(playerPokemon.getStatus() != Status.KO){
+            playerPokemon.attack(npcPokemon, move, terrain, textBubble, opponentBar);
+            System.out.println(executor.getBattleEvents().isEmpty());
+        } else if(playerPokemon.getStatus() == Status.KO){
+            handlePlayerPokemonKO();
         }
-        if(!turn.isPlayerTurn()) {
-            executor.addEvent(new DamageEvent(npcPokemon, playerPokemon, enemyMove, terrain, textBubble, playerBar));
-            executor.addEvent(new DamageEvent(playerPokemon, npcPokemon, move, terrain, textBubble, opponentBar));
+        if(npcPokemon.getStatus() != Status.KO){
+            System.out.println(executor.getBattleEvents().isEmpty());
+            npcPokemon.attack(playerPokemon, npcMove , terrain, textBubble, opponentBar);
+            System.out.println(executor.getBattleEvents().isEmpty());
+        } else if (npcPokemon.getStatus() == Status.KO){
+            handleNpcPokemonKO();
         }
-        executor.executeNext(() -> Platform.runLater(this::resetFightButtons));
+        executor.executeNext(() -> {
+            Platform.runLater(this::resetFightButtons);
+        });
         requestFocus();
+    }
+
+    private void handlePlayerPokemonKO(){
+        executor.addEvent(new MessageEvent(textBubble, playerPokemon.getName() + " fainted."));
+        // Open another window to let the player chose its next Pokémon
+    }
+    private void handleNpcPokemonKO(){
+        executor.addEvent(new MessageEvent(textBubble, npcPokemon.getName() + " fainted."));
+        // Let the enemy switch
+        // To make it easier for the AI, we do not allow switches.
     }
 
     private String getAttackName(int index){
@@ -225,5 +243,4 @@ public class FightButtons extends HBox {
 
         textBubble.showMessage("What will " + playerPokemon.getName() + " do?");
     }
-
 }

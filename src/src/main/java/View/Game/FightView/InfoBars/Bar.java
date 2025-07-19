@@ -128,7 +128,6 @@ public class Bar extends VBox {
         timeline.play();
         timeline.setOnFinished(e -> {
             if (onFinish != null) {
-                System.out.println("Starting another animation");
                 onFinish.run();
             }
         });

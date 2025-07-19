@@ -12,13 +12,10 @@ import Model.Pokemon.PokemonEnum.Status;
 import Model.Pokemon.PokemonEnum.Nature;
 import Model.Pokemon.PokemonEnum.Type;
 import Model.Pokemon.Attacks.DebrisAttack;
-
 import java.io.*;
 import java.util.*;
-
 import View.Console.BattleLayout.BattleConsole;
 import View.Game.FightView.InfoBars.Bar;
-import View.Game.FightView.Text.StatBubble;
 import View.Game.FightView.Text.TextBubble;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
@@ -77,7 +74,6 @@ public class Pokemon {
     int defSpeRaise;
 
     BattleExecutor executor = BattleExecutor.getInstance();
-
     BattleConsole console = BattleConsole.getInstance();
 
     public Pokemon(String name, int maxHP, int HP, int atk, int def, int atkSpe, int defSpe, int speed, int baseHP, int baseAtk, int baseDef, int baseAtkSpe, int baseDefSpe, int baseSpeed,
@@ -123,7 +119,6 @@ public class Pokemon {
         this.maxExp = maxExp;
         this.expType = expType;
         this.status = status;
-
     }
 
 
@@ -131,7 +126,7 @@ public class Pokemon {
     // Getter
     // ------------------------------------------------------------------------------------------------------------------
 
-    public String getName() {
+    public String getName(){
         return name;
     }
     public Type getType() {
@@ -179,9 +174,6 @@ public class Pokemon {
     public boolean isKO(){
         return this.getHP() <= 0;
     }
-    public Nature getNature() {
-        return nature;
-    }
     public ArrayList<Move> getAttacks() {
         return moves;
     }
@@ -192,15 +184,7 @@ public class Pokemon {
 
     public void levelUp() {
         level++;
-
         int oldHP = HP;
-//        int oldMaxHP = maxHP;
-//        int oldAtk = atk;
-//        int oldDef = def;
-//        int oldAtkSpe = atkSpe;
-//        int oldDefSpe = defSpe;
-//        int oldSpeed = speed;
-
         double atkNature = getNatureMultiplier("atk");
         double defNature = getNatureMultiplier("def");
         double atkSpeNature = getNatureMultiplier("atkSpe");
@@ -214,26 +198,10 @@ public class Pokemon {
         atkSpe = (int) Math.floor((Math.floor(((2 * baseAtkSpe + atkSpeIV + Math.floor(atkSpeEV / 4.0)) * level) / 100) + 5) * atkSpeNature);
         defSpe = (int) Math.floor((Math.floor(((2 * baseDefSpe + defSpeIV + Math.floor(defSpeEV / 4.0)) * level) / 100) + 5) * defSpeNature);
         speed = (int) Math.floor((Math.floor(((2 * baseSpeed + speedIV + Math.floor(speedEV / 4.0)) * level) / 100) + 5) * speedNature);
-
         if(HP < maxHP) HP += maxHP-oldHP;
         if(HP > maxHP) HP = maxHP;
-
         System.out.println(name + " is now " + level + " !");
-
     }
-
-    public void displayStatChanges(StatBubble bubble) {
-        String s = this.getName() + " level up!" + this.getLevel() + "\n" +
-                "HP      : " + this.getHP() + "/" + this.getMaxHP() + "\n" +
-                "Atk     : " + this.getAtk() + "\n" +
-                "Def     : " + this.getDef() + "\n" +
-                "AtkSpe  : " + this.getAtkSpe() + "\n" +
-                "DefSpe  : " + this.getDefSpe() + "\n" +
-                "Speed   : " + this.getSpeed();
-
-        bubble.showMessage(s);
-    }
-
 
     private double getNatureMultiplier(String stat) {
         if (nature == null) return 1.0;
@@ -274,79 +242,10 @@ public class Pokemon {
         return 1.0;
     }
 
-    // Getter for base stats
-    public int getBaseHP() {
-        return baseHP;
-    }
-
-    public int getBaseAtk() {
-        return baseAtk;
-    }
-
-    public int getBaseDef() {
-        return baseDef;
-    }
-
-    public int getBaseAtkSpe() {
-        return baseAtkSpe;
-    }
-
-    public int getBaseDefSpe() {
-        return baseDefSpe;
-    }
-
     public int getBaseSpeed() {
         return baseSpeed;
     }
 
-    //Getter for IV-EV
-    public int getHpIV() {
-        return hpIV;
-    }
-
-    public int getAtkIV() {
-        return atkIV;
-    }
-
-    public int getDefIV() {
-        return defIV;
-    }
-
-    public int getAtkSpeIV() {
-        return atkSpeIV;
-    }
-
-    public int getDefSpeIV() {
-        return defSpeIV;
-    }
-
-    public int getSpeedIV() {
-        return speedIV;
-    }
-
-    public int getHpEV() {
-        return hpEV;
-    }
-
-    public int getAtkEV() {
-        return atkEV;
-    }
-
-    public int getDefEV() {
-        return defEV;
-    }
-
-    public int getAtkSpeEV() {
-        return atkSpeEV;
-    }
-
-    public int getDefSpeEV() {
-        return defSpeEV;
-    }
-
-    public int getSpeedEV() {
-        return speedEV;
-    }
 
     // ------------------------------------------------------------------------------------------------------------------
     // Setter
@@ -383,29 +282,39 @@ public class Pokemon {
      * @param terrain The terrain the Pokémon are on
      */
     public void attack(Pokemon target, Move move, Terrain terrain, TextBubble bubble, Bar targetBar) {
-        Move m = getAttack(move);
-        console.log("--------------- Beginning of " + getName() + "'s turn ---------------");
-        console.log(getName() + " uses " + move.getName());
+        Move m = getAttack(move); // Gets the move from the move pool
+        console.log("----- Beginning of " + name + "'s turn -----");
+        console.log(target.name + "'s stats : \n" +
+                "HP: " + target.getHP() + "\n"
+                + "Atk: " + target.getAtk() + "\n"
+                + "Def: " + target.getDef() + "\n"
+                + "AtkSpe: " + target.getAtkSpe() + "\n"
+                + "DefSpe: " + target.getDefSpe() + "\n"
+                + "Speed: " + target.getSpeed() + "\n");
+        console.log(name + " uses " + move.name + "\n");
+
         if(m instanceof Attack attack){
-            statusEffect(target, move, bubble);
-            if((this.getStatus() == Status.normal || this.getStatus() == Status.cursed || this.getStatus() == Status.burned || this.getStatus() == Status.paralyzed || this.getStatus() == Status.freeze || this.getStatus() == Status.attracted || this.getStatus() == Status.confused || this.getStatus() == Status.asleep || this.getStatus() == Status.poisoned || this.getStatus() == Status.badlyPoisoned)){
-                executor.addEvent(new MessageEvent(bubble,getName() + " uses " + move.getName()));
+            console.log(attack.getName() + "\n" + "Power : " + attack.getPower() + "\n" + "Precision : " + attack.getPrecision() + "\n");
+            applyStatusEffect(target, move, bubble); // Apply the effect of the status
+            if((getStatus() == Status.normal || getStatus() == Status.cursed || getStatus() == Status.burned || getStatus() == Status.paralyzed || getStatus() == Status.freeze || getStatus() == Status.attracted || getStatus() == Status.confused || getStatus() == Status.asleep || getStatus() == Status.poisoned || getStatus() == Status.badlyPoisoned)){
+                executor.addEvent(new MessageEvent(bubble,name + " uses " + move.name));
                 executor.addEvent(new UpdateBarEvent(targetBar, targetBar.getHealth()));
                 int damage = (int) totalDamage((Attack) getAttack(attack), this, target, bubble);
-                target.setHP(Math.max(0, target.getHP() - damage));
+                console.log("Total damage : " + damage);
+                target.setHP(Math.max(0, target.getHP() - damage)); // Apply the damage
             }
         }
         if(m instanceof DebrisAttack debrisAttack){
-            statusEffect(target, move, bubble);
+            applyStatusEffect(target, move, bubble);
             terrain.setDebris(debrisAttack.getDebris());
         }
         if(m instanceof StatusAttack statusAttack){
-            statusEffect(target, statusAttack, bubble);
+            applyStatusEffect(target, statusAttack, bubble);
             target.status = setStatus(target, statusAttack, bubble);
-            System.out.println(target.getName() + " is " + target.getStatus() + "!");
+            System.out.println(target.name + " is " + target.getStatus() + "!");
         }
         if(m instanceof UpgradeMove upgradeMove){
-            statusEffect(target, upgradeMove, bubble);
+            applyStatusEffect(target, upgradeMove, bubble);
             switch (upgradeMove.getStat()) {
                 case "atk"    -> atkRaise += upgradeMove.getRaiseLevel();
                 case "def"    -> defRaise += upgradeMove.getRaiseLevel();
@@ -415,12 +324,8 @@ public class Pokemon {
             }
             updateStat(bubble, target);
         }
-        updateStatus();
-        console.log(target.getName() + " : " + target.getHP() + "/" + target.getMaxHP());
-        if (target.HP <= 0) {
-            console.log(target.getName() + " is " + target.getStatus());
-            target.setStatus(Status.KO);
-        }
+        updateStatusEffect();
+        console.log(target.name + " : " + target.getHP() + "/" + target.getMaxHP());
     }
 
     // ------------------------------------------------------------------------------------------------------------------
@@ -431,11 +336,11 @@ public class Pokemon {
      * Update the stat modifier each turn
      */
     public void updateStat(TextBubble bubble, Pokemon target){
-        this.atk = applyStatModifier(this.atk, atkRaise," attack", bubble, target);
-        this.def = applyStatModifier(this.def, defRaise, " defense", bubble, target);
-        this.speed = applyStatModifier(this.speed, speedRaise, " speed", bubble, target);
-        this.atkSpe = applyStatModifier(this.atkSpe, atkSpeRaise," special attack", bubble, target);
-        this.defSpe = applyStatModifier(this.defSpe, defSpeRaise," special defense", bubble, target);
+        this.atk = applyStatModifier(atk, atkRaise," attack", bubble, target);
+        this.def = applyStatModifier(def, defRaise, " defense", bubble, target);
+        this.speed = applyStatModifier(speed, speedRaise, " speed", bubble, target);
+        this.atkSpe = applyStatModifier(atkSpe, atkSpeRaise," special attack", bubble, target);
+        this.defSpe = applyStatModifier(defSpe, defSpeRaise," special defense", bubble, target);
     }
 
     private int applyStatModifier(int baseStat, int stage, String statName, TextBubble bubble, Pokemon target){
@@ -445,17 +350,17 @@ public class Pokemon {
         if (stage < -6) stage = -6;
 
         if (originalStage == 1) {
-            console.log(target.getName() + " raises its " + statName);
-            executor.addEvent(new MessageEvent(bubble, target.getName() + " raises its " + statName));
+            console.log(target.name + " raises its " + statName);
+            executor.addEvent(new MessageEvent(bubble, target.name + " raises its " + statName));
         } else if (originalStage == 2) {
-            console.log(target.getName() + " sharply raises its " + statName);
-            executor.addEvent(new MessageEvent(bubble, target.getName() + " sharply raises its " + statName));
+            console.log(target.name + " sharply raises its " + statName);
+            executor.addEvent(new MessageEvent(bubble, target.name + " sharply raises its " + statName));
         } else if (originalStage == -1) {
-            console.log(target.getName() + "'s" + statName + " decreased");
-            executor.addEvent(new MessageEvent(bubble, target.getName() + "'s" + statName + " decreased"));
+            console.log(target.name + "'s" + statName + " decreased");
+            executor.addEvent(new MessageEvent(bubble, target.name + "'s" + statName + " decreased"));
         } else if (originalStage == -2) {
-            console.log(target.getName() + "'s" + statName + " sharply decreased");
-            executor.addEvent(new MessageEvent(bubble, target.getName() + "'s" + statName + " sharply decreased"));
+            console.log(target.name + "'s" + statName + " sharply decreased");
+            executor.addEvent(new MessageEvent(bubble, target.name + "'s" + statName + " sharply decreased"));
         }
 
         int[] multipliersNumerator = {2, 2, 2, 2, 2, 2, 2, 3, 4, 5, 6, 7, 8};
@@ -483,14 +388,14 @@ public class Pokemon {
      */
     public Status setStatus(Pokemon target, StatusAttack statusMove, TextBubble bubble) {
         if(target.getStatus() != Status.normal){
-            console.log(target.getName() + " is already " + target.getStatus() + "! It won't have any effect.");
-            System.out.println(target.getName() + " is already " + target.getStatus() + "! It won't have any effect.");
-            executor.addEvent(new MessageEvent(bubble,target.getName() + " is already " + target.getStatus() + "! It won't have any effect."));
+            console.log(target.name + " is already " + target.getStatus() + "! It won't have any effect.");
+            System.out.println(target.name + " is already " + target.getStatus() + "! It won't have any effect.");
+            executor.addEvent(new MessageEvent(bubble,target.name + " is already " + target.getStatus() + "! It won't have any effect."));
         }
         if(immunitiesTable(target).contains(statusMove.getType())){
-            console.log("This attack does not affect " + getName());
-            System.out.println("This attack does not affect " + getName());
-            executor.addEvent(new MessageEvent(bubble,"This attack does not affect " + getName()));
+            console.log("This attack does not affect " + name);
+            System.out.println("This attack does not affect " + name);
+            executor.addEvent(new MessageEvent(bubble,"This attack does not affect " + name));
             return null;
         }
         if(target.getStatus() == Status.normal){
@@ -505,127 +410,126 @@ public class Pokemon {
      * @param move Move it uses
      */
 
-    public void statusEffect(Pokemon target, Move move, TextBubble bubble){
+    public void applyStatusEffect(Pokemon target, Move move, TextBubble bubble){
         Random random = new Random();
-        if(this.getAttack(move).getMode() == AttackMode.physical && this.getStatus() == Status.burned){
-            target.HP -= (int) totalDamage((Attack) this.getAttack(move), this, target, bubble)/2;
-//            System.out.println(getName() + " uses " + move.getName());
-//            executor.addEvent(new MessageEvent(bubble,getName() + " uses " + move.getName()));
-            System.out.println(target.getName() + " HP : " + target.HP + "/" + target.getMaxHP());
+        if(HP <= 0) setStatus(Status.KO);
+        if(getAttack(move).getMode() == AttackMode.physical && status == Status.burned){
+            target.HP -= (int) totalDamage((Attack) getAttack(move), this, target, bubble)/2;
+            System.out.println(target.name + " HP : " + target.HP + "/" + target.getMaxHP());
             return;
         }
-        if(this.getStatus() == Status.paralyzed){
+        if(status == Status.paralyzed){
             int randInt = random.nextInt(0,4);
             if(randInt == 1){
-                console.log(getName() + " is paralyzed! It can't move!");
-                System.out.println(getName() + " is paralyzed! It can't move!");
-                executor.addEvent(new MessageEvent(bubble,getName() + " is paralyzed! It can't move!"));
+                console.log(name + " is paralyzed! It can't move!");
+                System.out.println(name + " is paralyzed! It can't move!");
+                executor.addEvent(new MessageEvent(bubble,name + " is paralyzed! It can't move!"));
                 return;
             }
         }
-        if(this.getStatus() == Status.freeze){
+        if(status == Status.freeze){
             int randInt = random.nextInt(0,4);
             if(randInt < 3){
-                console.log(getName() + " is frozen solid!");
-                System.out.println(getName() + " is frozen solid!");
-                executor.addEvent(new MessageEvent(bubble,getName() + " is frozen solid!"));
+                console.log(name + " is frozen solid!");
+                System.out.println(name + " is frozen solid!");
+                executor.addEvent(new MessageEvent(bubble,name + " is frozen solid!"));
                 return;
             } else {
-                console.log(getName() + " is not frozen anymore!");
-                System.out.println(getName() + " is not frozen anymore!");
-                executor.addEvent(new MessageEvent(bubble,getName() + " is not frozen anymore!"));
+                console.log(name + " is not frozen anymore!");
+                System.out.println(name + " is not frozen anymore!");
+                executor.addEvent(new MessageEvent(bubble,name + " is not frozen anymore!"));
                 setStatus(null);
             }
         }
-        if(this.getStatus() == Status.asleep){
+        if(status == Status.asleep){
             int randInt = random.nextInt(0,3);
             if(randInt == 0){
-                console.log(getName() + " woke up!");
-                System.out.println(getName() + " woke up!");
-                executor.addEvent(new MessageEvent(bubble,getName() + " woke up!"));
+                console.log(name + " woke up!");
+                System.out.println(name + " woke up!");
+                executor.addEvent(new MessageEvent(bubble,name + " woke up!"));
                 setStatus(Status.normal);
             }
             if(randInt > 0){
-                console.log(getName() + " is asleep!");
-                System.out.println(getName() + " is asleep!");
-                executor.addEvent(new MessageEvent(bubble,getName() + " is asleep!"));
+                console.log(name + " is asleep!");
+                System.out.println(name + " is asleep!");
+                executor.addEvent(new MessageEvent(bubble,name + " is asleep!"));
                 ++wakeUp;
                 if(wakeUp == 4){
-                    console.log(getName() + " woke up!");
-                    System.out.println(getName() + " woke up!");
-                    executor.addEvent(new MessageEvent(bubble,getName() + " woke up!"));
-                    this.status = Status.normal;
+                    console.log(name + " woke up!");
+                    System.out.println(name + " woke up!");
+                    executor.addEvent(new MessageEvent(bubble,name + " woke up!"));
+                    status = Status.normal;
                 }
                 if(wakeUp != 4) {
                     return;
                 }
             }
         }
-        if(this.getStatus() == Status.attracted && !Objects.equals(this.getGender(), target.getGender())){
+        if(status == Status.attracted && !Objects.equals(gender, target.getGender())){
             int randInt = random.nextInt(0,2);
             if(randInt == 1){
-                console.log(getName() + " is attracted to " + target.getName());
-                System.out.println(getName() + " is attracted to " + target.getName());
-                executor.addEvent(new MessageEvent(bubble,getName() + " is attracted to " + target.getName()));
+                console.log(name + " is attracted to " + target.name);
+                System.out.println(name + " is attracted to " + target.name);
+                executor.addEvent(new MessageEvent(bubble,name + " is attracted to " + target.name));
                 return;
             }
         }
-        if(this.getStatus() == Status.confused){
+        if(status == Status.confused){
             int randInt = random.nextInt(0,2);
             ++healConfusion;
             if(randInt == 0){
                 if(healConfusion < 4) {
-                    console.log(getName() + " is confused!");
-                    executor.addEvent(new MessageEvent(bubble,getName() + " is confused!"));
-                    System.out.println(getName() + " is confused!");
+                    console.log(name + " is confused!");
+                    executor.addEvent(new MessageEvent(bubble,name + " is confused!"));
+                    System.out.println(name + " is confused!");
                 }
             }
             if(randInt == 1){
-                console.log(getName() + " is confused!");
-                console.log(getName() + " hurt itself in its confusion!");
-                System.out.println(getName() + " is confused!");
-                executor.addEvent(new MessageEvent(bubble,getName() + " is confused!"));
-                executor.addEvent(new MessageEvent(bubble,getName() + " hurt itself in its confusion!"));
-                System.out.println(getName() + " hurt itself in its confusion!");
+                console.log(name + " is confused!");
+                console.log(name + " hurt itself in its confusion!");
+                System.out.println(name + " is confused!");
+                executor.addEvent(new MessageEvent(bubble,name + " is confused!"));
+                executor.addEvent(new MessageEvent(bubble,name + " hurt itself in its confusion!"));
+                System.out.println(name + " hurt itself in its confusion!");
                 this.HP -= (int) (((((this.getLevel() * 0.4 + 2) * this.getAtk() * 40) / target.getDef()) / 50) + 2);
                 return;
             }
             if(healConfusion > 4){
-                console.log(getName() + " snapped out of confusion!");
-                System.out.println(getName() + " snapped out of confusion!");
-                executor.addEvent(new MessageEvent(bubble,getName() + " snapped out of confusion!"));
+                console.log(name + " snapped out of confusion!");
+                System.out.println(name + " snapped out of confusion!");
+                executor.addEvent(new MessageEvent(bubble,name + " snapped out of confusion!"));
                 this.setStatus(Status.normal);
                 healConfusion = 0;
             }
         }
         // To implement
-        if(getStatus() == Status.fear){
-            console.log(getName() + " is feared! It can't move!");
-            System.out.println(getName() + " is feared! It can't move!");
-            executor.addEvent(new MessageEvent(bubble,getName() + " is feared! It can't move!"));
+        if(status == Status.fear){
+            console.log(name + " is feared! It can't move!");
+            System.out.println(name + " is feared! It can't move!");
+            executor.addEvent(new MessageEvent(bubble,name + " is feared! It can't move!"));
         }
     }
 
     /**
      * Updates the status of the Pokémon
      */
-    public void updateStatus(){
-        switch(this.getStatus()){
+    public void updateStatusEffect(){
+        switch(status){
             case normal, attracted, asleep:
                 break;
             case burned:
-                console.log(getName() + " is burned!");
-                System.out.println(getName() + " is burned!");
+                console.log(name + " is burned!");
+                System.out.println(name + " is burned!");
                 this.HP = this.HP - (this.maxHP/16);
                 break;
             case poisoned:
-                console.log(getName() + " is poisoned!");
-                System.out.println(getName() + " is poisoned!");
+                console.log(name + " is poisoned!");
+                System.out.println(name + " is poisoned!");
                 this.HP = this.HP - (this.maxHP/8);
                 break;
             case badlyPoisoned:
-                console.log(getName() + " is badly poisoned!");
-                System.out.println(getName() + " is badly poisoned!");
+                console.log(name + " is badly poisoned!");
+                System.out.println(name + " is badly poisoned!");
                 this.HP = this.HP - (this.maxHP/16 * poisonCoefficient);
                 ++poisonCoefficient;
                 break;
@@ -670,7 +574,7 @@ public class Pokemon {
     }
 
     /**
-     * Checks if the move is effective or not (only works for physical and special attakcs)
+     * Checks if the move is effective or not (only works for physical and special attacks)
      * @param move The move that is used
      * @param launcher The Pokémon that launches the move
      * @param target The Pokémon that will get attacked
@@ -702,7 +606,7 @@ public class Pokemon {
                 }
                 if (targetImmunities.contains(move.getType())) {
                     console.log("This attack does not affect the pokemon");
-                    executor.addEvent(new MessageEvent(bubble, "The attack does not affect " + target.getName()));
+                    executor.addEvent(new MessageEvent(bubble, "The attack does not affect " + target.name));
                     System.out.println("This attack does not affect the pokemon");
                     return 0;
                 }
@@ -725,7 +629,7 @@ public class Pokemon {
                     return specialDamages * effectivenessCoefficient;
                 }
                 if (targetImmunities.contains(move.getType())) {
-                    executor.addEvent(new MessageEvent(bubble, "The attack does not affect " + target.getName()));
+                    executor.addEvent(new MessageEvent(bubble, "The attack does not affect " + target.name));
                     System.out.println("This attack does not affect the pokemon");
                     console.log("This attack does not affect the pokemon");
                     return 0;
@@ -970,7 +874,7 @@ public class Pokemon {
             case normal:
                 immunities.add(Type.ghost);
                 break;
-            case fire, water, grass, electric, ice, fighting, poison, psychic, bug, rock, dragon:
+            case fire, water, grass, electric, ice, fighting, poison, psychic, bug, rock, dragon, steel:
                 break;
             case ground:
                 immunities.add(Type.electric);
@@ -985,8 +889,6 @@ public class Pokemon {
             case dark:
                 immunities.add(Type.psychic);
                 break;
-            case steel:
-                break;
             case fairy:
                 immunities.add(Type.dragon);
                 break;
@@ -997,24 +899,6 @@ public class Pokemon {
 
         return immunities;
     }
-
-    // ------------------------------------------------------------------------------------------------------------------
-    // IV - EV
-    // ------------------------------------------------------------------------------------------------------------------
-
-    private int generateIV(){
-        Random rand = new Random();
-        return rand.nextInt(0,32);
-    }
-
-
-//    private int calculateIV (Model.Pokemon pokemon, int stat) {
-//        return (stat * 100/pokemon.getLevel() - pokemon.getEV(stat)/4 - 2 * pokemon.getBaseStat(stat));
-//    }
-//
-//    private int calculatePVIV (Model.Pokemon pokemon, int stat) {
-//        return ((100 * pokemon.getBaseStat(stat) - pokemon.getLevel() - 10) / pokemon.getLevel()) - pokemon.getEV(stat) / 4 - 2 * pokemon.getBaseStat(stat);
-//    }
 
     // ------------------------------------------------------------------------------------------------------------------
     // EXP
@@ -1038,10 +922,10 @@ public class Pokemon {
                 return 0;
             }
 
-            int baseExperience = getBaseExperience(defeatedPokemon.getName(), inputStream);
+            int baseExperience = getBaseExperience(defeatedPokemon.name, inputStream);
 
             if (baseExperience == -1) {
-                System.out.println("Can't find base exp for: " + defeatedPokemon.getName());
+                System.out.println("Can't find base exp for: " + defeatedPokemon.name);
                 return 0;
             }
 
@@ -1143,7 +1027,7 @@ public class Pokemon {
     }
 
     // ------------------------------------------------------------------------------------------------------------------
-    // Model.Pokemon AI
+    // Pokemon AI
     // ------------------------------------------------------------------------------------------------------------------
 
     /**
