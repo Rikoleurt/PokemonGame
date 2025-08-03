@@ -11,7 +11,7 @@ public class BattleExecutor {
     private static BattleExecutor instance;
     private final Queue<BattleEvent> battleEvents;
 
-    private BattleExecutor() {
+    public BattleExecutor() {
         this.battleEvents = new LinkedList<>();
     }
 
@@ -45,7 +45,7 @@ public class BattleExecutor {
 
     public void getEventsFromQueue() {
         for(BattleEvent event : battleEvents) {
-            System.out.println("Battle Event : " + event.getName() + " size : " + battleEvents.size());
+            System.out.println("Battle Event : " + event.getName() + " ; size : " + battleEvents.size());
         }
         System.out.println();
     }

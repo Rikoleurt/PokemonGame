@@ -97,8 +97,8 @@ public class StatBubble extends HBox implements Bubble {
         isDisplayingQueue = true;
         showMessage(next);
 
-        PauseTransition pause = new PauseTransition(Duration.seconds(1.5));
-        pause.setOnFinished(e -> displayNextMessage());
-        pause.play();
+//        PauseTransition pause = new PauseTransition(Duration.seconds(1.5));
+//        pause.setOnFinished(e -> displayNextMessage());
+//        pause.play();
     }
 }

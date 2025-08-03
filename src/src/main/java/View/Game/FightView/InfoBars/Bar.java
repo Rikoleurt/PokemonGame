@@ -141,10 +141,6 @@ public class Bar extends VBox {
         } else {
             playerBar.setStyle("-fx-accent: #d81e1e;");
         }
-
-        if (Math.abs(newProgress - endProgress) < 0.01 && onFinish != null) {
-            onFinish.run();
-        }
     }
 
     public void updateExpBar(int expGain, Label levelLabel, Runnable onFinish) {

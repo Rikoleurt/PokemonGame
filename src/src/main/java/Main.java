@@ -1,3 +1,4 @@
+import Controller.Fight.Battle.BattleExecutor;
 import Controller.Fight.FightController;
 import View.Console.BattleLayout.BattleView;
 import View.Game.FightView.FightView;
@@ -5,14 +6,19 @@ import View.Game.FightView.Text.TextBubble;
 import javafx.application.Application;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+
+import java.util.Objects;
+
+import static javafx.scene.input.KeyCode.SPACE;
 
 public class Main extends Application {
 
     FightView fightView = new FightView();
     TextBubble textBubble = fightView.getTextBubble();
-    FightController controller = new FightController(textBubble);
     BattleView battleView = new BattleView();
 
     @Override
@@ -29,7 +35,7 @@ public class Main extends Application {
 
         fightView.setStyle("-fx-alignment: center;");
         primaryStage.setTitle("Pokémon Game");
-//        controller.attachKeyHandlers(gameScene);
+
         primaryStage.setScene(gameScene);
         primaryStage.setX(consoleWidth);
         primaryStage.setY(0);
@@ -47,6 +53,7 @@ public class Main extends Application {
         consoleStage.show();
 
         gameScene.setOnKeyPressed(event -> textBubble.handleKeyPress(event.getCode()));
+
     }
 
     public static void main(String[] args) {

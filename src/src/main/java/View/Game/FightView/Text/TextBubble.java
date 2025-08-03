@@ -140,6 +140,7 @@ public class TextBubble extends HBox implements Bubble {
                 isTyping = false;
             } else {
                 if (onMessageComplete != null) {
+                    System.out.println("Running next message");
                     Runnable callback = onMessageComplete;
                     onMessageComplete = null;
                     callback.run();

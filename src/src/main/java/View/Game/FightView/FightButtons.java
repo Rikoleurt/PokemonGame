@@ -1,7 +1,6 @@
 package View.Game.FightView;
 
 import Controller.Fight.Battle.BattleExecutor;
-import Controller.Fight.Battle.Events.DamageEvent;
 
 import Controller.Fight.Battle.Events.MessageEvent;
 import Controller.Fight.Turns.Turn;
@@ -180,14 +179,11 @@ public class FightButtons extends HBox {
 
         if(playerPokemon.getStatus() != Status.KO){
             playerPokemon.attack(npcPokemon, move, terrain, textBubble, opponentBar);
-            System.out.println(executor.getBattleEvents().isEmpty());
-        } else if(playerPokemon.getStatus() == Status.KO){
+        } else if (playerPokemon.getStatus() == Status.KO){
             handlePlayerPokemonKO();
         }
         if(npcPokemon.getStatus() != Status.KO){
-            System.out.println(executor.getBattleEvents().isEmpty());
-            npcPokemon.attack(playerPokemon, npcMove , terrain, textBubble, opponentBar);
-            System.out.println(executor.getBattleEvents().isEmpty());
+            npcPokemon.attack(playerPokemon, npcMove , terrain, textBubble, playerBar);
         } else if (npcPokemon.getStatus() == Status.KO){
             handleNpcPokemonKO();
         }
