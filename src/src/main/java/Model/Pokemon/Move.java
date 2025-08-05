@@ -10,14 +10,13 @@ import static java.lang.Math.*;
 public class Move {
     String name;
     Type type;
-    AttackMode Mode;
+    AttackMode mode;
     int PP;
-    int raiseLevel;
 
-    public Move(String name, Type type, AttackMode Mode, int PP){
+    public Move(String name, Type type, AttackMode mode, int PP){
         this.name = name;
         this.type = type;
-        this.Mode = Mode;
+        this.mode = mode;
         this.PP = PP;
     }
 
@@ -26,7 +25,7 @@ public class Move {
     }
 
     public AttackMode getMode() {
-        return Mode;
+        return mode;
     }
 
     public String getName() {

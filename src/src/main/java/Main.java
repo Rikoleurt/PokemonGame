@@ -1,28 +1,30 @@
 import Controller.Fight.Battle.BattleExecutor;
 import Controller.Fight.FightController;
+import Server.SocketServer;
 import View.Console.BattleLayout.BattleView;
 import View.Game.FightView.FightView;
 import View.Game.FightView.Text.TextBubble;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
 import javafx.application.Application;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
-import java.util.Objects;
-
-import static javafx.scene.input.KeyCode.SPACE;
+import java.io.IOException;
 
 public class Main extends Application {
 
     FightView fightView = new FightView();
     TextBubble textBubble = fightView.getTextBubble();
     BattleView battleView = new BattleView();
+    SocketServer server = new SocketServer();
 
     @Override
     public void start(Stage primaryStage) {
+
         Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
         double screenWidth = screenBounds.getWidth();
         double screenHeight = screenBounds.getHeight();
@@ -35,7 +37,6 @@ public class Main extends Application {
 
         fightView.setStyle("-fx-alignment: center;");
         primaryStage.setTitle("Pokémon Game");
-
         primaryStage.setScene(gameScene);
         primaryStage.setX(consoleWidth);
         primaryStage.setY(0);
@@ -53,6 +54,16 @@ public class Main extends Application {
         consoleStage.show();
 
         gameScene.setOnKeyPressed(event -> textBubble.handleKeyPress(event.getCode()));
+
+        new Thread(() -> {
+            try {
+                server.start(5000);
+                System.out.println("Client connected to server");
+            } catch (IOException e) {
+                System.out.println("Client connect failed " + e.getMessage());
+                e.printStackTrace();
+            }
+        }).start();
 
     }
 

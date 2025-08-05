@@ -1,8 +1,10 @@
 package Model.Inventory.Items.Fight;
 
-import Model.Inventory.Items.Items;
+import Model.Inventory.Items.Item;
+import Model.Inventory.Items.Usable;
+import Model.Pokemon.Pokemon;
 
-public class StatBooster extends Items {
+public class StatBooster extends Item implements Usable {
 
     String name;
     String description;
@@ -27,5 +29,9 @@ public class StatBooster extends Items {
 
     public int getRaiseLevel() {
         return raiseLevel;
+    }
+
+    @Override
+    public void use(Pokemon target) {
     }
 }

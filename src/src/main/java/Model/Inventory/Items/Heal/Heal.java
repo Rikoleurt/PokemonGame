@@ -1,8 +1,10 @@
 package Model.Inventory.Items.Heal;
 
-import Model.Inventory.Items.Items;
+import Model.Inventory.Items.Item;
+import Model.Inventory.Items.Usable;
+import Model.Pokemon.Pokemon;
 
-public class Heal extends Items {
+public class Heal extends Item implements Usable {
 
     String name;
     String description;
@@ -21,5 +23,18 @@ public class Heal extends Items {
 
     public int getHP() {
         return HP;
+    }
+
+    @Override
+    public void use(Pokemon target) {
+
+        if (target.getHP() == target.getMaxHP()) {
+            System.out.println(target.getName() + " is already in top form!");
+            return;
+        }
+
+        int newHP = Math.min(target.getHP() + HP, target.getMaxHP());
+        target.setHP(newHP);
+        System.out.println(target.getName() + " regained some health!");
     }
 }

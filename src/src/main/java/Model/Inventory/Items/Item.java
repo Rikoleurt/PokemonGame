@@ -1,6 +1,6 @@
 package Model.Inventory.Items;
 
-public abstract class Items {
+public abstract class Item {
     String name;
     String description;
 

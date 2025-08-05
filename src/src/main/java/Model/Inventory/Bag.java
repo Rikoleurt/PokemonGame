@@ -1,6 +1,6 @@
 package Model.Inventory;
 
-import Model.Inventory.Items.Items;
+import Model.Inventory.Items.Item;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -8,37 +8,40 @@ import java.util.Set;
 
 public class Bag {
 
-    Map<Items, Integer> inventory;
+    Map<Item, Integer> inventory;
     long money;
 
-    public Bag(Map<Items, Integer> inventory, long money) {
+    public Bag(Map<Item, Integer> inventory, long money) {
         this.inventory = inventory;
         this.money = money;
     }
 
-    public Map<Items, Integer> getInventory() {
+    public Map<Item, Integer> getInventory() {
         return inventory;
     }
 
-    public void setInventory(Map<Items, Integer> inventory) {
+    public void setInventory(Map<Item, Integer> inventory) {
         this.inventory = inventory;
     }
 
-    public void setItem(Items item, int amount) {
+    public void setItem(Item item, int amount) {
         this.inventory.put(item, amount);
     }
-    public void removeItem(Items item) {
+
+    public void removeItem(Item item) {
         this.inventory.remove(item);
     }
-    public Items getItems(){
+
+    public Item getItems(){
         return inventory.keySet().iterator().next();
     }
+
     public void removeMultipleItems(int amount){
-        Set<Items> itemsSet = inventory.keySet();
-        Iterator<Items> itr = itemsSet.iterator();
-        if(amount <= itemsSet.size()) {
+        Set<Item> itemSet = inventory.keySet();
+        Iterator<Item> itr = itemSet.iterator();
+        if(amount <= itemSet.size()) {
             for (int i = 0; i < amount; i++) {
-                itemsSet.remove(itr.next());
+                itemSet.remove(itr.next());
             }
         }
     }

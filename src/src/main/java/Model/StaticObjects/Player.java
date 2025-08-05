@@ -2,7 +2,7 @@ package Model.StaticObjects;
 
 import Model.Inventory.Bag;
 import Model.Inventory.Items.Heal.Heal;
-import Model.Inventory.Items.Items;
+import Model.Inventory.Items.Item;
 import Model.Pokemon.Pokemon;
 
 import java.util.HashMap;
@@ -16,7 +16,7 @@ public class Player {
     public static Model.Person.Player initiatePlayer() {
 
 
-        Map<Items, Integer> inventory = new HashMap<>();
+        Map<Item, Integer> inventory = new HashMap<>();
 
         inventory.put(new Heal("Potion", "Heals 20HP", 20), 3);
 

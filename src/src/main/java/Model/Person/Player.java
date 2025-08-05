@@ -1,6 +1,8 @@
 package Model.Person;
 
 import Model.Inventory.Bag;
+import Model.Inventory.Items.Item;
+import Model.Inventory.Items.Usable;
 import Model.Pokemon.Pokemon;
 import Model.Pokemon.TerrainEnum.Debris;
 import Model.Pokemon.Terrain;
@@ -25,6 +27,10 @@ public class Player {
 
     public LinkedList<Pokemon> getTeam() {
         return team;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public Pokemon getPokemon(Pokemon pokemon) {
@@ -94,8 +100,13 @@ public class Player {
         }
     }
 
-    public void useItem(Pokemon pokemon){
-
+    public void use(Item item, Pokemon target){
+        if (item instanceof Usable) {
+            System.out.println(name + " uses a " + item.getName() + "!");
+            ((Usable) item).use(target);
+        } else { // Security
+            System.out.println("This item cannot be used.");
+        }
     }
     public void flee(){
 
