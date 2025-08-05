@@ -15,14 +15,14 @@ public class BagView extends BorderPane {
         this.player = player;
         pokemonList = new PokemonList(player);
 
-        getChildren().add(pokemonList);
-        setAlignment(pokemonList,Pos.CENTER_LEFT);
-        setLeft(pokemonList);
-
         Button backButton = new Button("Back");
         backButton.setOnAction(e -> { onClose.run(); });
-        getChildren().add(backButton);
+
+        setLeft(pokemonList);
         setTop(backButton);
+
         setAlignment(backButton,Pos.CENTER_RIGHT);
+        setAlignment(pokemonList,Pos.CENTER_LEFT);
+
     }
 }

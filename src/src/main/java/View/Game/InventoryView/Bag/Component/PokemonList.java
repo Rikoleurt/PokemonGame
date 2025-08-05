@@ -7,6 +7,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -24,38 +25,44 @@ public class PokemonList extends VBox {
         Button firstPokemon = createPokemonButton(player.getFrontPokemon());
         Button secondPokemon = createPokemonButton(player.getTeam().get(1));
         Button thirdPokemon = createPokemonButton(player.getTeam().get(2));
-        Button fourthPokemon = createPokemonButton(player.getTeam().get(3));
-        Button fifthPokemon = createPokemonButton(player.getTeam().get(4));
-        Button sixthPokemon = createPokemonButton(player.getTeam().getLast());
+//        Button fourthPokemon = createPokemonButton(player.getTeam().get(3));
+//        Button fifthPokemon = createPokemonButton(player.getTeam().get(4));
+//        Button sixthPokemon = createPokemonButton(player.getTeam().getLast());
 
-        components.addAll(firstPokemon,secondPokemon,thirdPokemon,fourthPokemon,fifthPokemon, sixthPokemon);
+        components.addAll(firstPokemon,secondPokemon,thirdPokemon);
     }
 
-    private Button createPokemonButton(Pokemon pokemon) {
+    private Button createPokemonButton(Pokemon p) {
         Button button = new Button();
         button.getStyleClass().add("pokemon-button");
 
-        HBox hbox = new HBox(10);
-        hbox.setAlignment(Pos.CENTER_LEFT);
+        VBox content = new VBox(4);
+        content.setAlignment(Pos.CENTER_LEFT);
 
-       // ImageView sprite = new ImageView((Element) new Image(getClass().getResourceAsStream("/images/pokemon/" + pokemon.getName().toLowerCase() + ".png")));
-        if(pokemon != null) {
-            VBox textBox = new VBox(2);
-            Label name = new Label(pokemon.getName());
-            Label hp = new Label(pokemon.getHP() + "/" + pokemon.getMaxHP());
-            Label level = new Label("Lv. " + pokemon.getLevel());
+        // Nom + genre
+        HBox nameRow = new HBox(5);
+        Label name = new Label(p.getName());
+        Label gender = new Label(Objects.equals(p.getGender(), "male") ? "♂" : "♀");
+        gender.getStyleClass().add(Objects.equals(p.getGender(), "male") ? "male" : "female");
+        nameRow.getChildren().addAll(name, gender);
 
-            String genderSymbol = Objects.equals(pokemon.getGender(), "male") ? "♂" : "♀";
-            Label gender = new Label(genderSymbol);
-            gender.getStyleClass().add(Objects.equals(pokemon.getGender(), "male") ? "male" : "female");
+        // HP ProgressBar
+        ProgressBar hpBar = new ProgressBar((double) p.getHP() / p.getMaxHP());
+        hpBar.setPrefWidth(120);
+        hpBar.getStyleClass().add("hp-bar");
 
-            HBox topRow = new HBox(name, gender);
-            topRow.setSpacing(5);
-            textBox.getChildren().addAll(topRow, hp, level);
+        // HP text et niveau
+        Label hpText = new Label(p.getHP() + "/" + p.getMaxHP());
+        Label level = new Label("Lv. " + p.getLevel());
 
-            hbox.getChildren().addAll(textBox);
-            button.setGraphic(hbox);
-        }
+        content.getChildren().addAll(nameRow, hpBar, hpText, level);
+
+        button.setGraphic(content);
+        button.setPrefSize(160, 80);
+        button.setMinSize(160, 80);
+        button.setMaxSize(160, 80);
+
         return button;
     }
+
 }

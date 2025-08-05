@@ -12,3 +12,9 @@
 .label.female {
     -fx-text-fill: #DB4437;
 }
+
+.hp-bar {
+    -fx-accent: #00C853;
+    -fx-control-inner-background: white;
+    -fx-background-radius: 4;
+}

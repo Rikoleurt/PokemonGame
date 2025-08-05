@@ -64,9 +64,6 @@ public class Player {
     public boolean isFront(Pokemon pokemon) {
         return getFrontPokemon() == pokemon;
     }
-    public int getTeamSize() {
-        return team.size();
-    }
 
     public int getIndexOf(Pokemon pokemon) {
         return team.indexOf(pokemon);
@@ -76,7 +73,7 @@ public class Player {
         this.bag = bag;
     }
 
-    public void setNickname(String name) {
+    public void setName(String name) {
         this.name = name;
     }
 

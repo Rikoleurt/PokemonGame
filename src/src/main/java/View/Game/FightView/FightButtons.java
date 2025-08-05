@@ -1,9 +1,9 @@
 package View.Game.FightView;
 
 import Controller.Fight.Battle.BattleExecutor;
-
 import Controller.Fight.Battle.Events.MessageEvent;
 import Controller.Fight.Turns.Turn;
+
 import Model.Pokemon.Pokemon;
 import Model.Pokemon.Move;
 import Model.Pokemon.PokemonEnum.Status;
@@ -14,6 +14,7 @@ import Model.Pokemon.TerrainEnum.Meteo;
 import View.Game.FightView.InfoBars.Bar;
 import View.Game.FightView.Text.TextBubble;
 import View.Game.InventoryView.Bag.BagView;
+
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -26,7 +27,7 @@ import javafx.scene.text.Font;
 
 import static View.Game.FightView.FightView.npc;
 import static View.Game.FightView.FightView.player;
-
+import View.Game.SceneManager;
 public class FightButtons extends HBox {
 
     static Font font = Font.loadFont(FightButtons.class.getResource("/font/pokemonFont.ttf").toExternalForm(), 18);
@@ -107,8 +108,13 @@ public class FightButtons extends HBox {
         });
 
         bagButton.setOnAction(e -> {
-            // Change view
+            BagView bagView = new BagView(player, () -> {
+                SceneManager.switchStageTo(new FightView()); // Retour au combat
+            });
+
+            SceneManager.switchStageTo(bagView); // Aller dans le sac
         });
+
 
         pokemonButton.setOnAction(e -> {
         });
