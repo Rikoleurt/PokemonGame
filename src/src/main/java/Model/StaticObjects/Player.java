@@ -15,7 +15,6 @@ public class Player {
 
     public static Model.Person.Player initiatePlayer() {
 
-
         Map<Item, Integer> inventory = new HashMap<>();
 
         inventory.put(new Heal("Potion", "Heals 20HP", 20), 3);

@@ -3,6 +3,7 @@ package Model.Inventory.Items.Fight;
 import Model.Inventory.Items.Item;
 import Model.Inventory.Items.Usable;
 import Model.Pokemon.Pokemon;
+import View.Game.FightView.Text.TextBubble;
 
 public class StatBooster extends Item implements Usable {
 
@@ -32,6 +33,7 @@ public class StatBooster extends Item implements Usable {
     }
 
     @Override
-    public void use(Pokemon target) {
+    public void use(Pokemon target, TextBubble textBubble) {
+
     }
 }

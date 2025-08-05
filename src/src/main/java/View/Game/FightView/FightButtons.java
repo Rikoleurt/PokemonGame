@@ -13,6 +13,7 @@ import Model.Pokemon.TerrainEnum.Meteo;
 
 import View.Game.FightView.InfoBars.Bar;
 import View.Game.FightView.Text.TextBubble;
+import View.Game.InventoryView.Bag.BagView;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -106,6 +107,7 @@ public class FightButtons extends HBox {
         });
 
         bagButton.setOnAction(e -> {
+            // Change view
         });
 
         pokemonButton.setOnAction(e -> {

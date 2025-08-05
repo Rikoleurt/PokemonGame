@@ -6,6 +6,7 @@ import Model.Inventory.Items.Usable;
 import Model.Pokemon.Pokemon;
 import Model.Pokemon.TerrainEnum.Debris;
 import Model.Pokemon.Terrain;
+import View.Game.FightView.Text.TextBubble;
 
 import java.util.LinkedList;
 
@@ -100,10 +101,10 @@ public class Player {
         }
     }
 
-    public void use(Item item, Pokemon target){
+    public void use(Item item, Pokemon target, TextBubble textBubble) {
         if (item instanceof Usable) {
             System.out.println(name + " uses a " + item.getName() + "!");
-            ((Usable) item).use(target);
+            ((Usable) item).use(target, textBubble);
         } else { // Security
             System.out.println("This item cannot be used.");
         }

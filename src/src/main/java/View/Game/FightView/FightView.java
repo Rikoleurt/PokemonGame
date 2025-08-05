@@ -11,6 +11,7 @@ import View.Game.FightView.InfoBars.PlayerBar;
 import View.Game.FightView.Text.StatBubble;
 import View.Game.FightView.Text.TextBubble;
 
+import View.Game.InventoryView.Bag.BagView;
 import javafx.geometry.Pos;
 import javafx.scene.layout.BorderPane;
 
@@ -24,7 +25,6 @@ public class FightView extends BorderPane {
 
     TextBubble textBubble = new TextBubble();
     StatBubble statBubble = new StatBubble();
-    List<String> messages = new ArrayList<>();
 
     public static Player player = initiatePlayer();
     public static NPC npc = initiateEnemy();

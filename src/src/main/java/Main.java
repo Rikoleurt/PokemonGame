@@ -4,6 +4,7 @@ import Server.SocketServer;
 import View.Console.BattleLayout.BattleView;
 import View.Game.FightView.FightView;
 import View.Game.FightView.Text.TextBubble;
+import View.Game.SceneManager;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
@@ -14,12 +15,10 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class Main extends Application {
 
-    FightView fightView = new FightView();
-    TextBubble textBubble = fightView.getTextBubble();
-    BattleView battleView = new BattleView();
     SocketServer server = new SocketServer();
 
     @Override
@@ -32,17 +31,24 @@ public class Main extends Application {
         double consoleWidth = screenWidth * 0.25;
         double gameWidth = screenWidth - consoleWidth;
 
-        Scene gameScene = new Scene(fightView, gameWidth, screenHeight);
-        Scene consoleScene = new Scene(battleView, consoleWidth, screenHeight);
+        // 1. Initialiser SceneManager
+        SceneManager.setStage(primaryStage);
 
-        fightView.setStyle("-fx-alignment: center;");
-        primaryStage.setTitle("Pokémon Game");
-        primaryStage.setScene(gameScene);
-        primaryStage.setX(consoleWidth);
-        primaryStage.setY(0);
-        primaryStage.setWidth(gameWidth);
-        primaryStage.setHeight(screenHeight);
-        primaryStage.show();
+        // 2. Créer et afficher la FightView
+        FightView fightView = new FightView();
+        Scene scene = new Scene(fightView, gameWidth, screenHeight);
+        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/style/style.css")).toExternalForm());
+        SceneManager.getStage().setScene(scene);
+        SceneManager.getStage().setX(consoleWidth);
+        SceneManager.getStage().setY(0);
+        SceneManager.getStage().setWidth(gameWidth);
+        SceneManager.getStage().setHeight(screenHeight);
+        SceneManager.getStage().setTitle("Pokémon Game");
+        SceneManager.getStage().show();
+
+        // 3. Console secondaire
+        BattleView battleView = new BattleView();
+        Scene consoleScene = new Scene(battleView, consoleWidth, screenHeight);
 
         Stage consoleStage = new Stage();
         consoleStage.setTitle("Battle Console");
@@ -53,8 +59,11 @@ public class Main extends Application {
         consoleStage.setHeight(screenHeight);
         consoleStage.show();
 
-        gameScene.setOnKeyPressed(event -> textBubble.handleKeyPress(event.getCode()));
+        // 4. Gestion du clavier pour la bulle de texte
+        TextBubble textBubble = fightView.getTextBubble();
+        scene.setOnKeyPressed(event -> textBubble.handleKeyPress(event.getCode()));
 
+        // 5. Démarrage serveur dans un thread à part
         new Thread(() -> {
             try {
                 server.start(5000);
@@ -64,7 +73,6 @@ public class Main extends Application {
                 e.printStackTrace();
             }
         }).start();
-
     }
 
     public static void main(String[] args) {
