@@ -3,6 +3,7 @@ package View.Game.InventoryView.Bag.Component;
 import Model.Person.Player;
 import Model.Pokemon.Pokemon;
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -19,8 +20,9 @@ import java.util.Objects;
 public class PokemonList extends VBox {
     Player player;
 
-    public PokemonList(Player player) {
+    public PokemonList(Player player, int spacing) {
         this.player = player;
+        setSpacing(spacing);
         ObservableList<Node> components = getChildren();
         Button firstPokemon = createPokemonButton(player.getFrontPokemon());
         Button secondPokemon = createPokemonButton(player.getTeam().get(1));
@@ -28,7 +30,6 @@ public class PokemonList extends VBox {
 //        Button fourthPokemon = createPokemonButton(player.getTeam().get(3));
 //        Button fifthPokemon = createPokemonButton(player.getTeam().get(4));
 //        Button sixthPokemon = createPokemonButton(player.getTeam().getLast());
-
         components.addAll(firstPokemon,secondPokemon,thirdPokemon);
     }
 
@@ -64,5 +65,4 @@ public class PokemonList extends VBox {
 
         return button;
     }
-
 }

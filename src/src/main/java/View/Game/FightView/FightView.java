@@ -12,8 +12,11 @@ import View.Game.FightView.Text.StatBubble;
 import View.Game.FightView.Text.TextBubble;
 
 import View.Game.InventoryView.Bag.BagView;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,15 +40,24 @@ public class FightView extends BorderPane {
 
     FightButtons fightButtons = new FightButtons(textBubble, opponentBar, playerBar);
 
-    public FightView(){
+    public FightView() {
+        HBox bottomBox = new HBox();
+        bottomBox.setSpacing(20);
+        bottomBox.setPadding(new Insets(10));
+        bottomBox.setAlignment(Pos.BOTTOM_LEFT);
+        
+        textBubble.setPrefHeight(150);
+        textBubble.prefWidthProperty().bind(bottomBox.widthProperty().subtract(320));
+        HBox.setHgrow(textBubble, Priority.ALWAYS);
 
-        setBottom(fightButtons);
-        setRight(playerBar);
+        bottomBox.getChildren().addAll(textBubble, fightButtons);
+
         setTop(opponentBar);
+        setRight(playerBar);
+        setBottom(bottomBox);
 
         setAlignment(opponentBar, Pos.TOP_LEFT);
         setAlignment(playerBar, Pos.BOTTOM_CENTER);
-        setAlignment(fightButtons, Pos.BOTTOM_RIGHT);
     }
 
     public TextBubble getTextBubble() {

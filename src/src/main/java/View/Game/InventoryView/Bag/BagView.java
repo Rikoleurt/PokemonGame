@@ -4,6 +4,7 @@ import Model.Person.Player;
 import View.Game.InventoryView.Bag.Component.PokemonList;
 import javafx.beans.Observable;
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
@@ -13,12 +14,13 @@ public class BagView extends BorderPane {
     PokemonList pokemonList;
     public BagView(Player player, Runnable onClose) {
         this.player = player;
-        pokemonList = new PokemonList(player);
+        pokemonList = new PokemonList(player, 10);
 
         Button backButton = new Button("Back");
         backButton.setOnAction(e -> { onClose.run(); });
 
         setLeft(pokemonList);
+        setPadding(new Insets(30,40.,0,50));
         setTop(backButton);
 
         setAlignment(backButton,Pos.CENTER_RIGHT);

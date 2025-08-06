@@ -36,6 +36,7 @@ public class Main extends Application {
 
         // 2. Créer et afficher la FightView
         FightView fightView = new FightView();
+        SceneManager.setFightView(fightView);
         Scene scene = new Scene(fightView, gameWidth, screenHeight);
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/style/style.css")).toExternalForm());
         SceneManager.getStage().setScene(scene);
