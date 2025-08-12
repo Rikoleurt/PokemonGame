@@ -22,7 +22,7 @@ public class Player {
         this.team = team;
     }
 
-    public Bag getInventory() {
+    public Bag getBag() {
         return bag;
     }
 

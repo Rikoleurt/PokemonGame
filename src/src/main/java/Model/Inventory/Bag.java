@@ -2,18 +2,14 @@ package Model.Inventory;
 
 import Model.Inventory.Items.Item;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class Bag {
 
     Map<Item, Integer> inventory;
-    long money;
 
-    public Bag(Map<Item, Integer> inventory, long money) {
+    public Bag(Map<Item, Integer>inventory) {
         this.inventory = inventory;
-        this.money = money;
     }
 
     public Map<Item, Integer> getInventory() {
@@ -24,29 +20,20 @@ public class Bag {
         this.inventory = inventory;
     }
 
-    public void setItem(Item item, int amount) {
-        this.inventory.put(item, amount);
+    public void setItem(Item item, int quantity) {
+        inventory.put(item, quantity);
     }
 
-    public void removeItem(Item item) {
-        this.inventory.remove(item);
+    public int getQuantity(Item item) {
+        return inventory.get(item);
     }
 
-    public Item getItems(){
-        return inventory.keySet().iterator().next();
-    }
-
-    public void removeMultipleItems(int amount){
-        Set<Item> itemSet = inventory.keySet();
-        Iterator<Item> itr = itemSet.iterator();
-        if(amount <= itemSet.size()) {
-            for (int i = 0; i < amount; i++) {
-                itemSet.remove(itr.next());
+    public Item getItem(Item key) {
+        for (Map.Entry<Item, Integer> entry : inventory.entrySet()) {
+            if (entry.getKey().equals(key)) {
+                return entry.getKey();
             }
         }
-    }
-
-    public long getMoney() {
-        return money;
+        return null;
     }
 }

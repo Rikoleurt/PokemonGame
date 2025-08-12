@@ -162,6 +162,7 @@ public class Pokemon {
     public int getMaxExp() {
         return maxExp;
     }
+
     public String getGender() {
         return gender;
     }

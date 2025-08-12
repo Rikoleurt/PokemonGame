@@ -36,21 +36,21 @@ public class TextBubble extends HBox implements Bubble {
     public TextBubble() {
         setAlignment(Pos.CENTER_LEFT);
         //setPadding(new Insets(10));
-        this.setStyle("-fx-background-color: rgba(0, 0, 0, 0.5);" +
+        setStyle("-fx-background-color: rgba(0, 0, 0, 0.5);" +
                 "-fx-border-color: darkgray;" +
                 "-fx-border-width: 4px;" +
                 "-fx-border-radius: 15px;" +
                 "-fx-background-radius: 15px;");
 
-        message.setFont(font);
         message.setStyle("-fx-text-fill: white;" +
                 "-fx-padding: 15px;" +
                 "-fx-alignment: center-left;" +
                 "-fx-wrap-text: true;");
+        message.setFont(font);
         message.setVisible(false);
         message.prefWidthProperty().bind(widthProperty());
         message.setPrefHeight(150);
-        this.getChildren().addAll(message);
+        getChildren().addAll(message);
     }
 
 

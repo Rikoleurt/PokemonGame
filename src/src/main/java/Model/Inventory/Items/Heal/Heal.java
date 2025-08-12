@@ -2,6 +2,7 @@ package Model.Inventory.Items.Heal;
 
 import Controller.Fight.Battle.BattleExecutor;
 import Controller.Fight.Battle.Events.MessageEvent;
+import Model.Inventory.Category;
 import Model.Inventory.Items.Item;
 import Model.Inventory.Items.Usable;
 import Model.Pokemon.Pokemon;
@@ -9,20 +10,12 @@ import View.Game.FightView.Text.TextBubble;
 
 public class Heal extends Item implements Usable {
 
-    String name;
-    String description;
     int HP;
     BattleExecutor executor = BattleExecutor.getInstance();
 
-    public Heal(String name, String description, int HP) {
-        this.name = name;
-        this.description = description;
+    public Heal(Category category, String name, String description, int HP) {
+        super(category, name, description);
         this.HP = HP;
-    }
-
-    @Override
-    public String getName() {
-        return name;
     }
 
     public int getHP() {
@@ -41,5 +34,10 @@ public class Heal extends Item implements Usable {
         target.setHP(newHP);
         System.out.println(target.getName() + " regained some health!");
         executor.addEvent(new MessageEvent(textBubble, target.getName() + " regained some health!"));
+    }
+
+    @Override
+    public boolean isUsable() {
+        return true;
     }
 }

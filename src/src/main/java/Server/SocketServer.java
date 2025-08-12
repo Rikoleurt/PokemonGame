@@ -4,16 +4,20 @@ import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
 
+import Model.Inventory.Category;
+import Model.Inventory.Items.Item;
+import Model.Person.Player;
 import Model.Pokemon.Move;
 import Model.Pokemon.Pokemon;
 import com.google.gson.*;
 
 public class SocketServer {
+
     private ServerSocket serverSocket;
     private Socket clientSocket;
     private BufferedReader in;
     private BufferedWriter out;
-    private Gson gson = new Gson();
+    private final Gson gson = new Gson();
     private Pokemon pokemon;
     private Pokemon pokemon2;
 
@@ -39,17 +43,17 @@ public class SocketServer {
         serverSocket.close();
     }
 
-    private JsonObject getInfo(Pokemon pokemon) {
+    private JsonObject getSelfInfos(Pokemon pokemon) {
         JsonObject jsonPokemon = new JsonObject();
         jsonPokemon.addProperty("name", pokemon.getName());
         jsonPokemon.addProperty("level", pokemon.getLevel());
         jsonPokemon.addProperty("HP", pokemon.getHP());
         jsonPokemon.addProperty("maxHP", pokemon.getMaxHP());
         jsonPokemon.addProperty("type", pokemon.getType().toString());
+        jsonPokemon.addProperty("status", pokemon.getStatus() != null ? pokemon.getStatus().toString() : "NONE");
 
         JsonArray jsonMoves = new JsonArray();
         ArrayList<Move> moves = pokemon.getAttacks();
-
         if (moves != null) {
             for (int i = 0; i < Math.min(4, moves.size()); i++) {
                 Move move = moves.get(i);
@@ -63,25 +67,65 @@ public class SocketServer {
                 }
             }
         }
-
         jsonPokemon.add("moves", jsonMoves);
         return jsonPokemon;
     }
 
-    private String buildGameStateJson(Pokemon self, Pokemon opponent, int turn) {
-        JsonObject gameState = new JsonObject();
-        gameState.add("self", getInfo(self));
-        gameState.add("opponent", getInfo(opponent));
+    private JsonObject getOpponentInfos(Pokemon opponent) {
+        JsonObject jsonPokemon = new JsonObject();
+        jsonPokemon.addProperty("name", opponent.getName());
+        jsonPokemon.addProperty("level", opponent.getLevel());
+        jsonPokemon.addProperty("HP", opponent.getHP());
+        jsonPokemon.addProperty("maxHP", opponent.getMaxHP());
+        jsonPokemon.addProperty("type", opponent.getType().toString());
+        jsonPokemon.addProperty("status", opponent.getStatus() != null ? opponent.getStatus().toString() : "NONE");
+        return jsonPokemon;
+    }
 
-        JsonArray actions = new JsonArray();
+
+    private String buildGameStateInJson(Player p, Pokemon self, Pokemon opponent, int turn) {
+        JsonObject gameState = new JsonObject();
+        gameState.add("self", getSelfInfos(self));
+        gameState.add("opponent", getOpponentInfos(opponent));
+
+        JsonObject choices = new JsonObject();
+        JsonArray availableChoices = new JsonArray();
+
         ArrayList<Move> moves = self.getAttacks();
-        for (int i = 0; i < Math.min(4, moves != null ? moves.size() : 0); i++) {
-            actions.add("MOVE_" + i);
+        JsonArray attack = new JsonArray();
+
+        int m = moves != null ? Math.min(4, moves.size()) : 0;
+
+        for (int i = 0; i < m; i++) attack.add("MOVE_" + i);
+        if (!attack.isEmpty()) {
+            choices.add("ATTACK", attack);
+            availableChoices.add("ATTACK");
+        }
+        System.out.println(attack.getAsString());
+
+        JsonArray sw = new JsonArray();
+        int teamSize = p.getTeam().size();
+        for (int i = 0; i < teamSize; i++) {
+             sw.add("SLOT_" + i);
+        }
+        System.out.println(sw.getAsString());
+        if (!sw.isEmpty()) {
+            choices.add("SWITCH", sw);
+            availableChoices.add("SWITCH");
         }
 
-        gameState.add("available_actions", actions);
-        gameState.addProperty("turn", turn);
+        JsonArray items = new JsonArray();
+        for (Item item : p.getBag().getInventory().keySet()) items.add(item.getName());
+        if (!items.isEmpty()) {
+            choices.add("ITEM", items);
+            availableChoices.add("ITEM");
+        }
+        System.out.println(items.getAsString());
 
+        gameState.add("available_choices", availableChoices);
+        gameState.add("choices", choices);
+        gameState.addProperty("turn", turn);
+        System.out.println(gson.toJson(gameState));
         return gson.toJson(gameState);
     }
 }

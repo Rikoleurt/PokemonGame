@@ -1,5 +1,6 @@
 package Model.Inventory.Items.Fight;
 
+import Model.Inventory.Category;
 import Model.Inventory.Items.Item;
 import Model.Inventory.Items.Usable;
 import Model.Pokemon.Pokemon;
@@ -7,21 +8,13 @@ import View.Game.FightView.Text.TextBubble;
 
 public class StatBooster extends Item implements Usable {
 
-    String name;
-    String description;
     String stat;
     int raiseLevel;
 
-    public StatBooster(String name, String description, String stat, int raiseLevel) {
-        this.name = name;
-        this.description = description;
+    public StatBooster(Category category, String name, String description, String stat, int raiseLevel) {
+        super(category, name, description);
         this.stat = stat;
         this.raiseLevel = raiseLevel;
-    }
-
-    @Override
-    public String getName() {
-        return name;
     }
 
     public String getStat() {
@@ -35,5 +28,10 @@ public class StatBooster extends Item implements Usable {
     @Override
     public void use(Pokemon target, TextBubble textBubble) {
 
+    }
+
+    @Override
+    public boolean isUsable() {
+        return true;
     }
 }

@@ -45,16 +45,21 @@ public class FightButtons extends HBox {
     Terrain terrain = new Terrain(player.getTeam(), npc.getTeam(), Debris.normal, Meteo.normal);
 
     // Initial buttons
-    Button runButton = createButton("Run");
-    Button fightButton = createButton("Fight");
-    Button bagButton = createButton("Bag");
-    Button pokemonButton = createButton("Pokemon");
+    Button runButton = createBaseButtons("#67b60b","Run");
+    Button fightButton = createBaseButtons("#cc3434", "Fight");
+    Button bagButton = createBaseButtons("#db8813", "Bag");
+    Button pokemonButton = createBaseButtons("#1371f4","Pokemon");
 
     // Attack buttons
-    Button atk1Button = createButton(getAttackName(0));
-    Button atk2Button = createButton(getAttackName(1));
-    Button atk3Button = createButton(getAttackName(2));
-    Button atk4Button = createButton(getAttackName(3));
+//    Button atk1Button = createButton(getAttackName(0));
+//    Button atk2Button = createButton(getAttackName(1));
+//    Button atk3Button = createButton(getAttackName(2));
+//    Button atk4Button = createButton(getAttackName(3));
+
+    Button atk1Button = createBaseButtons(getColorFromAttack(pAtk1), getAttackName(0));
+    Button atk2Button = createBaseButtons(getColorFromAttack(pAtk2), getAttackName(1));
+    Button atk3Button = createBaseButtons(getColorFromAttack(pAtk3), getAttackName(2));
+    Button atk4Button = createBaseButtons(getColorFromAttack(pAtk4), getAttackName(3));
 
     private Bar opponentBar;
     private final Bar playerBar;
@@ -90,8 +95,8 @@ public class FightButtons extends HBox {
 
         setPadding(new Insets(20));
         setAlignment(Pos.BOTTOM_RIGHT);
-        // Buttons action
 
+        // Buttons action
         fightButton.setOnAction(e -> {
            components.clear();
 
@@ -124,32 +129,6 @@ public class FightButtons extends HBox {
 
         atkButton();
 
-    }
-
-    private Button createButton(String text) {
-        Button button = new Button(text);
-        button.setFont(font);
-        button.setPrefSize(175, 75);
-        button.setStyle("-fx-background-color: white; " +
-                "-fx-border-color: black; " +
-                "-fx-border-width: 2px; " +
-                "-fx-border-radius: 5px; " +
-                "-fx-background-radius: 0px; " +
-                "-fx-font-weight: bold; " +
-                "-fx-text-fill: black; ");
-        if(text == null){
-            button.setText(" - ");
-            button.setFont(font);
-            button.setPrefSize(175, 75);
-            button.setStyle("-fx-background-color: white; " +
-                    "-fx-border-color: black; " +
-                    "-fx-border-width: 2px; " +
-                    "-fx-border-radius: 5px; " +
-                    "-fx-background-radius: 0px; " +
-                    "-fx-font-weight: bold; " +
-                    "-fx-text-fill: black; ");
-        }
-        return button;
     }
 
     private void atkButton() {
@@ -246,5 +225,59 @@ public class FightButtons extends HBox {
         vBox.setVisible(true);
 
         textBubble.showMessage("What will " + playerPokemon.getName() + " do?");
+    }
+
+    private Button createBaseButtons(String color, String name) {
+        Button button = new Button(name);
+        button.setFont(font);
+        button.setPrefSize(175, 75);
+        button.setStyle("-fx-background-color:" + color + "; " +
+                "-fx-border-color: black; " +
+                "-fx-border-width: 2px; " +
+                "-fx-border-radius: 6px; " +
+                "-fx-background-radius: 9px; " +
+                "-fx-font-weight: bold; " +
+                "-fx-text-fill: black; ");
+        if(name == null){
+            button.setText(" - ");
+            button.setFont(font);
+            button.setPrefSize(175, 75);
+            button.setStyle("-fx-background-color: white; " +
+                    "-fx-border-color: black; " +
+                    "-fx-border-width: 2px; " +
+                    "-fx-border-radius: 5px; " +
+                    "-fx-background-radius: 0px; " +
+                    "-fx-font-weight: bold; " +
+                    "-fx-text-fill: black; ");
+        }
+        return button;
+    }
+
+    private String getColorFromAttack(Move move) {
+        try {
+            return switch (move.getType()) {
+                case fire -> "#FF5014";
+                case water -> "#5096FF";
+                case grass -> "#64C864";
+                case poison -> "#B464C8";
+                case bug -> "#96D232";
+                case ice -> "#82DCE6";
+                case dark -> "#5A505A";
+                case rock -> "#BEAA78";
+                case fairy -> "#FFB4F0";
+                case ghost -> "#6E64B4";
+                case steel -> "#7896AA";
+                case dragon -> "#0050C8";
+                case flying -> "#96B4FF";
+                case ground -> "#D28232";
+                case normal -> "#BEBEBE";
+                case psychic -> "#FF64B4";
+                case electric -> "#FFDC32";
+                case fighting -> "#C83C3C";
+                case null -> "white";
+            };
+        } catch (NullPointerException e) {
+            return "white";
+        }
     }
 }

@@ -1,6 +1,7 @@
 package Model.StaticObjects;
 
 import Model.Inventory.Bag;
+import Model.Inventory.Category;
 import Model.Inventory.Items.Heal.Heal;
 import Model.Inventory.Items.Item;
 import Model.Pokemon.Pokemon;
@@ -14,13 +15,9 @@ import static Model.StaticObjects.Pokemons.*;
 public class Player {
 
     public static Model.Person.Player initiatePlayer() {
-
-        Map<Item, Integer> inventory = new HashMap<>();
-
-        inventory.put(new Heal("Potion", "Heals 20HP", 20), 3);
-
-        Bag bag = new Bag(inventory, 100);
-
+        Map<Item, Integer> items = new HashMap<>();
+        items.put(new Heal(Category.HEALTH, "Potion", "Heals 20HP", 20), 3);
+        Bag bag = new Bag(items);
         LinkedList<Pokemon> team = new LinkedList<>();
 
         Pokemon Pikachu = initiatePikachu();
@@ -33,5 +30,5 @@ public class Player {
 
         return new Model.Person.Player("Jason", bag, team);
     }
-
 }
+

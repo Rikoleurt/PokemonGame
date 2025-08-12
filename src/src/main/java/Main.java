@@ -47,18 +47,18 @@ public class Main extends Application {
         SceneManager.getStage().setTitle("Pokémon Game");
         SceneManager.getStage().show();
 
-        // 3. Console secondaire
-        BattleView battleView = new BattleView();
-        Scene consoleScene = new Scene(battleView, consoleWidth, screenHeight);
-
-        Stage consoleStage = new Stage();
-        consoleStage.setTitle("Battle Console");
-        consoleStage.setScene(consoleScene);
-        consoleStage.setX(0);
-        consoleStage.setY(0);
-        consoleStage.setWidth(consoleWidth);
-        consoleStage.setHeight(screenHeight);
-        consoleStage.show();
+//        // 3. Console secondaire
+//        BattleView battleView = new BattleView();
+//        Scene consoleScene = new Scene(battleView, consoleWidth, screenHeight);
+//
+//        Stage consoleStage = new Stage();
+//        consoleStage.setTitle("Battle Console");
+//        consoleStage.setScene(consoleScene);
+//        consoleStage.setX(0);
+//        consoleStage.setY(0);
+//        consoleStage.setWidth(consoleWidth);
+//        consoleStage.setHeight(screenHeight);
+//        consoleStage.show();
 
         // 4. Gestion du clavier pour la bulle de texte
         TextBubble textBubble = fightView.getTextBubble();
