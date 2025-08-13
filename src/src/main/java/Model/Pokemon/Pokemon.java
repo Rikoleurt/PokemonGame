@@ -296,7 +296,7 @@ public class Pokemon {
             applyStatusEffect(target, move, bubble); // Apply the effect of the status
             if((getStatus() == Status.normal || getStatus() == Status.cursed || getStatus() == Status.burned || getStatus() == Status.paralyzed || getStatus() == Status.freeze || getStatus() == Status.attracted || getStatus() == Status.confused || getStatus() == Status.asleep || getStatus() == Status.poisoned || getStatus() == Status.badlyPoisoned)){
                 executor.addEvent(new MessageEvent(bubble,name + " uses " + move.name));
-                executor.addEvent(new UpdateBarEvent(targetBar, targetBar.getHealth()));
+                executor.addEvent(new UpdateBarEvent(targetBar));
                 int damage = (int) totalDamage((Attack) getAttack(attack), this, target, bubble);
                 console.log("Total damage : " + damage);
                 target.setHP(Math.max(0, target.getHP() - damage)); // Apply the damage

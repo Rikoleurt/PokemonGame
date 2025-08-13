@@ -14,7 +14,7 @@ public class OpponentBar extends Bar {
         int pMaxHP = p.getMaxHP();
         String pStatus = p.getStatus().toString();
 
-        Label name = new Label(p.getName());
+        Label name = new Label(pName);
         Label HP = new Label("HP :");
         Label level = new Label("Lvl : " + pLevel);
         Label HPs = new Label(pHP + "/" + pMaxHP);

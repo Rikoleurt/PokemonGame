@@ -8,8 +8,6 @@ import Model.Pokemon.Pokemon;
 import Model.Pokemon.Move;
 import Model.Pokemon.PokemonEnum.Status;
 import Model.Pokemon.Terrain;
-import Model.Pokemon.TerrainEnum.Debris;
-import Model.Pokemon.TerrainEnum.Meteo;
 
 import View.Game.FightView.InfoBars.Bar;
 import View.Game.FightView.Text.TextBubble;
@@ -34,20 +32,19 @@ public class FightButtons extends HBox {
 
     static Font font = Font.loadFont(FightButtons.class.getResource("/font/pokemonFont.ttf").toExternalForm(), 18);
 
-    Pokemon playerPokemon = player.getFrontPokemon();
+    static Pokemon playerPokemon = player.getFrontPokemon();
+    static Pokemon npcPokemon = npc.getFrontPokemon();
 
-    Move pAtk1 = getMove(0);
-    Move pAtk2 = getMove(1);
-    Move pAtk3 = getMove(2);
-    Move pAtk4 = getMove(3);
-
-    Pokemon npcPokemon = npc.getFrontPokemon();
+    static Move pAtk1 = getMove(0);
+    static Move pAtk2 = getMove(1);
+    static Move pAtk3 = getMove(2);
+    static Move pAtk4 = getMove(3);
 
     // Initial buttons
-    Button runButton = createBaseButtons("#67b60b","Run");
-    Button fightButton = createBaseButtons("#cc3434", "Fight");
-    Button bagButton = createBaseButtons("#db8813", "Bag");
-    Button pokemonButton = createBaseButtons("#1371f4","Pokemon");
+    static Button runButton = createBaseButtons("#67b60b","Run");
+    static Button attackButton = createBaseButtons("#cc3434", "Fight");
+    static Button bagButton = createBaseButtons("#db8813", "Bag");
+    static Button pokemonButton = createBaseButtons("#1371f4","Pokemon");
 
     // Attack buttons
 //    Button atk1Button = createButton(getAttackName(0));
@@ -55,10 +52,10 @@ public class FightButtons extends HBox {
 //    Button atk3Button = createButton(getAttackName(2));
 //    Button atk4Button = createButton(getAttackName(3));
 
-    Button atk1Button = createBaseButtons(getColorFromAttack(pAtk1), getAttackName(0));
-    Button atk2Button = createBaseButtons(getColorFromAttack(pAtk2), getAttackName(1));
-    Button atk3Button = createBaseButtons(getColorFromAttack(pAtk3), getAttackName(2));
-    Button atk4Button = createBaseButtons(getColorFromAttack(pAtk4), getAttackName(3));
+    static Button atk1Button = createBaseButtons(getColorFromAttack(pAtk1), getAttackName(0));
+    static Button atk2Button = createBaseButtons(getColorFromAttack(pAtk2), getAttackName(1));
+    static Button atk3Button = createBaseButtons(getColorFromAttack(pAtk3), getAttackName(2));
+    static Button atk4Button = createBaseButtons(getColorFromAttack(pAtk4), getAttackName(3));
 
     private final Bar opponentBar;
     private final Bar playerBar;
@@ -66,8 +63,8 @@ public class FightButtons extends HBox {
 
     VBox vBox = new VBox();
     VBox vBox2 = new VBox();
-    HBox HBox1 = new HBox(fightButton, bagButton);
-    HBox HBox2 = new HBox(runButton, pokemonButton);
+    private final static HBox HBox1 = new HBox(attackButton, bagButton);
+    private final static HBox HBox2 = new HBox(runButton, pokemonButton);
 
     BattleExecutor executor = BattleExecutor.getInstance();
 
@@ -95,7 +92,7 @@ public class FightButtons extends HBox {
         setAlignment(Pos.BOTTOM_RIGHT);
 
         // Buttons action
-        fightButton.setOnAction(e -> {
+        attackButton.setOnAction(e -> {
            components.clear();
 
            HBox1.getChildren().clear();
@@ -112,9 +109,9 @@ public class FightButtons extends HBox {
         });
 
         bagButton.setOnAction(e -> {
-            BagView bagView = new BagView(player, () -> {
+            BagView bagView = new BagView(player, npc, textBubble, () -> {
                 SceneManager.switchStageTo(SceneManager.getFightView()); // back to fight
-            }, textBubble, npc);
+            });
             SceneManager.switchStageTo(bagView); // go in the bag
         });
 
@@ -168,9 +165,7 @@ public class FightButtons extends HBox {
             } else {
                 handleNpcPokemonKO();
             }
-            executor.executeNext(() -> {
-                Platform.runLater(this::resetFightButtons);
-            });
+            executor.executeNext(() -> Platform.runLater(this::resetFightButtons));
         });
 
         requestFocus();
@@ -185,7 +180,7 @@ public class FightButtons extends HBox {
         // Let the enemy switch
     }
 
-    private String getAttackName(int index){
+    private static String getAttackName(int index){
         if(index < playerPokemon.getAttacks().size()){
             return playerPokemon.getAttacks().get(index).getName();
         } else {
@@ -193,7 +188,7 @@ public class FightButtons extends HBox {
         }
     }
 
-    private Move getMove(int index){
+    private static Move getMove(int index){
         if(index < playerPokemon.getAttacks().size()){
             return playerPokemon.getAttacks().get(index);
         } else {
@@ -201,7 +196,7 @@ public class FightButtons extends HBox {
         }
     }
 
-    private void resetFightButtons() {
+    public void resetFightButtons() {
         ObservableList<Node> components = this.getChildren();
 
         HBox1.getChildren().clear();
@@ -209,7 +204,7 @@ public class FightButtons extends HBox {
         vBox.getChildren().clear();
         components.clear();
 
-        HBox1.getChildren().addAll(fightButton, bagButton);
+        HBox1.getChildren().addAll(attackButton, bagButton);
         HBox2.getChildren().addAll(runButton, pokemonButton);
         vBox.getChildren().addAll(HBox1, HBox2);
 
@@ -222,7 +217,7 @@ public class FightButtons extends HBox {
         textBubble.showMessage("What will " + playerPokemon.getName() + " do?");
     }
 
-    private Button createBaseButtons(String color, String name) {
+    static private Button createBaseButtons(String color, String name) {
         Button button = new Button(name);
         button.setFont(font);
         button.setPrefSize(175, 75);
@@ -248,7 +243,7 @@ public class FightButtons extends HBox {
         return button;
     }
 
-    private String getColorFromAttack(Move move) {
+    private static String getColorFromAttack(Move move) {
         try {
             return switch (move.getType()) {
                 case fire -> "#FF5014";
@@ -274,5 +269,13 @@ public class FightButtons extends HBox {
         } catch (NullPointerException e) {
             return "white";
         }
+    }
+
+    public static HBox getHBox1(){
+        return HBox1;
+    }
+
+    public static HBox getHBox2(){
+        return HBox2;
     }
 }

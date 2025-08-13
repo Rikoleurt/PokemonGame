@@ -36,7 +36,7 @@ public class Heal extends Item implements Usable {
         int newHP = Math.min(target.getHP() + HP, target.getMaxHP());
         target.setHP(newHP);
         System.out.println(target.getName() + " regained some health!");
-        executor.addEvent(new UpdateBarEvent(FightView.getPlayerBar(), FightView.getPlayerBar().getHealth()));
+        executor.addEvent(new UpdateBarEvent(FightView.getPlayerBar()));
         executor.addEvent(new MessageEvent(textBubble, target.getName() + " regained some health!"));
     }
 

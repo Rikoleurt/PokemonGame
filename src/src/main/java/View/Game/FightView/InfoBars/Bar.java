@@ -26,7 +26,7 @@ public class Bar extends VBox {
     Label name = new Label();
     Label HP = new Label();
     Label level = new Label();
-    public static Label health = new Label();
+    Label health = new Label();
     Label status = new Label();
 
     Bar(double spacing, Pokemon p) {
@@ -98,17 +98,18 @@ public class Bar extends VBox {
         return level;
     }
 
-    public void updateHPBars(Label healthLabel, Runnable onFinish) {
+    public void updateHPBars(Runnable onFinish) {
         AtomicInteger currentHP = new AtomicInteger(Math.max(0, p.getHP()));
         int maxHP = p.getMaxHP();
 
         double startProgress = HPBar.getProgress();
-        double endProgress = Math.max(0, Math.min(1.0, (double) currentHP.get() / maxHP));
+        double endProgress = Math.max(0.0, Math.min(1.0, (double) currentHP.get() / maxHP));
         double step = 0.02;
 
         int steps = (int) Math.ceil(Math.abs(endProgress - startProgress) / step);
         if (steps <= 0) {
-            healthLabel.setText(currentHP.get() + "/" + maxHP);
+            health.setText(currentHP.get() + "/" + maxHP);
+            ApplyColor(currentHP, maxHP, HPBar);
             if (onFinish != null) onFinish.run();
             return;
         }
@@ -118,24 +119,19 @@ public class Bar extends VBox {
                 Duration.millis(50),
                 e -> {
                     double progress = HPBar.getProgress();
-                    double newProgress;
-                    if (progress < endProgress) {
-                        newProgress = Math.min(progress + step, endProgress);
-                    } else {
-                        newProgress = Math.max(progress - step, endProgress);
-                    }
+                    double newProgress = progress < endProgress
+                            ? Math.min(progress + step, endProgress)
+                            : Math.max(progress - step, endProgress);
                     HPBar.setProgress(newProgress);
                     int displayedHP = (int) Math.round(newProgress * maxHP);
                     currentHP.set(Math.max(0, displayedHP));
-                    healthLabel.setText(currentHP.get() + "/" + maxHP);
+                    health.setText(currentHP.get() + "/" + maxHP);
                     ApplyColor(currentHP, maxHP, HPBar);
                 }
         );
         timeline.getKeyFrames().add(keyFrame);
         timeline.setCycleCount(steps);
-        timeline.setOnFinished(e -> {
-            if (onFinish != null) onFinish.run();
-        });
+        timeline.setOnFinished(e -> { if (onFinish != null) onFinish.run(); });
         timeline.play();
     }
 
@@ -208,10 +204,6 @@ public class Bar extends VBox {
         });
 
         timeline.play();
-    }
-
-    public static Label getHealthLabel() {
-        return health;
     }
 }
 

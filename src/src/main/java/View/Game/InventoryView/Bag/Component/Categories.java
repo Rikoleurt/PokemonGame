@@ -3,8 +3,8 @@ package View.Game.InventoryView.Bag.Component;
 import Controller.Fight.Battle.BattleExecutor;
 import Controller.Fight.Battle.Events.AttackEvent;
 import Controller.Fight.Battle.Events.MessageEvent;
-import Controller.Fight.Battle.Events.UpdateBarEvent;
 import Controller.Fight.Battle.Events.UseItemEvent;
+
 import Model.Inventory.Bag;
 import Model.Inventory.Category;
 import Model.Inventory.Items.Item;
@@ -13,9 +13,13 @@ import Model.Person.Player;
 import Model.Pokemon.Move;
 import Model.Pokemon.Pokemon;
 import Model.Pokemon.PokemonEnum.Status;
+
+import View.Game.FightView.FightButtons;
 import View.Game.FightView.FightView;
 import View.Game.FightView.Text.TextBubble;
 import View.Game.SceneManager;
+
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -62,6 +66,8 @@ public class Categories extends VBox {
                     Pokemon chosenPokemon = player.getFrontPokemon();
                     if (chosenPokemon.getHP() < chosenPokemon.getMaxHP()) {
                         SceneManager.switchStageTo(SceneManager.getFightView());
+                        FightButtons.getHBox1().setVisible(false);
+                        FightButtons.getHBox2().setVisible(false);
                         executor.addEvent(new UseItemEvent(player, item, chosenPokemon, textBubble, executor));
                         executor.executeNext(() -> {
                             if (npcPokemon.getStatus() != Status.KO) {
@@ -70,7 +76,9 @@ public class Categories extends VBox {
                             } else {
                                 executor.addEvent(new MessageEvent(textBubble, npcPokemon.getName() + " fainted."));
                             }
-                            executor.executeNext(null);
+                            executor.executeNext(()-> {
+                                FightView.getFightButtons().resetFightButtons();
+                            });
                         });
                     } else {
                         bagBubble.showBubble();

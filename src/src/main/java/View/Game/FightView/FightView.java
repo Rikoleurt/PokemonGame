@@ -29,8 +29,8 @@ import static Model.StaticObjects.Player.initiatePlayer;
 
 public class FightView extends BorderPane {
 
-    public static TextBubble textBubble = new TextBubble();
-    public static StatBubble statBubble = new StatBubble();
+    static TextBubble textBubble = new TextBubble();
+    static StatBubble statBubble = new StatBubble();
 
     public static Player player = initiatePlayer();
     public static NPC npc = initiateEnemy();
@@ -38,11 +38,11 @@ public class FightView extends BorderPane {
     public static Pokemon playerPokemon = player.getFrontPokemon();
     public static Pokemon npcPokemon = npc.getFrontPokemon();
 
-    public static Bar opponentBar = new OpponentBar(5, npcPokemon);
-    public static Bar playerBar = new PlayerBar(5, playerPokemon);
-    public static Terrain terrain = new Terrain(player.getTeam(), npc.getTeam(), Debris.normal, Meteo.normal);
+    static Bar opponentBar = new OpponentBar(5, npcPokemon);
+    static Bar playerBar = new PlayerBar(5, playerPokemon);
+    static Terrain terrain = new Terrain(player.getTeam(), npc.getTeam(), Debris.normal, Meteo.normal);
 
-    FightButtons fightButtons = new FightButtons(textBubble, opponentBar, playerBar);
+    static FightButtons fightButtons = new FightButtons(textBubble, opponentBar, playerBar);
 
     public FightView() {
         HBox bottomBox = new HBox();
@@ -76,7 +76,7 @@ public class FightView extends BorderPane {
         return playerBar;
     }
 
-    public FightButtons getFightButtons() {
+    public static FightButtons getFightButtons() {
         return fightButtons;
     }
 

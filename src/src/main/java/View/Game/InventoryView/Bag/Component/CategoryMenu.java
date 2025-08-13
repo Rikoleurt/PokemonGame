@@ -33,7 +33,7 @@ public class CategoryMenu extends HBox {
 
     public CategoryMenu(Player player, int spacing, TextBubble textBubble, NPC npc) {
         this.player = player;
-
+        this.npc = npc;
         this.textBubble = textBubble;
         setSpacing(spacing);
         setAlignment(Pos.CENTER_LEFT);
