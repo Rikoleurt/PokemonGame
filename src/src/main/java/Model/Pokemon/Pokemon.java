@@ -162,7 +162,6 @@ public class Pokemon {
     public int getMaxExp() {
         return maxExp;
     }
-
     public String getGender() {
         return gender;
     }
@@ -258,11 +257,9 @@ public class Pokemon {
     public void setAttack(ArrayList<Move> moves, int position, Move move) {
         moves.set(position, move);
     }
-
     public void setExp(int exp) {
         this.exp = exp;
     }
-
     public void setHP(int hp) {
         this.HP = hp;
         if (this.HP <= 0) {
@@ -937,14 +934,11 @@ public class Pokemon {
         }
     }
 
-
-
     /**
      * Get the base experience in the csv file
      * @param pokemonName name of the Pokémon we have to search for
      * @return The base experience of the Pokémon
      */
-
     public static int getBaseExperience(String pokemonName, InputStream inputStream) {
         try (CSVReader reader = new CSVReader(new BufferedReader(new InputStreamReader(inputStream)))) {
             String[] nextLine;
@@ -1021,7 +1015,6 @@ public class Pokemon {
 
         return currentMaxExp;
     }
-
     private double calculateP() {
         double[] pValues = {0.0, 0.008, 0.014};
         return pValues[this.getLevel() % 3];

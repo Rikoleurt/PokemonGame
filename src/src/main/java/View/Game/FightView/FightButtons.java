@@ -1,8 +1,8 @@
 package View.Game.FightView;
 
 import Controller.Fight.Battle.BattleExecutor;
+import Controller.Fight.Battle.Events.AttackEvent;
 import Controller.Fight.Battle.Events.MessageEvent;
-import Controller.Fight.Turns.Turn;
 
 import Model.Pokemon.Pokemon;
 import Model.Pokemon.Move;
@@ -28,6 +28,7 @@ import javafx.scene.text.Font;
 
 import static View.Game.FightView.FightView.npc;
 import static View.Game.FightView.FightView.player;
+import static View.Game.FightView.FightView.terrain;
 
 public class FightButtons extends HBox {
 
@@ -41,8 +42,6 @@ public class FightButtons extends HBox {
     Move pAtk4 = getMove(3);
 
     Pokemon npcPokemon = npc.getFrontPokemon();
-
-    Terrain terrain = new Terrain(player.getTeam(), npc.getTeam(), Debris.normal, Meteo.normal);
 
     // Initial buttons
     Button runButton = createBaseButtons("#67b60b","Run");
@@ -61,7 +60,7 @@ public class FightButtons extends HBox {
     Button atk3Button = createBaseButtons(getColorFromAttack(pAtk3), getAttackName(2));
     Button atk4Button = createBaseButtons(getColorFromAttack(pAtk4), getAttackName(3));
 
-    private Bar opponentBar;
+    private final Bar opponentBar;
     private final Bar playerBar;
     private final TextBubble textBubble;
 
@@ -70,7 +69,6 @@ public class FightButtons extends HBox {
     HBox HBox1 = new HBox(fightButton, bagButton);
     HBox HBox2 = new HBox(runButton, pokemonButton);
 
-    Turn turn = new Turn(playerPokemon, npcPokemon);
     BattleExecutor executor = BattleExecutor.getInstance();
 
     public FightButtons(TextBubble textBubble, Bar opponentBar, Bar playerBar) {
@@ -116,7 +114,7 @@ public class FightButtons extends HBox {
         bagButton.setOnAction(e -> {
             BagView bagView = new BagView(player, () -> {
                 SceneManager.switchStageTo(SceneManager.getFightView()); // back to fight
-            });
+            }, textBubble, npc);
             SceneManager.switchStageTo(bagView); // go in the bag
         });
 
@@ -134,20 +132,20 @@ public class FightButtons extends HBox {
     private void atkButton() {
         atk1Button.setOnAction(e -> {
             if(pAtk1 != null) {
-                atkButtonAction(pAtk1, terrain);
+                onAttackPressed(pAtk1, terrain);
             }
         });
 
         atk2Button.setOnAction(e -> {
             if(pAtk2 != null) {
-                atkButtonAction(pAtk2, terrain);
+                onAttackPressed(pAtk2, terrain);
             }
 
         });
 
         atk3Button.setOnAction(e -> {
             if(pAtk3 != null) {
-                atkButtonAction(pAtk3, terrain);
+                onAttackPressed(pAtk3, terrain);
             }
         });
 
@@ -158,25 +156,23 @@ public class FightButtons extends HBox {
         });
     }
 
-    private void atkButtonAction(Move move, Terrain terrain) {
+    private void onAttackPressed(Move move, Terrain terrain) {
         HBox1.setVisible(false);
         HBox2.setVisible(false);
-        Move npcMove = npcPokemon.chooseMove();
-        // Problem : If one of the Pokémon are KO within the turn, then it'll still attack
 
-        if(playerPokemon.getStatus() != Status.KO){
-            playerPokemon.attack(npcPokemon, move, terrain, textBubble, opponentBar);
-        } else if (playerPokemon.getStatus() == Status.KO){
-            handlePlayerPokemonKO();
-        }
-        if(npcPokemon.getStatus() != Status.KO){
-            npcPokemon.attack(playerPokemon, npcMove , terrain, textBubble, playerBar);
-        } else if (npcPokemon.getStatus() == Status.KO){
-            handleNpcPokemonKO();
-        }
+        executor.addEvent(new AttackEvent(playerPokemon, npcPokemon, move, terrain, textBubble, opponentBar, executor));
         executor.executeNext(() -> {
-            Platform.runLater(this::resetFightButtons);
+            if (npcPokemon.getStatus() != Status.KO) {
+                Move npcMove = npcPokemon.chooseMove();
+                executor.addEvent(new AttackEvent(npcPokemon, playerPokemon, npcMove, terrain, textBubble, playerBar, executor));
+            } else {
+                handleNpcPokemonKO();
+            }
+            executor.executeNext(() -> {
+                Platform.runLater(this::resetFightButtons);
+            });
         });
+
         requestFocus();
     }
 
@@ -187,7 +183,6 @@ public class FightButtons extends HBox {
     private void handleNpcPokemonKO(){
         executor.addEvent(new MessageEvent(textBubble, npcPokemon.getName() + " fainted."));
         // Let the enemy switch
-        // To make it easier for the AI, we do not allow switches.
     }
 
     private String getAttackName(int index){

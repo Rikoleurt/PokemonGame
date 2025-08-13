@@ -2,10 +2,13 @@ package Model.Inventory.Items.Heal;
 
 import Controller.Fight.Battle.BattleExecutor;
 import Controller.Fight.Battle.Events.MessageEvent;
+import Controller.Fight.Battle.Events.UpdateBarEvent;
 import Model.Inventory.Category;
 import Model.Inventory.Items.Item;
 import Model.Inventory.Items.Usable;
 import Model.Pokemon.Pokemon;
+import View.Game.FightView.FightView;
+import View.Game.FightView.InfoBars.Bar;
 import View.Game.FightView.Text.TextBubble;
 
 public class Heal extends Item implements Usable {
@@ -33,6 +36,7 @@ public class Heal extends Item implements Usable {
         int newHP = Math.min(target.getHP() + HP, target.getMaxHP());
         target.setHP(newHP);
         System.out.println(target.getName() + " regained some health!");
+        executor.addEvent(new UpdateBarEvent(FightView.getPlayerBar(), FightView.getPlayerBar().getHealth()));
         executor.addEvent(new MessageEvent(textBubble, target.getName() + " regained some health!"));
     }
 

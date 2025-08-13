@@ -1,7 +1,9 @@
 package View.Game.InventoryView.Bag.Component;
 
 import Model.Inventory.Category;
+import Model.Person.NPC;
 import Model.Person.Player;
+import View.Game.FightView.Text.TextBubble;
 import View.Game.InventoryView.Bag.Component.Categories;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -26,10 +28,13 @@ public class CategoryMenu extends HBox {
     private final Map<ToggleButton, Category> map = new LinkedHashMap<>();
     private final ObjectProperty<Category> selectedCategory = new SimpleObjectProperty<>();
     private Consumer<Category> onCategorySelected;
-    private final Categories categories;
+    TextBubble textBubble;
+    NPC npc;
 
-    public CategoryMenu(Player player, int spacing) {
+    public CategoryMenu(Player player, int spacing, TextBubble textBubble, NPC npc) {
         this.player = player;
+
+        this.textBubble = textBubble;
         setSpacing(spacing);
         setAlignment(Pos.CENTER_LEFT);
         ObservableList<Node> components = getChildren();
@@ -72,11 +77,11 @@ public class CategoryMenu extends HBox {
             else if (e.getCode() == KeyCode.RIGHT) move(1);
         });
 
-        categories = new Categories(player, spacing);
+        Categories categories = new Categories(player, spacing, textBubble, npc);
         vWrapper.getChildren().addAll(menuBox, categories);
         components.add(vWrapper);
 
-        setOnCategorySelected(c -> categories.showCategory(c));
+        setOnCategorySelected(categories::showCategory);
         select(Category.HEALTH);
         categories.showCategory(Category.HEALTH);
     }

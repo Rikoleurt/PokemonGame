@@ -26,7 +26,7 @@ public class Bar extends VBox {
     Label name = new Label();
     Label HP = new Label();
     Label level = new Label();
-    Label health = new Label();
+    public static Label health = new Label();
     Label status = new Label();
 
     Bar(double spacing, Pokemon p) {
@@ -103,37 +103,44 @@ public class Bar extends VBox {
         int maxHP = p.getMaxHP();
 
         double startProgress = HPBar.getProgress();
-        double endProgress = Math.max(0, (double) currentHP.get() / maxHP);
+        double endProgress = Math.max(0, Math.min(1.0, (double) currentHP.get() / maxHP));
+        double step = 0.02;
+
+        int steps = (int) Math.ceil(Math.abs(endProgress - startProgress) / step);
+        if (steps <= 0) {
+            healthLabel.setText(currentHP.get() + "/" + maxHP);
+            if (onFinish != null) onFinish.run();
+            return;
+        }
 
         Timeline timeline = new Timeline();
         KeyFrame keyFrame = new KeyFrame(
                 Duration.millis(50),
                 e -> {
                     double progress = HPBar.getProgress();
-                    if (progress > endProgress) {
-                        double newProgress = Math.max(progress - 0.02, endProgress);
-                        HPBar.setProgress(newProgress);
-
-                        int displayedHP = (int) Math.round(newProgress * maxHP);
-                        currentHP.set(Math.max(0, displayedHP));
-                        healthLabel.setText(currentHP.get() + "/" + maxHP);
-
-                        ApplyColor(onFinish, currentHP, maxHP, endProgress, newProgress, HPBar);
+                    double newProgress;
+                    if (progress < endProgress) {
+                        newProgress = Math.min(progress + step, endProgress);
+                    } else {
+                        newProgress = Math.max(progress - step, endProgress);
                     }
-                });
-
-        int steps = (int) Math.ceil((startProgress - endProgress) / 0.02);
+                    HPBar.setProgress(newProgress);
+                    int displayedHP = (int) Math.round(newProgress * maxHP);
+                    currentHP.set(Math.max(0, displayedHP));
+                    healthLabel.setText(currentHP.get() + "/" + maxHP);
+                    ApplyColor(currentHP, maxHP, HPBar);
+                }
+        );
         timeline.getKeyFrames().add(keyFrame);
         timeline.setCycleCount(steps);
-        timeline.play();
         timeline.setOnFinished(e -> {
-            if (onFinish != null) {
-                onFinish.run();
-            }
+            if (onFinish != null) onFinish.run();
         });
+        timeline.play();
     }
 
-    private static void ApplyColor(Runnable onFinish, AtomicInteger currentHP, int maxHP, double endProgress, double newProgress, ProgressBar playerBar) {
+
+    private static void ApplyColor(AtomicInteger currentHP, int maxHP, ProgressBar playerBar) {
         if (currentHP.get() > maxHP / 2) {
             playerBar.setStyle("-fx-accent: #709f5e;");
         } else if (currentHP.get() > maxHP / 4) {
@@ -201,6 +208,10 @@ public class Bar extends VBox {
         });
 
         timeline.play();
+    }
+
+    public static Label getHealthLabel() {
+        return health;
     }
 }
 

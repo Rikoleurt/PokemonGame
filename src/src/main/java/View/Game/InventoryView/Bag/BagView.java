@@ -1,6 +1,8 @@
 package View.Game.InventoryView.Bag;
 
+import Model.Person.NPC;
 import Model.Person.Player;
+import View.Game.FightView.Text.TextBubble;
 import View.Game.InventoryView.Bag.Component.CategoryMenu;
 import View.Game.InventoryView.Bag.Component.PokemonList;
 import javafx.beans.Observable;
@@ -13,14 +15,16 @@ import javafx.scene.layout.HBox;
 
 public class BagView extends BorderPane {
     Player player;
+    NPC npc;
     PokemonList pokemonList;
     CategoryMenu categoryMenu;
+    TextBubble textBubble;
 
-    public BagView(Player player, Runnable onClose) {
+    public BagView(Player player, Runnable onClose, TextBubble textBubble, NPC npc) {
         this.player = player;
-
+        this.textBubble = textBubble;
         pokemonList = new PokemonList(player, 10);
-        categoryMenu = new CategoryMenu(player,20);
+        categoryMenu = new CategoryMenu(player,20, textBubble, npc);
 
         Button backButton = new Button("Back");
         backButton.setOnAction(e -> onClose.run());

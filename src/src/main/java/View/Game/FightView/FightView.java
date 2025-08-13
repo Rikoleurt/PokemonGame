@@ -5,6 +5,9 @@ import Model.Person.NPC;
 import Model.Person.Player;
 import Model.Pokemon.Pokemon;
 
+import Model.Pokemon.Terrain;
+import Model.Pokemon.TerrainEnum.Debris;
+import Model.Pokemon.TerrainEnum.Meteo;
 import View.Game.FightView.InfoBars.Bar;
 import View.Game.FightView.InfoBars.OpponentBar;
 import View.Game.FightView.InfoBars.PlayerBar;
@@ -26,8 +29,8 @@ import static Model.StaticObjects.Player.initiatePlayer;
 
 public class FightView extends BorderPane {
 
-    TextBubble textBubble = new TextBubble();
-    StatBubble statBubble = new StatBubble();
+    public static TextBubble textBubble = new TextBubble();
+    public static StatBubble statBubble = new StatBubble();
 
     public static Player player = initiatePlayer();
     public static NPC npc = initiateEnemy();
@@ -35,8 +38,9 @@ public class FightView extends BorderPane {
     public static Pokemon playerPokemon = player.getFrontPokemon();
     public static Pokemon npcPokemon = npc.getFrontPokemon();
 
-    Bar opponentBar = new OpponentBar(5, npcPokemon);
-    Bar playerBar = new PlayerBar(5, playerPokemon);
+    public static Bar opponentBar = new OpponentBar(5, npcPokemon);
+    public static Bar playerBar = new PlayerBar(5, playerPokemon);
+    public static Terrain terrain = new Terrain(player.getTeam(), npc.getTeam(), Debris.normal, Meteo.normal);
 
     FightButtons fightButtons = new FightButtons(textBubble, opponentBar, playerBar);
 
@@ -62,5 +66,41 @@ public class FightView extends BorderPane {
 
     public TextBubble getTextBubble() {
         return textBubble;
+    }
+
+    public static Bar getOpponentBar() {
+        return opponentBar;
+    }
+
+    public static Bar getPlayerBar() {
+        return playerBar;
+    }
+
+    public FightButtons getFightButtons() {
+        return fightButtons;
+    }
+
+    public static NPC getNpc() {
+        return npc;
+    }
+
+    public static Player getPlayer() {
+        return player;
+    }
+
+    public static Pokemon getNpcPokemon() {
+        return npcPokemon;
+    }
+
+    public static Pokemon getPlayerPokemon() {
+        return playerPokemon;
+    }
+
+    public static StatBubble getStatBubble() {
+        return statBubble;
+    }
+
+    public static Terrain getTerrain() {
+        return terrain;
     }
 }
