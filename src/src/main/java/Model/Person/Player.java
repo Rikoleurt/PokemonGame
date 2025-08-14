@@ -6,7 +6,7 @@ import Model.Inventory.Items.Usable;
 import Model.Pokemon.Pokemon;
 import Model.Pokemon.TerrainEnum.Debris;
 import Model.Pokemon.Terrain;
-import View.Game.FightView.Text.TextBubble;
+import View.Game.Battle.Text.TextBubble;
 
 import java.util.LinkedList;
 
@@ -42,7 +42,7 @@ public class Player {
         return team.getFirst();
     }
 
-    public void exchangePokemonToFront(Pokemon pokemon, Pokemon otherPokemon) {
+    private void exchangePokemonToFront(Pokemon pokemon, Pokemon otherPokemon) {
         if(this.isFront(pokemon)) {
             int temp = team.indexOf(otherPokemon); // bulbizarre at ?
             Pokemon tempPokemon = team.getFirst(); // temp Model.Pokemon is pikachu
@@ -53,7 +53,7 @@ public class Player {
         }
     }
 
-    public void exchangePositionOf(Pokemon pokemon, Pokemon otherPokemon) {
+    private void exchangePositionOf(Pokemon pokemon, Pokemon otherPokemon) {
         int temp = team.indexOf(otherPokemon); // Bulbizarre at position 1
         Pokemon tempPokemon = getPokemon(pokemon); // temp is pikachu
         int index = team.indexOf(tempPokemon); // index of pikachu is 0
@@ -89,7 +89,7 @@ public class Player {
 
     // After sending a first pokemon, the player has multiple choices in fights
 
-    public void changePokemon(Pokemon pokemon, Terrain terrain){
+    public void setFront(Pokemon pokemon, Terrain terrain){
         System.out.println(this.getFrontPokemon().getName() + " stop! ");
         exchangePokemonToFront(getFrontPokemon(), pokemon);
         System.out.println(pokemon.getName() + "! Go!");

@@ -1,12 +1,7 @@
-import Controller.Fight.Battle.BattleExecutor;
-import Controller.Fight.FightController;
 import Server.SocketServer;
-import View.Console.BattleLayout.BattleView;
-import View.Game.FightView.FightView;
-import View.Game.FightView.Text.TextBubble;
+import View.Game.Battle.BattleView;
+import View.Game.Battle.Text.TextBubble;
 import View.Game.SceneManager;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 
 import javafx.application.Application;
 import javafx.geometry.Rectangle2D;
@@ -35,9 +30,9 @@ public class Main extends Application {
         SceneManager.setStage(primaryStage);
 
         // 2. Créer et afficher la FightView
-        FightView fightView = new FightView();
-        SceneManager.setFightView(fightView);
-        Scene scene = new Scene(fightView, gameWidth, screenHeight);
+        BattleView battleView = new BattleView();
+        SceneManager.setFightView(battleView);
+        Scene scene = new Scene(battleView, gameWidth, screenHeight);
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/style/style.css")).toExternalForm());
         SceneManager.getStage().setScene(scene);
         SceneManager.getStage().setX(consoleWidth);
@@ -61,7 +56,7 @@ public class Main extends Application {
 //        consoleStage.show();
 
         // 4. Gestion du clavier pour la bulle de texte
-        TextBubble textBubble = fightView.getTextBubble();
+        TextBubble textBubble = battleView.getTextBubble();
         scene.setOnKeyPressed(event -> textBubble.handleKeyPress(event.getCode()));
 
         // 5. Démarrage serveur dans un thread à part

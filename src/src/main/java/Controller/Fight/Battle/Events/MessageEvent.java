@@ -1,6 +1,6 @@
 package Controller.Fight.Battle.Events;
 
-import View.Game.FightView.Text.TextBubble;
+import View.Game.Battle.Text.TextBubble;
 
 public class MessageEvent extends BattleEvent {
     TextBubble bubble;

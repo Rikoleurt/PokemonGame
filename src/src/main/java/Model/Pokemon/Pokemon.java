@@ -15,8 +15,8 @@ import Model.Pokemon.Attacks.DebrisAttack;
 import java.io.*;
 import java.util.*;
 import View.Console.BattleLayout.BattleConsole;
-import View.Game.FightView.InfoBars.Bar;
-import View.Game.FightView.Text.TextBubble;
+import View.Game.Battle.InfoBars.Bar;
+import View.Game.Battle.Text.TextBubble;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
 

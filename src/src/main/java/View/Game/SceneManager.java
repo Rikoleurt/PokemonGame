@@ -1,6 +1,6 @@
 package View.Game;
 
-import View.Game.FightView.FightView;
+import View.Game.Battle.BattleView;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -31,8 +31,8 @@ public class SceneManager {
         return primaryStage;
     }
 
-    public static void setFightView(FightView fightView){
-        fightViewRoot = fightView;
+    public static void setFightView(BattleView battleView){
+        fightViewRoot = battleView;
     }
 
     public static Parent getFightView(){

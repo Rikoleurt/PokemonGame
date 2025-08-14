@@ -1,6 +1,6 @@
 package View.Console.BattleLayout;
 
-import View.Game.FightView.FightButtons;
+import View.Game.Battle.BattleButtons;
 import javafx.scene.control.TextArea;
 import javafx.scene.text.Font;
 
@@ -10,7 +10,7 @@ import javafx.scene.text.Font;
 public class BattleConsole extends TextArea {
 
     private static BattleConsole instance;
-    private static Font font = Font.loadFont(FightButtons.class.getResource("/font/pokemonFont.ttf").toExternalForm(), 18);
+    private static Font font = Font.loadFont(BattleButtons.class.getResource("/font/pokemonFont.ttf").toExternalForm(), 18);
 
     private BattleConsole() {
         setEditable(false);

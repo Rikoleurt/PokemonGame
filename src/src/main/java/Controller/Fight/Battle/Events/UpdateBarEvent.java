@@ -1,7 +1,6 @@
 package Controller.Fight.Battle.Events;
 
-import View.Game.FightView.InfoBars.Bar;
-import javafx.scene.control.Label;
+import View.Game.Battle.InfoBars.Bar;
 
 public class UpdateBarEvent extends BattleEvent {
     private final Bar bar;

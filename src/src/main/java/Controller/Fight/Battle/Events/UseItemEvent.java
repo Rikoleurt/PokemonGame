@@ -4,7 +4,7 @@ import Controller.Fight.Battle.BattleExecutor;
 import Model.Inventory.Items.Item;
 import Model.Person.Player;
 import Model.Pokemon.Pokemon;
-import View.Game.FightView.Text.TextBubble;
+import View.Game.Battle.Text.TextBubble;
 
 public class UseItemEvent extends BattleEvent {
     private final Player player;

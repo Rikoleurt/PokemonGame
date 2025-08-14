@@ -4,8 +4,8 @@ import Controller.Fight.Battle.BattleExecutor;
 import Model.Pokemon.Move;
 import Model.Pokemon.Pokemon;
 import Model.Pokemon.Terrain;
-import View.Game.FightView.InfoBars.Bar;
-import View.Game.FightView.Text.TextBubble;
+import View.Game.Battle.InfoBars.Bar;
+import View.Game.Battle.Text.TextBubble;
 
 public class AttackEvent extends BattleEvent{
 
