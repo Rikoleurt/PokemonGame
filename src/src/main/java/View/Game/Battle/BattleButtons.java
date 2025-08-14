@@ -220,6 +220,8 @@ public class BattleButtons extends HBox {
         vBox.setVisible(true);
 
         textBubble.showMessage("What will " + playerPokemon.getName() + " do?");
+//        executor.addEvent(new MessageEvent(textBubble, "What will " + playerPokemon.getName() + " do?"));
+//        executor.executeNext(null);
     }
 
     static private Button createBaseButtons(String color, String name) {
