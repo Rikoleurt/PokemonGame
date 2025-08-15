@@ -22,8 +22,6 @@ import javafx.scene.layout.VBox;
 import java.util.List;
 
 import static View.Game.Battle.BattleView.*;
-import static View.Game.Battle.BattleView.npcPokemon;
-import static View.Game.Battle.BattleView.playerPokemon;
 
 public class SwitchView extends BorderPane {
     Player player;

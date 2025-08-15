@@ -31,8 +31,8 @@ public class BattleView extends BorderPane {
     public static Player player = initiatePlayer();
     public static NPC npc = initiateEnemy();
 
-    public static Pokemon playerPokemon = player.getFrontPokemon();
-    public static Pokemon npcPokemon = npc.getFrontPokemon();
+    static Pokemon playerPokemon = player.getFrontPokemon();
+    static Pokemon npcPokemon = npc.getFrontPokemon();
 
     static Bar opponentBar = new OpponentBar(5, npcPokemon);
     static Bar playerBar = new PlayerBar(5, playerPokemon);

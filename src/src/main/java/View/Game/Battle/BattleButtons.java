@@ -33,13 +33,13 @@ public class BattleButtons extends HBox {
 
     static Font font = Font.loadFont(BattleButtons.class.getResource("/font/pokemonFont.ttf").toExternalForm(), 18);
 
-    static Pokemon playerPokemon = player.getFrontPokemon();
-    static Pokemon npcPokemon = npc.getFrontPokemon();
+    private Pokemon playerPokemon = player.getFrontPokemon();
+    private Pokemon npcPokemon = npc.getFrontPokemon();
 
-    static Move pAtk1 = getMove(0);
-    static Move pAtk2 = getMove(1);
-    static Move pAtk3 = getMove(2);
-    static Move pAtk4 = getMove(3);
+    Move pAtk1 = getMove(0);
+    Move pAtk2 = getMove(1);
+    Move pAtk3 = getMove(2);
+    Move pAtk4 = getMove(3);
 
     // Initial buttons
     static Button runButton = createBaseButtons("#67b60b","Run");
@@ -48,15 +48,10 @@ public class BattleButtons extends HBox {
     static Button pokemonButton = createBaseButtons("#1371f4","Pokemon");
 
     // Attack buttons
-//    Button atk1Button = createButton(getAttackName(0));
-//    Button atk2Button = createButton(getAttackName(1));
-//    Button atk3Button = createButton(getAttackName(2));
-//    Button atk4Button = createButton(getAttackName(3));
-
-    static Button atk1Button = createBaseButtons(getColorFromAttack(pAtk1), getAttackName(0));
-    static Button atk2Button = createBaseButtons(getColorFromAttack(pAtk2), getAttackName(1));
-    static Button atk3Button = createBaseButtons(getColorFromAttack(pAtk3), getAttackName(2));
-    static Button atk4Button = createBaseButtons(getColorFromAttack(pAtk4), getAttackName(3));
+    Button atk1Button = createBaseButtons(getColorFromAttack(pAtk1), getAttackName(0));
+    Button atk2Button = createBaseButtons(getColorFromAttack(pAtk2), getAttackName(1));
+    Button atk3Button = createBaseButtons(getColorFromAttack(pAtk3), getAttackName(2));
+    Button atk4Button = createBaseButtons(getColorFromAttack(pAtk4), getAttackName(3));
 
     private final Bar opponentBar;
     private final Bar playerBar;
@@ -64,6 +59,7 @@ public class BattleButtons extends HBox {
 
     VBox vBox = new VBox();
     VBox vBox2 = new VBox();
+
     private final static HBox HBox1 = new HBox(attackButton, bagButton);
     private final static HBox HBox2 = new HBox(runButton, pokemonButton);
 
@@ -127,11 +123,11 @@ public class BattleButtons extends HBox {
         runButton.setOnAction(e -> {
         });
 
-        atkButton();
+        onMoveButton();
 
     }
 
-    private void atkButton() {
+    private void onMoveButton() {
         atk1Button.setOnAction(e -> {
             if(pAtk1 != null) {
                 onAttackPressed(pAtk1, terrain);
@@ -185,7 +181,7 @@ public class BattleButtons extends HBox {
         // Let the enemy switch
     }
 
-    private static String getAttackName(int index){
+    private String getAttackName(int index){
         if(index < playerPokemon.getAttacks().size()){
             return playerPokemon.getAttacks().get(index).getName();
         } else {
@@ -193,7 +189,7 @@ public class BattleButtons extends HBox {
         }
     }
 
-    private static Move getMove(int index){
+    private Move getMove(int index){
         if(index < playerPokemon.getAttacks().size()){
             return playerPokemon.getAttacks().get(index);
         } else {
@@ -292,7 +288,7 @@ public class BattleButtons extends HBox {
         atk3Button = createBaseButtons(getColorFromAttack(pAtk3), getAttackName(2));
         atk4Button = createBaseButtons(getColorFromAttack(pAtk4), getAttackName(3));
 
-        atkButton();
+        onMoveButton();
     }
 
     public static HBox getHBox1(){
