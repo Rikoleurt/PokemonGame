@@ -31,13 +31,17 @@ public class Heal extends Item implements Usable {
             System.out.println(target.getName() + " is already in top form!");
             return;
         }
-
         int newHP = Math.min(target.getHP() + HP, target.getMaxHP());
         target.setHP(newHP);
         System.out.println(target.getName() + " regained some health!");
-        executor.addEvent(new UpdateBarEvent(BattleView.getPlayerBar()));
+        if (View.Game.Battle.BattleView.getPlayer().getTeam().contains(target)) {
+            executor.addEvent(new UpdateBarEvent(View.Game.Battle.BattleView.getPlayerBar()));
+        } else {
+            executor.addEvent(new UpdateBarEvent(View.Game.Battle.BattleView.getOpponentBar()));
+        }
         executor.addEvent(new MessageEvent(textBubble, target.getName() + " regained some health!"));
     }
+
 
     @Override
     public boolean isUsable() {

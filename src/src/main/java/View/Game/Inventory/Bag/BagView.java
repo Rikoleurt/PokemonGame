@@ -25,6 +25,7 @@ public class BagView extends BorderPane {
 
     public BagView(Player player, NPC npc, TextBubble textBubble, Runnable onClose) {
         this.player = player;
+        this.npc = npc;
         this.textBubble = textBubble;
         pokemonList = new PokemonList(player, 10);
         categoryMenu = new CategoryMenu(player, 20, textBubble, npc);

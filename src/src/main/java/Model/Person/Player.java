@@ -10,7 +10,7 @@ import View.Game.Battle.Text.TextBubble;
 
 import java.util.LinkedList;
 
-public class Player {
+public class Player implements Fighter {
 
     String name;
     Bag bag;
@@ -99,12 +99,8 @@ public class Player {
     }
 
     public void use(Item item, Pokemon target, TextBubble textBubble) {
-        if (item instanceof Usable) {
-            System.out.println(name + " uses a " + item.getName() + "!");
-            ((Usable) item).use(target, textBubble);
-        } else { // Security
-            System.out.println("This item cannot be used.");
-        }
+        if (item instanceof Usable) ((Usable) item).use(target, textBubble);
+
     }
     public void flee(){
 

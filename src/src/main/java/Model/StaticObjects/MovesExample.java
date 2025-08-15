@@ -10,7 +10,7 @@ import Model.Pokemon.TerrainEnum.Debris;
 
 import java.util.HashMap;
 
-public class Moves {
+public class MovesExample {
 
     public static HashMap<Integer, Move> initiateAttacks()
     {

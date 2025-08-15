@@ -1,5 +1,6 @@
 package Model.Inventory;
 
+import Model.Inventory.Items.Heal.Heal;
 import Model.Inventory.Items.Item;
 
 import java.util.*;
@@ -32,6 +33,24 @@ public class Bag {
         for (Map.Entry<Item, Integer> entry : inventory.entrySet()) {
             if (entry.getKey().equals(key)) {
                 return entry.getKey();
+            }
+        }
+        return null;
+    }
+
+    public Item getItem(int id) {
+        for (Map.Entry<Item, Integer> entry : inventory.entrySet()) {
+            if (entry.getValue() == id) {
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
+
+    public Item getFirstHeal() {
+        for (Item item : inventory.keySet()) {
+            if (item instanceof Heal) {
+                return item;
             }
         }
         return null;

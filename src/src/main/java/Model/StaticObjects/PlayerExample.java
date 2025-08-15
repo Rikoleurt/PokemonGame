@@ -10,9 +10,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import static Model.StaticObjects.Pokemons.*;
+import static Model.StaticObjects.PokemonsExample.*;
 
-public class Player {
+public class PlayerExample {
 
     public static Model.Person.Player initiatePlayer() {
         Map<Item, Integer> items = new HashMap<>();
@@ -27,7 +27,6 @@ public class Player {
         team.add(Salameche);
         team.add(Pikachu);
         team.add(Bulbizarre);
-
         return new Model.Person.Player("Jason", bag, team);
     }
 }

@@ -8,9 +8,9 @@ import Model.Pokemon.PokemonEnum.Experience;
 import Model.Pokemon.PokemonEnum.Status;
 import Model.Pokemon.PokemonEnum.Type;
 
-import static Model.StaticObjects.Moves.initiateAttacks;
+import static Model.StaticObjects.MovesExample.initiateAttacks;
 
-public class Pokemons {
+public class PokemonsExample {
     static HashMap<Integer, Move> attacks = initiateAttacks();
     static ArrayList<Move> bulbizarreMoves = new ArrayList<>();
     static ArrayList<Move> pikachuMoves = new ArrayList<>();
@@ -20,7 +20,7 @@ public class Pokemons {
     public static Pokemon initiateBulbizarre() {
         bulbizarreMoves.add(attacks.get(4));
         bulbizarreMoves.add(attacks.get(6));
-        return new Pokemon("bulbasaur", 31, 31, 18, 18, 23, 23, 17,
+        return new Pokemon("bulbasaur", 31, 20, 18, 18, 23, 23, 17,
                 45, 49, 49, 65, 65, 45,
                 10, 10, 10, 10, 10, 10,
                 0, 0, 0, 0, 0, 0,

@@ -2,19 +2,19 @@ package Controller.Fight.Battle.Events;
 
 import Controller.Fight.Battle.BattleExecutor;
 import Model.Inventory.Items.Item;
-import Model.Person.Player;
+import Model.Person.Fighter;
 import Model.Pokemon.Pokemon;
 import View.Game.Battle.Text.TextBubble;
 
 public class UseItemEvent extends BattleEvent {
-    private final Player player;
+    private final Fighter fighter;
     private final Item item;
     private final Pokemon target;
     private final TextBubble bubble;
     private final BattleExecutor executor;
 
-    public UseItemEvent(Player player, Item item, Pokemon target, TextBubble bubble, BattleExecutor executor) {
-        this.player = player;
+    public UseItemEvent(Fighter fighter, Item item, Pokemon target, TextBubble bubble, BattleExecutor executor) {
+        this.fighter = fighter;
         this.item = item;
         this.target = target;
         this.bubble = bubble;
@@ -23,7 +23,7 @@ public class UseItemEvent extends BattleEvent {
 
     @Override
     public void execute() {
-        player.use(item, target, bubble);
+        fighter.use(item, target, bubble);
         executor.executeNext(this::onFinish);
     }
 }

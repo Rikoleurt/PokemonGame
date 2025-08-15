@@ -1,6 +1,6 @@
 package Model.Pokemon.TerrainEnum;
 
-public enum Meteo {
+public enum Weather {
     normal,
     rainy,
     hailstorm,

@@ -4,6 +4,8 @@ import Controller.Fight.Battle.BattleExecutor;
 import Controller.Fight.Battle.Events.AttackEvent;
 import Controller.Fight.Battle.Events.MessageEvent;
 
+import Controller.Fight.Battle.Events.UseItemEvent;
+import Model.Inventory.Items.Item;
 import Model.Pokemon.Pokemon;
 import Model.Pokemon.Move;
 import Model.Pokemon.PokemonEnum.Status;
@@ -173,19 +175,89 @@ public class BattleButtons extends HBox {
         HBox1.setVisible(false);
         HBox2.setVisible(false);
 
-        executor.addEvent(new AttackEvent(playerPokemon, npcPokemon, move, terrain, textBubble, opponentBar, executor));
-        executor.executeNext(() -> {
-            if (npcPokemon.getStatus() != Status.KO) {
-                Move npcMove = npcPokemon.chooseMove();
-                executor.addEvent(new AttackEvent(npcPokemon, playerPokemon, npcMove, terrain, textBubble, playerBar, executor));
-            } else {
-                handleNpcPokemonKO();
-            }
-            executor.executeNext(() -> Platform.runLater(this::resetFightButtons));
-        });
+        Move npcMove = npcPokemon.chooseMove();
+        String npcChoice = npc.makeChoice();
+        Item itemChoice = npc.itemChoice(npcPokemon);
 
+        if (itemChoice != null) System.out.println(itemChoice.getName());
+        System.out.println(npcChoice);
+
+        // --- NPC utilise un objet ---
+        if ("Item".equals(npcChoice) && itemChoice != null) {
+            getHBox1().setVisible(false);
+            getHBox2().setVisible(false);
+
+            executor.addEvent(new UseItemEvent(npc, itemChoice, npcPokemon, textBubble, executor));
+            executor.executeNext(() -> {
+                if (playerPokemon.getStatus() != Status.KO) {
+                    // Le joueur attaque le NPC -> MAJ de la barre adverse
+                    executor.addEvent(new AttackEvent(playerPokemon, npcPokemon, move, BattleView.getTerrain(), textBubble, opponentBar, executor));
+                } else {
+                    executor.addEvent(new MessageEvent(textBubble, playerPokemon.getName() + " fainted."));
+                }
+                executor.executeNext(() -> BattleView.getFightButtons().resetFightButtons());
+            });
+
+            requestFocus();
+            return; // IMPORTANT: sinon on retombe dans la logique d'attaque/priorité => double attaque
+        }
+
+        // Si le NPC a choisi Item mais qu'aucun item pertinent n'est dispo, on retombe en attaque
+        if ("Item".equals(npcChoice) && itemChoice == null) {
+            npcChoice = "Attack";
+        }
+
+        // --- NPC switch ---
+        if ("Switch".equals(npcChoice)) {
+            Pokemon next = npc.chooseSwitchTarget();
+            if (next != null) {
+                getHBox1().setVisible(false);
+                getHBox2().setVisible(false);
+                executor.addEvent(new MessageEvent(textBubble, npc.getFrontPokemon().getName() + " stop!"));
+                npc.setFront(next, terrain);
+                executor.addEvent(new MessageEvent(textBubble, npc.getFrontPokemon().getName() + " go!"));
+                opponentBar.setPokemon(npc.getFrontPokemon());
+                executor.executeNext(() -> {
+                    Pokemon freshNpc = BattleView.getNpc().getFrontPokemon();
+                    Pokemon freshPlayer = player.getFrontPokemon();
+                    if (freshPlayer.getStatus() != Status.KO) {
+                        executor.addEvent(new AttackEvent(freshPlayer, freshNpc, move, BattleView.getTerrain(), textBubble, opponentBar, executor));
+                    } else {
+                        executor.addEvent(new MessageEvent(textBubble, freshPlayer.getName() + " fainted."));
+                    }
+                    executor.executeNext(() -> BattleView.getFightButtons().resetFightButtons());
+                });
+                requestFocus();
+            }
+            return;
+        }
+
+        // --- Attaques (priorité) ---
+        if (npcPokemon.hasPriority(playerPokemon)) {
+            executor.addEvent(new AttackEvent(npcPokemon, playerPokemon, npcMove, terrain, textBubble, playerBar, executor));
+            executor.executeNext(() -> {
+                if (playerPokemon.getStatus() != Status.KO) {
+                    executor.addEvent(new AttackEvent(playerPokemon, npcPokemon, move, terrain, textBubble, opponentBar, executor));
+                } else {
+                    handlePlayerPokemonKO();
+                }
+                executor.executeNext(() -> Platform.runLater(this::resetFightButtons));
+            });
+        } else {
+            executor.addEvent(new AttackEvent(playerPokemon, npcPokemon, move, terrain, textBubble, opponentBar, executor));
+            executor.executeNext(() -> {
+                if (npcPokemon.getStatus() != Status.KO) {
+                    executor.addEvent(new AttackEvent(npcPokemon, playerPokemon, npcMove, terrain, textBubble, playerBar, executor));
+                } else {
+                    handleNpcPokemonKO();
+                }
+                executor.executeNext(() -> Platform.runLater(this::resetFightButtons));
+            });
+        }
         requestFocus();
     }
+
+
 
     private void handlePlayerPokemonKO(){
         executor.addEvent(new MessageEvent(textBubble, playerPokemon.getName() + " fainted."));

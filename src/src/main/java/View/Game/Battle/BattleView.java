@@ -1,13 +1,13 @@
 package View.Game.Battle;
 
 
-import Model.Person.NPC;
-import Model.Person.Player;
 import Model.Pokemon.Pokemon;
 
 import Model.Pokemon.Terrain;
 import Model.Pokemon.TerrainEnum.Debris;
-import Model.Pokemon.TerrainEnum.Meteo;
+import Model.Pokemon.TerrainEnum.Weather;
+import Model.Person.NPC;
+import Model.Person.Player;
 import View.Game.Battle.InfoBars.Bar;
 import View.Game.Battle.InfoBars.OpponentBar;
 import View.Game.Battle.InfoBars.PlayerBar;
@@ -20,8 +20,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 
-import static Model.StaticObjects.NPC.initiateEnemy;
-import static Model.StaticObjects.Player.initiatePlayer;
+import static Model.StaticObjects.NPCExample.initiateEnemy;
+import static Model.StaticObjects.PlayerExample.initiatePlayer;
 
 public class BattleView extends BorderPane {
 
@@ -36,7 +36,7 @@ public class BattleView extends BorderPane {
 
     static Bar opponentBar = new OpponentBar(5, npcPokemon);
     static Bar playerBar = new PlayerBar(5, playerPokemon);
-    public static Terrain terrain = new Terrain(player.getTeam(), npc.getTeam(), Debris.normal, Meteo.normal);
+    public static Terrain terrain = new Terrain(player.getTeam(), npc.getTeam(), Debris.normal, Weather.normal);
 
     static BattleButtons battleButtons = new BattleButtons(textBubble, opponentBar, playerBar);
 
@@ -76,11 +76,11 @@ public class BattleView extends BorderPane {
         return battleButtons;
     }
 
-    public static NPC getNpc() {
+    public static Model.Person.NPC getNpc() {
         return npc;
     }
 
-    public static Player getPlayer() {
+    public static Model.Person.Player getPlayer() {
         return player;
     }
 

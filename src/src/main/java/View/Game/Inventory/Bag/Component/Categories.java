@@ -60,7 +60,6 @@ public class Categories extends VBox {
                 Button button = new Button(item.getName());
                 button.setOnAction(e -> {
                     Pokemon chosenPokemon = player.getFrontPokemon();
-                    System.out.println("Chosen pokemon : " + chosenPokemon.getName());
                     if (chosenPokemon.getHP() < chosenPokemon.getMaxHP()) {
                         SceneManager.switchStageTo(SceneManager.getFightView());
                         BattleButtons.getHBox1().setVisible(false);
@@ -69,12 +68,11 @@ public class Categories extends VBox {
                         executor.executeNext(() -> {
                             if (npcPokemon.getStatus() != Status.KO) {
                                 Move npcMove = npcPokemon.chooseMove();
-                                System.out.println("Player pokemon : " + playerPokemon.getName());
                                 executor.addEvent(new AttackEvent(npcPokemon, playerPokemon, npcMove, BattleView.getTerrain(), textBubble, BattleView.getPlayerBar(), executor));
                             } else {
                                 executor.addEvent(new MessageEvent(textBubble, npcPokemon.getName() + " fainted."));
                             }
-                            executor.executeNext(()-> {
+                            executor.executeNext(() -> {
                                 BattleView.getFightButtons().resetFightButtons();
                             });
                         });

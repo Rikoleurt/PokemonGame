@@ -180,8 +180,6 @@ public class Pokemon {
     public Move getAttack(Move move){
         return moves.get(moves.indexOf(move));
     }
-
-
     public void levelUp() {
         level++;
         int oldHP = HP;
@@ -202,7 +200,6 @@ public class Pokemon {
         if(HP > maxHP) HP = maxHP;
         System.out.println(name + " is now " + level + " !");
     }
-
     private double getNatureMultiplier(String stat) {
         if (nature == null) return 1.0;
 
@@ -241,11 +238,12 @@ public class Pokemon {
 
         return 1.0;
     }
-
     public int getBaseSpeed() {
         return baseSpeed;
     }
-
+    public boolean hasPriority(Pokemon other){
+        return speed > other.speed;
+    }
 
     // ------------------------------------------------------------------------------------------------------------------
     // Setter
@@ -401,13 +399,11 @@ public class Pokemon {
         }
         return target.getStatus();
     }
-
     /**
      * Applies the effect on the Pokémon before it attacks
      * @param target The target the player's Pokémon attacks
      * @param move Move it uses
      */
-
     public void applyStatusEffect(Pokemon target, Move move, TextBubble bubble){
         Random random = new Random();
         if(HP <= 0) setStatus(Status.KO);
@@ -507,7 +503,6 @@ public class Pokemon {
             executor.addEvent(new MessageEvent(bubble,name + " is feared! It can't move!"));
         }
     }
-
     /**
      * Updates the status of the Pokémon
      */
@@ -570,7 +565,6 @@ public class Pokemon {
         }
         return calculateEffectiveness(attack, launcher, target, power, bubble);
     }
-
     /**
      * Checks if the move is effective or not (only works for physical and special attacks)
      * @param move The move that is used
@@ -747,7 +741,6 @@ public class Pokemon {
         }
         return weaknesses;
     }
-
     public List<Type> resistancesTable(Pokemon pokemon) {
 
         List<Type> resistances = new ArrayList<>();
@@ -863,7 +856,6 @@ public class Pokemon {
 
         return resistances;
     }
-
     public  List<Type> immunitiesTable(Pokemon pokemon) {
 
         List<Type> immunities = new ArrayList<>();
@@ -1030,39 +1022,61 @@ public class Pokemon {
      */
     public Move chooseMove() {
         Random rand = new Random();
-        int randomNumber = rand.nextInt(1,4);
+        int randomNumber = rand.nextInt(1, 4);
         Move move = null;
-        ArrayList<Move> moves = this.getAttacks();
+        ArrayList<Move> moves = getAttacks();
 
-        if(randomNumber == 1){
-            if(moves.getFirst() != null){
-                move = moves.getFirst();
-            }
-            if(moves.getFirst() == null){
+        if (randomNumber == 1) {
+            try {
+                if (moves.getFirst() != null) {
+                    move = moves.getFirst();
+                }
+                if (moves.getFirst() == null) {
+                    chooseMove();
+                }
+            } catch (IndexOutOfBoundsException e) {
+                System.out.println("Out of Bounds");
                 chooseMove();
             }
         }
-        if(randomNumber == 2){
-            if(moves.get(1) != null){
-                move = moves.get(1);
-            }
-            if(moves.get(1) == null){
+        if (randomNumber == 2) {
+            try {
+                if (moves.get(1) != null) {
+                    move = moves.get(1);
+                }
+                if (moves.get(1) == null) {
+                    chooseMove();
+                }
+            } catch (IndexOutOfBoundsException e) {
+                System.out.println("Out of Bounds");
                 chooseMove();
             }
+
         }
-        if(randomNumber == 3){
-            if(moves.get(2) != null){
-                move = moves.get(2);
-            }
-            if(moves.get(2) == null){
+        if (randomNumber == 3) {
+            try {
+                if (moves.get(2) != null) {
+                    move = moves.get(2);
+                }
+                if (moves.get(2) == null) {
+                    chooseMove();
+                }
+            } catch (IndexOutOfBoundsException e) {
+                System.out.println("Out of Bounds");
                 chooseMove();
             }
+
         }
-        if(randomNumber == 4){
-            if(moves.get(3) != null){
-                move = moves.get(3);
-            }
-            if(moves.get(3) == null){
+        if (randomNumber == 4) {
+            try {
+                if (moves.get(3) != null) {
+                    move = moves.get(3);
+                }
+                if (moves.get(3) == null) {
+                    chooseMove();
+                }
+            } catch (IndexOutOfBoundsException e) {
+                System.out.println("Out of Bounds");
                 chooseMove();
             }
         }

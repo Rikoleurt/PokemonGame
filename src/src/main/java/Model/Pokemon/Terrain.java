@@ -1,10 +1,11 @@
 package Model.Pokemon;
 
-import Model.Person.Player;
+import Model.Person.NPC;
 import Model.Pokemon.PokemonEnum.Status;
 import Model.Pokemon.PokemonEnum.Type;
 import Model.Pokemon.TerrainEnum.Debris;
-import Model.Pokemon.TerrainEnum.Meteo;
+import Model.Pokemon.TerrainEnum.Weather;
+import Model.Person.Player;
 
 
 import java.util.LinkedList;
@@ -15,25 +16,25 @@ public class Terrain {
     LinkedList<Pokemon> enemyTeam;
 
     Debris debris;
-    Meteo meteo;
+    Weather weather;
 
     private int nbSpikes = 0;
     private int nbPoisonSpikes = 0;
     private int nbStealthRocks = 0;
 
-    public Terrain(LinkedList<Pokemon> team, LinkedList<Pokemon> enemyTeam, Debris debris, Meteo meteo) {
+    public Terrain(LinkedList<Pokemon> team, LinkedList<Pokemon> enemyTeam, Debris debris, Weather weather) {
         this.team = team;
         this.enemyTeam = enemyTeam;
         this.debris = debris;
-        this.meteo = meteo;
+        this.weather = weather;
     }
 
     public Debris getDebris() {
         return debris;
     }
 
-    public Meteo getMeteo() {
-        return meteo;
+    public Weather getMeteo() {
+        return weather;
     }
 
     public LinkedList<Pokemon> getTeam() {
@@ -77,9 +78,9 @@ public class Terrain {
         this.debris = debris;
     }
 
-    public void setMeteo(Meteo meteo) {
-        System.out.println("The meteo is " + meteo);
-        this.meteo = meteo;
+    public void setWeather(Weather weather) {
+        System.out.println("The weather is " + weather);
+        this.weather = weather;
     }
 
 
@@ -87,6 +88,10 @@ public class Terrain {
     // debrisEffect is only called when the player or the npc changes its pokemon i.e changePokemon();
     public void debrisEffect(Player player, Terrain terrain) {
             updateDebris(player.getFrontPokemon(), terrain);
+    }
+
+    public void debrisEffect(NPC npc, Terrain terrain) {
+        updateDebris(npc.getFrontPokemon(), terrain);
     }
 
     public void updateDebris(Pokemon pokemon, Terrain terrain) {
