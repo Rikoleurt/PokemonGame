@@ -130,8 +130,6 @@ public class TextBubble extends HBox implements Bubble {
         typingTimeline.play();
     }
 
-
-
     public void handleKeyPress(KeyCode code) {
         if (code == KeyCode.SPACE || code == KeyCode.ENTER) {
             if (isTyping) {

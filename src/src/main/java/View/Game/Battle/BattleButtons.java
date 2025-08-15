@@ -20,7 +20,10 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -90,6 +93,17 @@ public class BattleButtons extends HBox {
         setPadding(new Insets(20));
         setAlignment(Pos.BOTTOM_RIGHT);
 
+        // Button handler
+        setFocusTraversable(true);
+        setOnKeyPressed(e -> handleKeyPress(e.getCode()));
+        Platform.runLater(() -> {
+            Scene scene = SceneManager.getStage().getScene();
+            if (scene != null) {
+                scene.addEventFilter(KeyEvent.KEY_PRESSED, ev -> handleKeyPress(ev.getCode()));
+            }
+            attackButton.requestFocus();
+        });
+
         // Buttons action
         attackButton.setOnAction(e -> {
            components.clear();
@@ -106,6 +120,7 @@ public class BattleButtons extends HBox {
            components.addAll(vBox2, vBox);
 
         });
+        atk1Button.requestFocus();
 
         bagButton.setOnAction(e -> {
             BagView bagView = new BagView(player, npc, textBubble, () -> {
@@ -218,6 +233,7 @@ public class BattleButtons extends HBox {
         textBubble.showMessage("What will " + playerPokemon.getName() + " do?");
 //        executor.addEvent(new MessageEvent(textBubble, "What will " + playerPokemon.getName() + " do?"));
 //        executor.executeNext(null);
+        attackButton.requestFocus();
     }
 
     static private Button createBaseButtons(String color, String name) {
@@ -271,6 +287,23 @@ public class BattleButtons extends HBox {
             };
         } catch (NullPointerException e) {
             return "white";
+        }
+    }
+
+    private void handleKeyPress(KeyCode code){
+        if (code == KeyCode.A){
+            Scene scene = SceneManager.getStage().getScene();
+            Node focused = scene != null ? scene.getFocusOwner() : null;
+            if (focused instanceof Button b){
+                b.fire();
+            }
+        }
+        if (code == KeyCode.B){
+            boolean onMainMenu = HBox1.getChildren().contains(attackButton) && HBox2.getChildren().contains(pokemonButton);
+            if (!onMainMenu){
+                resetFightButtons();
+                attackButton.requestFocus();
+            }
         }
     }
 

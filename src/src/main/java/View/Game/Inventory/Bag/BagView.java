@@ -5,9 +5,14 @@ import Model.Person.Player;
 import View.Game.Battle.Text.TextBubble;
 import View.Game.Inventory.Bag.Component.CategoryMenu;
 import View.Game.Inventory.Bag.Component.PokemonList;
+import View.Game.SceneManager;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 
@@ -22,7 +27,7 @@ public class BagView extends BorderPane {
         this.player = player;
         this.textBubble = textBubble;
         pokemonList = new PokemonList(player, 10);
-        categoryMenu = new CategoryMenu(player,20, textBubble, npc);
+        categoryMenu = new CategoryMenu(player, 20, textBubble, npc);
 
         Button backButton = new Button("Back");
         backButton.setOnAction(e -> onClose.run());
@@ -39,5 +44,17 @@ public class BagView extends BorderPane {
 
         setAlignment(backButton, Pos.CENTER_RIGHT);
         setAlignment(pokemonList, Pos.CENTER_LEFT);
+
+        setFocusTraversable(true);
+        Platform.runLater(() -> {
+            Scene scene = SceneManager.getStage().getScene();
+            if (scene != null) {
+                scene.addEventFilter(KeyEvent.KEY_PRESSED, ev -> {
+                    if (ev.getCode() == KeyCode.B) {
+                        backButton.fire();
+                    }
+                });
+            }
+        });
     }
 }

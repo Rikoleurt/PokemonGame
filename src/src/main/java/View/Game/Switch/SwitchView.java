@@ -12,9 +12,13 @@ import View.Game.Battle.BattleView;
 import View.Game.Battle.InfoBars.Bar;
 import View.Game.Battle.Text.TextBubble;
 import View.Game.SceneManager;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -44,6 +48,18 @@ public class SwitchView extends BorderPane {
 
         root.getChildren().addAll(hBox, hBox2, hBox3, backButton);
         setCenter(root);
+
+        setFocusTraversable(true);
+        Platform.runLater(() -> {
+            Scene scene = SceneManager.getStage().getScene();
+            if (scene != null) {
+                scene.addEventFilter(KeyEvent.KEY_PRESSED, ev -> {
+                    if (ev.getCode() == KeyCode.B) {
+                        backButton.fire();
+                    }
+                });
+            }
+        });
     }
 
     private void setButtons() {
@@ -70,28 +86,20 @@ public class SwitchView extends BorderPane {
             BattleView.getPlayerBar().setVisible(false);
 
             SceneManager.switchStageTo(SceneManager.getFightView());
-
             executor.addEvent(new MessageEvent(textBubble, player.getFrontPokemon().getName() + " stop!"));
-
             player.setFront(pokemon, terrain);
-
             executor.addEvent(new MessageEvent(textBubble, player.getFrontPokemon().getName() + " go!"));
-
             BattleView.getPlayerBar().setPokemon(player.getFrontPokemon());
-
             executor.executeNext(() -> {
                 BattleView.getPlayerBar().setVisible(true);
-
                 Pokemon npcPokemon = BattleView.getNpc().getFrontPokemon();
                 Pokemon playerPokemon = player.getFrontPokemon();
-
                 if (npcPokemon.getStatus() != Status.KO) {
                     Move npcMove = npcPokemon.chooseMove();
                     executor.addEvent(new AttackEvent(npcPokemon, playerPokemon, npcMove, BattleView.getTerrain(), textBubble, BattleView.getPlayerBar(), executor));
                 } else {
                     executor.addEvent(new MessageEvent(textBubble, npcPokemon.getName() + " fainted."));
                 }
-
                 executor.executeNext(() -> {
                     BattleView.getPlayerBar().setVisible(true);
                     BattleView.getFightButtons().resetFightButtons();
