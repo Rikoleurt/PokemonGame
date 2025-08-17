@@ -29,6 +29,10 @@ public class Bag {
         return inventory.get(item);
     }
 
+    public void setQuantity(Item item, int quantity) {
+        inventory.put(item, quantity);
+    }
+
     public Item getItem(Item key) {
         for (Map.Entry<Item, Integer> entry : inventory.entrySet()) {
             if (entry.getKey().equals(key)) {

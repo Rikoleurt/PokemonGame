@@ -1,8 +1,93 @@
 .pokemon-button {
     -fx-background-radius: 15;
-    -fx-background-color: linear-gradient(to right, #f8f8f8, #e0e0e0);
+    -fx-background-color: linear-gradient(to bottom, #4ec72f, #509041);
     -fx-padding: 5 10 5 10;
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0.1, 0, 1);
+    -fx-font-size: 18px;
+    -fx-border-width: 2;
+    -fx-border-radius: 14px;
+    -fx-border-color: #0a0707;
+}
+
+.item-button {
+    -fx-background-color: transparent;
+    -fx-border-color: black;
+    -fx-border-width: 2;
+    -fx-border-radius: 15;
+    -fx-background-radius: 15;
+    -fx-pref-width: 1200;
+    -fx-pref-height: 30;
+    -fx-max-height: 30;
+    -fx-max-width: 1000;
+    -fx-font-size: 18;
+    -fx-padding: 0 12 0 12;
+}
+
+.item-button:hover {
+    -fx-background-color: rgba(0,0,0,0.05);
+}
+
+.item-button:pressed {
+    -fx-background-color: rgba(0,0,0,0.1);
+}
+
+.item-name {
+    -fx-text-fill: black;
+}
+
+.item-qty {
+    -fx-text-fill: black;
+    -fx-opacity: 0.7;
+}
+
+
+.category-button {
+    -fx-background-color: transparent;
+    -fx-border-color: black;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-text-fill: black;
+    -fx-font-size: 14px;
+    -fx-padding: 4 10 4 10;
+    -fx-pref-width: 75;
+    -fx-pref-height: 30;
+    -fx-max-height: 30;
+    -fx-max-width: 200;
+}
+
+.category-button:hover {
+    -fx-background-color: rgba(0,0,0,0.05);
+}
+
+
+.category-button:selected {
+    -fx-background-color: black;
+    -fx-text-fill: white;
+}
+
+.category-button:focused {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+    -fx-border-color: black;
+}
+
+.battle-button {
+    -fx-font-family: "Pokémon DP Pro Regular";
+    -fx-font-size: 18px;
+    -fx-background-radius: 9;
+    -fx-border-color: black;
+    -fx-border-width: 2px;
+    -fx-border-radius: 6px;
+    -fx-text-fill: black;
+    -fx-cursor: hand;
+}
+
+.battle-button:hover {
+    -fx-scale-x: 1.1;
+    -fx-scale-y: 1.1;
+    -fx-border-color: #FFD700;
+    -fx-border-width: 3;
+    -fx-effect: dropshadow(gaussian, rgba(255,215,0,0.6), 15, 0.3, 0, 0);
 }
 
 .label.male {
@@ -17,4 +102,47 @@
     -fx-accent: #00C853;
     -fx-control-inner-background: white;
     -fx-background-radius: 4;
+}
+
+.switch-button {
+    -fx-background-radius: 8;
+    -fx-min-height: 110;
+    -fx-min-width: 320;
+    -fx-padding: 12 16 12 16;
+    -fx-alignment: CENTER_LEFT;
+}
+
+.switch-hp-text {
+    -fx-font-size: 14px;
+    -fx-text-fill: #333333;
+}
+
+.scroll-bar:vertical {
+    -fx-background-color: transparent;
+    -fx-pref-width: 8px;
+}
+
+.scroll-bar:vertical .thumb {
+    -fx-background-color: black;
+    -fx-background-radius: 4px;
+}
+
+.scroll-bar:vertical .increment-arrow,
+.scroll-bar:vertical .decrement-arrow {
+    -fx-background-color: black;
+}
+
+.scroll-bar:vertical .track {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.root {
+    -fx-font-family: "Pokémon DP Pro Regular";
 }

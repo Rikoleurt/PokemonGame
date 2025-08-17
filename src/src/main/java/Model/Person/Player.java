@@ -2,7 +2,7 @@ package Model.Person;
 
 import Model.Inventory.Bag;
 import Model.Inventory.Items.Item;
-import Model.Inventory.Items.Usable;
+import Model.Inventory.Items.Consumable;
 import Model.Pokemon.Pokemon;
 import Model.Pokemon.TerrainEnum.Debris;
 import Model.Pokemon.Terrain;
@@ -99,8 +99,10 @@ public class Player implements Fighter {
     }
 
     public void use(Item item, Pokemon target, TextBubble textBubble) {
-        if (item instanceof Usable) ((Usable) item).use(target, textBubble);
-
+        if (item instanceof Consumable && bag.getInventory().containsKey(item) && bag.getQuantity(item) > 0) {
+            ((Consumable) item).consume(target, textBubble);
+            bag.setQuantity(item, bag.getInventory().get(item) - 1);
+        }
     }
     public void flee(){
 

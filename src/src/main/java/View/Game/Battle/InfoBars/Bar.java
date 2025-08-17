@@ -1,5 +1,6 @@
 package View.Game.Battle.InfoBars;
 
+import Model.Person.Player;
 import Model.Pokemon.Pokemon;
 import View.Game.Battle.Text.TextBubble;
 import javafx.animation.KeyFrame;
@@ -8,18 +9,24 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
 
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static View.Game.Battle.BattleView.player;
+
 public class Bar extends VBox {
-    static Font font = Font.loadFont(Bar.class.getResource("/font/pokemonFont.ttf").toExternalForm(), 18);
+
+    static Font font = Font.loadFont(Objects.requireNonNull(Bar.class.getResource("/font/pokemonFont.ttf")).toExternalForm(), 18);
 
     TextBubble bubble;
-    public Pokemon p; // Careful with "public"
+    public Pokemon pokemon; // /!\
     ProgressBar HPBar = new ProgressBar(1);
     ProgressBar expBar = new ProgressBar(1);
 
@@ -29,16 +36,16 @@ public class Bar extends VBox {
     Label health = new Label();
     Label status = new Label();
 
-    Bar(double spacing, Pokemon p) {
+    Bar(double spacing, Pokemon pokemon) {
 
-        this.p = p;
+        this.pokemon = pokemon;
         this.setSpacing(spacing);
 
-        String pName = p.getName();
-        int pLevel = p.getLevel();
-        int pHP = p.getHP();
-        int pMaxHP = p.getMaxHP();
-        String pStatus = p.getStatus().toString();
+        String pName = pokemon.getName();
+        int pLevel = pokemon.getLevel();
+        int pHP = pokemon.getHP();
+        int pMaxHP = pokemon.getMaxHP();
+        String pStatus = pokemon.getStatus().toString();
 
         name.setText(pName);
         HP.setText("HP : ");
@@ -69,7 +76,16 @@ public class Bar extends VBox {
 
         HBox3.setAlignment(Pos.CENTER_LEFT);
 
-        setPadding(new Insets(20));
+        setPadding(new Insets(15));
+        Image image1 = new Image(Objects.requireNonNull(Bar.class.getResource("/images/pokeball.png")).toExternalForm());
+        Image image2 = new Image(Objects.requireNonNull(Bar.class.getResource("/images/pokeballKO.png")).toExternalForm());
+
+
+        ImageView imageView2 = new ImageView(image2);
+        imageView2.setFitWidth(20);
+        imageView2.setPreserveRatio(true);
+
+
         // Opponent bar objects
         if(this instanceof OpponentBar) {
             this.getChildren().addAll(HBox1, HBox2, HBox3);
@@ -77,7 +93,24 @@ public class Bar extends VBox {
 
         // Player bar objects
         if(this instanceof PlayerBar) {
-            this.getChildren().addAll(HBox1,expBarBox, HBox2, HBox3);
+            int size = player.getTeam().size();
+            HBox pokeHBox = new HBox();
+            for(int i = 0; i < size; i++) {
+                if(player.getTeam().get(i).isKO()) {
+                    Image image = new Image(Objects.requireNonNull(Bar.class.getResource("/images/pokeballKO.png")).toExternalForm());
+                    ImageView imageView = new ImageView(image);
+                    imageView.setFitWidth(20);
+                    imageView.setPreserveRatio(true);
+                    pokeHBox.getChildren().add(imageView);
+                } else {
+                    Image image = new Image(Objects.requireNonNull(Bar.class.getResource("/images/pokeball.png")).toExternalForm());
+                    ImageView imageView = new ImageView(image);
+                    imageView.setFitWidth(20);
+                    imageView.setPreserveRatio(true);
+                    pokeHBox.getChildren().add(imageView);
+                }
+            }
+            this.getChildren().addAll(pokeHBox, HBox1, expBarBox, HBox2, HBox3);
         }
     }
 
@@ -99,7 +132,7 @@ public class Bar extends VBox {
     }
 
     public void setPokemon(Pokemon p) {
-        this.p = p;
+        this.pokemon = p;
         String pName = p.getName();
         int pLevel = p.getLevel();
         int pHP = p.getHP();
@@ -121,8 +154,8 @@ public class Bar extends VBox {
     }
 
     public void updateHPBars(Runnable onFinish) {
-        AtomicInteger currentHP = new AtomicInteger(Math.max(0, p.getHP()));
-        int maxHP = p.getMaxHP();
+        AtomicInteger currentHP = new AtomicInteger(Math.max(0, pokemon.getHP()));
+        int maxHP = pokemon.getMaxHP();
 
         double startProgress = HPBar.getProgress();
         double endProgress = Math.max(0.0, Math.min(1.0, (double) currentHP.get() / maxHP));
@@ -173,8 +206,8 @@ public class Bar extends VBox {
     }
 
     private void applyExpGain(int remainingExp, Label levelLabel,  Runnable onFinish) {
-        int currentExp = p.getExp();
-        int currentMaxExp = p.calculateMaxExp();
+        int currentExp = pokemon.getExp();
+        int currentMaxExp = pokemon.calculateMaxExp();
 
         int expToNextLevel = currentMaxExp - currentExp;
         int appliedExp = Math.min(remainingExp, expToNextLevel);
@@ -192,7 +225,7 @@ public class Bar extends VBox {
                 double nextProgress = Math.min(progress + 0.01, endProgress);
                 expBar.setProgress(nextProgress);
 
-                int shownExp = (int) Math.round(nextProgress * p.calculateMaxExp());
+                int shownExp = (int) Math.round(nextProgress * pokemon.calculateMaxExp());
                 displayedExp.set(shownExp);
             }
         });
@@ -204,19 +237,19 @@ public class Bar extends VBox {
             expBar.setProgress(endProgress);
 
             if (finalExp >= currentMaxExp) {
-                p.setExp(finalExp);
+                pokemon.setExp(finalExp);
 
-                p.levelUp();
-                p.setExp(0);
+                pokemon.levelUp();
+                pokemon.setExp(0);
 
                 expBar.setProgress(0);
-                levelLabel.setText("Lvl : " + p.getLevel());
+                levelLabel.setText("Lvl : " + pokemon.getLevel());
 
                 //textBubble.showMessage(pName + " levels up !");
 
                 applyExpGain(remainingExp - appliedExp, levelLabel, onFinish);
             } else {
-                p.setExp(finalExp);
+                pokemon.setExp(finalExp);
                 if (onFinish != null) {
 //                    textBubble.showMessages(pokemon.getName() + " earned " + finalExp + " exp");
 //                    statBubble.showMessage(statMessage(pokemon));

@@ -6,6 +6,7 @@ import View.Game.SceneManager;
 import javafx.application.Application;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
+import javafx.scene.text.Font;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
@@ -26,13 +27,14 @@ public class Main extends Application {
         double consoleWidth = screenWidth * 0.25;
         double gameWidth = screenWidth - consoleWidth;
 
-        // 1. Initialiser SceneManager
         SceneManager.setStage(primaryStage);
 
-        // 2. Créer et afficher la FightView
         BattleView battleView = new BattleView();
         SceneManager.setFightView(battleView);
+
+        Font globalFont = Font.loadFont(Objects.requireNonNull(getClass().getResource("/font/pokemonFont.ttf")).toExternalForm(), 18);
         Scene scene = new Scene(battleView, gameWidth, screenHeight);
+        scene.getRoot().setStyle("-fx-font-family: '" + globalFont.getName() + "'; -fx-font-size: 18px;");
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/style/style.css")).toExternalForm());
         SceneManager.getStage().setScene(scene);
         SceneManager.getStage().setX(consoleWidth);
@@ -42,7 +44,6 @@ public class Main extends Application {
         SceneManager.getStage().setTitle("Pokémon Game");
         SceneManager.getStage().show();
 
-//        // 3. Console secondaire
 //        BattleView battleView = new BattleView();
 //        Scene consoleScene = new Scene(battleView, consoleWidth, screenHeight);
 //
@@ -55,11 +56,9 @@ public class Main extends Application {
 //        consoleStage.setHeight(screenHeight);
 //        consoleStage.show();
 
-        // 4. Gestion du clavier pour la bulle de texte
         TextBubble textBubble = battleView.getTextBubble();
         scene.setOnKeyPressed(event -> textBubble.handleKeyPress(event.getCode()));
 
-        // 5. Démarrage serveur dans un thread à part
         new Thread(() -> {
             try {
                 server.start(5000);

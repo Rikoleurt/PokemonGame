@@ -22,10 +22,13 @@ public class NPCExample {
         Bag bag = new Bag(items);
 
         LinkedList<Pokemon> team = new LinkedList<>();
-        Pokemon Bulbizarre = initiateBulbizarre();
-        Pokemon Carapuce = initiateCarapuce();
-        team.add(Bulbizarre);
-        team.add(Carapuce);
+
+        Pokemon bulbizarre = initiateBulbizarre();
+        Pokemon carapuce = initiateCarapuce();
+
+        team.add(bulbizarre);
+        team.add(carapuce);
+
         return new Model.Person.NPC("npc", team, bag);
     }
 }

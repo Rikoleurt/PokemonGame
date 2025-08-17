@@ -31,7 +31,6 @@ public class MovesExample {
         DebrisAttack stealthRock = new DebrisAttack("Stealth Rock", Type.rock, AttackMode.status, 40, Debris.stealthRock);
         DebrisAttack spikes = new DebrisAttack("Spikes", Type.normal, AttackMode.status, 40, Debris.spikes);
 
-
         attackDB.put(0, tackle);
         attackDB.put(1, thunderBolt);
         attackDB.put(2, thunderPunch);

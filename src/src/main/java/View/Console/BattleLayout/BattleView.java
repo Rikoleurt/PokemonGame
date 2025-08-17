@@ -8,7 +8,6 @@ public class BattleView extends BorderPane {
 
     BattleConsole battleConsole = BattleConsole.getInstance();
 
-
     public BattleView() {
         setCenter(battleConsole);
     }

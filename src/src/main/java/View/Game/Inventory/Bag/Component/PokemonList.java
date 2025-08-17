@@ -3,11 +3,13 @@ package View.Game.Inventory.Bag.Component;
 import Model.Person.Player;
 import Model.Pokemon.Pokemon;
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -35,30 +37,34 @@ public class PokemonList extends VBox {
 
         VBox content = new VBox(4);
         content.setAlignment(Pos.CENTER_LEFT);
-
-        // Nom + genre
         HBox nameRow = new HBox(5);
+
         Label name = new Label(p.getName());
         Label gender = new Label(Objects.equals(p.getGender(), "male") ? "♂" : "♀");
         gender.getStyleClass().add(Objects.equals(p.getGender(), "male") ? "male" : "female");
         nameRow.getChildren().addAll(name, gender);
 
-        // HP ProgressBar
         ProgressBar hpBar = new ProgressBar((double) p.getHP() / p.getMaxHP());
         hpBar.setPrefWidth(120);
+        hpBar.setPrefHeight(15);
         hpBar.getStyleClass().add("hp-bar");
 
-        // HP text et niveau
         Label hpText = new Label(p.getHP() + "/" + p.getMaxHP());
         Label level = new Label("Lv. " + p.getLevel());
 
         content.getChildren().addAll(nameRow, hpBar, hpText, level);
 
         button.setGraphic(content);
-        button.setPrefSize(160, 80);
-        button.setMinSize(160, 80);
-        button.setMaxSize(160, 80);
+        button.setPrefSize(200, 110);
 
+
+
+        if(p.isKO()){
+            button.setStyle("-fx-background-color: linear-gradient(to bottom, #ef900e, #ac740f);" +
+                            "-fx-border-color: black;" +
+                            "-fx-border-radius: 14px;" +
+                            "-fx-border-width: 2px;");
+        }
         return button;
     }
 }

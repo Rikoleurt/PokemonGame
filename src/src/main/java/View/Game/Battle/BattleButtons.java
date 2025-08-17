@@ -310,29 +310,29 @@ public class BattleButtons extends HBox {
 
     static private Button createBaseButtons(String color, String name) {
         Button button = new Button(name);
-        button.setFont(font);
+        button.getStyleClass().add("battle-button");
         button.setPrefSize(175, 75);
         button.setStyle("-fx-background-color:" + color + "; " +
                 "-fx-border-color: black; " +
                 "-fx-border-width: 2px; " +
                 "-fx-border-radius: 6px; " +
                 "-fx-background-radius: 9px; " +
-                "-fx-font-weight: bold; " +
                 "-fx-text-fill: black; ");
-        if(name == null){
+        if (name == null) {
             button.setText(" - ");
-            button.setFont(font);
+            button.getStyleClass().add("battle-button");
             button.setPrefSize(175, 75);
             button.setStyle("-fx-background-color: white; " +
                     "-fx-border-color: black; " +
                     "-fx-border-width: 2px; " +
                     "-fx-border-radius: 5px; " +
                     "-fx-background-radius: 0px; " +
-                    "-fx-font-weight: bold; " +
                     "-fx-text-fill: black; ");
         }
         return button;
     }
+
+
 
     private static String getColorFromAttack(Move move) {
         try {

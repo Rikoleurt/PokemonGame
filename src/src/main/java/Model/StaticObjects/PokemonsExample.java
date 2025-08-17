@@ -18,9 +18,11 @@ public class PokemonsExample {
     static ArrayList<Move> salamecheMoves = new ArrayList<>();
 
     public static Pokemon initiateBulbizarre() {
-        bulbizarreMoves.add(attacks.get(4));
-        bulbizarreMoves.add(attacks.get(6));
-        return new Pokemon("bulbasaur", 31, 20, 18, 18, 23, 23, 17,
+        if(!bulbizarreMoves.contains(attacks.get(4)) || !bulbizarreMoves.contains(attacks.get(6))) {
+            bulbizarreMoves.add(attacks.get(4));
+            bulbizarreMoves.add(attacks.get(6));
+        }
+        return new Pokemon("bulbasaur", 31, 31, 18, 18, 23, 23, 17,
                 45, 49, 49, 65, 65, 45,
                 10, 10, 10, 10, 10, 10,
                 0, 0, 0, 0, 0, 0,

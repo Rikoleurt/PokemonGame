@@ -10,12 +10,12 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -30,33 +30,42 @@ public class CategoryMenu extends HBox {
     TextBubble textBubble;
     NPC npc;
 
+    VBox vWrapper;
+    HBox menuBox;
+    ScrollPane sp;
+    Categories categories;
+
     public CategoryMenu(Player player, int spacing, TextBubble textBubble, NPC npc) {
         this.player = player;
         this.npc = npc;
         this.textBubble = textBubble;
+
         setSpacing(spacing);
         setAlignment(Pos.CENTER_LEFT);
         ObservableList<Node> components = getChildren();
 
-        VBox vWrapper = new VBox();
+        vWrapper = new VBox();
         vWrapper.setSpacing(spacing);
 
-        HBox menuBox = new HBox();
+        menuBox = new HBox();
         menuBox.setSpacing(spacing);
-        ObservableList<Node> menuComponents = menuBox.getChildren();
 
+        ObservableList<Node> menuComponents = menuBox.getChildren();
         Button leftArrow = new Button("<");
         menuComponents.add(leftArrow);
+        leftArrow.getStyleClass().add("category-button");
 
-        for (Category c : Category.values()) {
-            ToggleButton tb = new ToggleButton(labelOf(c));
-            tb.setUserData(c);
-            tb.setToggleGroup(group);
-            map.put(tb, c);
-            menuComponents.add(tb);
+        for (Category category : Category.values()) {
+            ToggleButton toggleButton = new ToggleButton(labelOf(category));
+            toggleButton.getStyleClass().add("category-button");
+            toggleButton.setUserData(category);
+            toggleButton.setToggleGroup(group);
+            map.put(toggleButton, category);
+            menuComponents.add(toggleButton);
         }
 
         Button rightArrow = new Button(">");
+        rightArrow.getStyleClass().add("category-button");
         menuComponents.add(rightArrow);
 
         leftArrow.setOnAction(e -> move(-1));
@@ -71,18 +80,40 @@ public class CategoryMenu extends HBox {
         });
 
         setFocusTraversable(true);
+
         setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.LEFT) move(-1);
             else if (e.getCode() == KeyCode.RIGHT) move(1);
         });
 
-        Categories categories = new Categories(player, spacing, textBubble, npc);
-        vWrapper.getChildren().addAll(menuBox, categories);
+        categories = new Categories(player, spacing, textBubble, npc);
+
+        sp = new ScrollPane(categories);
+        sp.setFitToWidth(true);
+        sp.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        sp.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        sp.setPrefViewportHeight(180);
+        sp.getStyleClass().add("custom-scroll");
+
+        vWrapper.getChildren().addAll(menuBox, sp);
         components.add(vWrapper);
 
         setOnCategorySelected(categories::showCategory);
         select(Category.HEALTH);
+
         categories.showCategory(Category.HEALTH);
+    }
+
+    public HBox getMenuBox() {
+        return menuBox;
+    }
+
+    public ScrollPane getSp() {
+        return sp;
+    }
+
+    public Categories getCategories() {
+        return categories;
     }
 
     private String labelOf(Category c) {

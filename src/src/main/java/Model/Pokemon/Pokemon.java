@@ -172,13 +172,18 @@ public class Pokemon {
         return expType;
     }
     public boolean isKO(){
-        return this.getHP() <= 0;
+        return HP <= 0;
     }
     public ArrayList<Move> getAttacks() {
         return moves;
     }
     public Move getAttack(Move move){
-        return moves.get(moves.indexOf(move));
+        try {
+            return moves.get(moves.indexOf(move));
+        } catch (IndexOutOfBoundsException e) {
+            System.out.println("Index Out of Bounds");
+            return moves.getLast();
+        }
     }
     public void levelUp() {
         level++;
@@ -250,6 +255,9 @@ public class Pokemon {
     // ------------------------------------------------------------------------------------------------------------------
 
     public void setStatus(Status status) {
+        if(status == Status.KO) {
+            setHP(0);
+        }
         this.status = status;
     }
     public void setAttack(ArrayList<Move> moves, int position, Move move) {
@@ -1021,65 +1029,13 @@ public class Pokemon {
      * @return A random move
      */
     public Move chooseMove() {
-        Random rand = new Random();
-        int randomNumber = rand.nextInt(1, 4);
-        Move move = null;
-        ArrayList<Move> moves = getAttacks();
-
-        if (randomNumber == 1) {
-            try {
-                if (moves.getFirst() != null) {
-                    move = moves.getFirst();
-                }
-                if (moves.getFirst() == null) {
-                    chooseMove();
-                }
-            } catch (IndexOutOfBoundsException e) {
-                System.out.println("Out of Bounds");
-                chooseMove();
-            }
-        }
-        if (randomNumber == 2) {
-            try {
-                if (moves.get(1) != null) {
-                    move = moves.get(1);
-                }
-                if (moves.get(1) == null) {
-                    chooseMove();
-                }
-            } catch (IndexOutOfBoundsException e) {
-                System.out.println("Out of Bounds");
-                chooseMove();
-            }
-
-        }
-        if (randomNumber == 3) {
-            try {
-                if (moves.get(2) != null) {
-                    move = moves.get(2);
-                }
-                if (moves.get(2) == null) {
-                    chooseMove();
-                }
-            } catch (IndexOutOfBoundsException e) {
-                System.out.println("Out of Bounds");
-                chooseMove();
-            }
-
-        }
-        if (randomNumber == 4) {
-            try {
-                if (moves.get(3) != null) {
-                    move = moves.get(3);
-                }
-                if (moves.get(3) == null) {
-                    chooseMove();
-                }
-            } catch (IndexOutOfBoundsException e) {
-                System.out.println("Out of Bounds");
-                chooseMove();
-            }
-        }
-        return move;
+        ArrayList<Move> movePool = getAttacks();
+        if (movePool == null || movePool.isEmpty()) return null;
+        ArrayList<Move> pool = new ArrayList<>();
+        for (Move m : movePool) if (m != null) pool.add(m);
+        if (pool.isEmpty()) return null;
+        Random r = new Random();
+        return pool.get(r.nextInt(pool.size()));
     }
+
 }

@@ -5,12 +5,11 @@ import Controller.Fight.Battle.Events.MessageEvent;
 import Controller.Fight.Battle.Events.UpdateBarEvent;
 import Model.Inventory.Category;
 import Model.Inventory.Items.Item;
-import Model.Inventory.Items.Usable;
+import Model.Inventory.Items.Consumable;
 import Model.Pokemon.Pokemon;
-import View.Game.Battle.BattleView;
 import View.Game.Battle.Text.TextBubble;
 
-public class Heal extends Item implements Usable {
+public class Heal extends Item implements Consumable {
 
     int HP;
     BattleExecutor executor = BattleExecutor.getInstance();
@@ -25,7 +24,7 @@ public class Heal extends Item implements Usable {
     }
 
     @Override
-    public void use(Pokemon target, TextBubble textBubble) {
+    public void consume(Pokemon target, TextBubble textBubble) {
         if (target.getHP() == target.getMaxHP()) {
             executor.addEvent(new MessageEvent(textBubble, target.getName() + " is already in top form!"));
             System.out.println(target.getName() + " is already in top form!");
@@ -33,7 +32,7 @@ public class Heal extends Item implements Usable {
         }
         int newHP = Math.min(target.getHP() + HP, target.getMaxHP());
         target.setHP(newHP);
-        System.out.println(target.getName() + " regained some health!");
+
         if (View.Game.Battle.BattleView.getPlayer().getTeam().contains(target)) {
             executor.addEvent(new UpdateBarEvent(View.Game.Battle.BattleView.getPlayerBar()));
         } else {

@@ -2,7 +2,7 @@ package Model.Person;
 
 import Model.Inventory.Bag;
 import Model.Inventory.Items.Item;
-import Model.Inventory.Items.Usable;
+import Model.Inventory.Items.Consumable;
 import Model.Pokemon.Pokemon;
 import Model.Pokemon.PokemonEnum.Status;
 import Model.Pokemon.Terrain;
@@ -40,7 +40,7 @@ public class NPC implements Fighter {
     }
     public String makeChoice() {
         Random rand = new Random();
-        int randInt = rand.nextInt(1,100);
+        int randInt = rand.nextInt(10,20);
         if (randInt < 10 && team.size() >= 2) {
             lastChoice = "Switch";
         } else if (randInt < 5 && team.size() == 1) {
@@ -55,7 +55,7 @@ public class NPC implements Fighter {
     }
     public void use(Item item, Pokemon target, TextBubble textBubble) {
         if (!"Item".equals(lastChoice)) return;
-        if (item instanceof Usable) ((Usable) item).use(target, textBubble);
+        if (item instanceof Consumable) ((Consumable) item).consume(target, textBubble);
     }
 
     public Item itemChoice(Pokemon target) {

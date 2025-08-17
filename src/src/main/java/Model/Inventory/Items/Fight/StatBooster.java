@@ -2,11 +2,11 @@ package Model.Inventory.Items.Fight;
 
 import Model.Inventory.Category;
 import Model.Inventory.Items.Item;
-import Model.Inventory.Items.Usable;
+import Model.Inventory.Items.Consumable;
 import Model.Pokemon.Pokemon;
 import View.Game.Battle.Text.TextBubble;
 
-public class StatBooster extends Item implements Usable {
+public class StatBooster extends Item implements Consumable {
 
     String stat;
     int raiseLevel;
@@ -26,7 +26,7 @@ public class StatBooster extends Item implements Usable {
     }
 
     @Override
-    public void use(Pokemon target, TextBubble textBubble) {
+    public void consume(Pokemon target, TextBubble textBubble) {
 
     }
 
