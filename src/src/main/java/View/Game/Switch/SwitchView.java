@@ -221,11 +221,14 @@ public class SwitchView extends BorderPane {
         BattleButtons.getHBox1().setVisible(false);
         BattleButtons.getHBox2().setVisible(false);
         BattleView.getPlayerBar().setVisible(false);
+
         SceneManager.switchStageTo(SceneManager.getFightView());
         executor.addEvent(new MessageEvent(textBubble, player.getFrontPokemon().getName() + " stop!"));
         player.setFront(pokemon, terrain);
+        BattleView.refreshSprites();
         executor.addEvent(new MessageEvent(textBubble, player.getFrontPokemon().getName() + " go!"));
         BattleView.getPlayerBar().setPokemon(player.getFrontPokemon());
+
         executor.executeNext(() -> {
             if(isTurnDisable){
                 executor.executeNext(() -> {

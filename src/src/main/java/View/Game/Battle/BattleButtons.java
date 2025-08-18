@@ -224,6 +224,7 @@ public class BattleButtons extends HBox {
                 getHBox2().setVisible(false);
                 executor.addEvent(new MessageEvent(textBubble, npc.getFrontPokemon().getName() + " stop!"));
                 npc.setFront(next, terrain);
+                BattleView.refreshSprites();
                 executor.addEvent(new MessageEvent(textBubble, npc.getFrontPokemon().getName() + " go!"));
                 opponentBar.setPokemon(npc.getFrontPokemon());
                 executor.executeNext(() -> {
