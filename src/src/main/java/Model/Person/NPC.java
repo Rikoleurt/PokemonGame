@@ -40,8 +40,9 @@ public class NPC implements Fighter {
     }
     public String makeChoice() {
         Random rand = new Random();
-        int randInt = rand.nextInt(10,20);
-        if (randInt < 10 && team.size() >= 2) {
+        int randInt = rand.nextInt(1,10);
+        int healthyPokemon = getHealthyPokemon();
+        if (randInt < 10 && healthyPokemon > 1) {
             lastChoice = "Switch";
         } else if (randInt < 5 && team.size() == 1) {
             makeChoice();
@@ -55,7 +56,10 @@ public class NPC implements Fighter {
     }
     public void use(Item item, Pokemon target, TextBubble textBubble) {
         if (!"Item".equals(lastChoice)) return;
-        if (item instanceof Consumable) ((Consumable) item).consume(target, textBubble);
+        if (item instanceof Consumable && bag.getInventory().containsKey(item) && bag.getQuantity(item) > 0) {
+            ((Consumable) item).consume(target, textBubble);
+            bag.setQuantity(item, bag.getInventory().get(item) - 1);
+        }
     }
 
     public Item itemChoice(Pokemon target) {
@@ -95,5 +99,14 @@ public class NPC implements Fighter {
             }
         }
         return null;
+    }
+
+    public int getHealthyPokemon() {
+        int healthyPokemon = 0;
+        for (Pokemon p : team) {
+            System.out.println(p.getName() + ", status : " + p.getStatus());
+            if(p.getStatus() != Status.KO) healthyPokemon++;
+        }
+        return healthyPokemon;
     }
 }

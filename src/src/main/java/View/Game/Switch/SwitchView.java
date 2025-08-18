@@ -26,6 +26,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
@@ -47,29 +48,38 @@ public class SwitchView extends BorderPane {
     HBox hBox2 = new HBox();
     HBox hBox3 = new HBox();
     BattleExecutor executor = BattleExecutor.getInstance();
+    boolean isTurnDisable = false;
 
     public SwitchView(Player player, TextBubble textBubble, Runnable onClose) {
         this.player = player;
         this.textBubble = textBubble;
 
-        ObservableList<Node> components = this.getChildren();
+        ObservableList<Node> components = getChildren();
         setButtons();
 
-        Button backButton = new Button("Back");
-        backButton.setOnAction(e -> onClose.run());
+        Button cancelButton = new Button("CANCEL");
+        cancelButton.getStyleClass().add("cancel-button");
 
-        root.getChildren().addAll(hBox, hBox2, hBox3);
+        cancelButton.setOnAction(e -> onClose.run());
+
         setCenter(root);
-        root.setPadding(new Insets(10, 10, 10, 10));
+        root.setAlignment(Pos.CENTER_RIGHT);
+        root.setPadding(new Insets(20));
+
         HBox wrapper = new HBox();
         wrapper.setSpacing(10);
-        wrapper.setAlignment(Pos.TOP_RIGHT);
-        wrapper.getChildren().add(backButton);
-        setTop(wrapper);
-        switchBubble.setVisible(false);
-        setBottom(switchBubble);
+        wrapper.setAlignment(Pos.CENTER_LEFT);
+        wrapper.getChildren().addAll(switchBubble, cancelButton);
+        HBox.setHgrow(switchBubble, Priority.ALWAYS);
+        setBottom(wrapper);
+
+        switchBubble.setVisible(true);
+        switchBubble.showMessage("Choose a Pokémon.");
+        switchBubble.setPrefHeight(100);
+        switchBubble.prefWidthProperty().bind(wrapper.widthProperty().subtract(200));
+
+
         setPadding(new Insets(20));
-        root.setPadding(new Insets(20));
 
         setFocusTraversable(true);
         Platform.runLater(() -> {
@@ -77,7 +87,7 @@ public class SwitchView extends BorderPane {
             if (scene != null) {
                 scene.addEventFilter(KeyEvent.KEY_PRESSED, ev -> {
                     if (ev.getCode() == KeyCode.B) {
-                        backButton.fire();
+                        cancelButton.fire();
                     }
                 });
             }
@@ -85,50 +95,109 @@ public class SwitchView extends BorderPane {
     }
 
     private void setButtons() {
-        hBox.getChildren().clear();
-        hBox2.getChildren().clear();
-        hBox3.getChildren().clear();
+        root.getChildren().clear();
 
-        hBox.setSpacing(24);
-        hBox2.setSpacing(24);
-        hBox3.setSpacing(24);
+        HBox columns = new HBox();
+        columns.setSpacing(32);
+        columns.setAlignment(Pos.TOP_LEFT);
+
+        VBox colLeft = new VBox();
+        colLeft.setSpacing(24);
+        colLeft.setPadding(new Insets(0,0,75,0));
+
+        VBox colRight = new VBox();
+        colRight.setSpacing(24);
+        colRight.setAlignment(Pos.CENTER_RIGHT);
 
         List<Pokemon> team = player.getTeam();
         for (int i = 0; i < team.size(); i++) {
-            Button button = createButtons(team.get(i));
-            if (i <= 1) hBox.getChildren().add(button);
-            if (i > 1 && i <= 3) hBox2.getChildren().add(button);
-            if (i > 3 && i <= 5) hBox3.getChildren().add(button);
+            Button b = createButtons(team.get(i));
+            if (i < 3) colLeft.getChildren().add(b);
+            else colRight.getChildren().add(b);
         }
-    }
 
+        columns.getChildren().addAll(colLeft, colRight);
+        HBox.setHgrow(colLeft, Priority.NEVER);
+        HBox.setHgrow(colRight, Priority.NEVER);
+
+        root.getChildren().add(columns);
+    }
 
     private Button createButtons(Pokemon pokemon) {
         Button button = new Button();
-        button.setText(null);
         button.setGraphic(buildSwitchContent(pokemon));
-        button.setDisable(player.getFrontPokemon() == pokemon);
         button.getStyleClass().add("switch-button");
-
-        button.setOnAction(_ -> { onButtonPressed(pokemon); });
-
-        HBox.setMargin(button, new Insets(12)); // espace autour de chaque bouton
+        button.setMinSize(420, 160);
+        button.setPrefSize(420, 160);
+        button.setMaxSize(420, 160);
+        HBox.setMargin(button, new Insets(6));
+        if(pokemon.isKO()){
+            button.setGraphic(buildSwitchContent(pokemon));
+        }
+        if(pokemon == player.getFrontPokemon()){
+            button.setOnAction(e -> {
+                switchBubble.showMessage("This Pokémon is already fighting!");
+                PauseTransition pause = new PauseTransition(new Duration(2));
+                pause.play();
+                pause.setOnFinished(event -> { switchBubble.setMessageVisible(false); });
+                switchBubble.requestFocus();
+            });
+        }
+        if(!(pokemon == player.getFrontPokemon())){
+            button.setOnAction(e -> handleSwitch(pokemon));
+        }
         return button;
     }
 
     private Node buildSwitchContent(Pokemon p) {
-        Label name = new Label(p.getName());
-        name.getStyleClass().add("switch-name");
 
         int hp = p.getHP();
         int max = p.getMaxHP();
-        Label hpText = new Label(hp + " / " + max);
-        hpText.getStyleClass().add("switch-hp-text");
+        int lvl = p.getLevel();
+        Status st = p.getStatus();
 
+        Label name = new Label(p.getName());
+        Label text = new Label("HP");
+        Label gender = new Label(Objects.equals(p.getGender(), "male") ? "♂" : "♀");
+        Label hpText = new Label(hp + " / " + max);
+        Label status = new Label(st.toString());
+        Label level = new Label("Lv." + lvl);
+
+        if(st == Status.normal) status.setText(null);
+
+        gender.getStyleClass().add(Objects.equals(p.getGender(), "male") ? "male" : "female");
+
+        ProgressBar bar = makeProgressBar(p);
+
+        HBox top = new HBox(name, new HBox());
+        top.setAlignment(Pos.CENTER_LEFT);
+        top.setSpacing(8);
+        HBox.setHgrow(top.getChildren().get(1), Priority.ALWAYS);
+        top.getChildren().addAll(gender);
+
+        HBox center = new HBox(text, bar, new HBox());
+        center.setAlignment(Pos.CENTER_LEFT);
+        center.setSpacing(10);
+        HBox.setHgrow(center.getChildren().get(1), Priority.ALWAYS);
+
+        HBox bottom = new HBox(level, status, hpText);
+        hpText.setPadding(new Insets(0,0,0,250));
+        bottom.setSpacing(10);
+
+        VBox box = new VBox(top, center, bottom);
+        box.setSpacing(12);
+        box.setAlignment(Pos.CENTER_LEFT);
+        return box;
+    }
+
+    private ProgressBar makeProgressBar(Pokemon p){
+        int hp = p.getHP();
+        int max = p.getMaxHP();
         ProgressBar bar = new ProgressBar();
         double ratio = max <= 0 ? 0 : Math.max(0, Math.min(1.0, (double) hp / max));
         bar.setProgress(ratio);
-        bar.setPrefWidth(220);
+        bar.setPrefWidth(360);
+        bar.setPrefHeight(16);
         bar.getStyleClass().add("hp-bar");
         if (ratio > 0.5) {
             bar.setStyle("-fx-accent: #00C853;");
@@ -137,13 +206,10 @@ public class SwitchView extends BorderPane {
         } else {
             bar.setStyle("-fx-accent: #D32F2F;");
         }
-
-        VBox box = new VBox(name, hpText, bar);
-        box.setSpacing(6);
-        box.setAlignment(Pos.CENTER_LEFT);
-        return box;
+        return bar;
     }
-    private void onButtonPressed(Pokemon pokemon){
+
+    private void handleSwitch(Pokemon pokemon) {
         if (pokemon.isKO()) {
             switchBubble.setVisible(true);
             switchBubble.showMessage(pokemon.getName() + " is not it its best shape... You can not switch.");
@@ -152,19 +218,22 @@ public class SwitchView extends BorderPane {
             delay.play();
             return;
         }
-
         BattleButtons.getHBox1().setVisible(false);
         BattleButtons.getHBox2().setVisible(false);
         BattleView.getPlayerBar().setVisible(false);
-
         SceneManager.switchStageTo(SceneManager.getFightView());
         executor.addEvent(new MessageEvent(textBubble, player.getFrontPokemon().getName() + " stop!"));
-
         player.setFront(pokemon, terrain);
         executor.addEvent(new MessageEvent(textBubble, player.getFrontPokemon().getName() + " go!"));
         BattleView.getPlayerBar().setPokemon(player.getFrontPokemon());
-
         executor.executeNext(() -> {
+            if(isTurnDisable){
+                executor.executeNext(() -> {
+                    BattleView.getPlayerBar().setVisible(true);
+                    BattleView.getFightButtons().resetFightButtons();
+                });
+                return;
+            }
             BattleView.getPlayerBar().setVisible(true);
             Pokemon npcPokemon = BattleView.getNpc().getFrontPokemon();
             Pokemon playerPokemon = player.getFrontPokemon();
@@ -179,5 +248,12 @@ public class SwitchView extends BorderPane {
                 BattleView.getFightButtons().resetFightButtons();
             });
         });
+    }
+
+    public boolean isTurnDisable() {
+        return isTurnDisable;
+    }
+    public void setTurnDisable(boolean isTurnDisable) {
+        this.isTurnDisable = isTurnDisable;
     }
 }

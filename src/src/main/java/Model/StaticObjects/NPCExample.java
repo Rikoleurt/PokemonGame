@@ -10,15 +10,15 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import static Model.StaticObjects.PokemonsExample.initiateBulbizarre;
-import static Model.StaticObjects.PokemonsExample.initiateCarapuce;
+import static Model.StaticObjects.PokemonExample.initiateBulbizarre;
+import static Model.StaticObjects.PokemonExample.initiateCarapuce;
 
 public class NPCExample {
 
     public static Model.Person.NPC initiateEnemy()
     {
         Map<Item, Integer> items = new HashMap<>();
-        items.put(new Heal(Category.HEALTH, "Potion", "Heals 20HP", 20), 3);
+        items.put(new Heal(Category.HEALTH, "Potion", "Heals 20HP", 20), 0);
         Bag bag = new Bag(items);
 
         LinkedList<Pokemon> team = new LinkedList<>();

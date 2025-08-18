@@ -4,6 +4,7 @@ import Model.Inventory.Bag;
 import Model.Inventory.Items.Item;
 import Model.Inventory.Items.Consumable;
 import Model.Pokemon.Pokemon;
+import Model.Pokemon.PokemonEnum.Status;
 import Model.Pokemon.TerrainEnum.Debris;
 import Model.Pokemon.Terrain;
 import View.Game.Battle.Text.TextBubble;
@@ -104,7 +105,17 @@ public class Player implements Fighter {
             bag.setQuantity(item, bag.getInventory().get(item) - 1);
         }
     }
+
     public void flee(){
 
+    }
+
+    public int getHealthyPokemon() {
+        int healthyPokemon = 0;
+        for (Pokemon p : team) {
+            System.out.println(p.getName() + ", status : " + p.getStatus());
+            if(p.getStatus() != Status.KO) healthyPokemon++;
+        }
+        return healthyPokemon;
     }
 }

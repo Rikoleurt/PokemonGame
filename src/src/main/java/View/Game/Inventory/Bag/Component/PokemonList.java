@@ -3,13 +3,11 @@ package View.Game.Inventory.Bag.Component;
 import Model.Person.Player;
 import Model.Pokemon.Pokemon;
 import javafx.collections.ObservableList;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -22,13 +20,23 @@ public class PokemonList extends VBox {
         this.player = player;
         setSpacing(spacing);
         ObservableList<Node> components = getChildren();
-        Button firstPokemon = createPokemonButton(player.getFrontPokemon());
-        Button secondPokemon = createPokemonButton(player.getTeam().get(1));
-        Button thirdPokemon = createPokemonButton(player.getTeam().get(2));
-//        Button fourthPokemon = createPokemonButton(player.getTeam().get(3));
-//        Button fifthPokemon = createPokemonButton(player.getTeam().get(4));
-//        Button sixthPokemon = createPokemonButton(player.getTeam().getLast());
-        components.addAll(firstPokemon,secondPokemon,thirdPokemon);
+
+        addComponentIfNotNull(components, player.getFrontPokemon());
+        addComponentIfNotNull(components, getTeamPokemon(1));
+        addComponentIfNotNull(components, getTeamPokemon(2));
+        addComponentIfNotNull(components, getTeamPokemon(3));
+        addComponentIfNotNull(components, getTeamPokemon(4));
+        addComponentIfNotNull(components, getTeamPokemon(5));
+    }
+
+    private Pokemon getTeamPokemon(int index) {
+        return player.getTeam().size() > index ? player.getTeam().get(index) : null;
+    }
+
+    private void addComponentIfNotNull(ObservableList<Node> components, Pokemon p) {
+        if (p != null) {
+            components.add(createPokemonButton(p));
+        }
     }
 
     private Button createPokemonButton(Pokemon p) {
@@ -57,13 +65,11 @@ public class PokemonList extends VBox {
         button.setGraphic(content);
         button.setPrefSize(200, 110);
 
-
-
-        if(p.isKO()){
+        if (p.isKO()) {
             button.setStyle("-fx-background-color: linear-gradient(to bottom, #ef900e, #ac740f);" +
-                            "-fx-border-color: black;" +
-                            "-fx-border-radius: 14px;" +
-                            "-fx-border-width: 2px;");
+                    "-fx-border-color: black;" +
+                    "-fx-border-radius: 14px;" +
+                    "-fx-border-width: 2px;");
         }
         return button;
     }

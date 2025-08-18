@@ -14,6 +14,8 @@ import View.Game.Battle.InfoBars.PlayerBar;
 import View.Game.Battle.Text.StatBubble;
 import View.Game.Battle.Text.TextBubble;
 
+import View.Game.SceneManager;
+import View.Game.Switch.SwitchView;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.layout.BorderPane;
@@ -58,6 +60,10 @@ public class BattleView extends BorderPane {
 
         setAlignment(opponentBar, Pos.TOP_LEFT);
         setAlignment(playerBar, Pos.BOTTOM_CENTER);
+
+        if(npc.getFrontPokemon().isKO()) {
+
+        }
     }
 
     public TextBubble getTextBubble() {
@@ -99,4 +105,6 @@ public class BattleView extends BorderPane {
     public static Terrain getTerrain() {
         return terrain;
     }
+
+    private void npcSwitch(){}
 }

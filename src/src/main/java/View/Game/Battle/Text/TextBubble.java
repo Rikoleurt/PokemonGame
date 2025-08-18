@@ -26,7 +26,7 @@ public class TextBubble extends HBox implements Bubble {
     private String fullMessage = "";
     private Timeline typingTimeline;
 
-
+    private final int ht = 150;
     static Font font = Font.loadFont(TextBubble.class.getResource("/font/pokemonFont.ttf").toExternalForm(), 18);
 
     // Text Label
@@ -45,11 +45,12 @@ public class TextBubble extends HBox implements Bubble {
         message.setStyle("-fx-text-fill: white;" +
                 "-fx-padding: 15px;" +
                 "-fx-alignment: center-left;" +
-                "-fx-wrap-text: true;");
+                "-fx-wrap-text: true;" +
+                "-fx-font-size: 20");
         message.setFont(font);
         message.setVisible(false);
         message.prefWidthProperty().bind(widthProperty());
-        message.setPrefHeight(150);
+        message.setPrefHeight(ht);
         getChildren().addAll(message);
     }
 
@@ -138,7 +139,6 @@ public class TextBubble extends HBox implements Bubble {
                 isTyping = false;
             } else {
                 if (onMessageComplete != null) {
-                    System.out.println("Running next message");
                     Runnable callback = onMessageComplete;
                     onMessageComplete = null;
                     callback.run();
@@ -147,7 +147,6 @@ public class TextBubble extends HBox implements Bubble {
             }
         }
     }
-
 
     public void setOnMessageComplete(Runnable onMessageComplete) {
         this.onMessageComplete = onMessageComplete;

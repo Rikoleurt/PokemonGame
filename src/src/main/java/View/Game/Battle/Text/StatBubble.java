@@ -21,17 +21,17 @@ public class StatBubble extends HBox implements Bubble {
         setAlignment(Pos.TOP_RIGHT);
         setSpacing(30);
         //setPadding(new Insets(10));
-        this.setStyle("-fx-background-color: rgba(0, 0, 0, 0.5);" + // Fond noir semi-transparent
-                "-fx-border-color: darkgray;" +               // Bordure gris foncé
-                "-fx-border-width: 4px;" +                    // Épaisseur de la bordure
-                "-fx-border-radius: 15px;" +                  // Coins arrondis
-                "-fx-background-radius: 15px;");              // Coins arrondis
+        this.setStyle("-fx-background-color: rgba(0, 0, 0, 0.5);" +
+                "-fx-border-color: darkgray;" +
+                "-fx-border-width: 4px;" +
+                "-fx-border-radius: 15px;" +
+                "-fx-background-radius: 15px;");
 
         message.setFont(font);
-        message.setStyle("-fx-text-fill: white;" +    // Couleur du texte en blanc
-                "-fx-padding: 5px;" +       // Espacement interne
-                "-fx-alignment: center-left;" + // Alignement du texte
-                "-fx-wrap-text: true;");     // Gestion des retours à la ligne
+        message.setStyle("-fx-text-fill: white;" +
+                "-fx-padding: 5px;" +
+                "-fx-wrap-text: true;" +
+                "-fx-font-size: 20");
         message.setVisible(false);
         message.setPrefSize(200,225);
         this.getChildren().addAll(message);

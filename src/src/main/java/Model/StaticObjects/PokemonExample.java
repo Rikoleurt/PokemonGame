@@ -10,12 +10,15 @@ import Model.Pokemon.PokemonEnum.Type;
 
 import static Model.StaticObjects.MovesExample.initiateAttacks;
 
-public class PokemonsExample {
+public class PokemonExample {
     static HashMap<Integer, Move> attacks = initiateAttacks();
     static ArrayList<Move> bulbizarreMoves = new ArrayList<>();
     static ArrayList<Move> pikachuMoves = new ArrayList<>();
     static ArrayList<Move> carapuceMoves = new ArrayList<>();
     static ArrayList<Move> salamecheMoves = new ArrayList<>();
+    static ArrayList<Move> ekansMoves = new ArrayList<>();
+    static ArrayList<Move> pidgeyMoves = new ArrayList<>();
+    static ArrayList<Move> butterfreeMoves = new ArrayList<>();
 
     public static Pokemon initiateBulbizarre() {
         if(!bulbizarreMoves.contains(attacks.get(4)) || !bulbizarreMoves.contains(attacks.get(6))) {
@@ -46,7 +49,7 @@ public class PokemonsExample {
 
     public static Pokemon initiateCarapuce() {
         carapuceMoves.add(attacks.get(5));
-        carapuceMoves.add(attacks.get(7));
+        // carapuceMoves.add(attacks.get(7));
         return new Pokemon("squirtle", 31, 31, 17, 23, 19, 22, 17,
                 44, 48, 65, 50, 64, 43,
                 10, 10, 10, 10, 10, 10,
@@ -60,12 +63,54 @@ public class PokemonsExample {
         salamecheMoves.add(attacks.get(0));
         salamecheMoves.add(attacks.get(3));
         salamecheMoves.add(attacks.get(6));
-        return new Pokemon("charmander", 30, 30, 19, 17, 22, 19, 21,
+        return new Pokemon("charmander", 30, 1, 19, 17, 22, 19, 21,
                 39, 52, 43, 60, 50, 65,
                 10, 10, 10, 10, 10, 10,
                 0, 0, 0, 0, 0, 0,
                 0, 0, 0, 0, 0,
                 11, Type.fire, salamecheMoves, "male",
                 1000, 0, Experience.Fast, Status.normal);
+    }
+
+    public static Pokemon initiatePidgey() {
+        pidgeyMoves.add(attacks.get(12)); // Gust
+        pidgeyMoves.add(attacks.get(0));  // Tackle
+
+        return new Pokemon("pidgey", 30, 30, 21, 19, 16, 16, 26,
+                33, 21, 19, 16, 16, 26,
+                10, 10, 10, 10, 10, 10,
+                0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0,
+                11, Type.flying, pidgeyMoves, "male",
+                0, 100, Experience.Fast, Status.normal);
+    }
+
+    public static Pokemon initiateButterfree() {
+        butterfreeMoves.add(attacks.get(0)); // Tackle
+        butterfreeMoves.add(attacks.get(13)); // Confusion
+        butterfreeMoves.add(attacks.get(14)); // Bug bite
+
+        return new Pokemon("butterfree", 35, 35, 16, 17, 25, 23, 21,
+                60, 45, 50, 90, 80, 70,
+                10, 10, 10, 10, 10, 10,
+                0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0,
+                11, Type.bug, butterfreeMoves, "female",
+                0, 100, Experience.Fast, Status.normal);
+    }
+
+    public static Pokemon initiateEkans() {
+        if (!ekansMoves.contains(attacks.get(16)) || !ekansMoves.contains(attacks.get(17))) {
+            ekansMoves.add(attacks.get(16)); // Bite
+            ekansMoves.add(attacks.get(17)); // Poison Sting
+        }
+
+        return new Pokemon("ekans", 34, 34, 21, 17, 16, 20, 24,
+                35, 60, 44, 40, 54, 55,
+                10, 10, 10, 10, 10, 10,
+                0, 0, 0, 0, 0, 0,
+                0, 0, 0, 0, 0,
+                12, Type.poison, ekansMoves, "male",
+                0, 100, Experience.Medium, Status.normal);
     }
 }

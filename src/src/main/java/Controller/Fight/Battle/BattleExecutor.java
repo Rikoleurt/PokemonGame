@@ -26,12 +26,12 @@ public class BattleExecutor {
         battleEvents.add(event);
     }
 
-    public void executeEvents() {
-        battleEvents.forEach(BattleEvent::execute);
+    public void clearEvents() {
+        if(battleEvents.isEmpty()) return;
+        battleEvents.clear();
     }
-
     public void executeNext(Runnable onAllEventsFinished) {
-        // getEventsFromQueue();
+         getEventsFromQueue();
         if (!battleEvents.isEmpty()) {
             BattleEvent event = battleEvents.poll();
             event.setOnFinish(() -> executeNext(onAllEventsFinished));

@@ -19,6 +19,7 @@ import javafx.util.Duration;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static View.Game.Battle.BattleView.npc;
 import static View.Game.Battle.BattleView.player;
 
 public class Bar extends VBox {
@@ -59,6 +60,12 @@ public class Bar extends VBox {
         health.setFont(font);
         status.setFont(font);
 
+        name.setStyle("-fx-font-size: 22");
+        HP.setStyle("-fx-font-size: 22");
+        level.setStyle("-fx-font-size: 22");
+        health.setStyle("-fx-font-size: 22");
+        status.setStyle("-fx-font-size: 22");
+
         HPBar.setPrefSize(150,17);
         HPBar.setStyle("-fx-accent: #709f5e;");
 
@@ -77,9 +84,9 @@ public class Bar extends VBox {
         HBox3.setAlignment(Pos.CENTER_LEFT);
 
         setPadding(new Insets(15));
+
         Image image1 = new Image(Objects.requireNonNull(Bar.class.getResource("/images/pokeball.png")).toExternalForm());
         Image image2 = new Image(Objects.requireNonNull(Bar.class.getResource("/images/pokeballKO.png")).toExternalForm());
-
 
         ImageView imageView2 = new ImageView(image2);
         imageView2.setFitWidth(20);
@@ -88,7 +95,24 @@ public class Bar extends VBox {
 
         // Opponent bar objects
         if(this instanceof OpponentBar) {
-            this.getChildren().addAll(HBox1, HBox2, HBox3);
+            int size = npc.getTeam().size();
+            HBox pokeHBox = new HBox();
+            for(int i = 0; i < size; i++) {
+                if(npc.getTeam().get(i).getName().equals("KO")) {
+                    Image image = new Image(Objects.requireNonNull(Bar.class.getResource("/images/pokeballKO.png")).toExternalForm());
+                    ImageView imageView = new ImageView(image);
+                    imageView.setFitWidth(20);
+                    imageView.setPreserveRatio(true);
+                    pokeHBox.getChildren().add(imageView);
+                } else {
+                    Image image = new Image(Objects.requireNonNull(Bar.class.getResource("/images/pokeball.png")).toExternalForm());
+                    ImageView imageView = new ImageView(image);
+                    imageView.setFitWidth(20);
+                    imageView.setPreserveRatio(true);
+                    pokeHBox.getChildren().add(imageView);
+                }
+            }
+            getChildren().addAll(pokeHBox, HBox1, HBox2, HBox3);
         }
 
         // Player bar objects
@@ -110,7 +134,7 @@ public class Bar extends VBox {
                     pokeHBox.getChildren().add(imageView);
                 }
             }
-            this.getChildren().addAll(pokeHBox, HBox1, expBarBox, HBox2, HBox3);
+            getChildren().addAll(pokeHBox, HBox1, expBarBox, HBox2, HBox3);
         }
     }
 
@@ -259,6 +283,40 @@ public class Bar extends VBox {
         });
 
         timeline.play();
+    }
+
+    public void resetPokeball() {
+        HBox pokeHBox = new HBox();
+        pokeHBox.setSpacing(4);
+
+        if (this instanceof OpponentBar) {
+            int size = npc.getTeam().size();
+            for (int i = 0; i < size; i++) {
+                boolean ko = npc.getTeam().get(i).isKO();
+                String imgPath = ko ? "/images/pokeballKO.png" : "/images/pokeball.png";
+                ImageView iv = new ImageView(new Image(Objects.requireNonNull(Bar.class.getResource(imgPath)).toExternalForm()));
+                iv.setFitWidth(20);
+                iv.setPreserveRatio(true);
+                pokeHBox.getChildren().add(iv);
+            }
+            if (!getChildren().isEmpty()) getChildren().set(0, pokeHBox);
+            else getChildren().addFirst(pokeHBox);
+            return;
+        }
+
+        if (this instanceof PlayerBar) {
+            int size = player.getTeam().size();
+            for (int i = 0; i < size; i++) {
+                boolean ko = player.getTeam().get(i).isKO();
+                String imgPath = ko ? "/images/pokeballKO.png" : "/images/pokeball.png";
+                ImageView iv = new ImageView(new Image(Objects.requireNonNull(Bar.class.getResource(imgPath)).toExternalForm()));
+                iv.setFitWidth(20);
+                iv.setPreserveRatio(true);
+                pokeHBox.getChildren().add(iv);
+            }
+            if (!getChildren().isEmpty()) getChildren().set(0, pokeHBox);
+            else getChildren().addFirst(pokeHBox);
+        }
     }
 }
 

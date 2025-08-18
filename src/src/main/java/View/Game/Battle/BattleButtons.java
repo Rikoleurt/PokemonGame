@@ -17,6 +17,7 @@ import View.Game.Inventory.Bag.BagView;
 import View.Game.SceneManager;
 
 import View.Game.Switch.SwitchView;
+import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -29,6 +30,9 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import javafx.util.Duration;
+
+import java.util.List;
 
 import static View.Game.Battle.BattleView.npc;
 import static View.Game.Battle.BattleView.player;
@@ -78,11 +82,11 @@ public class BattleButtons extends HBox {
         ObservableList<Node> components = getChildren();
 
         refreshFromCurrentPokemon();
-
         vBox.getChildren().addAll(HBox1, HBox2);
         vBox.setAlignment(Pos.CENTER);
         vBox2.getChildren().add(textBubble);
-
+        HBox1.setStyle("-fx-font-size: 20");
+        HBox2.setStyle("-fx-font-size: 20");
         components.addAll(vBox2, vBox);
 
         textBubble.showMessage("What will " + playerPokemon.getName() + " do?");
@@ -174,41 +178,46 @@ public class BattleButtons extends HBox {
     private void onAttackPressed(Move move, Terrain terrain) {
         HBox1.setVisible(false);
         HBox2.setVisible(false);
-
         Move npcMove = npcPokemon.chooseMove();
         String npcChoice = npc.makeChoice();
         Item itemChoice = npc.itemChoice(npcPokemon);
 
-        if (itemChoice != null) System.out.println(itemChoice.getName());
-        System.out.println(npcChoice);
+        if(playerPokemon.isKO()){
+            handlePlayerPokemonKO();
+            return;
+        }
 
-        // --- NPC utilise un objet ---
+        if(npcPokemon.isKO()){
+            handleNpcPokemonKO();
+            return;
+        }
+
         if ("Item".equals(npcChoice) && itemChoice != null) {
             getHBox1().setVisible(false);
             getHBox2().setVisible(false);
-
             executor.addEvent(new UseItemEvent(npc, itemChoice, npcPokemon, textBubble, executor));
             executor.executeNext(() -> {
                 if (playerPokemon.getStatus() != Status.KO) {
-                    // Le joueur attaque le NPC -> MAJ de la barre adverse
                     executor.addEvent(new AttackEvent(playerPokemon, npcPokemon, move, BattleView.getTerrain(), textBubble, opponentBar, executor));
+                    executor.executeNext(() -> {
+                        if (npcPokemon.getStatus() == Status.KO) {
+                            handleNpcPokemonKO();
+                        } else {
+                            BattleView.getFightButtons().resetFightButtons();
+                        }
+                    });
                 } else {
-                    executor.addEvent(new MessageEvent(textBubble, playerPokemon.getName() + " fainted."));
+                    handlePlayerPokemonKO();
                 }
-                executor.executeNext(() -> BattleView.getFightButtons().resetFightButtons());
             });
-
             requestFocus();
-            return; // IMPORTANT: sinon on retombe dans la logique d'attaque/priorité => double attaque
+            return;
         }
 
-        // Si le NPC a choisi Item mais qu'aucun item pertinent n'est dispo, on retombe en attaque
-        if ("Item".equals(npcChoice) && itemChoice == null) {
-            npcChoice = "Attack";
-        }
+        if ("Item".equals(npcChoice)) npcChoice = "Attack";
+        if(npc.getTeam().size() == 1) npcChoice = "Attack";
 
-        // --- NPC switch ---
-        if ("Switch".equals(npcChoice)) {
+        if ("Switch".equals(npcChoice) && npc.getTeam().size() > 1) {
             Pokemon next = npc.chooseSwitchTarget();
             if (next != null) {
                 getHBox1().setVisible(false);
@@ -222,36 +231,53 @@ public class BattleButtons extends HBox {
                     Pokemon freshPlayer = player.getFrontPokemon();
                     if (freshPlayer.getStatus() != Status.KO) {
                         executor.addEvent(new AttackEvent(freshPlayer, freshNpc, move, BattleView.getTerrain(), textBubble, opponentBar, executor));
+                        executor.executeNext(() -> {
+                            if (freshNpc.getStatus() == Status.KO) {
+                                handleNpcPokemonKO();
+                            } else {
+                                BattleView.getFightButtons().resetFightButtons();
+                            }
+                        });
                     } else {
-                        executor.addEvent(new MessageEvent(textBubble, freshPlayer.getName() + " fainted."));
+                        handlePlayerPokemonKO();
                     }
-                    executor.executeNext(() -> BattleView.getFightButtons().resetFightButtons());
                 });
                 requestFocus();
             }
             return;
         }
 
-        // --- Attaques (priorité) ---
         if (npcPokemon.hasPriority(playerPokemon)) {
             executor.addEvent(new AttackEvent(npcPokemon, playerPokemon, npcMove, terrain, textBubble, playerBar, executor));
             executor.executeNext(() -> {
                 if (playerPokemon.getStatus() != Status.KO) {
                     executor.addEvent(new AttackEvent(playerPokemon, npcPokemon, move, terrain, textBubble, opponentBar, executor));
+                    executor.executeNext(() -> {
+                        if (npcPokemon.getStatus() == Status.KO) {
+                            handleNpcPokemonKO();
+                        } else {
+                            Platform.runLater(this::resetFightButtons);
+                        }
+                    });
                 } else {
                     handlePlayerPokemonKO();
                 }
-                executor.executeNext(() -> Platform.runLater(this::resetFightButtons));
             });
         } else {
             executor.addEvent(new AttackEvent(playerPokemon, npcPokemon, move, terrain, textBubble, opponentBar, executor));
             executor.executeNext(() -> {
                 if (npcPokemon.getStatus() != Status.KO) {
                     executor.addEvent(new AttackEvent(npcPokemon, playerPokemon, npcMove, terrain, textBubble, playerBar, executor));
+                    executor.executeNext(() -> {
+                        if (playerPokemon.getStatus() == Status.KO) {
+                            handlePlayerPokemonKO();
+                        } else {
+                            Platform.runLater(this::resetFightButtons);
+                        }
+                    });
                 } else {
                     handleNpcPokemonKO();
                 }
-                executor.executeNext(() -> Platform.runLater(this::resetFightButtons));
             });
         }
         requestFocus();
@@ -259,30 +285,58 @@ public class BattleButtons extends HBox {
 
 
 
+
     private void handlePlayerPokemonKO(){
         executor.addEvent(new MessageEvent(textBubble, playerPokemon.getName() + " fainted."));
+        executor.executeNext(this::askPlayerForSwitch);
+        executor.clearEvents();
         // Open another window to let the player chose its next Pokémon
     }
     private void handleNpcPokemonKO(){
         executor.addEvent(new MessageEvent(textBubble, npcPokemon.getName() + " fainted."));
+        executor.executeNext(this::askNPCForSwitch);
         // Let the enemy switch
     }
 
-    private String getAttackName(int index){
-        if(index < playerPokemon.getAttacks().size()){
-            return playerPokemon.getAttacks().get(index).getName();
-        } else {
-            return " - ";
-        }
+    private void askPlayerForSwitch(){
+        SwitchView switchView = new SwitchView(player, textBubble, () -> SceneManager.switchStageTo(SceneManager.getFightView()));
+        SceneManager.switchStageTo(switchView);
+        switchView.setTurnDisable(true);
     }
 
-    private Move getMove(int index){
-        if(index < playerPokemon.getAttacks().size()){
-            return playerPokemon.getAttacks().get(index);
-        } else {
-            return null;
-        }
+    private void askNPCForSwitch() {
+        getHBox1().setVisible(false);
+        getHBox2().setVisible(false);
+        Pokemon next = npc.chooseSwitchTarget();
+        PauseTransition pt = new PauseTransition(Duration.seconds(1));
+        pt.setOnFinished(event -> {
+            if (next != null) {
+                npc.setFront(next, terrain);
+                executor.addEvent(new MessageEvent(textBubble, npc.getName() + " sends " + npc.getFrontPokemon().getName() + "!"));
+                opponentBar.setPokemon(npc.getFrontPokemon());
+                opponentBar.resetPokeball();
+                executor.executeNext(() -> Platform.runLater(this::resetFightButtons));
+            } else {
+                Platform.runLater(this::resetFightButtons);
+            }
+        });
+        pt.play();
     }
+
+
+    private String getAttackName(int index) {
+        List<Move> attacks = playerPokemon.getAttacks();
+        if (attacks == null || index < 0 || index >= attacks.size()) return " - ";
+        Move m = attacks.get(index);
+        return (m != null) ? m.getName() : " - ";
+    }
+
+    private Move getMove(int index) {
+        List<Move> attacks = playerPokemon.getAttacks();
+        if (attacks == null || index < 0 || index >= attacks.size()) return null;
+        return attacks.get(index);
+    }
+
 
     public void resetFightButtons() {
         refreshFromCurrentPokemon();
@@ -303,8 +357,6 @@ public class BattleButtons extends HBox {
         vBox.setVisible(true);
 
         textBubble.showMessage("What will " + playerPokemon.getName() + " do?");
-//        executor.addEvent(new MessageEvent(textBubble, "What will " + playerPokemon.getName() + " do?"));
-//        executor.executeNext(null);
         attackButton.requestFocus();
     }
 
@@ -317,7 +369,8 @@ public class BattleButtons extends HBox {
                 "-fx-border-width: 2px; " +
                 "-fx-border-radius: 6px; " +
                 "-fx-background-radius: 9px; " +
-                "-fx-text-fill: black; ");
+                "-fx-text-fill: black; " +
+                "-fx-font-size: 22");
         if (name == null) {
             button.setText(" - ");
             button.getStyleClass().add("battle-button");
@@ -327,7 +380,8 @@ public class BattleButtons extends HBox {
                     "-fx-border-width: 2px; " +
                     "-fx-border-radius: 5px; " +
                     "-fx-background-radius: 0px; " +
-                    "-fx-text-fill: black; ");
+                    "-fx-text-fill: black; " +
+                    "-fx-font-size: 22");
         }
         return button;
     }

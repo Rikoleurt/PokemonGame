@@ -13,10 +13,14 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.Background;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Paint;
 
 public class BagView extends BorderPane {
     Player player;
@@ -33,19 +37,33 @@ public class BagView extends BorderPane {
         pokemonList = new PokemonList(player, 10);
         categoryMenu = new CategoryMenu(player, 20, textBubble, npc);
 
-        Button backButton = new Button("Back");
-        backButton.setOnAction(e -> onClose.run());
+        Button backLabel = new Button("Back");
+        backLabel.getStyleClass().add("back-label");
+
+        Button backButton = new Button("B");
+        backButton.getStyleClass().add("back-button");
+        backButton.setOnAction(e -> {
+            onClose.run();
+        });
+
+        BorderPane.setMargin(pokemonList, new Insets(0, 40, 0, 0));
+
+        HBox commandBox = new HBox();
+        commandBox.getStyleClass().add("command-box");
+        commandBox.getChildren().addAll(backButton, backLabel);
+        commandBox.setPadding(new Insets(5));
+        commandBox.setPrefHeight(60);
+        commandBox.setPrefWidth(60);
+        commandBox.setSpacing(10);
+        commandBox.setAlignment(Pos.CENTER_RIGHT);
+
+        VBox bottomBox = new VBox();
+        bottomBox.setSpacing(10);
+        bottomBox.getChildren().addAll(categoryMenu.getCategories().getBagBubble(), commandBox);
 
         setLeft(pokemonList);
         setPadding(new Insets(30, 40, 30, 50));
         setCenter(categoryMenu);
-
-        BorderPane.setMargin(pokemonList, new Insets(0, 40, 0, 0));
-
-        VBox bottomBox = new VBox();
-        bottomBox.setSpacing(10);
-        bottomBox.getChildren().addAll(categoryMenu.getCategories().getBagBubble(), backButton);
-
         setBottom(bottomBox);
 
         setAlignment(backButton, Pos.CENTER_RIGHT);
