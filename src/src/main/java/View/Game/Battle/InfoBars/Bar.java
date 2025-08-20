@@ -2,6 +2,7 @@ package View.Game.Battle.InfoBars;
 
 import Model.Person.Player;
 import Model.Pokemon.Pokemon;
+import Model.Pokemon.PokemonEnum.Status;
 import View.Game.Battle.Text.TextBubble;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -35,7 +36,6 @@ public class Bar extends VBox {
     Label HP = new Label();
     Label level = new Label();
     Label health = new Label();
-    Label status = new Label();
 
     Bar(double spacing, Pokemon pokemon) {
 
@@ -46,25 +46,28 @@ public class Bar extends VBox {
         int pLevel = pokemon.getLevel();
         int pHP = pokemon.getHP();
         int pMaxHP = pokemon.getMaxHP();
-        String pStatus = pokemon.getStatus().toString();
+        Status pStatus = pokemon.getStatus();
+        Image statusImg = null;
 
+        if(pStatus != Status.normal) {
+             statusImg = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/" + pStatus.toString() + ".png")));
+        }
+
+        ImageView view = new ImageView(statusImg);
         name.setText(pName);
         HP.setText("HP : ");
         level.setText("Lvl : " + pLevel);
         health.setText(pHP + "/" + pMaxHP);
-        status.setText(pStatus);
 
         name.setFont(font);
         HP.setFont(font);
         level.setFont(font);
         health.setFont(font);
-        status.setFont(font);
 
         name.setStyle("-fx-font-size: 22");
         HP.setStyle("-fx-font-size: 22");
         level.setStyle("-fx-font-size: 22");
         health.setStyle("-fx-font-size: 22");
-        status.setStyle("-fx-font-size: 22");
 
         HPBar.setPrefSize(150,17);
         HPBar.setStyle("-fx-accent: #709f5e;");
@@ -72,7 +75,7 @@ public class Bar extends VBox {
         expBar.setPrefSize(175, 12);
         expBar.setStyle("-fx-accent: #994ee4;");
 
-        HBox HBox1 = new HBox(name, level);
+        HBox HBox1 = new HBox(name, view, level);
         HBox expBarBox = new HBox(expBar, HPBar);
         HBox HBox2 = new HBox(HP, HPBar);
         HBox HBox3 = new HBox(health);
@@ -85,7 +88,6 @@ public class Bar extends VBox {
 
         setPadding(new Insets(15));
 
-        Image image1 = new Image(Objects.requireNonNull(Bar.class.getResource("/images/pokeball.png")).toExternalForm());
         Image image2 = new Image(Objects.requireNonNull(Bar.class.getResource("/images/pokeballKO.png")).toExternalForm());
 
         ImageView imageView2 = new ImageView(image2);
@@ -142,9 +144,6 @@ public class Bar extends VBox {
         return health;
     }
 
-    public Label getStatus() {
-        return status;
-    }
     public Label getName() {
         return name;
     }
@@ -164,8 +163,7 @@ public class Bar extends VBox {
         String pStatus = p.getStatus().toString();
 
         name.setText(pName);
-        level.setText("Lvl : " + pLevel);
-        status.setText(pStatus);
+        level.setText("Lvl." + pLevel);
         health.setText(pHP + "/" + pMaxHP);
 
         double hpProgress = pMaxHP == 0 ? 0 : Math.max(0.0, Math.min(1.0, (double) pHP / pMaxHP));
@@ -317,6 +315,10 @@ public class Bar extends VBox {
             if (!getChildren().isEmpty()) getChildren().set(0, pokeHBox);
             else getChildren().addFirst(pokeHBox);
         }
+    }
+
+    public void refreshStatus(){
+
     }
 }
 

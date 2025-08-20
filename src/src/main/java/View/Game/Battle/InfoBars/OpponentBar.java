@@ -18,13 +18,13 @@ public class OpponentBar extends Bar {
         Label name = new Label(pName);
         Label HP = new Label("HP :");
         Label level = new Label("Lvl : " + pLevel);
-        Label HPs = new Label(pHP + "/" + pMaxHP);
+//        Label HPs = new Label(pHP + "/" + pMaxHP);
         Label status = new Label(pStatus);
 
         name.setFont(font);
         HP.setFont(font);
         level.setFont(font);
-        HPs.setFont(font);
+//        HPs.setFont(font);
         status.setFont(font);
     }
 }

@@ -44,6 +44,7 @@ public class Main extends Application {
         SceneManager.getStage().setTitle("Pokémon Game");
         SceneManager.getStage().show();
 
+
 //        BattleView battleView = new BattleView();
 //        Scene consoleScene = new Scene(battleView, consoleWidth, screenHeight);
 //

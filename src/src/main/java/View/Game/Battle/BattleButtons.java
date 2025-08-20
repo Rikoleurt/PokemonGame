@@ -169,15 +169,17 @@ public class BattleButtons extends HBox {
         });
 
         atk4Button.setOnAction(e -> {
-//            if(pAtk4 != null) {
-//                atkButtonAction(pAtk4, terrain);
-//            }
+            if(pAtk4 != null) {
+                onAttackPressed(pAtk4, terrain);
+            }
         });
     }
 
     private void onAttackPressed(Move move, Terrain terrain) {
+
         HBox1.setVisible(false);
         HBox2.setVisible(false);
+
         Move npcMove = npcPokemon.chooseMove();
         String npcChoice = npc.makeChoice();
         Item itemChoice = npc.itemChoice(npcPokemon);
@@ -193,9 +195,12 @@ public class BattleButtons extends HBox {
         }
 
         if ("Item".equals(npcChoice) && itemChoice != null) {
+
             getHBox1().setVisible(false);
             getHBox2().setVisible(false);
+
             executor.addEvent(new UseItemEvent(npc, itemChoice, npcPokemon, textBubble, executor));
+
             executor.executeNext(() -> {
                 if (playerPokemon.getStatus() != Status.KO) {
                     executor.addEvent(new AttackEvent(playerPokemon, npcPokemon, move, BattleView.getTerrain(), textBubble, opponentBar, executor));
@@ -222,11 +227,15 @@ public class BattleButtons extends HBox {
             if (next != null) {
                 getHBox1().setVisible(false);
                 getHBox2().setVisible(false);
+
                 executor.addEvent(new MessageEvent(textBubble, npc.getFrontPokemon().getName() + " stop!"));
+
                 npc.setFront(next, terrain);
                 BattleView.refreshSprites();
+
                 executor.addEvent(new MessageEvent(textBubble, npc.getFrontPokemon().getName() + " go!"));
                 opponentBar.setPokemon(npc.getFrontPokemon());
+
                 executor.executeNext(() -> {
                     Pokemon freshNpc = BattleView.getNpc().getFrontPokemon();
                     Pokemon freshPlayer = player.getFrontPokemon();

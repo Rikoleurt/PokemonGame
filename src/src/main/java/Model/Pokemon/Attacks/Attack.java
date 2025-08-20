@@ -7,11 +7,15 @@ import Model.Pokemon.PokemonEnum.Type;
 public class Attack extends Move {
 
     int power;
-    int precision;
+    double precision;
 
-    public Attack(String name, int power, int precision, Type type, AttackMode Mode, int PP) {
+    public Attack(String name, int power, double precision, Type type, AttackMode Mode, int PP) {
         super(name, type, Mode, PP);
         this.power = power;
+        this.precision = precision;
+    }
+
+    public void setPrecision(double precision) {
         this.precision = precision;
     }
 
@@ -19,7 +23,7 @@ public class Attack extends Move {
         return power;
     }
 
-    public int getPrecision() {
+    public double getPrecision() {
         return precision;
     }
 }

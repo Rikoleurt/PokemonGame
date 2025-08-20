@@ -40,7 +40,7 @@ public class NPC implements Fighter {
     }
     public String makeChoice() {
         Random rand = new Random();
-        int randInt = rand.nextInt(1,10);
+        int randInt = rand.nextInt(1,100);
         int healthyPokemon = getHealthyPokemon();
         if (randInt < 10 && healthyPokemon > 1) {
             lastChoice = "Switch";
@@ -84,9 +84,7 @@ public class NPC implements Fighter {
     }
 
     public void setFront(Pokemon pokemon, Terrain terrain) {
-        System.out.println(this.getFrontPokemon().getName() + " stop! ");
         exchangePokemonToFront(getFrontPokemon(), pokemon);
-        System.out.println(pokemon.getName() + "! Go!");
         if (terrain.getDebris() != Debris.normal) {
             terrain.debrisEffect(this, terrain);
         }

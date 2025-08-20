@@ -4,6 +4,7 @@ import Model.Pokemon.Attacks.*;
 
 import Model.Pokemon.Attacks.Attack;
 import Model.Pokemon.Move;
+import Model.Pokemon.PokemonEnum.Status;
 import Model.Pokemon.PokemonEnum.Type;
 import Model.Pokemon.AttackEnum.AttackMode;
 import Model.Pokemon.TerrainEnum.Debris;
@@ -29,10 +30,11 @@ public class MovesExample {
         Attack poisonSting = new Attack("Poison Sting", 15, 100, Type.poison, AttackMode.physical, 35);
 
         // UpgradeMove sandAttack = new UpgradeMove("Sand Attack", "precision", -1, Type.ground, AttackMode.status, 15);
-        UpgradeMove leer = new UpgradeMove("Leer", "def", -1, Type.normal, AttackMode.status, 30);
-        UpgradeMove tailWhip = new UpgradeMove("Tail Whip", "def", -1, Type.normal, AttackMode.status, 30);
-        UpgradeMove swordDance = new UpgradeMove("Sword Dance", "atk", -2, Type.normal, AttackMode.status, 20);
-        // UpgradeMove stunSpore = new UpgradeMove("Stun Spore", "paralysis", 0, Type.grass, AttackMode.status, 30);
+        SetUpMove leer = new SetUpMove("Leer", "def", -1, Type.normal, AttackMode.status, 30);
+        SetUpMove tailWhip = new SetUpMove("Tail Whip", "def", -1, Type.normal, AttackMode.status, 30);
+        SetUpMove swordDance = new SetUpMove("Sword Dance", "atk", -2, Type.normal, AttackMode.status, 20);
+
+        StatusAttack stunSpore = new StatusAttack("Stun Spore", 100, Status.paralyzed, Type.electric, AttackMode.status, 30);
 
         DebrisAttack toxicSpikes = new DebrisAttack("Toxic Spikes", Type.poison, AttackMode.status, 20, Debris.poisonSpikes);
         DebrisAttack stealthRock = new DebrisAttack("Stealth Rock", Type.rock, AttackMode.status, 40, Debris.stealthRock);
@@ -55,6 +57,7 @@ public class MovesExample {
         attackDB.put(14, bugBite);
         attackDB.put(15, bite);
         attackDB.put(16, poisonSting);
+        attackDB.put(17, stunSpore);
 
         return attackDB;
     }

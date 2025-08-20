@@ -6,7 +6,7 @@ import Controller.Fight.Battle.Events.UpdateBarEvent;
 import Model.Pokemon.AttackEnum.AttackMode;
 import Model.Pokemon.Attacks.Attack;
 import Model.Pokemon.Attacks.StatusAttack;
-import Model.Pokemon.Attacks.UpgradeMove;
+import Model.Pokemon.Attacks.SetUpMove;
 import Model.Pokemon.PokemonEnum.Experience;
 import Model.Pokemon.PokemonEnum.Status;
 import Model.Pokemon.PokemonEnum.Nature;
@@ -22,7 +22,7 @@ import com.opencsv.exceptions.CsvValidationException;
 
 
 public class Pokemon {
-
+    //region Variable
     int HP;
     int maxHP;
     int hpIV;
@@ -53,7 +53,6 @@ public class Pokemon {
     int maxExp;
     String name;
     Type type;
-    Type type1;
     Type type2;
     ArrayList<Move> moves;
 
@@ -75,7 +74,7 @@ public class Pokemon {
 
     BattleExecutor executor = BattleExecutor.getInstance();
     BattleConsole console = BattleConsole.getInstance();
-
+    //endregion
     public Pokemon(String name, int maxHP, int HP, int atk, int def, int atkSpe, int defSpe, int speed, int baseHP, int baseAtk, int baseDef, int baseAtkSpe, int baseDefSpe, int baseSpeed,
                    int hpIV, int atkIV, int defIV, int atkSpeIV, int defSpeIV, int speedIV, int hpEV, int atkEV, int defEV, int atkSpeEV, int defSpeEV, int speedEV, int atkRaise, int
                    defRaise, int atkSpeRaise, int defSpeRaise, int speedRaise, int level, Type type, ArrayList<Move> moves, String gender, int exp, int maxExp, Experience expType,
@@ -122,9 +121,7 @@ public class Pokemon {
     }
 
 
-    // ------------------------------------------------------------------------------------------------------------------
-    // Getter
-    // ------------------------------------------------------------------------------------------------------------------
+    //region Getter
 
     public String getName(){
         return name;
@@ -249,11 +246,9 @@ public class Pokemon {
     public boolean hasPriority(Pokemon other){
         return speed > other.speed;
     }
+    //endregion
 
-    // ------------------------------------------------------------------------------------------------------------------
-    // Setter
-    // ------------------------------------------------------------------------------------------------------------------
-
+    //region Setter
     public void setStatus(Status status) {
         if(status == Status.KO) {
             setHP(0);
@@ -273,11 +268,9 @@ public class Pokemon {
             this.status = Status.KO;
         }
     }
+    //endregion
 
-    // ------------------------------------------------------------------------------------------------------------------
-    // Attack
-    // ------------------------------------------------------------------------------------------------------------------
-
+    //region Attack
     /**
      * Verifies which instance is the player Pokémon's next move and applies the effect on the target according to the
      * move category (i.e. physical/special attack, a debris attack, a status attack or an upgrade move)
@@ -287,275 +280,65 @@ public class Pokemon {
      */
     public void attack(Pokemon target, Move move, Terrain terrain, TextBubble bubble, Bar targetBar) {
         Move m = getAttack(move); // Gets the move from the move pool
-        console.log("----- Beginning of " + name + "'s turn -----");
-        console.log(target.name + "'s stats : \n" +
-                "HP: " + target.getHP() + "\n"
-                + "Atk: " + target.getAtk() + "\n"
-                + "Def: " + target.getDef() + "\n"
-                + "AtkSpe: " + target.getAtkSpe() + "\n"
-                + "DefSpe: " + target.getDefSpe() + "\n"
-                + "Speed: " + target.getSpeed() + "\n");
-        console.log(name + " uses " + move.name + "\n");
-
+        applyStatusEffect(target, move, bubble, targetBar); // Apply the effect of the status
+        executor.addEvent(new MessageEvent(bubble,name + " uses " + m.name));
         if(m instanceof Attack attack){
-            console.log(attack.getName() + "\n" + "Power : " + attack.getPower() + "\n" + "Precision : " + attack.getPrecision() + "\n");
-            applyStatusEffect(target, move, bubble); // Apply the effect of the status
-            if((getStatus() == Status.normal || getStatus() == Status.cursed || getStatus() == Status.burned || getStatus() == Status.paralyzed || getStatus() == Status.freeze || getStatus() == Status.attracted || getStatus() == Status.confused || getStatus() == Status.asleep || getStatus() == Status.poisoned || getStatus() == Status.badlyPoisoned)){
-                executor.addEvent(new MessageEvent(bubble,name + " uses " + move.name));
+            if(!canHit(m)){
+                executor.addEvent(new MessageEvent(bubble,"It missed!"));
+            } else if((getStatus() == Status.normal || getStatus() == Status.cursed || getStatus() == Status.burned || getStatus() == Status.paralyzed || getStatus() == Status.freeze || getStatus() == Status.attracted || getStatus() == Status.confused || getStatus() == Status.asleep || getStatus() == Status.poisoned || getStatus() == Status.badlyPoisoned)){
                 int damage = (int) totalDamage((Attack) getAttack(attack), this, target, bubble);
-                console.log("Total damage : " + damage);
                 target.setHP(Math.max(0, target.getHP() - damage)); // Apply the damage
                 executor.addEvent(new UpdateBarEvent(targetBar));
             }
         }
         if(m instanceof DebrisAttack debrisAttack){
-            applyStatusEffect(target, move, bubble);
             terrain.setDebris(debrisAttack.getDebris());
         }
         if(m instanceof StatusAttack statusAttack){
-            applyStatusEffect(target, statusAttack, bubble);
-            target.status = setStatus(target, statusAttack, bubble);
-            System.out.println(target.name + " is " + target.getStatus() + "!");
-        }
-        if(m instanceof UpgradeMove upgradeMove){
-            applyStatusEffect(target, upgradeMove, bubble);
-            switch (upgradeMove.getStat()) {
-                case "atk"    -> atkRaise += upgradeMove.getRaiseLevel();
-                case "def"    -> defRaise += upgradeMove.getRaiseLevel();
-                case "speed"  -> speedRaise += upgradeMove.getRaiseLevel();
-                case "atkSpe" -> atkSpeRaise += upgradeMove.getRaiseLevel();
-                case "defSpe" -> defSpeRaise += upgradeMove.getRaiseLevel();
-            }
-            updateStat(bubble, target);
-        }
-        updateStatusEffect();
-        console.log(target.name + " : " + target.getHP() + "/" + target.getMaxHP());
-    }
-
-    // ------------------------------------------------------------------------------------------------------------------
-    // Everything that touches to stat changes in fights
-    // ------------------------------------------------------------------------------------------------------------------
-
-    /**
-     * Update the stat modifier each turn
-     */
-    public void updateStat(TextBubble bubble, Pokemon target){
-        this.atk = applyStatModifier(atk, atkRaise," attack", bubble, target);
-        this.def = applyStatModifier(def, defRaise, " defense", bubble, target);
-        this.speed = applyStatModifier(speed, speedRaise, " speed", bubble, target);
-        this.atkSpe = applyStatModifier(atkSpe, atkSpeRaise," special attack", bubble, target);
-        this.defSpe = applyStatModifier(defSpe, defSpeRaise," special defense", bubble, target);
-    }
-
-    private int applyStatModifier(int baseStat, int stage, String statName, TextBubble bubble, Pokemon target){
-        int originalStage = stage;
-
-        if (stage > 6) stage = 6;
-        if (stage < -6) stage = -6;
-
-        if (originalStage == 1) {
-            console.log(target.name + " raises its " + statName);
-            executor.addEvent(new MessageEvent(bubble, target.name + " raises its " + statName));
-        } else if (originalStage == 2) {
-            console.log(target.name + " sharply raises its " + statName);
-            executor.addEvent(new MessageEvent(bubble, target.name + " sharply raises its " + statName));
-        } else if (originalStage == -1) {
-            console.log(target.name + "'s" + statName + " decreased");
-            executor.addEvent(new MessageEvent(bubble, target.name + "'s" + statName + " decreased"));
-        } else if (originalStage == -2) {
-            console.log(target.name + "'s" + statName + " sharply decreased");
-            executor.addEvent(new MessageEvent(bubble, target.name + "'s" + statName + " sharply decreased"));
-        }
-
-        int[] multipliersNumerator = {2, 2, 2, 2, 2, 2, 2, 3, 4, 5, 6, 7, 8};
-        int[] multipliersDenominator = {8, 7, 6, 5, 4, 3, 2, 2, 2, 2, 2, 2, 2};
-
-        return (baseStat * multipliersNumerator[stage + 6]) / multipliersDenominator[stage + 6];
-    }
-
-
-    // ------------------------------------------------------------------------------------------------------------------
-    // Everything that touches to terrain, debris and climate
-    // ------------------------------------------------------------------------------------------------------------------
-
-    // In progress ...
-
-    // ------------------------------------------------------------------------------------------------------------------
-    // Everything that touches to status
-    // ------------------------------------------------------------------------------------------------------------------
-
-    /**
-     * Sets the status according to the element table
-     * @param target The target the player's Pokémon attacks
-     * @param statusMove The status attack it uses
-     * @return The status of the target
-     */
-    public Status setStatus(Pokemon target, StatusAttack statusMove, TextBubble bubble) {
-        if(target.getStatus() != Status.normal){
-            console.log(target.name + " is already " + target.getStatus() + "! It won't have any effect.");
-            System.out.println(target.name + " is already " + target.getStatus() + "! It won't have any effect.");
-            executor.addEvent(new MessageEvent(bubble,target.name + " is already " + target.getStatus() + "! It won't have any effect."));
-        }
-        if(immunitiesTable(target).contains(statusMove.getType())){
-            console.log("This attack does not affect " + name);
-            System.out.println("This attack does not affect " + name);
-            executor.addEvent(new MessageEvent(bubble,"This attack does not affect " + name));
-            return null;
-        }
-        if(target.getStatus() == Status.normal){
-            return statusMove.getStatus();
-        }
-        return target.getStatus();
-    }
-    /**
-     * Applies the effect on the Pokémon before it attacks
-     * @param target The target the player's Pokémon attacks
-     * @param move Move it uses
-     */
-    public void applyStatusEffect(Pokemon target, Move move, TextBubble bubble){
-        Random random = new Random();
-        if(HP <= 0) setStatus(Status.KO);
-        if(getAttack(move).getMode() == AttackMode.physical && status == Status.burned){
-            target.HP -= (int) totalDamage((Attack) getAttack(move), this, target, bubble)/2;
-            System.out.println(target.name + " HP : " + target.HP + "/" + target.getMaxHP());
-            return;
-        }
-        if(status == Status.paralyzed){
-            int randInt = random.nextInt(0,4);
-            if(randInt == 1){
-                console.log(name + " is paralyzed! It can't move!");
-                System.out.println(name + " is paralyzed! It can't move!");
-                executor.addEvent(new MessageEvent(bubble,name + " is paralyzed! It can't move!"));
-                return;
-            }
-        }
-        if(status == Status.freeze){
-            int randInt = random.nextInt(0,4);
-            if(randInt < 3){
-                console.log(name + " is frozen solid!");
-                System.out.println(name + " is frozen solid!");
-                executor.addEvent(new MessageEvent(bubble,name + " is frozen solid!"));
+            if(!canHit(m)){
+                executor.addEvent(new MessageEvent(bubble,"It missed!"));
                 return;
             } else {
-                console.log(name + " is not frozen anymore!");
-                System.out.println(name + " is not frozen anymore!");
-                executor.addEvent(new MessageEvent(bubble,name + " is not frozen anymore!"));
-                setStatus(null);
+                target.status = setStatus(target, statusAttack, bubble);
             }
         }
-        if(status == Status.asleep){
-            int randInt = random.nextInt(0,3);
-            if(randInt == 0){
-                console.log(name + " woke up!");
-                System.out.println(name + " woke up!");
-                executor.addEvent(new MessageEvent(bubble,name + " woke up!"));
-                setStatus(Status.normal);
-            }
-            if(randInt > 0){
-                console.log(name + " is asleep!");
-                System.out.println(name + " is asleep!");
-                executor.addEvent(new MessageEvent(bubble,name + " is asleep!"));
-                ++wakeUp;
-                if(wakeUp == 4){
-                    console.log(name + " woke up!");
-                    System.out.println(name + " woke up!");
-                    executor.addEvent(new MessageEvent(bubble,name + " woke up!"));
-                    status = Status.normal;
+        if(m instanceof SetUpMove setUpMove){
+            switch (setUpMove.getStat()) {
+                case "atk" -> {
+                    target.atkRaise += setUpMove.getRaiseLevel();
+                    writeStatUpgradeMsg(target, "attack", setUpMove, bubble);
                 }
-                if(wakeUp != 4) {
-                    return;
+                case "def" -> {
+                    target.defRaise += setUpMove.getRaiseLevel();
+                    writeStatUpgradeMsg(target, "defense", setUpMove, bubble);
                 }
-            }
-        }
-        if(status == Status.attracted && !Objects.equals(gender, target.getGender())){
-            int randInt = random.nextInt(0,2);
-            if(randInt == 1){
-                console.log(name + " is attracted to " + target.name);
-                System.out.println(name + " is attracted to " + target.name);
-                executor.addEvent(new MessageEvent(bubble,name + " is attracted to " + target.name));
-                return;
-            }
-        }
-        if(status == Status.confused){
-            int randInt = random.nextInt(0,2);
-            ++healConfusion;
-            if(randInt == 0){
-                if(healConfusion < 4) {
-                    console.log(name + " is confused!");
-                    executor.addEvent(new MessageEvent(bubble,name + " is confused!"));
-                    System.out.println(name + " is confused!");
+                case "speed" -> {
+                    target.speedRaise += setUpMove.getRaiseLevel();
+                    writeStatUpgradeMsg(target, "speed", setUpMove, bubble);
+                }
+                case "atkSpe" -> {
+                    target.atkSpeRaise += setUpMove.getRaiseLevel();
+                    writeStatUpgradeMsg(target, "special attack", setUpMove, bubble);
+                }
+                case "defSpe" -> {
+                    target.defSpeRaise += setUpMove.getRaiseLevel();
+                    writeStatUpgradeMsg(target, "special defense", setUpMove, bubble);
+                }
+                case "precision" -> {
+                    updatePrecision(target, setUpMove.getRaiseLevel());
+                    writeStatUpgradeMsg(target, "precision", setUpMove, bubble);
                 }
             }
-            if(randInt == 1){
-                console.log(name + " is confused!");
-                console.log(name + " hurt itself in its confusion!");
-                System.out.println(name + " is confused!");
-                executor.addEvent(new MessageEvent(bubble,name + " is confused!"));
-                executor.addEvent(new MessageEvent(bubble,name + " hurt itself in its confusion!"));
-                System.out.println(name + " hurt itself in its confusion!");
-                this.HP -= (int) (((((this.getLevel() * 0.4 + 2) * this.getAtk() * 40) / target.getDef()) / 50) + 2);
-                return;
-            }
-            if(healConfusion > 4){
-                console.log(name + " snapped out of confusion!");
-                System.out.println(name + " snapped out of confusion!");
-                executor.addEvent(new MessageEvent(bubble,name + " snapped out of confusion!"));
-                this.setStatus(Status.normal);
-                healConfusion = 0;
-            }
+            updateStatChanges();
         }
-        // To implement
-        if(status == Status.fear){
-            console.log(name + " is feared! It can't move!");
-            System.out.println(name + " is feared! It can't move!");
-            executor.addEvent(new MessageEvent(bubble,name + " is feared! It can't move!"));
-        }
+        updateHealthFromStatus(bubble, targetBar);
     }
-    /**
-     * Updates the status of the Pokémon
-     */
-    public void updateStatusEffect(){
-        switch(status){
-            case normal, attracted, asleep:
-                break;
-            case burned:
-                console.log(name + " is burned!");
-                System.out.println(name + " is burned!");
-                this.HP = this.HP - (this.maxHP/16);
-                break;
-            case poisoned:
-                console.log(name + " is poisoned!");
-                System.out.println(name + " is poisoned!");
-                this.HP = this.HP - (this.maxHP/8);
-                break;
-            case badlyPoisoned:
-                console.log(name + " is badly poisoned!");
-                System.out.println(name + " is badly poisoned!");
-                this.HP = this.HP - (this.maxHP/16 * poisonCoefficient);
-                ++poisonCoefficient;
-                break;
-            case confused:
-            case fear:
-                healFear++;
-                if(healFear == 1) {
-                    this.setStatus(Status.normal);
-                    healFear = 0;
-                }
-                break;
-            case cursed:
-                this.HP = this.HP - (this.maxHP/4);
-        }
-    }
-
-    // ------------------------------------------------------------------------------------------------------------------
-    // Total damages of special and physical attacks
-    // ------------------------------------------------------------------------------------------------------------------
 
     /**
      * Calculates the total damage (includes critical hits and the stab)
-     * @param attack
-     * @param launcher
-     * @param target
+     * @param attack The attack
+     * @param launcher The Pokémon that lauches the attack
+     * @param target The chosen target
      * @return The total damage done to the target
      */
     public double totalDamage(Attack attack, Pokemon launcher, Pokemon target, TextBubble bubble) {
@@ -646,11 +429,172 @@ public class Pokemon {
         }
         return 0;
     }
+    //endregion
 
-    //------------------------------------------------------------------------------------------------------------------
-    // Type table
-    // ------------------------------------------------------------------------------------------------------------------
+    //region Status
+    /**
+     * Sets the status according to the element table
+     * @param target The target the player's Pokémon attacks
+     * @param statusMove The status attack it uses
+     * @return The status of the target
+     */
+    private Status setStatus(Pokemon target, StatusAttack statusMove, TextBubble bubble) {
+        if(target.getStatus() != Status.normal){
+            console.log(target.name + " is already " + target.getStatus() + "! It won't have any effect.");
+            System.out.println(target.name + " is already " + target.getStatus() + "! It won't have any effect.");
+            executor.addEvent(new MessageEvent(bubble,target.name + " is already " + target.getStatus() + "! It won't have any effect."));
+        }
+        if(immunitiesTable(target).contains(statusMove.getType())){
+            console.log("This attack does not affect " + name);
+            System.out.println("This attack does not affect " + name);
+            executor.addEvent(new MessageEvent(bubble,"This attack does not affect " + name));
+            return null;
+        }
+        if(target.getStatus() == Status.normal){
+            return statusMove.getStatus();
+        }
+        return target.getStatus();
+    }
+    /**
+     * Applies the effect on the Pokémon before it attacks
+     * @param target The target the player's Pokémon attacks
+     * @param move Move it uses
+     */
+    private void applyStatusEffect(Pokemon target, Move move, TextBubble bubble, Bar bar){
+        Random random = new Random();
+        if(getAttack(move).getMode() == AttackMode.physical && status == Status.burned){
+            target.HP -= (int) totalDamage((Attack) getAttack(move), this, target, bubble)/2;
+            executor.addEvent(new UpdateBarEvent(bar));
+            return;
+        }
 
+        if(status == Status.paralyzed){
+            int paralyze = random.nextInt(1,2);
+            if(paralyze == 1){
+                executor.addEvent(new MessageEvent(bubble,name + " is paralyzed! It can't move!"));
+                return;
+            }
+        }
+
+        if(status == Status.freeze){
+            int freezes = random.nextInt(0,4);
+            if(freezes < 3){
+                executor.addEvent(new MessageEvent(bubble,name + " is frozen solid!"));
+                return;
+            } else {
+                executor.addEvent(new MessageEvent(bubble,name + " is not frozen anymore!"));
+                setStatus(Status.normal);
+            }
+        }
+
+        if(status == Status.asleep){
+            int asleep = random.nextInt(0,3);
+            if(asleep == 0){
+                executor.addEvent(new MessageEvent(bubble,name + " woke up!"));
+                setStatus(Status.normal);
+            }
+            if(asleep > 0){
+                executor.addEvent(new MessageEvent(bubble,name + " is asleep!"));
+                ++wakeUp;
+                if(wakeUp == 4){
+                    executor.addEvent(new MessageEvent(bubble,name + " woke up!"));
+                    setStatus(Status.normal);
+                }
+                if(wakeUp != 4) {
+                    return;
+                }
+            }
+        }
+
+        if(status == Status.attracted && !Objects.equals(gender, target.gender)){
+            int inLove = random.nextInt(0,2);
+            if(inLove == 1){
+                executor.addEvent(new MessageEvent(bubble,name + " is attracted to " + target.name));
+                return;
+            }
+        }
+
+        if(status == Status.confused){
+            int confused = random.nextInt(0,2);
+            ++healConfusion;
+            if(confused == 0){
+                if(healConfusion < 4) {
+                    console.log(name + " is confused!");
+                    executor.addEvent(new MessageEvent(bubble,name + " is confused!"));
+                }
+            }
+            if(confused == 1){
+                executor.addEvent(new MessageEvent(bubble,name + " is confused!"));
+                executor.addEvent(new MessageEvent(bubble,name + " hurt itself in its confusion!"));
+                HP -= (int) (((((level * 0.4 + 2) * atk * 40) / def) / 50) + 2);
+                return;
+            }
+            if(healConfusion > 4){
+                executor.addEvent(new MessageEvent(bubble,name + " snapped out of confusion!"));
+                setStatus(Status.normal);
+                healConfusion = 0;
+                executor.addEvent(new MessageEvent(bubble,name + " uses " + move.getName()));
+                target.HP -= (int) totalDamage((Attack) getAttack(move), this, target, bubble)/2;
+                executor.addEvent(new UpdateBarEvent(bar));
+            }
+        }
+        // To implement
+//        if(status == Status.fear){
+//            console.log(name + " is feared! It can't move!");
+//            System.out.println(name + " is feared! It can't move!");
+//            executor.addEvent(new MessageEvent(bubble,name + " is feared! It can't move!"));
+//        }
+        System.out.println("executing...");
+        executor.executeNext(null);
+    }
+    /**
+     * Updates the status of the Pokémon
+     */
+    public void updateHealthFromStatus(TextBubble bubble, Bar bar){
+        switch(status){
+            case normal, attracted, asleep:
+                break;
+            case burned:
+                executor.addEvent(new MessageEvent(bubble,name + " is burned!"));
+
+                HP = HP - (maxHP/16);
+
+                executor.addEvent(new MessageEvent(bubble,name + " suffers from its burn!"));
+                executor.addEvent(new UpdateBarEvent(bar));
+                break;
+            case poisoned:
+                executor.addEvent(new MessageEvent(bubble,name + " is poisoned!"));
+
+                HP = HP - (maxHP/8);
+
+                executor.addEvent(new MessageEvent(bubble,name + " suffers from poison!"));
+                executor.addEvent(new UpdateBarEvent(bar));
+                break;
+            case badlyPoisoned:
+                executor.addEvent(new MessageEvent(bubble,name + " is badly poisoned!"));
+
+                HP = HP - ((maxHP/16) * poisonCoefficient);
+                
+                executor.addEvent(new MessageEvent(bubble,name + " suffers from poison!"));
+                executor.addEvent(new UpdateBarEvent(bar));
+                ++poisonCoefficient;
+                break;
+            case confused:
+//            case fear:
+//                healFear++;
+//                if(healFear == 1) {
+//                    this.setStatus(Status.normal);
+//                    healFear = 0;
+//                }
+//                break;
+//            case cursed:
+//                HP = HP - (maxHP/4);
+        }
+        executor.executeNext(null);
+    }
+    //endregion
+
+    //region Type table
     public List<Type> weaknessesTable(Pokemon pokemon) {
 
         List<Type> weaknesses = new ArrayList<>();
@@ -897,11 +841,9 @@ public class Pokemon {
 
         return immunities;
     }
+    //endregion
 
-    // ------------------------------------------------------------------------------------------------------------------
-    // EXP
-    // ------------------------------------------------------------------------------------------------------------------
-
+    //region Experience
     /**
      *
      * Calculates the experience gain based on a formula, the base experience of the Pokémon can be got in the csv file
@@ -929,7 +871,7 @@ public class Pokemon {
 
             return ((a * e * t * baseExperience * defeatedPokemon.getLevel()) / 7);
         } catch (IOException ex) {
-            ex.printStackTrace();
+            System.out.println("IOException: " + ex.getMessage());
             return 0;
         }
     }
@@ -968,7 +910,7 @@ public class Pokemon {
                 }
             }
         } catch (IOException | NumberFormatException | CsvValidationException e) {
-            e.printStackTrace();
+            System.out.println("Exception : " + e.getMessage());
         }
 
         System.err.println("Error : Pokémon '" + pokemonName + "' didn't find in the csv file");
@@ -1019,11 +961,9 @@ public class Pokemon {
         double[] pValues = {0.0, 0.008, 0.014};
         return pValues[this.getLevel() % 3];
     }
+    //endregion
 
-    // ------------------------------------------------------------------------------------------------------------------
-    // Pokemon AI
-    // ------------------------------------------------------------------------------------------------------------------
-
+    //region AI
     /**
      * Recursively choose a random move in the Pokémon's move pool
      * @return A random move
@@ -1031,11 +971,100 @@ public class Pokemon {
     public Move chooseMove() {
         ArrayList<Move> movePool = getAttacks();
         if (movePool == null || movePool.isEmpty()) return null;
+
         ArrayList<Move> pool = new ArrayList<>();
-        for (Move m : movePool) if (m != null) pool.add(m);
+
+        for (Move move : movePool) if (move != null) pool.add(move);
+
         if (pool.isEmpty()) return null;
-        Random r = new Random();
-        return pool.get(r.nextInt(pool.size()));
+        Random random = new Random();
+
+        return pool.get(random.nextInt(pool.size()));
+    }
+    //endregion
+
+    //region Helpers
+    private void writeStatUpgradeMsg(Pokemon target, String stat, SetUpMove move, TextBubble bubble) {
+        switch (move.getRaiseLevel()){
+            case 1 -> {
+                console.log(target.name + " raises its " + stat);
+                executor.addEvent(new MessageEvent(bubble, target.name  + " raises its " + stat));
+            }
+            case 2 -> {
+                console.log(target.name + " sharply raises its " + stat);
+                executor.addEvent(new MessageEvent(bubble, target.name  + " sharply raises its " + stat));
+            }
+            case -1 -> {
+                console.log(target.name + "'s " + stat + " decreased");
+                executor.addEvent(new MessageEvent(bubble, target.name + "'s " + stat + " decreased"));
+            }
+            case -2 -> {
+                console.log(target.name + "'s " + stat + " harshly decreased");
+                executor.addEvent(new MessageEvent(bubble, target.name + "'s " + stat + " harshly decreased"));
+            }
+        }
     }
 
+    private boolean canHit(Move move){
+        boolean canHit = false;
+        double precision;
+        Random rand = new Random();
+        int imprecision = rand.nextInt(1,100);
+
+        if(move instanceof Attack){
+            precision = ((Attack) move).getPrecision();
+            // If the precision of the attack is superior to the random integer then the attack hits
+            if(precision > imprecision){
+                canHit = true;
+            }
+        }
+        if(move instanceof StatusAttack){
+            precision = ((StatusAttack) move).getPrecision();
+            if(precision > imprecision){
+                canHit = true;
+            }
+        }
+        return canHit;
+    }
+
+    /**
+     * Update the stat modifier each turn
+     */
+    private void updateStatChanges(){
+        System.out.println("Updating stat values...");
+        this.atk = applyStatModifier(atk, atkRaise);
+        this.def = applyStatModifier(def, defRaise);
+        this.speed = applyStatModifier(speed, speedRaise);
+        this.atkSpe = applyStatModifier(atkSpe, atkSpeRaise);
+        this.defSpe = applyStatModifier(defSpe, defSpeRaise);
+    }
+
+    private int applyStatModifier(int baseStat, int stage){
+        if (stage > 6) stage = 6;
+        if (stage < -6) stage = -6;
+        int[] multipliersNumerator = {2, 2, 2, 2, 2, 2, 2, 3, 4, 5, 6, 7, 8};
+        int[] multipliersDenominator = {8, 7, 6, 5, 4, 3, 2, 2, 2, 2, 2, 2, 2};
+        return (baseStat * multipliersNumerator[stage + 6]) / multipliersDenominator[stage + 6];
+    }
+
+    private void updatePrecision(Pokemon target, int stage){
+        if(stage > 6) stage = 6;
+        if (stage < -6) stage = -6;
+        ArrayList<Move> movePool = target.getAttacks();
+        double precision = 100;
+        for(Move move : movePool) {
+            System.out.println("Updating precision...");
+            double[] multipliers = {1.0 / 3, 3.0 / 8, 3.0 / 7, 1.0 / 2, 3.0 / 5, 3.0 / 4, 0, 4.0 / 3, 5.0 / 3, 2, 7.0 / 3, 8.0 / 3, 3};
+            if (move instanceof Attack attack) {
+                attack.setPrecision(precision * multipliers[stage + 6]);
+                System.out.println(attack.getName() + ", precision : " + attack.getPrecision() + ", stage : " + stage);
+            }
+            if (move instanceof StatusAttack statusAttack){
+                statusAttack.setPrecision(precision * multipliers[stage + 6]);
+                System.out.println(statusAttack.getName() + ", precision : " + statusAttack.getPrecision() + ", stage : " + stage);
+            }
+        }
+    }
+
+    //endregion
 }
