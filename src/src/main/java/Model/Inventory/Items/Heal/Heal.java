@@ -24,16 +24,16 @@ public class Heal extends Item implements Consumable {
     }
 
     @Override
-    public void consume(Pokemon target, TextBubble textBubble) {
+    public void consume(Pokemon target) {
         if (target.getHP() == target.getMaxHP()) {
-            executor.addEvent(new MessageEvent(textBubble, target.getName() + " is already in top form!"));
+            executor.addEvent(new MessageEvent(target.getName() + " is already in top form!"));
             System.out.println(target.getName() + " is already in top form!");
             return;
         }
         int newHP = Math.min(target.getHP() + HP, target.getMaxHP());
         target.setHP(newHP);
         executor.addEvent(new UpdateBarEvent(target));
-        executor.addEvent(new MessageEvent(textBubble, target.getName() + " regained some health!"));
+        executor.addEvent(new MessageEvent(target.getName() + " regained some health!"));
     }
 
 

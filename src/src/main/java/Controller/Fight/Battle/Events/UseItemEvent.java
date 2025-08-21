@@ -10,20 +10,19 @@ public class UseItemEvent extends BattleEvent {
     private final Fighter fighter;
     private final Item item;
     private final Pokemon target;
-    private final TextBubble bubble;
     private final BattleExecutor executor;
 
-    public UseItemEvent(Fighter fighter, Item item, Pokemon target, TextBubble bubble, BattleExecutor executor) {
+    public UseItemEvent(Fighter fighter, Item item, Pokemon target, BattleExecutor executor) {
         this.fighter = fighter;
         this.item = item;
         this.target = target;
-        this.bubble = bubble;
+
         this.executor = executor;
     }
 
     @Override
     public void execute() {
-        fighter.use(item, target, bubble);
+        fighter.use(item, target);
         executor.executeNext(this::onFinish);
     }
 }

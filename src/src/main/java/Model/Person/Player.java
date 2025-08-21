@@ -99,9 +99,9 @@ public class Player implements Fighter {
         }
     }
 
-    public void use(Item item, Pokemon target, TextBubble textBubble) {
+    public void use(Item item, Pokemon target) {
         if (item instanceof Consumable && bag.getInventory().containsKey(item) && bag.getQuantity(item) > 0) {
-            ((Consumable) item).consume(target, textBubble);
+            ((Consumable) item).consume(target);
             bag.setQuantity(item, bag.getInventory().get(item) - 1);
         }
     }

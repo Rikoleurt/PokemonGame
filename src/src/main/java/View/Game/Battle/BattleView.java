@@ -30,7 +30,6 @@ import static Model.StaticObjects.NPCExample.initiateEnemy;
 import static Model.StaticObjects.PlayerExample.initiatePlayer;
 
 public class BattleView extends BorderPane {
-
     static TextBubble textBubble = new TextBubble();
     static StatBubble statBubble = new StatBubble();
 
@@ -44,7 +43,7 @@ public class BattleView extends BorderPane {
     static Bar playerBar = new PlayerBar(5, playerPokemon);
     public static Terrain terrain = new Terrain(player.getTeam(), npc.getTeam(), Debris.normal, Weather.normal);
 
-    static BattleButtons battleButtons = new BattleButtons(textBubble, opponentBar, playerBar);
+     static BattleButtons battleButtons = new BattleButtons(textBubble, opponentBar, playerBar);
 
     static ImageView playerSprite;
     static ImageView opponentSprite;
@@ -146,8 +145,6 @@ public class BattleView extends BorderPane {
         return null;
     }
 
-
-
     public static void refreshSprites() {
         Pokemon p = player.getFrontPokemon();
         Pokemon n = npc.getFrontPokemon();
@@ -156,7 +153,7 @@ public class BattleView extends BorderPane {
     }
 
 
-    public TextBubble getTextBubble() {
+    public static TextBubble getTextBubble() {
         return textBubble;
     }
 

@@ -273,7 +273,6 @@ public class Pokemon {
     //endregion
 
     //region Attack
-
     /**
      * Verifies which instance is the player Pokémon's next move and applies the effect on the target according to the
      * move category (i.e. physical/special attack, a debris attack, a status attack or an upgrade move)
@@ -281,68 +280,66 @@ public class Pokemon {
      * @param move The move it uses
      * @param terrain The terrain the Pokémon are on
      */
-    public void attack(Pokemon target, Move move, Terrain terrain, TextBubble bubble) {
+    public void attack(Pokemon target, Move move, Terrain terrain) {
         Move m = getAttack(move); // Gets the move from the move pool
-        applyStatusEffect(target, move, bubble); // Apply the effect of the status
+        applyStatusEffect(target, move); // Apply the effect of the status
         System.out.println(isTurn);
         if(m instanceof Attack attack && isTurn){
-            executor.addEvent(new MessageEvent(bubble,name + " uses " + attack.getName()));
+            executor.addEvent(new MessageEvent(name + " uses " + attack.getName()));
             if(!canHit(m)){
-                executor.addEvent(new MessageEvent(bubble,"It missed!"));
+                executor.addEvent(new MessageEvent("It missed!"));
             } else if((status == Status.normal || status == Status.cursed || status == Status.burned || status == Status.paralyzed || status == Status.freeze || status == Status.attracted || status == Status.confused || status == Status.asleep || status == Status.poisoned || status == Status.badlyPoisoned)){
-                int damage = (int) totalDamage((Attack) getAttack(attack), this, target, bubble);
+                int damage = (int) totalDamage((Attack) getAttack(attack), this, target);
                 target.setHP(Math.max(0, target.getHP() - damage)); // Apply the damage
                 System.out.println(target.getName());
                 executor.addEvent(new UpdateBarEvent(target));
             }
         }
         if(m instanceof DebrisAttack debrisAttack && isTurn){
-            executor.addEvent(new MessageEvent(bubble,name + " uses " + debrisAttack.getName()));
+            executor.addEvent(new MessageEvent(name + " uses " + debrisAttack.getName()));
             terrain.setDebris(debrisAttack.getDebris());
         }
         if(m instanceof StatusAttack statusAttack && isTurn){
-            executor.addEvent(new MessageEvent(bubble,name + " uses " + statusAttack.getName()));
+            executor.addEvent(new MessageEvent(name + " uses " + statusAttack.getName()));
             if(!canHit(m)){
-                executor.addEvent(new MessageEvent(bubble,"It missed!"));
+                executor.addEvent(new MessageEvent("It missed!"));
                 return;
             } else {
-                target.status = setStatus(target, statusAttack, bubble);
+                target.status = setStatus(target, statusAttack);
             }
         }
         if(m instanceof SetUpMove setUpMove && isTurn){
-            executor.addEvent(new MessageEvent(bubble,name + " uses " + setUpMove.getName()));
+            executor.addEvent(new MessageEvent(name + " uses " + setUpMove.getName()));
             switch (setUpMove.getStat()) {
                 case "atk" -> {
                     target.atkRaise += setUpMove.getRaiseLevel();
-                    writeStatUpgradeMsg(target, "attack", setUpMove, bubble);
+                    writeStatUpgradeMsg(target, "attack", setUpMove);
                 }
                 case "def" -> {
                     target.defRaise += setUpMove.getRaiseLevel();
-                    writeStatUpgradeMsg(target, "defense", setUpMove, bubble);
+                    writeStatUpgradeMsg(target, "defense", setUpMove);
                 }
                 case "speed" -> {
                     target.speedRaise += setUpMove.getRaiseLevel();
-                    writeStatUpgradeMsg(target, "speed", setUpMove, bubble);
+                    writeStatUpgradeMsg(target, "speed", setUpMove);
                 }
                 case "atkSpe" -> {
                     target.atkSpeRaise += setUpMove.getRaiseLevel();
-                    writeStatUpgradeMsg(target, "special attack", setUpMove, bubble);
+                    writeStatUpgradeMsg(target, "special attack", setUpMove);
                 }
                 case "defSpe" -> {
                     target.defSpeRaise += setUpMove.getRaiseLevel();
-                    writeStatUpgradeMsg(target, "special defense", setUpMove, bubble);
+                    writeStatUpgradeMsg(target, "special defense", setUpMove);
                 }
                 case "precision" -> {
                     updatePrecision(target, setUpMove.getRaiseLevel());
-                    writeStatUpgradeMsg(target, "precision", setUpMove, bubble);
+                    writeStatUpgradeMsg(target, "precision", setUpMove);
                 }
             }
             updateStatChanges();
         }
-        updateHealthFromStatus(bubble);
+        updateHealthFromStatus();
     }
-
-
     /**
      * Calculates the total damage (includes critical hits and the stab)
      * @param attack The attack
@@ -350,7 +347,7 @@ public class Pokemon {
      * @param target The chosen target
      * @return The total damage done to the target
      */
-    public double totalDamage(Attack attack, Pokemon launcher, Pokemon target, TextBubble bubble) {
+    public double totalDamage(Attack attack, Pokemon launcher, Pokemon target) {
         float power = attack.getPower();
         double augmentedDamage;
         if(attack.isStab(launcher)) {
@@ -358,12 +355,10 @@ public class Pokemon {
         }
         if(attack.isCritical(launcher)){
             augmentedDamage = launcher.getAttack(attack).criticalDamage(launcher);
-            console.log("Critical hit !");
-            executor.addEvent(new MessageEvent(bubble, "Critical hit !"));
-            System.out.println("Critical hit !");
-            return calculateEffectiveness(attack, launcher, target, power, bubble) * augmentedDamage;
+            executor.addEvent(new MessageEvent( "Critical hit !"));
+            return calculateEffectiveness(attack, launcher, target, power) * augmentedDamage;
         }
-        return calculateEffectiveness(attack, launcher, target, power, bubble);
+        return calculateEffectiveness(attack, launcher, target, power);
     }
     /**
      * Checks if the move is effective or not (only works for physical and special attacks)
@@ -373,7 +368,7 @@ public class Pokemon {
      * @param power The power of the move
      * @return The attack damage without taking into account critical/stab hits
      */
-    private double calculateEffectiveness(Move move, Pokemon launcher, Pokemon target, float power, TextBubble bubble) {
+    private double calculateEffectiveness(Move move, Pokemon launcher, Pokemon target, float power) {
         List<Type> targetWeaknesses = weaknessesTable(target);
         List<Type> targetResistances = resistancesTable(target);
         List<Type> targetImmunities = immunitiesTable(target);
@@ -391,22 +386,16 @@ public class Pokemon {
                 double physicalDamages = ((((launcherLevel * 0.4 + 2) * launcherAtk * power) / targetDef) / 50) + 2;
                 if (targetWeaknesses.contains(move.getType())) {
                     effectivenessCoefficient = 2;
-                    executor.addEvent(new MessageEvent(bubble, "The attack is super effective !"));
-                    console.log("The attack is super effective !");
-                    System.out.println("The attack is super effective !");
+                    executor.addEvent(new MessageEvent("The attack is super effective !"));
                     return physicalDamages * effectivenessCoefficient;
                 }
                 if (targetImmunities.contains(move.getType())) {
                     console.log("This attack does not affect the pokemon");
-                    executor.addEvent(new MessageEvent(bubble, "The attack does not affect " + target.name));
-                    System.out.println("This attack does not affect the pokemon");
                     return 0;
                 }
                 if (targetResistances.contains(move.getType())) {
                     effectivenessCoefficient = 0.5f;
-                    executor.addEvent(new MessageEvent(bubble, "The attack is not very effective..."));
-                    System.out.println("The attack is not very effective");
-                    console.log("The attack is not very effective");
+                    executor.addEvent(new MessageEvent("The attack is not very effective..."));
                     return physicalDamages * effectivenessCoefficient;
                 } else {
                     return physicalDamages;
@@ -416,21 +405,15 @@ public class Pokemon {
                 if (targetWeaknesses.contains(move.getType())) {
                     effectivenessCoefficient = 2;
                     console.log("The attack is super effective !");
-                    executor.addEvent(new MessageEvent(bubble, "The attack is super effective !"));
-                    System.out.println("The attack is super effective !");
                     return specialDamages * effectivenessCoefficient;
                 }
                 if (targetImmunities.contains(move.getType())) {
-                    executor.addEvent(new MessageEvent(bubble, "The attack does not affect " + target.name));
-                    System.out.println("This attack does not affect the pokemon");
-                    console.log("This attack does not affect the pokemon");
+                    executor.addEvent(new MessageEvent( "The attack does not affect " + target.name));
                     return 0;
                 }
                 if (targetResistances.contains(move.getType())) {
                     effectivenessCoefficient = 0.5f;
-                    executor.addEvent(new MessageEvent(bubble, "The attack is not very effective..."));
-                    System.out.println("The attack is not very effective !");
-                    console.log("The attack is not very effective");
+                    executor.addEvent(new MessageEvent( "The attack is not very effective..."));
                     return specialDamages * effectivenessCoefficient;
                 } else {
                     return specialDamages;
@@ -447,12 +430,12 @@ public class Pokemon {
      * @param statusMove The status attack it uses
      * @return The status of the target
      */
-    private Status setStatus(Pokemon target, StatusAttack statusMove, TextBubble bubble) {
+    private Status setStatus(Pokemon target, StatusAttack statusMove) {
         if(target.getStatus() != Status.normal){
-            executor.addEvent(new MessageEvent(bubble,target.name + " is already " + target.getStatus() + "! It won't have any effect."));
+            executor.addEvent(new MessageEvent(target.name + " is already " + target.getStatus() + "! It won't have any effect."));
         }
         if(immunitiesTable(target).contains(statusMove.getType())){
-            executor.addEvent(new MessageEvent(bubble,"This attack does not affect " + name));
+            executor.addEvent(new MessageEvent("This attack does not affect " + name));
             return null;
         }
         if(target.getStatus() == Status.normal){
@@ -466,11 +449,11 @@ public class Pokemon {
      * @param target The target the player's Pokémon attacks
      * @param move Move it uses
      */
-    public void applyStatusEffect(Pokemon target, Move move, TextBubble bubble){
+    public void applyStatusEffect(Pokemon target, Move move){
         Random random = new Random();
         if(getAttack(move).getMode() == AttackMode.physical && status == Status.burned){
-            executor.addEvent(new MessageEvent(bubble, name + " uses " + move.getName()));
-            target.HP -= (int) totalDamage((Attack) getAttack(move), this, target, bubble)/2;
+            executor.addEvent(new MessageEvent(name + " uses " + move.getName()));
+            target.HP -= (int) totalDamage((Attack) getAttack(move), this, target)/2;
             executor.addEvent(new UpdateBarEvent(target));
             isTurn = false;
             return;
@@ -478,9 +461,9 @@ public class Pokemon {
 
         if(status == Status.paralyzed){
             boolean paralyzed = random.nextInt(0,4) == 0;
-            executor.addEvent(new MessageEvent(bubble, name + " is paralyzed!"));
+            executor.addEvent(new MessageEvent( name + " is paralyzed!"));
             if(paralyzed){
-                executor.addEvent(new MessageEvent(bubble,name + " can't move!"));
+                executor.addEvent(new MessageEvent(name + " can't move!"));
                 isTurn = false;
                 return;
             }
@@ -489,11 +472,11 @@ public class Pokemon {
         if(status == Status.freeze){
             boolean frozen = random.nextInt(0,4) < 3;
             if(frozen){
-                executor.addEvent(new MessageEvent(bubble,name + " is frozen solid!"));
+                executor.addEvent(new MessageEvent(name + " is frozen solid!"));
                 isTurn = false;
                 return;
             } else {
-                executor.addEvent(new MessageEvent(bubble,name + " is not frozen anymore!"));
+                executor.addEvent(new MessageEvent(name + " is not frozen anymore!"));
                 setStatus(Status.normal);
             }
         }
@@ -501,14 +484,14 @@ public class Pokemon {
         if(status == Status.asleep){
             int asleep = random.nextInt(0,3);
             if(asleep == 0){
-                executor.addEvent(new MessageEvent(bubble,name + " woke up!"));
+                executor.addEvent(new MessageEvent(name + " woke up!"));
                 setStatus(Status.normal);
             }
             if(asleep > 0){
-                executor.addEvent(new MessageEvent(bubble,name + " is asleep!"));
+                executor.addEvent(new MessageEvent(name + " is asleep!"));
                 ++wakeUp;
                 if(wakeUp == 4){
-                    executor.addEvent(new MessageEvent(bubble,name + " woke up!"));
+                    executor.addEvent(new MessageEvent(name + " woke up!"));
                     setStatus(Status.normal);
                 }
                 if(wakeUp != 4) {
@@ -521,7 +504,7 @@ public class Pokemon {
         if(status == Status.attracted && !Objects.equals(gender, target.gender)){
             boolean inLove = random.nextInt(0,2) == 1;
             if(inLove){
-                executor.addEvent(new MessageEvent(bubble,name + " is attracted to " + target.name));
+                executor.addEvent(new MessageEvent(name + " is attracted to " + target.name));
                 isTurn = false;
                 return;
             }
@@ -533,23 +516,23 @@ public class Pokemon {
             if(confused == 0){
                 if(healConfusion < 4) {
                     console.log(name + " is confused!");
-                    executor.addEvent(new MessageEvent(bubble,name + " is confused!"));
+                    executor.addEvent(new MessageEvent(name + " is confused!"));
                 }
             }
             if(confused == 1){
-                executor.addEvent(new MessageEvent(bubble,name + " is confused!"));
-                executor.addEvent(new MessageEvent(bubble,name + " hurt itself in its confusion!"));
+                executor.addEvent(new MessageEvent(name + " is confused!"));
+                executor.addEvent(new MessageEvent(name + " hurt itself in its confusion!"));
                 HP -= (int) (((((level * 0.4 + 2) * atk * 40) / def) / 50) + 2);
                 executor.addEvent(new UpdateBarEvent(this));
                 isTurn = false;
                 return;
             }
             if(healConfusion > 4){
-                executor.addEvent(new MessageEvent(bubble,name + " snapped out of confusion!"));
+                executor.addEvent(new MessageEvent(name + " snapped out of confusion!"));
                 setStatus(Status.normal);
                 healConfusion = 0;
-                executor.addEvent(new MessageEvent(bubble,name + " uses " + move.getName()));
-                target.HP -= (int) totalDamage((Attack) getAttack(move), this, target, bubble)/2;
+                executor.addEvent(new MessageEvent(name + " uses " + move.getName()));
+                target.HP -= (int) totalDamage((Attack) getAttack(move), this, target)/2;
                 executor.addEvent(new UpdateBarEvent(target));
             }
         }
@@ -557,36 +540,36 @@ public class Pokemon {
 //        if(status == Status.fear){
 //            console.log(name + " is feared! It can't move!");
 //            System.out.println(name + " is feared! It can't move!");
-//            executor.addEvent(new MessageEvent(bubble,name + " is feared! It can't move!"));
+//            executor.addEvent(new MessageEvent(name + " is feared! It can't move!"));
 //        }
     }
     /**
      * Updates the status of the Pokémon
      */
-    public void updateHealthFromStatus(TextBubble bubble){
+    public void updateHealthFromStatus(){
         switch(status){
             case normal, attracted, asleep:
                 break;
             case burned:
-                executor.addEvent(new MessageEvent(bubble,name + " is burned!"));
+                executor.addEvent(new MessageEvent(name + " is burned!"));
                 HP -= (maxHP/16);
-                executor.addEvent(new MessageEvent(bubble,name + " suffers from its burn!"));
+                executor.addEvent(new MessageEvent(name + " suffers from its burn!"));
                 executor.addEvent(new UpdateBarEvent(this));
                 break;
             case poisoned:
-                executor.addEvent(new MessageEvent(bubble,name + " is poisoned!"));
+                executor.addEvent(new MessageEvent(name + " is poisoned!"));
 
                 HP -= (maxHP/8);
 
-                executor.addEvent(new MessageEvent(bubble,name + " suffers from poison!"));
+                executor.addEvent(new MessageEvent(name + " suffers from poison!"));
                 executor.addEvent(new UpdateBarEvent(this));
                 break;
             case badlyPoisoned:
-                executor.addEvent(new MessageEvent(bubble,name + " is badly poisoned!"));
+                executor.addEvent(new MessageEvent(name + " is badly poisoned!"));
 
                 HP -= ((maxHP/16) * poisonCoefficient);
                 
-                executor.addEvent(new MessageEvent(bubble,name + " suffers from poison!"));
+                executor.addEvent(new MessageEvent(name + " suffers from poison!"));
                 executor.addEvent(new UpdateBarEvent(this));
                 ++poisonCoefficient;
                 break;
@@ -994,23 +977,23 @@ public class Pokemon {
     //endregion
 
     //region Helpers
-    private void writeStatUpgradeMsg(Pokemon target, String stat, SetUpMove move, TextBubble bubble) {
+    private void writeStatUpgradeMsg(Pokemon target, String stat, SetUpMove move) {
         switch (move.getRaiseLevel()){
             case 1 -> {
                 console.log(target.name + " raises its " + stat);
-                executor.addEvent(new MessageEvent(bubble, target.name  + " raises its " + stat));
+                executor.addEvent(new MessageEvent(target.name  + " raises its " + stat));
             }
             case 2 -> {
                 console.log(target.name + " sharply raises its " + stat);
-                executor.addEvent(new MessageEvent(bubble, target.name  + " sharply raises its " + stat));
+                executor.addEvent(new MessageEvent(target.name  + " sharply raises its " + stat));
             }
             case -1 -> {
                 console.log(target.name + "'s " + stat + " decreased");
-                executor.addEvent(new MessageEvent(bubble, target.name + "'s " + stat + " decreased"));
+                executor.addEvent(new MessageEvent(target.name + "'s " + stat + " decreased"));
             }
             case -2 -> {
                 console.log(target.name + "'s " + stat + " harshly decreased");
-                executor.addEvent(new MessageEvent(bubble, target.name + "'s " + stat + " harshly decreased"));
+                executor.addEvent(new MessageEvent(target.name + "'s " + stat + " harshly decreased"));
             }
         }
     }

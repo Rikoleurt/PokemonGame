@@ -111,13 +111,13 @@ public class Categories extends VBox {
                         SceneManager.switchStageTo(SceneManager.getFightView());
                         BattleButtons.getHBox1().setVisible(false);
                         BattleButtons.getHBox2().setVisible(false);
-                        executor.addEvent(new UseItemEvent(player, item, chosenPokemon, textBubble, executor));
+                        executor.addEvent(new UseItemEvent(player, item, chosenPokemon, executor));
                         executor.executeNext(() -> {
                             if (npcPokemon.getStatus() != Status.KO) {
                                 Move npcMove = npcPokemon.chooseMove();
-                                executor.addEvent(new AttackEvent(npcPokemon, playerPokemon, npcMove, BattleView.getTerrain(), textBubble, executor));
+                                executor.addEvent(new AttackEvent(npcPokemon, playerPokemon, npcMove, BattleView.getTerrain(), executor));
                             } else {
-                                executor.addEvent(new MessageEvent(textBubble, npcPokemon.getName() + " fainted."));
+                                executor.addEvent(new MessageEvent(npcPokemon.getName() + " fainted."));
                             }
                             executor.executeNext(() -> {
                                 BattleView.getFightButtons().resetFightButtons();

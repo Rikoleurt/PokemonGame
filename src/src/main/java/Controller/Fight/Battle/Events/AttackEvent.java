@@ -13,21 +13,19 @@ public class AttackEvent extends BattleEvent{
     private final Pokemon defender;
     private final Move move;
     private final Terrain terrain;
-    private final TextBubble bubble;
     private final BattleExecutor executor;
 
-    public AttackEvent(Pokemon attacker, Pokemon defender, Move move, Terrain terrain, TextBubble bubble, BattleExecutor executor) {
+    public AttackEvent(Pokemon attacker, Pokemon defender, Move move, Terrain terrain, BattleExecutor executor) {
         this.attacker = attacker;
         this.defender = defender;
         this.move = move;
         this.terrain = terrain;
-        this.bubble = bubble;
         this.executor = executor;
     }
 
     @Override
     public void execute() {
-        attacker.attack(defender, move, terrain, bubble);
+        attacker.attack(defender, move, terrain);
         executor.executeNext(this::onFinish);
     }
 }

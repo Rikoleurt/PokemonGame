@@ -54,10 +54,12 @@ public class NPC implements Fighter {
         System.out.println(lastChoice);
         return lastChoice;
     }
-    public void use(Item item, Pokemon target, TextBubble textBubble) {
+
+    @Override
+    public void use(Item item, Pokemon target) {
         if (!"Item".equals(lastChoice)) return;
         if (item instanceof Consumable && bag.getInventory().containsKey(item) && bag.getQuantity(item) > 0) {
-            ((Consumable) item).consume(target, textBubble);
+            ((Consumable) item).consume(target);
             bag.setQuantity(item, bag.getInventory().get(item) - 1);
         }
     }

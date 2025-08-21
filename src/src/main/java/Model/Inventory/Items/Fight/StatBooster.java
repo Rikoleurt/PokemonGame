@@ -26,8 +26,7 @@ public class StatBooster extends Item implements Consumable {
     }
 
     @Override
-    public void consume(Pokemon target, TextBubble textBubble) {
-
+    public void consume(Pokemon target) {
     }
 
     @Override

@@ -198,11 +198,11 @@ public class BattleButtons extends HBox {
 
         if ("Item".equals(npcChoice) && itemChoice != null) {
 
-            executor.addEvent(new UseItemEvent(npc, itemChoice, npcPokemon, textBubble, executor));
+            executor.addEvent(new UseItemEvent(npc, itemChoice, npcPokemon, executor));
 
             executor.executeNext(() -> {
                 if (playerPokemon.getStatus() != Status.KO) {
-                    executor.addEvent(new AttackEvent(playerPokemon, npcPokemon, move, BattleView.getTerrain(), textBubble, executor));
+                    executor.addEvent(new AttackEvent(playerPokemon, npcPokemon, move, BattleView.getTerrain(), executor));
                     executor.executeNext(() -> {
                         if (npcPokemon.getStatus() == Status.KO) {
                             handleNpcPokemonKO();
@@ -225,17 +225,17 @@ public class BattleButtons extends HBox {
         if ("Switch".equals(npcChoice) && npc.getTeam().size() > 1) {
             Pokemon next = npc.chooseSwitchTarget();
             if (next != null) {
-                executor.addEvent(new MessageEvent(textBubble, npc.getFrontPokemon().getName() + " stop!"));
+                executor.addEvent(new MessageEvent(npc.getFrontPokemon().getName() + " stop!"));
                 npc.setFront(next, terrain);
                 BattleView.refreshSprites();
-                executor.addEvent(new MessageEvent(textBubble, npc.getFrontPokemon().getName() + " go!"));
+                executor.addEvent(new MessageEvent(npc.getFrontPokemon().getName() + " go!"));
                 opponentBar.setPokemon(npc.getFrontPokemon());
 
                 executor.executeNext(() -> {
                     Pokemon freshNpc = BattleView.getNpc().getFrontPokemon();
                     Pokemon freshPlayer = player.getFrontPokemon();
                     if (freshPlayer.getStatus() != Status.KO) {
-                        executor.addEvent(new AttackEvent(freshPlayer, freshNpc, move, BattleView.getTerrain(), textBubble, executor));
+                        executor.addEvent(new AttackEvent(freshPlayer, freshNpc, move, BattleView.getTerrain(), executor));
                         executor.executeNext(() -> {
                             if (freshNpc.getStatus() == Status.KO) {
                                 handleNpcPokemonKO();
@@ -253,10 +253,10 @@ public class BattleButtons extends HBox {
         }
 
         if (npcPokemon.hasPriority(playerPokemon)) {
-            executor.addEvent(new AttackEvent(npcPokemon, playerPokemon, npcMove, terrain, textBubble, executor));
+            executor.addEvent(new AttackEvent(npcPokemon, playerPokemon, npcMove, terrain, executor));
             executor.executeNext(() -> {
                 if (playerPokemon.getStatus() != Status.KO) {
-                    executor.addEvent(new AttackEvent(playerPokemon, npcPokemon, move, terrain, textBubble, executor));
+                    executor.addEvent(new AttackEvent(playerPokemon, npcPokemon, move, terrain, executor));
                     executor.executeNext(() -> {
                         if (npcPokemon.getStatus() == Status.KO) {
                             handleNpcPokemonKO();
@@ -269,10 +269,10 @@ public class BattleButtons extends HBox {
                 }
             });
         } else {
-            executor.addEvent(new AttackEvent(playerPokemon, npcPokemon, move, terrain, textBubble, executor));
+            executor.addEvent(new AttackEvent(playerPokemon, npcPokemon, move, terrain, executor));
             executor.executeNext(() -> {
                 if (npcPokemon.getStatus() != Status.KO) {
-                    executor.addEvent(new AttackEvent(npcPokemon, playerPokemon, npcMove, terrain, textBubble, executor));
+                    executor.addEvent(new AttackEvent(npcPokemon, playerPokemon, npcMove, terrain, executor));
                     executor.executeNext(() -> {
                         if (playerPokemon.getStatus() == Status.KO) {
                             handlePlayerPokemonKO();
@@ -293,13 +293,13 @@ public class BattleButtons extends HBox {
 
 
     private void handlePlayerPokemonKO(){
-        executor.addEvent(new MessageEvent(textBubble, playerPokemon.getName() + " fainted."));
+        executor.addEvent(new MessageEvent(playerPokemon.getName() + " fainted."));
         executor.executeNext(this::askPlayerForSwitch);
         executor.clearEvents();
         // Open another window to let the player chose its next Pokémon
     }
     private void handleNpcPokemonKO(){
-        executor.addEvent(new MessageEvent(textBubble, npcPokemon.getName() + " fainted."));
+        executor.addEvent(new MessageEvent(npcPokemon.getName() + " fainted."));
         executor.executeNext(this::askNPCForSwitch);
         // Let the enemy switch
     }
@@ -318,7 +318,7 @@ public class BattleButtons extends HBox {
         pt.setOnFinished(event -> {
             if (next != null) {
                 npc.setFront(next, terrain);
-                executor.addEvent(new MessageEvent(textBubble, npc.getName() + " sends " + npc.getFrontPokemon().getName() + "!"));
+                executor.addEvent(new MessageEvent(npc.getName() + " sends " + npc.getFrontPokemon().getName() + "!"));
                 opponentBar.setPokemon(npc.getFrontPokemon());
                 opponentBar.resetPokeball();
                 executor.executeNext(() -> Platform.runLater(this::resetFightButtons));

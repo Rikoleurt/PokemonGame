@@ -223,10 +223,10 @@ public class SwitchView extends BorderPane {
         BattleView.getPlayerBar().setVisible(false);
 
         SceneManager.switchStageTo(SceneManager.getFightView());
-        executor.addEvent(new MessageEvent(textBubble, player.getFrontPokemon().getName() + " stop!"));
+        executor.addEvent(new MessageEvent(player.getFrontPokemon().getName() + " stop!"));
         player.setFront(pokemon, terrain);
         BattleView.refreshSprites();
-        executor.addEvent(new MessageEvent(textBubble, player.getFrontPokemon().getName() + " go!"));
+        executor.addEvent(new MessageEvent(player.getFrontPokemon().getName() + " go!"));
         BattleView.getPlayerBar().setPokemon(player.getFrontPokemon());
 
         executor.executeNext(() -> {
@@ -242,9 +242,9 @@ public class SwitchView extends BorderPane {
             Pokemon playerPokemon = player.getFrontPokemon();
             if (npcPokemon.getStatus() != Status.KO) {
                 Move npcMove = npcPokemon.chooseMove();
-                executor.addEvent(new AttackEvent(npcPokemon, playerPokemon, npcMove, BattleView.getTerrain(), textBubble, executor));
+                executor.addEvent(new AttackEvent(npcPokemon, playerPokemon, npcMove, BattleView.getTerrain(), executor));
             } else {
-                executor.addEvent(new MessageEvent(textBubble, npcPokemon.getName() + " fainted."));
+                executor.addEvent(new MessageEvent(npcPokemon.getName() + " fainted."));
             }
             executor.executeNext(() -> {
                 BattleView.getPlayerBar().setVisible(true);
