@@ -115,7 +115,7 @@ public class Categories extends VBox {
                         executor.executeNext(() -> {
                             if (npcPokemon.getStatus() != Status.KO) {
                                 Move npcMove = npcPokemon.chooseMove();
-                                executor.addEvent(new AttackEvent(npcPokemon, playerPokemon, npcMove, BattleView.getTerrain(), textBubble, BattleView.getPlayerBar(), executor));
+                                executor.addEvent(new AttackEvent(npcPokemon, playerPokemon, npcMove, BattleView.getTerrain(), textBubble, executor));
                             } else {
                                 executor.addEvent(new MessageEvent(textBubble, npcPokemon.getName() + " fainted."));
                             }

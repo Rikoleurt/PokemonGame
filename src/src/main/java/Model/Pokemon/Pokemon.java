@@ -72,6 +72,8 @@ public class Pokemon {
     int atkSpeRaise;
     int defSpeRaise;
 
+    boolean isTurn = true;
+
     BattleExecutor executor = BattleExecutor.getInstance();
     BattleConsole console = BattleConsole.getInstance();
     //endregion
@@ -271,6 +273,7 @@ public class Pokemon {
     //endregion
 
     //region Attack
+
     /**
      * Verifies which instance is the player Pokémon's next move and applies the effect on the target according to the
      * move category (i.e. physical/special attack, a debris attack, a status attack or an upgrade move)
@@ -278,23 +281,27 @@ public class Pokemon {
      * @param move The move it uses
      * @param terrain The terrain the Pokémon are on
      */
-    public void attack(Pokemon target, Move move, Terrain terrain, TextBubble bubble, Bar targetBar) {
+    public void attack(Pokemon target, Move move, Terrain terrain, TextBubble bubble) {
         Move m = getAttack(move); // Gets the move from the move pool
-        applyStatusEffect(target, move, bubble, targetBar); // Apply the effect of the status
-        executor.addEvent(new MessageEvent(bubble,name + " uses " + m.name));
-        if(m instanceof Attack attack){
+        applyStatusEffect(target, move, bubble); // Apply the effect of the status
+        System.out.println(isTurn);
+        if(m instanceof Attack attack && isTurn){
+            executor.addEvent(new MessageEvent(bubble,name + " uses " + attack.getName()));
             if(!canHit(m)){
                 executor.addEvent(new MessageEvent(bubble,"It missed!"));
-            } else if((getStatus() == Status.normal || getStatus() == Status.cursed || getStatus() == Status.burned || getStatus() == Status.paralyzed || getStatus() == Status.freeze || getStatus() == Status.attracted || getStatus() == Status.confused || getStatus() == Status.asleep || getStatus() == Status.poisoned || getStatus() == Status.badlyPoisoned)){
+            } else if((status == Status.normal || status == Status.cursed || status == Status.burned || status == Status.paralyzed || status == Status.freeze || status == Status.attracted || status == Status.confused || status == Status.asleep || status == Status.poisoned || status == Status.badlyPoisoned)){
                 int damage = (int) totalDamage((Attack) getAttack(attack), this, target, bubble);
                 target.setHP(Math.max(0, target.getHP() - damage)); // Apply the damage
-                executor.addEvent(new UpdateBarEvent(targetBar));
+                System.out.println(target.getName());
+                executor.addEvent(new UpdateBarEvent(target));
             }
         }
-        if(m instanceof DebrisAttack debrisAttack){
+        if(m instanceof DebrisAttack debrisAttack && isTurn){
+            executor.addEvent(new MessageEvent(bubble,name + " uses " + debrisAttack.getName()));
             terrain.setDebris(debrisAttack.getDebris());
         }
-        if(m instanceof StatusAttack statusAttack){
+        if(m instanceof StatusAttack statusAttack && isTurn){
+            executor.addEvent(new MessageEvent(bubble,name + " uses " + statusAttack.getName()));
             if(!canHit(m)){
                 executor.addEvent(new MessageEvent(bubble,"It missed!"));
                 return;
@@ -302,7 +309,8 @@ public class Pokemon {
                 target.status = setStatus(target, statusAttack, bubble);
             }
         }
-        if(m instanceof SetUpMove setUpMove){
+        if(m instanceof SetUpMove setUpMove && isTurn){
+            executor.addEvent(new MessageEvent(bubble,name + " uses " + setUpMove.getName()));
             switch (setUpMove.getStat()) {
                 case "atk" -> {
                     target.atkRaise += setUpMove.getRaiseLevel();
@@ -331,13 +339,14 @@ public class Pokemon {
             }
             updateStatChanges();
         }
-        updateHealthFromStatus(bubble, targetBar);
+        updateHealthFromStatus(bubble);
     }
+
 
     /**
      * Calculates the total damage (includes critical hits and the stab)
      * @param attack The attack
-     * @param launcher The Pokémon that lauches the attack
+     * @param launcher The Pokémon that launches the attack
      * @param target The chosen target
      * @return The total damage done to the target
      */
@@ -440,46 +449,48 @@ public class Pokemon {
      */
     private Status setStatus(Pokemon target, StatusAttack statusMove, TextBubble bubble) {
         if(target.getStatus() != Status.normal){
-            console.log(target.name + " is already " + target.getStatus() + "! It won't have any effect.");
-            System.out.println(target.name + " is already " + target.getStatus() + "! It won't have any effect.");
             executor.addEvent(new MessageEvent(bubble,target.name + " is already " + target.getStatus() + "! It won't have any effect."));
         }
         if(immunitiesTable(target).contains(statusMove.getType())){
-            console.log("This attack does not affect " + name);
-            System.out.println("This attack does not affect " + name);
             executor.addEvent(new MessageEvent(bubble,"This attack does not affect " + name));
             return null;
         }
         if(target.getStatus() == Status.normal){
             return statusMove.getStatus();
         }
-        return target.getStatus();
+        return target.status;
     }
+
     /**
      * Applies the effect on the Pokémon before it attacks
      * @param target The target the player's Pokémon attacks
      * @param move Move it uses
      */
-    private void applyStatusEffect(Pokemon target, Move move, TextBubble bubble, Bar bar){
+    public void applyStatusEffect(Pokemon target, Move move, TextBubble bubble){
         Random random = new Random();
         if(getAttack(move).getMode() == AttackMode.physical && status == Status.burned){
+            executor.addEvent(new MessageEvent(bubble, name + " uses " + move.getName()));
             target.HP -= (int) totalDamage((Attack) getAttack(move), this, target, bubble)/2;
-            executor.addEvent(new UpdateBarEvent(bar));
+            executor.addEvent(new UpdateBarEvent(target));
+            isTurn = false;
             return;
         }
 
         if(status == Status.paralyzed){
-            int paralyze = random.nextInt(1,2);
-            if(paralyze == 1){
-                executor.addEvent(new MessageEvent(bubble,name + " is paralyzed! It can't move!"));
+            boolean paralyzed = random.nextInt(0,4) == 0;
+            executor.addEvent(new MessageEvent(bubble, name + " is paralyzed!"));
+            if(paralyzed){
+                executor.addEvent(new MessageEvent(bubble,name + " can't move!"));
+                isTurn = false;
                 return;
             }
         }
 
         if(status == Status.freeze){
-            int freezes = random.nextInt(0,4);
-            if(freezes < 3){
+            boolean frozen = random.nextInt(0,4) < 3;
+            if(frozen){
                 executor.addEvent(new MessageEvent(bubble,name + " is frozen solid!"));
+                isTurn = false;
                 return;
             } else {
                 executor.addEvent(new MessageEvent(bubble,name + " is not frozen anymore!"));
@@ -501,15 +512,17 @@ public class Pokemon {
                     setStatus(Status.normal);
                 }
                 if(wakeUp != 4) {
+                    isTurn = false;
                     return;
                 }
             }
         }
 
         if(status == Status.attracted && !Objects.equals(gender, target.gender)){
-            int inLove = random.nextInt(0,2);
-            if(inLove == 1){
+            boolean inLove = random.nextInt(0,2) == 1;
+            if(inLove){
                 executor.addEvent(new MessageEvent(bubble,name + " is attracted to " + target.name));
+                isTurn = false;
                 return;
             }
         }
@@ -527,6 +540,8 @@ public class Pokemon {
                 executor.addEvent(new MessageEvent(bubble,name + " is confused!"));
                 executor.addEvent(new MessageEvent(bubble,name + " hurt itself in its confusion!"));
                 HP -= (int) (((((level * 0.4 + 2) * atk * 40) / def) / 50) + 2);
+                executor.addEvent(new UpdateBarEvent(this));
+                isTurn = false;
                 return;
             }
             if(healConfusion > 4){
@@ -535,7 +550,7 @@ public class Pokemon {
                 healConfusion = 0;
                 executor.addEvent(new MessageEvent(bubble,name + " uses " + move.getName()));
                 target.HP -= (int) totalDamage((Attack) getAttack(move), this, target, bubble)/2;
-                executor.addEvent(new UpdateBarEvent(bar));
+                executor.addEvent(new UpdateBarEvent(target));
             }
         }
         // To implement
@@ -544,39 +559,35 @@ public class Pokemon {
 //            System.out.println(name + " is feared! It can't move!");
 //            executor.addEvent(new MessageEvent(bubble,name + " is feared! It can't move!"));
 //        }
-        System.out.println("executing...");
-        executor.executeNext(null);
     }
     /**
      * Updates the status of the Pokémon
      */
-    public void updateHealthFromStatus(TextBubble bubble, Bar bar){
+    public void updateHealthFromStatus(TextBubble bubble){
         switch(status){
             case normal, attracted, asleep:
                 break;
             case burned:
                 executor.addEvent(new MessageEvent(bubble,name + " is burned!"));
-
-                HP = HP - (maxHP/16);
-
+                HP -= (maxHP/16);
                 executor.addEvent(new MessageEvent(bubble,name + " suffers from its burn!"));
-                executor.addEvent(new UpdateBarEvent(bar));
+                executor.addEvent(new UpdateBarEvent(this));
                 break;
             case poisoned:
                 executor.addEvent(new MessageEvent(bubble,name + " is poisoned!"));
 
-                HP = HP - (maxHP/8);
+                HP -= (maxHP/8);
 
                 executor.addEvent(new MessageEvent(bubble,name + " suffers from poison!"));
-                executor.addEvent(new UpdateBarEvent(bar));
+                executor.addEvent(new UpdateBarEvent(this));
                 break;
             case badlyPoisoned:
                 executor.addEvent(new MessageEvent(bubble,name + " is badly poisoned!"));
 
-                HP = HP - ((maxHP/16) * poisonCoefficient);
+                HP -= ((maxHP/16) * poisonCoefficient);
                 
                 executor.addEvent(new MessageEvent(bubble,name + " suffers from poison!"));
-                executor.addEvent(new UpdateBarEvent(bar));
+                executor.addEvent(new UpdateBarEvent(this));
                 ++poisonCoefficient;
                 break;
             case confused:
@@ -590,7 +601,6 @@ public class Pokemon {
 //            case cursed:
 //                HP = HP - (maxHP/4);
         }
-        executor.executeNext(null);
     }
     //endregion
 
@@ -1031,7 +1041,6 @@ public class Pokemon {
      * Update the stat modifier each turn
      */
     private void updateStatChanges(){
-        System.out.println("Updating stat values...");
         this.atk = applyStatModifier(atk, atkRaise);
         this.def = applyStatModifier(def, defRaise);
         this.speed = applyStatModifier(speed, speedRaise);

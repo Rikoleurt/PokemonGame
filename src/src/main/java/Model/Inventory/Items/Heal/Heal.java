@@ -32,12 +32,7 @@ public class Heal extends Item implements Consumable {
         }
         int newHP = Math.min(target.getHP() + HP, target.getMaxHP());
         target.setHP(newHP);
-
-        if (View.Game.Battle.BattleView.getPlayer().getTeam().contains(target)) {
-            executor.addEvent(new UpdateBarEvent(View.Game.Battle.BattleView.getPlayerBar()));
-        } else {
-            executor.addEvent(new UpdateBarEvent(View.Game.Battle.BattleView.getOpponentBar()));
-        }
+        executor.addEvent(new UpdateBarEvent(target));
         executor.addEvent(new MessageEvent(textBubble, target.getName() + " regained some health!"));
     }
 

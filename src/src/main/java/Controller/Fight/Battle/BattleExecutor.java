@@ -2,6 +2,9 @@ package Controller.Fight.Battle;
 
 import Controller.Fight.Battle.Events.BattleEvent;
 import Controller.Fight.Battle.Events.MessageEvent;
+import Model.Pokemon.Pokemon;
+import View.Game.Battle.BattleView;
+import View.Game.Battle.InfoBars.Bar;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -30,8 +33,9 @@ public class BattleExecutor {
         if(battleEvents.isEmpty()) return;
         battleEvents.clear();
     }
+
     public void executeNext(Runnable onAllEventsFinished) {
-         getEventsFromQueue();
+        // getEventsFromQueue();
         if (!battleEvents.isEmpty()) {
             BattleEvent event = battleEvents.poll();
             event.setOnFinish(() -> executeNext(onAllEventsFinished));
