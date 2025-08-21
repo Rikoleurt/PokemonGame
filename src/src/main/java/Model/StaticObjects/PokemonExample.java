@@ -23,7 +23,7 @@ public class PokemonExample {
     public static Pokemon initiateBulbizarre() {
         if(!bulbizarreMoves.contains(attacks.get(4)) || !bulbizarreMoves.contains(attacks.get(6))) {
             bulbizarreMoves.add(attacks.get(4));
-//            bulbizarreMoves.add(attacks.get(6));
+            bulbizarreMoves.add(attacks.get(6));
         }
         return new Pokemon("bulbasaur", 31, 31, 18, 18, 23, 23, 17,
                 45, 49, 49, 65, 65, 45,
@@ -31,7 +31,7 @@ public class PokemonExample {
                 0, 0, 0, 0, 0, 0,
                 0, 0, 0, 0, 0,
                 10, Type.grass, bulbizarreMoves, "female",
-                0, 100, Experience.Fast, Status.burned);
+                0, 100, Experience.Fast, Status.badlyPoisoned);
     }
 
     public static Pokemon initiatePikachu() {
@@ -49,7 +49,7 @@ public class PokemonExample {
 
     public static Pokemon initiateCarapuce() {
         carapuceMoves.add(attacks.get(5));
-        // carapuceMoves.add(attacks.get(7));
+        carapuceMoves.add(attacks.get(7));
         return new Pokemon("squirtle", 31, 31, 17, 23, 19, 22, 17,
                 44, 48, 65, 50, 64, 43,
                 10, 10, 10, 10, 10, 10,
@@ -69,7 +69,7 @@ public class PokemonExample {
                 0, 0, 0, 0, 0, 0,
                 0, 0, 0, 0, 0,
                 11, Type.fire, salamecheMoves, "male",
-                1000, 0, Experience.Fast, Status.paralyzed);
+                1000, 0, Experience.Fast, Status.normal);
     }
 
     public static Pokemon initiatePidgey() {

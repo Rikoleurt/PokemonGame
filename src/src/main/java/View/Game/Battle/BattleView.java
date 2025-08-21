@@ -68,8 +68,8 @@ public class BattleView extends BorderPane {
 
         textBubble.setPrefHeight(150);
         textBubble.prefWidthProperty().bind(bottomBox.widthProperty().subtract(320));
-        HBox.setHgrow(textBubble, Priority.ALWAYS);
 
+        HBox.setHgrow(textBubble, Priority.ALWAYS);
         bottomBox.getChildren().addAll(textBubble, battleButtons);
 
         setTop(opponentBar);
@@ -152,7 +152,6 @@ public class BattleView extends BorderPane {
         opponentSprite.setImage(spriteFor(n, false));
     }
 
-
     public static TextBubble getTextBubble() {
         return textBubble;
     }
@@ -192,4 +191,5 @@ public class BattleView extends BorderPane {
     public static Terrain getTerrain() {
         return terrain;
     }
+
 }

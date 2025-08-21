@@ -40,13 +40,13 @@ public class NPC implements Fighter {
     }
     public String makeChoice() {
         Random rand = new Random();
-        int randInt = rand.nextInt(1,100);
+        int randInt = rand.nextInt(0,100);
         int healthyPokemon = getHealthyPokemon();
         if (randInt < 10 && healthyPokemon > 1) {
             lastChoice = "Switch";
         } else if (randInt < 5 && team.size() == 1) {
             makeChoice();
-        } else if (randInt < 20 && randInt > 10) {
+        } else if (randInt < 20 && randInt >= 10) {
             lastChoice = "Item";
         } else {
             lastChoice = "Attack";

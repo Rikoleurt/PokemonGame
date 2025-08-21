@@ -1,3 +1,7 @@
+import Controller.Fight.Battle.BattleExecutor;
+import Controller.Fight.Battle.Events.MessageEvent;
+import Model.Person.NPC;
+import Model.Person.Player;
 import Server.SocketServer;
 import View.Game.Battle.BattleView;
 import View.Game.Battle.Text.TextBubble;
@@ -16,7 +20,6 @@ import java.util.Objects;
 public class Main extends Application {
 
     SocketServer server = new SocketServer();
-
     @Override
     public void start(Stage primaryStage) {
 
@@ -57,7 +60,7 @@ public class Main extends Application {
 //        consoleStage.setHeight(screenHeight);
 //        consoleStage.show();
 
-        TextBubble textBubble = battleView.getTextBubble();
+        TextBubble textBubble = BattleView.getTextBubble();
         scene.setOnKeyPressed(event -> textBubble.handleKeyPress(event.getCode()));
 
         new Thread(() -> {
@@ -66,12 +69,11 @@ public class Main extends Application {
                 System.out.println("Client connected to server");
             } catch (IOException e) {
                 System.out.println("Client connect failed " + e.getMessage());
-                e.printStackTrace();
             }
         }).start();
     }
 
-    public static void main(String[] args) {
+    static void main(String[] args) {
         launch(args);
     }
 }

@@ -37,6 +37,10 @@ public class Bar extends VBox {
     Label level = new Label();
     Label health = new Label();
 
+    HBox hBox1 = new HBox();
+    ImageView statusImg;
+
+
     Bar(double spacing, Pokemon pokemon) {
 
         this.pokemon = pokemon;
@@ -47,13 +51,17 @@ public class Bar extends VBox {
         int pHP = pokemon.getHP();
         int pMaxHP = pokemon.getMaxHP();
         Status pStatus = pokemon.getStatus();
-        Image statusImg = null;
 
+        statusImg = new ImageView();
+        statusImg.setPreserveRatio(true);
+        statusImg.setFitHeight(30);
+        statusImg.setFitWidth(30);
         if(pStatus != Status.normal) {
-             statusImg = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/" + pStatus.toString() + ".png")));
+            statusImg.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/" + pStatus.toString() + ".png"))));
+        } else {
+            statusImg.setImage(null);
         }
 
-        ImageView view = new ImageView(statusImg);
         name.setText(pName);
         HP.setText("HP : ");
         level.setText("Lvl : " + pLevel);
@@ -75,16 +83,19 @@ public class Bar extends VBox {
         expBar.setPrefSize(175, 12);
         expBar.setStyle("-fx-accent: #994ee4;");
 
-        HBox HBox1 = new HBox(name, view, level);
+        hBox1.getChildren().addAll(name, statusImg, level);
         HBox expBarBox = new HBox(expBar, HPBar);
-        HBox HBox2 = new HBox(HP, HPBar);
-        HBox HBox3 = new HBox(health);
+        HBox hBox2 = new HBox(HP, HPBar);
+        HBox hBox3 = new HBox(health);
 
-        HBox1.setSpacing(spacing * 10);
-        HBox2.setSpacing(spacing);
-        HBox3.setSpacing(spacing);
+        if(this instanceof PlayerBar && pokemon.getStatus() != Status.normal) hBox1.setAlignment(Pos.CENTER);
+        if(this instanceof OpponentBar && pokemon.getStatus() != Status.normal) hBox1.setAlignment(Pos.CENTER_LEFT);
 
-        HBox3.setAlignment(Pos.CENTER_LEFT);
+        hBox1.setSpacing(spacing * 2);
+        hBox2.setSpacing(spacing);
+        hBox3.setSpacing(spacing);
+
+        hBox3.setAlignment(Pos.CENTER_LEFT);
 
         setPadding(new Insets(15));
 
@@ -94,8 +105,6 @@ public class Bar extends VBox {
         imageView2.setFitWidth(20);
         imageView2.setPreserveRatio(true);
 
-
-        // Opponent bar objects
         if(this instanceof OpponentBar) {
             int size = npc.getTeam().size();
             HBox pokeHBox = new HBox();
@@ -114,10 +123,9 @@ public class Bar extends VBox {
                     pokeHBox.getChildren().add(imageView);
                 }
             }
-            getChildren().addAll(pokeHBox, HBox1, HBox2, HBox3);
+            getChildren().addAll(pokeHBox, hBox1, hBox2, hBox3);
         }
 
-        // Player bar objects
         if(this instanceof PlayerBar) {
             int size = player.getTeam().size();
             HBox pokeHBox = new HBox();
@@ -136,9 +144,11 @@ public class Bar extends VBox {
                     pokeHBox.getChildren().add(imageView);
                 }
             }
-            getChildren().addAll(pokeHBox, HBox1, expBarBox, HBox2, HBox3);
+            getChildren().addAll(pokeHBox, hBox1, expBarBox, hBox2, hBox3);
         }
+        refreshStatus();
     }
+
 
     public Label getHealth() {
         return health;
@@ -160,7 +170,6 @@ public class Bar extends VBox {
         int pLevel = p.getLevel();
         int pHP = p.getHP();
         int pMaxHP = p.getMaxHP();
-        String pStatus = p.getStatus().toString();
 
         name.setText(pName);
         level.setText("Lvl." + pLevel);
@@ -173,6 +182,8 @@ public class Bar extends VBox {
         int maxExp = Math.max(1, p.calculateMaxExp());
         double expProgress = Math.max(0.0, Math.min(1.0, (double) p.getExp() / maxExp));
         expBar.setProgress(expProgress);
+        refreshStatus();
+
     }
 
     public void updateHPBars(Runnable onFinish) {
@@ -318,7 +329,15 @@ public class Bar extends VBox {
     }
 
     public void refreshStatus(){
-
+        Status st = pokemon.getStatus();
+        if(st != Status.normal) {
+            statusImg.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/" + st.toString() + ".png"))));
+        } else {
+            statusImg.setImage(null);
+            hBox1.setSpacing(30);
+        }
+        if(this instanceof PlayerBar && pokemon.getStatus() != Status.normal) hBox1.setAlignment(Pos.CENTER);
+        if(this instanceof OpponentBar && pokemon.getStatus() != Status.normal) hBox1.setAlignment(Pos.CENTER_LEFT);
     }
 }
 

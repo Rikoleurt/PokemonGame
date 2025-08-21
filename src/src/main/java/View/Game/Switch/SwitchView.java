@@ -210,6 +210,7 @@ public class SwitchView extends BorderPane {
     }
 
     private void handleSwitch(Pokemon pokemon) {
+        BattleView.refreshSprites();
         if (pokemon.isKO()) {
             switchBubble.setVisible(true);
             switchBubble.showMessage(pokemon.getName() + " is not it its best shape... You can not switch.");
