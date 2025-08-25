@@ -25,7 +25,7 @@ public class PokemonExample {
             bulbizarreMoves.add(attacks.get(4));
             bulbizarreMoves.add(attacks.get(6));
         }
-        return new Pokemon("bulbasaur", 31, 31, 18, 18, 23, 23, 17,
+        return new Pokemon("bulbasaur", 31, 1, 18, 18, 23, 23, 17,
                 45, 49, 49, 65, 65, 45,
                 10, 10, 10, 10, 10, 10,
                 0, 0, 0, 0, 0, 0,

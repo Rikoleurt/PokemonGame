@@ -73,10 +73,12 @@ public class Pokemon {
     int defSpeRaise;
 
     boolean isTurn = true;
+    boolean isDeadFromStatus = false;
 
     BattleExecutor executor = BattleExecutor.getInstance();
     BattleConsole console = BattleConsole.getInstance();
     //endregion
+
     public Pokemon(String name, int maxHP, int HP, int atk, int def, int atkSpe, int defSpe, int speed, int baseHP, int baseAtk, int baseDef, int baseAtkSpe, int baseDefSpe, int baseSpeed,
                    int hpIV, int atkIV, int defIV, int atkSpeIV, int defSpeIV, int speedIV, int hpEV, int atkEV, int defEV, int atkSpeEV, int defSpeEV, int speedEV, int atkRaise, int
                    defRaise, int atkSpeRaise, int defSpeRaise, int speedRaise, int level, Type type, ArrayList<Move> moves, String gender, int exp, int maxExp, Experience expType,
@@ -180,7 +182,6 @@ public class Pokemon {
         try {
             return moves.get(moves.indexOf(move));
         } catch (IndexOutOfBoundsException e) {
-            System.out.println("Index Out of Bounds");
             return moves.getLast();
         }
     }
@@ -283,7 +284,6 @@ public class Pokemon {
     public void attack(Pokemon target, Move move, Terrain terrain) {
         Move m = getAttack(move); // Gets the move from the move pool
         applyStatusEffect(target, move); // Apply the effect of the status
-        System.out.println(isTurn);
         if(m instanceof Attack attack && isTurn){
             executor.addEvent(new MessageEvent(name + " uses " + attack.getName()));
             if(!canHit(m)){
@@ -552,23 +552,19 @@ public class Pokemon {
                 break;
             case burned:
                 executor.addEvent(new MessageEvent(name + " is burned!"));
-                HP -= (maxHP/16);
+                setHP(Math.max(0,HP - (maxHP/16)));
                 executor.addEvent(new MessageEvent(name + " suffers from its burn!"));
                 executor.addEvent(new UpdateBarEvent(this));
                 break;
             case poisoned:
                 executor.addEvent(new MessageEvent(name + " is poisoned!"));
-
-                HP -= (maxHP/8);
-
+                setHP(Math.max(0,HP - (maxHP/8)));
                 executor.addEvent(new MessageEvent(name + " suffers from poison!"));
                 executor.addEvent(new UpdateBarEvent(this));
                 break;
             case badlyPoisoned:
                 executor.addEvent(new MessageEvent(name + " is badly poisoned!"));
-
-                HP -= ((maxHP/16) * poisonCoefficient);
-                
+                setHP(Math.max(0,HP - (maxHP/16) * poisonCoefficient));
                 executor.addEvent(new MessageEvent(name + " suffers from poison!"));
                 executor.addEvent(new UpdateBarEvent(this));
                 ++poisonCoefficient;
@@ -584,7 +580,18 @@ public class Pokemon {
 //            case cursed:
 //                HP = HP - (maxHP/4);
         }
+        if(HP <= 0){
+            status = Status.KO;
+            isDeadFromStatus = true;
+            System.out.println(isDeadFromStatus);
+        }
     }
+
+    public boolean isDeadFromStatus(){
+        return isDeadFromStatus;
+    }
+
+
     //endregion
 
     //region Type table

@@ -84,16 +84,12 @@ public class Player implements Fighter {
 
     // sendPokemon() should be called automatically at the beginning of the fights
     public void sendPokemon(Terrain terrain){
-        System.out.println(getFrontPokemon().getName() + "! Go!");
         terrain.getTeam().add(getFrontPokemon());
     }
 
     // After sending a first pokemon, the player has multiple choices in fights
-
     public void setFront(Pokemon pokemon, Terrain terrain){
-        System.out.println(this.getFrontPokemon().getName() + " stop! ");
         exchangePokemonToFront(getFrontPokemon(), pokemon);
-        System.out.println(pokemon.getName() + "! Go!");
         if(terrain.getDebris() != Debris.normal){
             terrain.debrisEffect(this, terrain);
         }
@@ -113,7 +109,6 @@ public class Player implements Fighter {
     public int getHealthyPokemon() {
         int healthyPokemon = 0;
         for (Pokemon p : team) {
-            System.out.println(p.getName() + ", status : " + p.getStatus());
             if(p.getStatus() != Status.KO) healthyPokemon++;
         }
         return healthyPokemon;

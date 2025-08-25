@@ -4,13 +4,15 @@ import View.Game.Battle.BattleButtons;
 import javafx.scene.control.TextArea;
 import javafx.scene.text.Font;
 
+import java.util.Objects;
+
 /**
  * This console allows the user to see what data the AI will use to make decisions
  */
 public class BattleConsole extends TextArea {
 
     private static BattleConsole instance;
-    private static Font font = Font.loadFont(BattleButtons.class.getResource("/font/pokemonFont.ttf").toExternalForm(), 18);
+    private static final Font font = Font.loadFont(Objects.requireNonNull(BattleButtons.class.getResource("/font/pokemonFont.ttf")).toExternalForm(), 18);
 
     private BattleConsole() {
         setEditable(false);

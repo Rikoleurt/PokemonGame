@@ -51,7 +51,6 @@ public class NPC implements Fighter {
         } else {
             lastChoice = "Attack";
         }
-        System.out.println(lastChoice);
         return lastChoice;
     }
 
@@ -104,7 +103,6 @@ public class NPC implements Fighter {
     public int getHealthyPokemon() {
         int healthyPokemon = 0;
         for (Pokemon p : team) {
-            System.out.println(p.getName() + ", status : " + p.getStatus());
             if(p.getStatus() != Status.KO) healthyPokemon++;
         }
         return healthyPokemon;

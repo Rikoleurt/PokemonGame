@@ -195,6 +195,17 @@ public class BattleButtons extends HBox {
             handleNpcPokemonKO();
             return;
         }
+        System.out.println("isDead : " + npcPokemon.isDeadFromStatus());
+
+        if(npcPokemon.isDeadFromStatus()){
+            handleNpcPokemonKO();
+            return;
+        }
+
+        if(playerPokemon.isDeadFromStatus()){
+            handlePlayerPokemonKO();
+            return;
+        }
 
         if ("Item".equals(npcChoice) && itemChoice != null) {
 
@@ -206,7 +217,6 @@ public class BattleButtons extends HBox {
                     executor.executeNext(() -> {
                         if (npcPokemon.getStatus() == Status.KO) {
                             handleNpcPokemonKO();
-
                         } else if (isQueueEmpty) {
                             Platform.runLater(this::resetFightButtons);
                         }
