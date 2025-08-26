@@ -1,13 +1,12 @@
-package Controller.Fight.Battle.Events;
+package Controller.Fight.Battle.Events.ActionEvents;
 
 import Controller.Fight.Battle.BattleExecutor;
+import Controller.Fight.Battle.Events.BattleEvent;
 import Model.Pokemon.Move;
 import Model.Pokemon.Pokemon;
 import Model.Pokemon.Terrain;
-import View.Game.Battle.InfoBars.Bar;
-import View.Game.Battle.Text.TextBubble;
 
-public class AttackEvent extends BattleEvent{
+public class AttackEvent extends BattleEvent {
 
     private final Pokemon attacker;
     private final Pokemon defender;
@@ -21,6 +20,7 @@ public class AttackEvent extends BattleEvent{
         this.move = move;
         this.terrain = terrain;
         this.executor = executor;
+        System.out.println(attacker.getName() + " attacks " + defender.getName());
     }
 
     @Override

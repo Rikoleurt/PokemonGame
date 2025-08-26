@@ -1,8 +1,8 @@
 package Model.Pokemon;
 
 import Controller.Fight.Battle.BattleExecutor;
-import Controller.Fight.Battle.Events.MessageEvent;
-import Controller.Fight.Battle.Events.UpdateBarEvent;
+import Controller.Fight.Battle.Events.UIEvents.MessageEvent;
+import Controller.Fight.Battle.Events.UIEvents.UpdateBarEvent;
 import Model.Pokemon.AttackEnum.AttackMode;
 import Model.Pokemon.Attacks.Attack;
 import Model.Pokemon.Attacks.StatusAttack;
@@ -15,8 +15,6 @@ import Model.Pokemon.Attacks.DebrisAttack;
 import java.io.*;
 import java.util.*;
 import View.Console.BattleLayout.BattleConsole;
-import View.Game.Battle.InfoBars.Bar;
-import View.Game.Battle.Text.TextBubble;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
 
@@ -291,7 +289,7 @@ public class Pokemon {
             } else if((status == Status.normal || status == Status.cursed || status == Status.burned || status == Status.paralyzed || status == Status.freeze || status == Status.attracted || status == Status.confused || status == Status.asleep || status == Status.poisoned || status == Status.badlyPoisoned)){
                 int damage = (int) totalDamage((Attack) getAttack(attack), this, target);
                 target.setHP(Math.max(0, target.getHP() - damage)); // Apply the damage
-                System.out.println(target.getName());
+                System.out.println(target.getHP() + ", damage : " + damage);
                 executor.addEvent(new UpdateBarEvent(target));
             }
         }
@@ -338,7 +336,6 @@ public class Pokemon {
             }
             updateStatChanges();
         }
-        updateHealthFromStatus();
     }
     /**
      * Calculates the total damage (includes critical hits and the stab)
@@ -449,7 +446,7 @@ public class Pokemon {
      * @param target The target the player's Pokémon attacks
      * @param move Move it uses
      */
-    public void applyStatusEffect(Pokemon target, Move move){
+    private void applyStatusEffect(Pokemon target, Move move){
         Random random = new Random();
         if(getAttack(move).getMode() == AttackMode.physical && status == Status.burned){
             executor.addEvent(new MessageEvent(name + " uses " + move.getName()));
@@ -546,9 +543,9 @@ public class Pokemon {
     /**
      * Updates the status of the Pokémon
      */
-    public void updateHealthFromStatus(){
+    public void registerStatusEffect(){
         switch(status){
-            case normal, attracted, asleep:
+            case attracted, asleep:
                 break;
             case burned:
                 executor.addEvent(new MessageEvent(name + " is burned!"));
@@ -580,17 +577,14 @@ public class Pokemon {
 //            case cursed:
 //                HP = HP - (maxHP/4);
         }
-        if(HP <= 0){
-            status = Status.KO;
-            isDeadFromStatus = true;
-            System.out.println(isDeadFromStatus);
-        }
+        System.out.println("isDead : " + isDeadFromStatus());
+        if(status == Status.KO) isDeadFromStatus = true;
+        System.out.println("isDead : " + isDeadFromStatus());
     }
 
     public boolean isDeadFromStatus(){
         return isDeadFromStatus;
     }
-
 
     //endregion
 
@@ -1064,6 +1058,14 @@ public class Pokemon {
             }
         }
     }
+
+    public int getEffectiveSpeed() {
+        int s = speed;
+        if (status == Status.paralyzed) s = s / 2;
+        if (s < 1) s = 1;
+        return s;
+    }
+
 
     //endregion
 }

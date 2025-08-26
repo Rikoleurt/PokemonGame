@@ -7,7 +7,6 @@ import Model.Pokemon.Pokemon;
 import Model.Pokemon.PokemonEnum.Status;
 import Model.Pokemon.TerrainEnum.Debris;
 import Model.Pokemon.Terrain;
-import View.Game.Battle.Text.TextBubble;
 
 import java.util.LinkedList;
 
@@ -16,6 +15,7 @@ public class Player implements Fighter {
     String name;
     Bag bag;
     LinkedList<Pokemon> team;
+    Action action;
 
     public Player(String name, Bag bag, LinkedList<Pokemon> team) {
         this.name = name;
@@ -43,6 +43,12 @@ public class Player implements Fighter {
         return team.getFirst();
     }
 
+    public Action getAction() {
+        return action;
+    }
+    public void setAction(Action action) {
+        this.action = action;
+    }
     private void exchangePokemonToFront(Pokemon pokemon, Pokemon otherPokemon) {
         if(this.isFront(pokemon)) {
             int temp = team.indexOf(otherPokemon); // bulbizarre at ?
@@ -87,7 +93,7 @@ public class Player implements Fighter {
         terrain.getTeam().add(getFrontPokemon());
     }
 
-    // After sending a first pokemon, the player has multiple choices in fights
+    // After sending a first Pokémon, the player has multiple choices in fights
     public void setFront(Pokemon pokemon, Terrain terrain){
         exchangePokemonToFront(getFrontPokemon(), pokemon);
         if(terrain.getDebris() != Debris.normal){
@@ -102,9 +108,7 @@ public class Player implements Fighter {
         }
     }
 
-    public void flee(){
-
-    }
+    public void run(){}
 
     public int getHealthyPokemon() {
         int healthyPokemon = 0;

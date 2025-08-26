@@ -1,14 +1,13 @@
 package View.Game.Battle;
 
 import Controller.Fight.Battle.BattleExecutor;
-import Controller.Fight.Battle.Events.AttackEvent;
-import Controller.Fight.Battle.Events.MessageEvent;
+import Controller.Fight.Battle.Events.UIEvents.EndTurn;
+import Controller.Fight.Battle.Events.StartTurn;
+import Controller.Fight.Battle.Events.UIEvents.MessageEvent;
 
-import Controller.Fight.Battle.Events.UseItemEvent;
-import Model.Inventory.Items.Item;
+import Model.Person.Action;
 import Model.Pokemon.Pokemon;
 import Model.Pokemon.Move;
-import Model.Pokemon.PokemonEnum.Status;
 import Model.Pokemon.Terrain;
 
 import View.Game.Battle.InfoBars.Bar;
@@ -34,9 +33,7 @@ import javafx.util.Duration;
 
 import java.util.List;
 
-import static View.Game.Battle.BattleView.npc;
-import static View.Game.Battle.BattleView.player;
-import static View.Game.Battle.BattleView.terrain;
+import static View.Game.Battle.BattleView.*;
 
 public class BattleButtons extends HBox {
 
@@ -151,161 +148,177 @@ public class BattleButtons extends HBox {
     private void onMoveButton() {
         atk1Button.setOnAction(e -> {
             if(pAtk1 != null) {
-                onAttackPressed(pAtk1, terrain);
+//                onAttackPressed(pAtk1, terrain);
+                onButtonPressed(pAtk1, terrain);
             }
         });
 
         atk2Button.setOnAction(e -> {
             if(pAtk2 != null) {
-                onAttackPressed(pAtk2, terrain);
+//                onAttackPressed(pAtk2, terrain);
+                onButtonPressed(pAtk2, terrain);
             }
 
         });
 
         atk3Button.setOnAction(e -> {
             if(pAtk3 != null) {
-                onAttackPressed(pAtk3, terrain);
+//                onAttackPressed(pAtk3, terrain);
+                onButtonPressed(pAtk3, terrain);
             }
         });
 
         atk4Button.setOnAction(e -> {
             if(pAtk4 != null) {
-                onAttackPressed(pAtk4, terrain);
+//                onAttackPressed(pAtk4, terrain);
+                onButtonPressed(pAtk4, terrain);
             }
         });
     }
 
-    private void onAttackPressed(Move move, Terrain terrain) {
+    private void onButtonPressed(Move move, Terrain terrain) {
+        player.setAction(Action.Attack);
         HBox1.setVisible(false);
         HBox2.setVisible(false);
         BattleView.refreshSprites();
-
-        Move npcMove = npcPokemon.chooseMove();
-        String npcChoice = npc.makeChoice();
-        Item itemChoice = npc.itemChoice(npcPokemon);
-
-        boolean isQueueEmpty = executor.getBattleEvents().isEmpty();
-
-        if(playerPokemon.isKO()){
-            handlePlayerPokemonKO();
-            return;
-        }
-
-        if(npcPokemon.isKO()){
-            handleNpcPokemonKO();
-            return;
-        }
-        System.out.println("isDead : " + npcPokemon.isDeadFromStatus());
-
-        if(npcPokemon.isDeadFromStatus()){
-            handleNpcPokemonKO();
-            return;
-        }
-
-        if(playerPokemon.isDeadFromStatus()){
-            handlePlayerPokemonKO();
-            return;
-        }
-
-        if ("Item".equals(npcChoice) && itemChoice != null) {
-
-            executor.addEvent(new UseItemEvent(npc, itemChoice, npcPokemon, executor));
-
-            executor.executeNext(() -> {
-                if (playerPokemon.getStatus() != Status.KO) {
-                    executor.addEvent(new AttackEvent(playerPokemon, npcPokemon, move, BattleView.getTerrain(), executor));
-                    executor.executeNext(() -> {
-                        if (npcPokemon.getStatus() == Status.KO) {
-                            handleNpcPokemonKO();
-                        } else if (isQueueEmpty) {
-                            Platform.runLater(this::resetFightButtons);
-                        }
-                    });
-                } else {
-                    handlePlayerPokemonKO();
-                }
-            });
-            requestFocus();
-            return;
-        }
-
-        if ("Item".equals(npcChoice)) npcChoice = "Attack";
-        if(npc.getTeam().size() == 1) npcChoice = "Attack";
-
-        if ("Switch".equals(npcChoice) && npc.getTeam().size() > 1) {
-            Pokemon next = npc.chooseSwitchTarget();
-            if (next != null) {
-                executor.addEvent(new MessageEvent(npc.getFrontPokemon().getName() + " stop!"));
-                npc.setFront(next, terrain);
-                BattleView.refreshSprites();
-                executor.addEvent(new MessageEvent(npc.getFrontPokemon().getName() + " go!"));
-                opponentBar.setPokemon(npc.getFrontPokemon());
-
-                executor.executeNext(() -> {
-                    Pokemon freshNpc = BattleView.getNpc().getFrontPokemon();
-                    Pokemon freshPlayer = player.getFrontPokemon();
-                    if (freshPlayer.getStatus() != Status.KO) {
-                        executor.addEvent(new AttackEvent(freshPlayer, freshNpc, move, BattleView.getTerrain(), executor));
-                        executor.executeNext(() -> {
-                            if (freshNpc.getStatus() == Status.KO) {
-                                handleNpcPokemonKO();
-                            } else if (isQueueEmpty) {
-                                Platform.runLater(this::resetFightButtons);
-                            }
-                        });
-                    } else {
-                        handlePlayerPokemonKO();
-                    }
-                });
-                requestFocus();
-            }
-            return;
-        }
-
-        if (npcPokemon.hasPriority(playerPokemon)) {
-            executor.addEvent(new AttackEvent(npcPokemon, playerPokemon, npcMove, terrain, executor));
-            executor.executeNext(() -> {
-                if (playerPokemon.getStatus() != Status.KO) {
-                    executor.addEvent(new AttackEvent(playerPokemon, npcPokemon, move, terrain, executor));
-                    executor.executeNext(() -> {
-                        if (npcPokemon.getStatus() == Status.KO) {
-                            handleNpcPokemonKO();
-                        } else if (isQueueEmpty) {
-                            Platform.runLater(this::resetFightButtons);
-                        }
-                    });
-                } else {
-                    handlePlayerPokemonKO();
-                }
-            });
-        } else {
-            executor.addEvent(new AttackEvent(playerPokemon, npcPokemon, move, terrain, executor));
-            executor.executeNext(() -> {
-                if (npcPokemon.getStatus() != Status.KO) {
-                    executor.addEvent(new AttackEvent(npcPokemon, playerPokemon, npcMove, terrain, executor));
-                    executor.executeNext(() -> {
-                        if (playerPokemon.getStatus() == Status.KO) {
-                            handlePlayerPokemonKO();
-                        } else if (isQueueEmpty) {
-                            Platform.runLater(this::resetFightButtons);
-                        }
-                    });
-                } else {
-                    handleNpcPokemonKO();
-                }
-            });
-        }
-        requestFocus();
+        executor.addEvent(new StartTurn(npc, player, move, terrain, executor, this));
+        executor.executeNext(() -> {
+            executor.addEvent(new EndTurn(this, executor));
+            executor.executeNext(null);
+        });
     }
 
-
-
-
+//    private void onAttackPressed(Move move, Terrain terrain) {
+//        HBox1.setVisible(false);
+//        HBox2.setVisible(false);
+//        BattleView.refreshSprites();
+//
+//        Move npcMove = npcPokemon.chooseMove();
+//        String npcChoice = npc.makeChoice();
+//        Item itemChoice = npc.itemChoice(npcPokemon);
+//
+//        boolean isQueueEmpty = executor.getEvents().isEmpty();
+//
+//        if(playerPokemon.isKO()){
+//            handlePlayerPokemonKO();
+//            return;
+//        }
+//
+//        if(npcPokemon.isKO()){
+//            handleNpcPokemonKO();
+//            return;
+//        }
+//
+//        // Item
+//        if ("Item".equals(npcChoice) && itemChoice != null) {
+//            executor.addEvent(new UseItemEvent(npc, itemChoice, npcPokemon, executor));
+//            executor.executeNext(() -> {
+//                if (playerPokemon.getStatus() != Status.KO) {
+//                    executor.addEvent(new AttackEvent(playerPokemon, npcPokemon, move, BattleView.getTerrain(), executor));
+//                    executor.executeNext(() -> {
+//                        if (npcPokemon.getStatus() == Status.KO) {
+//                            handleNpcPokemonKO();
+//                        } else if (npcPokemon.isDeadFromStatus()){
+//                            handleNpcPokemonKO();
+//                        } else if (playerPokemon.isDeadFromStatus()){
+//                            handlePlayerPokemonKO();
+//                        }else if (isQueueEmpty) {
+//                            Platform.runLater(this::resetFightButtons);
+//                        }
+//                    });
+//                } else {
+//                    handlePlayerPokemonKO();
+//                }
+//            });
+//            requestFocus();
+//            return;
+//        }
+//
+//        if ("Item".equals(npcChoice)) npcChoice = "Attack";
+//        if(npc.getTeam().size() == 1) npcChoice = "Attack";
+//
+//        // Switch
+//        if ("Switch".equals(npcChoice) && npc.getTeam().size() > 1) {
+//            Pokemon next = npc.chooseSwitchTarget();
+//            if (next != null) {
+//                executor.addEvent(new MessageEvent(npc.getFrontPokemon().getName() + " stop!"));
+//                npc.setFront(next, terrain);
+//                BattleView.refreshSprites();
+//                executor.addEvent(new MessageEvent(npc.getFrontPokemon().getName() + " go!"));
+//                opponentBar.setPokemon(npc.getFrontPokemon());
+//                executor.executeNext(() -> {
+//                    Pokemon freshNpc = BattleView.getNpc().getFrontPokemon();
+//                    Pokemon freshPlayer = player.getFrontPokemon();
+//                    if (freshPlayer.getStatus() != Status.KO) {
+//                        executor.addEvent(new AttackEvent(freshPlayer, freshNpc, move, BattleView.getTerrain(), executor));
+//                        executor.executeNext(() -> {
+//                            if (freshNpc.getStatus() == Status.KO) {
+//                                handleNpcPokemonKO();
+//                            } else if (freshNpc.isDeadFromStatus()) {
+//                                handleNpcPokemonKO();
+//                            } else if (freshPlayer.isDeadFromStatus()) {
+//                                handlePlayerPokemonKO();
+//                            } else if (isQueueEmpty) {
+//                                Platform.runLater(this::resetFightButtons);
+//                            }
+//                        });
+//                    } else {
+//                        handlePlayerPokemonKO();
+//                    }
+//                });
+//                requestFocus();
+//            }
+//            return;
+//        }
+//
+//        // Attack
+//        if (npcPokemon.hasPriority(playerPokemon)) {
+//            executor.addEvent(new AttackEvent(npcPokemon, playerPokemon, npcMove, terrain, executor));
+//            executor.executeNext(() -> {
+//                if (playerPokemon.getStatus() != Status.KO) {
+//                    executor.addEvent(new AttackEvent(playerPokemon, npcPokemon, move, terrain, executor));
+//                    executor.executeNext(() -> {
+//                        if (npcPokemon.getStatus() == Status.KO) {
+//                            handleNpcPokemonKO();
+//                        } else if (npcPokemon.isDeadFromStatus()){
+//                            handleNpcPokemonKO();
+//                        } else if (playerPokemon.isDeadFromStatus()){
+//                            handlePlayerPokemonKO();
+//                        } else if (isQueueEmpty) {
+//                            Platform.runLater(this::resetFightButtons);
+//                        }
+//                    });
+//                } else {
+//                    handlePlayerPokemonKO();
+//                }
+//            });
+//        } else {
+//            executor.addEvent(new AttackEvent(playerPokemon, npcPokemon, move, terrain, executor));
+//            executor.executeNext(() -> {
+//                if (npcPokemon.getStatus() != Status.KO) {
+//                    executor.addEvent(new AttackEvent(npcPokemon, playerPokemon, npcMove, terrain, executor));
+//                    executor.executeNext(() -> {
+//                        if (playerPokemon.getStatus() == Status.KO) {
+//                            handlePlayerPokemonKO();
+//                        } else if (npcPokemon.isDeadFromStatus()){
+//                            handleNpcPokemonKO();
+//                        } else if (playerPokemon.isDeadFromStatus()){
+//                            handlePlayerPokemonKO();
+//                        } else if (isQueueEmpty) {
+//                            Platform.runLater(this::resetFightButtons);
+//                        }
+//                    });
+//                } else {
+//                    handleNpcPokemonKO();
+//                }
+//            });
+//        }
+//        requestFocus();
+//    }
 
     private void handlePlayerPokemonKO(){
         executor.addEvent(new MessageEvent(playerPokemon.getName() + " fainted."));
         executor.executeNext(this::askPlayerForSwitch);
-        executor.clearEvents();
         // Open another window to let the player chose its next Pokémon
     }
     private void handleNpcPokemonKO(){
@@ -314,10 +327,11 @@ public class BattleButtons extends HBox {
         // Let the enemy switch
     }
 
-    private void askPlayerForSwitch(){
+    public void askPlayerForSwitch(){
         SwitchView switchView = new SwitchView(player, textBubble, () -> SceneManager.switchStageTo(SceneManager.getFightView()));
         SceneManager.switchStageTo(switchView);
         switchView.setTurnDisable(true);
+        refreshSprites();
     }
 
     private void askNPCForSwitch() {
@@ -337,8 +351,8 @@ public class BattleButtons extends HBox {
             }
         });
         pt.play();
+        refreshSprites();
     }
-
 
     private String getAttackName(int index) {
         List<Move> attacks = playerPokemon.getAttacks();
@@ -352,7 +366,6 @@ public class BattleButtons extends HBox {
         if (attacks == null || index < 0 || index >= attacks.size()) return null;
         return attacks.get(index);
     }
-
 
     public void resetFightButtons() {
         refreshFromCurrentPokemon();
@@ -401,8 +414,6 @@ public class BattleButtons extends HBox {
         }
         return button;
     }
-
-
 
     private static String getColorFromAttack(Move move) {
         try {

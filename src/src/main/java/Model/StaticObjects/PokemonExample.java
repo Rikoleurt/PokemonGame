@@ -25,7 +25,7 @@ public class PokemonExample {
             bulbizarreMoves.add(attacks.get(4));
             bulbizarreMoves.add(attacks.get(6));
         }
-        return new Pokemon("bulbasaur", 31, 1, 18, 18, 23, 23, 17,
+        return new Pokemon("bulbasaur", 31, 31, 18, 18, 23, 23, 17,
                 45, 49, 49, 65, 65, 45,
                 10, 10, 10, 10, 10, 10,
                 0, 0, 0, 0, 0, 0,
@@ -69,7 +69,7 @@ public class PokemonExample {
                 0, 0, 0, 0, 0, 0,
                 0, 0, 0, 0, 0,
                 11, Type.fire, salamecheMoves, "male",
-                1000, 0, Experience.Fast, Status.normal);
+                1000, 0, Experience.Fast, Status.badlyPoisoned);
     }
 
     public static Pokemon initiatePidgey() {

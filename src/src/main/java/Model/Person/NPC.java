@@ -19,6 +19,7 @@ public class NPC implements Fighter {
     LinkedList<Pokemon> team;
     Bag bag;
     String lastChoice;
+    Action action = null;
 
     public NPC(String name, LinkedList<Pokemon> team, Bag bag) {
         this.name = name;
@@ -54,14 +55,38 @@ public class NPC implements Fighter {
         return lastChoice;
     }
 
+    public Action makeChoiceAction(){
+        Random rand = new Random();
+        int randInt = rand.nextInt(0,100);
+        int healthyPokemon = getHealthyPokemon();
+        if (randInt < 10 && healthyPokemon > 1) {
+            action = Action.Switch;
+        } else if (randInt < 5 && team.size() == 1) {
+            makeChoice();
+        } else if (randInt < 20 && randInt >= 10) {
+            action = Action.Item;
+        } else {
+            action = Action.Attack;
+        }
+        return action;
+    }
+
     @Override
     public void use(Item item, Pokemon target) {
-        if (!"Item".equals(lastChoice)) return;
         if (item instanceof Consumable && bag.getInventory().containsKey(item) && bag.getQuantity(item) > 0) {
             ((Consumable) item).consume(target);
             bag.setQuantity(item, bag.getInventory().get(item) - 1);
         }
     }
+
+//    @Override
+//    public void use(Item item, Pokemon target) {
+//        if (!"Item".equals(lastChoice)) return;
+//        if (item instanceof Consumable && bag.getInventory().containsKey(item) && bag.getQuantity(item) > 0) {
+//            ((Consumable) item).consume(target);
+//            bag.setQuantity(item, bag.getInventory().get(item) - 1);
+//        }
+//    }
 
     public Item itemChoice(Pokemon target) {
         Item itemChoice = null;

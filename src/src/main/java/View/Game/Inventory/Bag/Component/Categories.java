@@ -1,9 +1,9 @@
 package View.Game.Inventory.Bag.Component;
 
 import Controller.Fight.Battle.BattleExecutor;
-import Controller.Fight.Battle.Events.AttackEvent;
-import Controller.Fight.Battle.Events.MessageEvent;
-import Controller.Fight.Battle.Events.UseItemEvent;
+import Controller.Fight.Battle.Events.ActionEvents.AttackEvent;
+import Controller.Fight.Battle.Events.UIEvents.MessageEvent;
+import Controller.Fight.Battle.Events.ActionEvents.UseItemEvent;
 import Model.Inventory.Bag;
 import Model.Inventory.Category;
 import Model.Inventory.Items.Item;

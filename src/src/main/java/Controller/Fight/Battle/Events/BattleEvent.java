@@ -22,8 +22,7 @@ public abstract class BattleEvent implements Event {
      * Executes the event with a certain implementation. One must use onFinish() to respect the chaining
      * (mandatory in the body of execute())
      */
-    @Override
-    public void execute() {}
+    public abstract void execute();
 
     public String getName(){
         return getClass().getSimpleName();

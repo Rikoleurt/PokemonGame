@@ -1,8 +1,8 @@
 package View.Game.Switch;
 
 import Controller.Fight.Battle.BattleExecutor;
-import Controller.Fight.Battle.Events.AttackEvent;
-import Controller.Fight.Battle.Events.MessageEvent;
+import Controller.Fight.Battle.Events.ActionEvents.AttackEvent;
+import Controller.Fight.Battle.Events.UIEvents.MessageEvent;
 import Model.Pokemon.Move;
 import Model.Pokemon.Pokemon;
 import Model.Pokemon.PokemonEnum.Status;

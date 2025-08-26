@@ -1,10 +1,10 @@
-package Controller.Fight.Battle.Events;
+package Controller.Fight.Battle.Events.ActionEvents;
 
 import Controller.Fight.Battle.BattleExecutor;
+import Controller.Fight.Battle.Events.BattleEvent;
 import Model.Inventory.Items.Item;
 import Model.Person.Fighter;
 import Model.Pokemon.Pokemon;
-import View.Game.Battle.Text.TextBubble;
 
 public class UseItemEvent extends BattleEvent {
     private final Fighter fighter;

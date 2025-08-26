@@ -1,10 +1,8 @@
 package Controller.Fight.Battle;
 
 import Controller.Fight.Battle.Events.BattleEvent;
-import Controller.Fight.Battle.Events.MessageEvent;
-import Model.Pokemon.Pokemon;
-import View.Game.Battle.BattleView;
-import View.Game.Battle.InfoBars.Bar;
+import Controller.Fight.Battle.Events.Event;
+import Controller.Fight.Battle.Events.UIEvents.MessageEvent;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -12,10 +10,11 @@ import java.util.Queue;
 public class BattleExecutor {
 
     private static BattleExecutor instance;
-    private final Queue<BattleEvent> battleEvents;
+    private final Queue<BattleEvent> events;
+    private int turn;
 
     public BattleExecutor() {
-        this.battleEvents = new LinkedList<>();
+        this.events = new LinkedList<>();
     }
 
     public static synchronized BattleExecutor getInstance() {
@@ -26,18 +25,19 @@ public class BattleExecutor {
     }
 
     public void addEvent(BattleEvent event) {
-        battleEvents.add(event);
+        events.add(event);
     }
 
     public void clearEvents() {
-        if(battleEvents.isEmpty()) return;
-        battleEvents.clear();
+        if(events.isEmpty()) return;
+        events.clear();
     }
 
     public void executeNext(Runnable onAllEventsFinished) {
-        // getEventsFromQueue();
-        if (!battleEvents.isEmpty()) {
-            BattleEvent event = battleEvents.poll();
+        getEventsFromQueue();
+        if (!events.isEmpty()) {
+            BattleEvent event = events.poll();
+            System.out.println("Next event: " + event.getName());
             event.setOnFinish(() -> executeNext(onAllEventsFinished));
             event.execute();
         } else {
@@ -48,13 +48,24 @@ public class BattleExecutor {
     }
 
     public void getEventsFromQueue() {
-        for(BattleEvent event : battleEvents) {
-            System.out.println("Battle Event : " + event.getName() + " ; size : " + battleEvents.size());
+        for(BattleEvent event : events) {
+            System.out.println("Battle Event : " + event.getName() + ", size : " + events.size());
+            if(event instanceof MessageEvent) {
+                System.out.println("Battle Event : " + event.getName() + ", message : " + ((MessageEvent) event).getMessage() + ", size : " + events.size());
+            }
         }
         System.out.println();
     }
 
-    public Queue<BattleEvent> getBattleEvents() {
-        return battleEvents;
+    public Queue<BattleEvent> getEvents() {
+        return events;
+    }
+
+    public void increaseTurn() {
+        System.out.println("Turn : " + turn);
+        turn++;
+    }
+    public int getTurn() {
+        return turn;
     }
 }

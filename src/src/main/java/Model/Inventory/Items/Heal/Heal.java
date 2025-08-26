@@ -1,13 +1,12 @@
 package Model.Inventory.Items.Heal;
 
 import Controller.Fight.Battle.BattleExecutor;
-import Controller.Fight.Battle.Events.MessageEvent;
-import Controller.Fight.Battle.Events.UpdateBarEvent;
+import Controller.Fight.Battle.Events.UIEvents.MessageEvent;
+import Controller.Fight.Battle.Events.UIEvents.UpdateBarEvent;
 import Model.Inventory.Category;
 import Model.Inventory.Items.Item;
 import Model.Inventory.Items.Consumable;
 import Model.Pokemon.Pokemon;
-import View.Game.Battle.Text.TextBubble;
 
 public class Heal extends Item implements Consumable {
 
