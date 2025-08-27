@@ -81,31 +81,37 @@ public class StartTurn extends BattleEvent {
                     playerPokemon = switchTarget;
                 }
             }
-            switch (npcAction) {
-                case Attack -> executor.addEvent(new AttackEvent(npcPokemon, playerPokemon, npcPokemon.chooseMove(), terrain, executor));
-                case Item   -> executor.addEvent(new UseItemEvent(npc, item, npcPokemon, executor));
-                case Switch -> {
-                    Pokemon npcSwitchTarget = new FoePokemonChoiceEvent(npc).compute();
-                    executor.addEvent(new FoeSwitchEvent(npc, npcSwitchTarget, terrain, executor, battleButtons));
-                    npcPokemon = npcSwitchTarget;
+            if (!npcPokemon.isKO()) {
+                switch (npcAction) {
+                    case Attack ->
+                            executor.addEvent(new AttackEvent(npcPokemon, playerPokemon, npcPokemon.chooseMove(), terrain, executor));
+                    case Item -> executor.addEvent(new UseItemEvent(npc, item, npcPokemon, executor));
+                    case Switch -> {
+                        Pokemon npcSwitchTarget = new FoePokemonChoiceEvent(npc).compute();
+                        executor.addEvent(new FoeSwitchEvent(npc, npcSwitchTarget, terrain, executor, battleButtons));
+                        npcPokemon = npcSwitchTarget;
+                    }
                 }
             }
         } else if (!npcPokemon.isKO()) {
             switch (npcAction) {
-                case Attack -> executor.addEvent(new AttackEvent(npcPokemon, playerPokemon, npcPokemon.chooseMove(), terrain, executor));
-                case Item   -> executor.addEvent(new UseItemEvent(npc, item, npcPokemon, executor));
+                case Attack ->
+                        executor.addEvent(new AttackEvent(npcPokemon, playerPokemon, npcPokemon.chooseMove(), terrain, executor));
+                case Item -> executor.addEvent(new UseItemEvent(npc, item, npcPokemon, executor));
                 case Switch -> {
                     Pokemon npcSwitchTarget = new FoePokemonChoiceEvent(npc).compute();
                     executor.addEvent(new FoeSwitchEvent(npc, npcSwitchTarget, terrain, executor, battleButtons));
                     npcPokemon = npcSwitchTarget;
                 }
             }
-            switch (playerAction) {
-                case Attack -> executor.addEvent(new AttackEvent(playerPokemon, npcPokemon, move, terrain, executor));
-                case Item   -> executor.addEvent(new UseItemEvent(player, playerItem, playerPokemon, executor));
-                case Switch -> {
-                    executor.addEvent(new PlayerSwitchEvent(player, switchTarget, executor));
-                    playerPokemon = switchTarget;
+            if (!playerPokemon.isKO()) {
+                switch (playerAction) {
+                    case Attack -> executor.addEvent(new AttackEvent(playerPokemon, npcPokemon, move, terrain, executor));
+                    case Item -> executor.addEvent(new UseItemEvent(player, playerItem, playerPokemon, executor));
+                    case Switch -> {
+                        executor.addEvent(new PlayerSwitchEvent(player, switchTarget, executor));
+                        playerPokemon = switchTarget;
+                    }
                 }
             }
         }

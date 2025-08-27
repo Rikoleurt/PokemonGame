@@ -25,7 +25,7 @@ public class AttackEvent extends BattleEvent {
 
     @Override
     public void execute() {
-        attacker.attack(defender, move, terrain);
+        if(!attacker.isKO()) attacker.attack(defender, move, terrain);
         executor.executeNext(this::onFinish);
     }
 }

@@ -214,12 +214,13 @@ public class BattleButtons extends HBox {
                 opponentBar.setPokemon(npc.getFrontPokemon());
                 opponentBar.resetPokeball();
                 executor.executeNext(() -> Platform.runLater(this::resetFightButtons));
+                refreshSprites();
             } else {
                 Platform.runLater(this::resetFightButtons);
+                refreshSprites();
             }
         });
         pt.play();
-        refreshSprites();
     }
 
     private String getAttackName(int index) {

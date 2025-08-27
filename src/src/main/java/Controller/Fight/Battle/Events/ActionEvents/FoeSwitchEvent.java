@@ -28,9 +28,7 @@ public class FoeSwitchEvent extends BattleEvent {
     @Override
     public void execute() {
         executor.addEvent(new MessageEvent(npc.getFrontPokemon().getName() + " stop!"));
-        System.out.println(getClass().getSimpleName() + " " + npc.getFrontPokemon().getName());
         npc.setFront(other, terrain);
-        System.out.println(getClass().getSimpleName() + " " + npc.getFrontPokemon().getName());
         BattleView.refreshSprites();
         executor.addEvent(new MessageEvent(npc.getFrontPokemon().getName() + " go!"));
         BattleView.getOpponentBar().setPokemon(npc.getFrontPokemon());

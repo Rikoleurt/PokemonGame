@@ -31,7 +31,7 @@ public class PokemonExample {
                 0, 0, 0, 0, 0, 0,
                 0, 0, 0, 0, 0,
                 10, Type.grass, bulbizarreMoves, "female",
-                0, 100, Experience.Fast, Status.badlyPoisoned);
+                0, 100, Experience.Fast, Status.normal);
     }
 
     public static Pokemon initiatePikachu() {
@@ -69,7 +69,7 @@ public class PokemonExample {
                 0, 0, 0, 0, 0, 0,
                 0, 0, 0, 0, 0,
                 11, Type.fire, salamecheMoves, "male",
-                1000, 0, Experience.Fast, Status.badlyPoisoned);
+                1000, 0, Experience.Fast, Status.normal);
     }
 
     public static Pokemon initiatePidgey() {
