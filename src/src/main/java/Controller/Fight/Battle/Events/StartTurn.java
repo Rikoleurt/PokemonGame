@@ -15,8 +15,10 @@ import Model.Person.NPC;
 import Model.Person.Player;
 import Model.Pokemon.Move;
 import Model.Pokemon.Pokemon;
+import Model.Pokemon.PokemonEnum.Status;
 import Model.Pokemon.Terrain;
 import View.Game.Battle.BattleButtons;
+import View.Game.Battle.BattleView;
 
 public class StartTurn extends BattleEvent {
 
@@ -39,9 +41,21 @@ public class StartTurn extends BattleEvent {
         this.battleButtons = battleButtons;
     }
 
+    public StartTurn(NPC npc, Player player, Pokemon switchTarget,  BattleExecutor executor) {
+        this.npc = npc;
+        this.player = player;
+        this.switchTarget = switchTarget;
+        this.move = null;
+        this.terrain = BattleView.getTerrain();
+        this.executor = executor;
+        this.battleButtons = BattleView.getFightButtons();
+    }
+
     @Override
     public void execute() {
         executor.increaseTurn();
+        BattleButtons.getHBox1().setVisible(false);
+        BattleButtons.getHBox2().setVisible(false);
 
         Action npcAction = new FoeChoiceEvent(npc).compute();
         Action playerAction = player.getAction();
@@ -62,7 +76,10 @@ public class StartTurn extends BattleEvent {
             switch (playerAction) {
                 case Attack -> executor.addEvent(new AttackEvent(playerPokemon, npcPokemon, move, terrain, executor));
                 case Item   -> executor.addEvent(new UseItemEvent(player, playerItem, playerPokemon, executor));
-                case Switch -> executor.addEvent(new PlayerSwitchEvent(player, switchTarget, executor));
+                case Switch ->  {
+                    executor.addEvent(new PlayerSwitchEvent(player, switchTarget, executor));
+                    playerPokemon = switchTarget;
+                }
             }
             switch (npcAction) {
                 case Attack -> executor.addEvent(new AttackEvent(npcPokemon, playerPokemon, npcPokemon.chooseMove(), terrain, executor));
@@ -86,15 +103,16 @@ public class StartTurn extends BattleEvent {
             switch (playerAction) {
                 case Attack -> executor.addEvent(new AttackEvent(playerPokemon, npcPokemon, move, terrain, executor));
                 case Item   -> executor.addEvent(new UseItemEvent(player, playerItem, playerPokemon, executor));
-                case Switch -> executor.addEvent(new PlayerSwitchEvent(player, switchTarget, executor));
+                case Switch -> {
+                    executor.addEvent(new PlayerSwitchEvent(player, switchTarget, executor));
+                    playerPokemon = switchTarget;
+                }
             }
         }
 
         System.out.println(playerPokemon.getName() + " vs " + npcPokemon.getName());
 
         executor.executeNext(this::onFinish);
-        executor.addEvent(new StatusEvent(playerPokemon, npcPokemon));
-
         if(npcPokemon.isKO()){
             System.out.println(npcPokemon.getName() + " is KO");
             executor.addEvent(new FaintEvent(player, npc, npcPokemon, battleButtons));
@@ -104,5 +122,6 @@ public class StartTurn extends BattleEvent {
             executor.addEvent(new FaintEvent(player, npc, playerPokemon, battleButtons));
             executor.executeNext(null);
         }
+        if(playerPokemon.getStatus() != Status.normal) executor.addEvent(new StatusEvent(playerPokemon, npcPokemon));
     }
 }

@@ -2,7 +2,12 @@ package View.Game.Switch;
 
 import Controller.Fight.Battle.BattleExecutor;
 import Controller.Fight.Battle.Events.ActionEvents.AttackEvent;
+import Controller.Fight.Battle.Events.ActionEvents.PlayerSwitchEvent;
+import Controller.Fight.Battle.Events.StartTurn;
+import Controller.Fight.Battle.Events.UIEvents.EndTurn;
 import Controller.Fight.Battle.Events.UIEvents.MessageEvent;
+import Model.Person.Action;
+import Model.Person.NPC;
 import Model.Pokemon.Move;
 import Model.Pokemon.Pokemon;
 import Model.Pokemon.PokemonEnum.Status;
@@ -41,6 +46,7 @@ public class SwitchView extends BorderPane {
     static Font font = Font.loadFont(Objects.requireNonNull(Bar.class.getResource("/font/pokemonFont.ttf")).toExternalForm(), 18);
 
     Player player;
+    NPC npc;
     TextBubble textBubble;
     TextBubble switchBubble = new TextBubble();
     VBox root = new VBox();
@@ -50,8 +56,9 @@ public class SwitchView extends BorderPane {
     BattleExecutor executor = BattleExecutor.getInstance();
     boolean isTurnDisable = false;
 
-    public SwitchView(Player player, TextBubble textBubble, Runnable onClose) {
+    public SwitchView(Player player, NPC npc, TextBubble textBubble, Runnable onClose) {
         this.player = player;
+        this.npc = npc;
         this.textBubble = textBubble;
 
         ObservableList<Node> components = getChildren();
@@ -219,45 +226,17 @@ public class SwitchView extends BorderPane {
             delay.play();
             return;
         }
-        BattleButtons.getHBox1().setVisible(false);
-        BattleButtons.getHBox2().setVisible(false);
-        BattleView.getPlayerBar().setVisible(false);
 
-        SceneManager.switchStageTo(SceneManager.getFightView());
-        executor.addEvent(new MessageEvent(player.getFrontPokemon().getName() + " stop!"));
-        player.setFront(pokemon, terrain);
-        BattleView.refreshSprites();
-        executor.addEvent(new MessageEvent(player.getFrontPokemon().getName() + " go!"));
-        BattleView.getPlayerBar().setPokemon(player.getFrontPokemon());
-
+        player.setAction(Action.Switch);
+        executor.addEvent(new StartTurn(npc, player, pokemon, executor));
         executor.executeNext(() -> {
-            if(isTurnDisable){
-                executor.executeNext(() -> {
-                    BattleView.getPlayerBar().setVisible(true);
-                    BattleView.getFightButtons().resetFightButtons();
-                });
-                return;
-            }
-            BattleView.getPlayerBar().setVisible(true);
-            Pokemon npcPokemon = BattleView.getNpc().getFrontPokemon();
-            Pokemon playerPokemon = player.getFrontPokemon();
-            if (npcPokemon.getStatus() != Status.KO) {
-                Move npcMove = npcPokemon.chooseMove();
-                executor.addEvent(new AttackEvent(npcPokemon, playerPokemon, npcMove, BattleView.getTerrain(), executor));
-            } else {
-                executor.addEvent(new MessageEvent(npcPokemon.getName() + " fainted."));
-            }
-            executor.executeNext(() -> {
-                BattleView.getPlayerBar().setVisible(true);
-                BattleView.getFightButtons().resetFightButtons();
-            });
+//            System.out.println(getClass().getSimpleName() + " Ending turn...");
+            executor.addEvent(new EndTurn(BattleView.getFightButtons(), executor));
+            executor.executeNext(null);
         });
     }
 
-    public boolean isTurnDisable() {
-        return isTurnDisable;
-    }
-    public void setTurnDisable(boolean isTurnDisable) {
-        this.isTurnDisable = isTurnDisable;
+    public void setTurnDisable(boolean disable){
+        isTurnDisable = disable;
     }
 }

@@ -6,6 +6,7 @@ import Controller.Fight.Battle.Events.Event;
 import Controller.Fight.Battle.Events.UIEvents.MessageEvent;
 import Model.Person.Player;
 import Model.Pokemon.Pokemon;
+import View.Game.Battle.BattleButtons;
 import View.Game.Battle.BattleView;
 import View.Game.SceneManager;
 
@@ -24,12 +25,14 @@ public class PlayerSwitchEvent extends BattleEvent {
 
     @Override
     public void execute() {
+        BattleView.getPlayerBar().setVisible(false);
         SceneManager.switchStageTo(SceneManager.getFightView());
         executor.addEvent(new MessageEvent(player.getFrontPokemon().getName() + " stop!"));
         player.setFront(other, terrain);
         BattleView.refreshSprites();
         executor.addEvent(new MessageEvent(player.getFrontPokemon().getName() + " go!"));
         BattleView.getPlayerBar().setPokemon(player.getFrontPokemon());
+        BattleView.getPlayerBar().setVisible(true);
         executor.executeNext(this::onFinish);
     }
 }

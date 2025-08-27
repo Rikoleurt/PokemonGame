@@ -134,7 +134,7 @@ public class BattleButtons extends HBox {
 
 
         pokemonButton.setOnAction(e -> {
-            SwitchView switchView = new SwitchView(player, textBubble, () -> SceneManager.switchStageTo(SceneManager.getFightView()));
+            SwitchView switchView = new SwitchView(player, npc, textBubble, () -> SceneManager.switchStageTo(SceneManager.getFightView()));
             SceneManager.switchStageTo(switchView);
         });
 
@@ -174,8 +174,7 @@ public class BattleButtons extends HBox {
 
     private void onButtonPressed(Move move, Terrain terrain) {
         player.setAction(Action.Attack);
-        HBox1.setVisible(false);
-        HBox2.setVisible(false);
+
         BattleView.refreshSprites();
         executor.addEvent(new StartTurn(npc, player, move, terrain, executor, this));
         executor.executeNext(() -> {
@@ -197,9 +196,9 @@ public class BattleButtons extends HBox {
 
 
     public void askPlayerForSwitch(){
-        SwitchView switchView = new SwitchView(player, textBubble, () -> SceneManager.switchStageTo(SceneManager.getFightView()));
+        SwitchView switchView = new SwitchView(player, npc, textBubble, () -> SceneManager.switchStageTo(SceneManager.getFightView()));
         SceneManager.switchStageTo(switchView);
-        switchView.setTurnDisable(true);
+//        switchView.setTurnDisable(true);
         refreshSprites();
     }
 

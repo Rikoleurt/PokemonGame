@@ -150,6 +150,7 @@ public class BattleView extends BorderPane {
         Pokemon n = npc.getFrontPokemon();
         playerSprite.setImage(spriteFor(p, true));
         opponentSprite.setImage(spriteFor(n, false));
+        System.out.println("Refreshing sprites in BattleView...");
     }
 
     public static TextBubble getTextBubble() {
