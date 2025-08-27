@@ -12,15 +12,16 @@ import java.util.Random;
 /**
  * Computes the order of the next turn and returns true if the player is the first to play
  */
-public class OrderEvent extends ComputeEvent<Boolean> {
+public class Order extends ComputeEvent<Boolean> {
 
     private final Player player;
     private final NPC npc;
     Action npcAction;
 
-    public OrderEvent(Player player, NPC npc) {
+    public Order(Player player, NPC npc, Action action) {
         this.player = player;
         this.npc = npc;
+        this.npcAction = action;
     }
 
     @Override
@@ -32,6 +33,12 @@ public class OrderEvent extends ComputeEvent<Boolean> {
 
         int playerPriority = priorityOf(playerAction);
         int npcPriority = priorityOf(npcAction);
+
+        System.out.println();
+        System.out.println("Class : " + getClass().getSimpleName() + " : ");
+        System.out.println("playerAction : " + playerAction + ", playerPriority: " + playerPriority);
+        System.out.println("npcAction : " +  npcAction + ", npcPriority: " + npcPriority);
+        System.out.println();
 
         if (playerPriority > npcPriority) return true;
         if (playerPriority < npcPriority) return false;

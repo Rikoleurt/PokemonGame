@@ -20,6 +20,6 @@ public class EndTurn extends BattleEvent {
             battleButtons.resetFightButtons();
             battleButtons.requestFocus();
         });
-        onFinish();
+        executor.executeNext(this::onFinish);
     }
 }

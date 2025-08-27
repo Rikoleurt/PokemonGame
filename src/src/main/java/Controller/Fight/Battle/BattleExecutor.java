@@ -34,10 +34,10 @@ public class BattleExecutor {
     }
 
     public void executeNext(Runnable onAllEventsFinished) {
-        getEventsFromQueue();
+//        getEventsFromQueue();
         if (!events.isEmpty()) {
             BattleEvent event = events.poll();
-            System.out.println("Next event: " + event.getName());
+//            System.out.println("Next event: " + event.getName());
             event.setOnFinish(() -> executeNext(onAllEventsFinished));
             event.execute();
         } else {

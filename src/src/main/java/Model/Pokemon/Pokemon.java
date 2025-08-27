@@ -289,7 +289,7 @@ public class Pokemon {
             } else if((status == Status.normal || status == Status.cursed || status == Status.burned || status == Status.paralyzed || status == Status.freeze || status == Status.attracted || status == Status.confused || status == Status.asleep || status == Status.poisoned || status == Status.badlyPoisoned)){
                 int damage = (int) totalDamage((Attack) getAttack(attack), this, target);
                 target.setHP(Math.max(0, target.getHP() - damage)); // Apply the damage
-                System.out.println(target.getHP() + ", damage : " + damage);
+//                System.out.println(target.getHP() + ", damage : " + damage);
                 executor.addEvent(new UpdateBarEvent(target));
             }
         }
@@ -402,6 +402,7 @@ public class Pokemon {
                 if (targetWeaknesses.contains(move.getType())) {
                     effectivenessCoefficient = 2;
                     console.log("The attack is super effective !");
+                    executor.addEvent(new MessageEvent("The attack is super effective !"));
                     return specialDamages * effectivenessCoefficient;
                 }
                 if (targetImmunities.contains(move.getType())) {
@@ -577,9 +578,9 @@ public class Pokemon {
 //            case cursed:
 //                HP = HP - (maxHP/4);
         }
-        System.out.println("isDead : " + isDeadFromStatus());
+//        System.out.println("isDead : " + isDeadFromStatus());
         if(status == Status.KO) isDeadFromStatus = true;
-        System.out.println("isDead : " + isDeadFromStatus());
+//        System.out.println("isDead : " + isDeadFromStatus());
     }
 
     public boolean isDeadFromStatus(){
