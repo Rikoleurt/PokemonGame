@@ -1,0 +1,46 @@
+.pk-alert.dialog-pane {
+    -fx-background-color: rgba(20,20,28,0.95);
+    -fx-background-radius: 16;
+    -fx-padding: 16 18 14 18;
+    -fx-font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+    -fx-font-size: 14px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 20, 0.2, 0, 8);
+}
+
+.pk-alert .content.label {
+    -fx-text-fill: white;
+    -fx-wrap-text: true;
+    -fx-padding: 4 0 12 0;
+}
+
+.pk-alert .button-bar {
+    -fx-padding: 0;
+}
+
+.pk-alert .button {
+    -fx-background-radius: 12;
+    -fx-padding: 8 14 8 14;
+    -fx-font-weight: 600;
+}
+
+.pk-alert .button:focused {
+    -fx-effect: dropshadow(gaussian, rgba(255,255,255,0.25), 10, 0.2, 0, 0);
+}
+
+.pk-alert .pk-yes {
+    -fx-background-color: linear-gradient(to bottom, #74f08a, #43d46c);
+    -fx-text-fill: #0b2a18;
+}
+
+.pk-alert .pk-yes:hover {
+    -fx-background-color: linear-gradient(to bottom, #7df492, #46dd73);
+}
+
+.pk-alert .pk-no {
+    -fx-background-color: #2a2f3a;
+    -fx-text-fill: #cbd5e1;
+}
+
+.pk-alert .pk-no:hover {
+    -fx-background-color: #353b48;
+}

@@ -116,19 +116,32 @@ public class BattleView extends BorderPane {
 
     public static void askClosedQuestion(MessageEvent messageEvent, Stage primaryStage, Runnable onYes, Runnable onNo) {
         String question = messageEvent.getMessage();
+
         ButtonType yes = new ButtonType("Yes", ButtonBar.ButtonData.YES);
         ButtonType no = new ButtonType("No", ButtonBar.ButtonData.NO);
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION,question, yes, no);
+
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, question, yes, no);
         alert.setHeaderText(null);
         alert.initOwner(primaryStage);
+        alert.initStyle(javafx.stage.StageStyle.UNDECORATED);
+        alert.getDialogPane().getStylesheets().add(Objects.requireNonNull(BattleView.class.getResource("/style/alert.css")).toExternalForm());
+        alert.getDialogPane().getStyleClass().add("pk-alert");
+
+        Button yesBtn = (javafx.scene.control.Button) alert.getDialogPane().lookupButton(yes);
+        Button noBtn = (javafx.scene.control.Button) alert.getDialogPane().lookupButton(no);
+
+        yesBtn.getStyleClass().add("pk-yes");
+        noBtn.getStyleClass().add("pk-no");
+
         alert.showAndWait().ifPresent(response -> {
             if (response == yes) {
-                if(onYes != null) onYes.run();
-            } else if(response == no) {
-                if(onNo != null) onNo.run();
+                if (onYes != null) onYes.run();
+            } else if (response == no) {
+                if (onNo != null) onNo.run();
             }
         });
     }
+
 
     private static String normalizeName(String raw, boolean back) {
         String n = Normalizer.normalize(raw, Normalizer.Form.NFD).replaceAll("\\p{M}", "");
