@@ -15,6 +15,7 @@ import View.Game.Battle.Text.TextBubble;
 import View.Game.Inventory.Bag.BagView;
 import View.Game.SceneManager;
 
+import View.Game.Switch.SwitchKOView;
 import View.Game.Switch.SwitchView;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
@@ -196,9 +197,9 @@ public class BattleButtons extends HBox {
 
 
     public void askPlayerForSwitch(){
-        SwitchView switchView = new SwitchView(player, npc, textBubble, () -> SceneManager.switchStageTo(SceneManager.getFightView()));
+        SwitchKOView switchView = new SwitchKOView(player, npc, textBubble, this, () -> SceneManager.switchStageTo(SceneManager.getFightView()));
         SceneManager.switchStageTo(switchView);
-//        switchView.setTurnDisable(true);
+        switchView.setTurnDisable(true);
         refreshSprites();
     }
 

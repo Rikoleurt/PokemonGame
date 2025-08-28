@@ -34,11 +34,11 @@ public class Order extends ComputeEvent<Boolean> {
         int playerPriority = priorityOf(playerAction);
         int npcPriority = priorityOf(npcAction);
 
-        System.out.println();
-        System.out.println("Class : " + getClass().getSimpleName() + " : ");
-        System.out.println("playerAction : " + playerAction + ", playerPriority: " + playerPriority);
-        System.out.println("npcAction : " +  npcAction + ", npcPriority: " + npcPriority);
-        System.out.println();
+//        System.out.println();
+//        System.out.println("Class : " + getClass().getSimpleName() + " : ");
+//        System.out.println("playerAction : " + playerAction + ", playerPriority: " + playerPriority);
+//        System.out.println("npcAction : " +  npcAction + ", npcPriority: " + npcPriority);
+//        System.out.println();
 
         if (playerPriority > npcPriority) return true;
         if (playerPriority < npcPriority) return false;

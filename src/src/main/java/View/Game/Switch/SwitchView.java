@@ -55,6 +55,8 @@ public class SwitchView extends BorderPane {
     HBox hBox3 = new HBox();
     BattleExecutor executor = BattleExecutor.getInstance();
     boolean isTurnDisable = false;
+    Button cancelButton;
+    HBox wrapper;
 
     public SwitchView(Player player, NPC npc, TextBubble textBubble, Runnable onClose) {
         this.player = player;
@@ -64,7 +66,7 @@ public class SwitchView extends BorderPane {
         ObservableList<Node> components = getChildren();
         setButtons();
 
-        Button cancelButton = new Button("CANCEL");
+        cancelButton = new Button("CANCEL");
         cancelButton.getStyleClass().add("cancel-button");
 
         cancelButton.setOnAction(e -> onClose.run());
@@ -73,7 +75,7 @@ public class SwitchView extends BorderPane {
         root.setAlignment(Pos.CENTER_RIGHT);
         root.setPadding(new Insets(20));
 
-        HBox wrapper = new HBox();
+        wrapper = new HBox();
         wrapper.setSpacing(10);
         wrapper.setAlignment(Pos.CENTER_LEFT);
         wrapper.getChildren().addAll(switchBubble, cancelButton);
@@ -216,7 +218,7 @@ public class SwitchView extends BorderPane {
         return bar;
     }
 
-    private void handleSwitch(Pokemon pokemon) {
+    protected void handleSwitch(Pokemon pokemon) {
         BattleView.refreshSprites();
         if (pokemon.isKO()) {
             switchBubble.setVisible(true);
@@ -225,6 +227,11 @@ public class SwitchView extends BorderPane {
             delay.setOnFinished(ev -> switchBubble.setVisible(false));
             delay.play();
             return;
+        }
+
+        if(isTurnDisable){
+            executor.addEvent(new PlayerSwitchEvent(player, pokemon, executor));
+            executor.executeNext(null);
         }
 
         player.setAction(Action.Switch);
@@ -238,5 +245,13 @@ public class SwitchView extends BorderPane {
 
     public void setTurnDisable(boolean disable){
         isTurnDisable = disable;
+    }
+
+    public HBox getWrapper() {
+        return wrapper;
+    }
+
+    public Button getCancelButton() {
+        return cancelButton;
     }
 }

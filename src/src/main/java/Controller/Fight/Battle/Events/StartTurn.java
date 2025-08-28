@@ -51,6 +51,16 @@ public class StartTurn extends BattleEvent {
         this.battleButtons = BattleView.getFightButtons();
     }
 
+    public StartTurn(NPC npc, Player player, Item playerItem, BattleExecutor executor) {
+        this.npc = npc;
+        this.player = player;
+        this.playerItem = playerItem;
+        this.switchTarget = null;
+        this.move = null;
+        this.terrain = BattleView.getTerrain();
+        this.executor = executor;
+    }
+
     @Override
     public void execute() {
         executor.increaseTurn();
@@ -65,12 +75,8 @@ public class StartTurn extends BattleEvent {
         Pokemon playerPokemon = player.getFrontPokemon();
         Pokemon npcPokemon = npc.getFrontPokemon();
 
-        System.out.println(playerPokemon.getName() + " vs " + npcPokemon.getName());
-
         Order order = new Order(player, npc, npcAction);
         boolean playerPriority = order.compute();
-
-        System.out.println("Player prio : " + playerPriority);
 
         if (playerPriority && !playerPokemon.isKO()) {
             switch (playerAction) {
@@ -115,8 +121,6 @@ public class StartTurn extends BattleEvent {
                 }
             }
         }
-
-        System.out.println(playerPokemon.getName() + " vs " + npcPokemon.getName());
 
         executor.executeNext(this::onFinish);
         if(npcPokemon.isKO()){

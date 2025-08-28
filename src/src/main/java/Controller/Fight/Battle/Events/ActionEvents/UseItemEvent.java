@@ -16,7 +16,6 @@ public class UseItemEvent extends BattleEvent {
         this.fighter = fighter;
         this.item = item;
         this.target = target;
-
         this.executor = executor;
     }
 

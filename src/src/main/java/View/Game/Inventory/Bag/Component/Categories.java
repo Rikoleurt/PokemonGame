@@ -2,11 +2,14 @@ package View.Game.Inventory.Bag.Component;
 
 import Controller.Fight.Battle.BattleExecutor;
 import Controller.Fight.Battle.Events.ActionEvents.AttackEvent;
+import Controller.Fight.Battle.Events.StartTurn;
+import Controller.Fight.Battle.Events.UIEvents.EndTurn;
 import Controller.Fight.Battle.Events.UIEvents.MessageEvent;
 import Controller.Fight.Battle.Events.ActionEvents.UseItemEvent;
 import Model.Inventory.Bag;
 import Model.Inventory.Category;
 import Model.Inventory.Items.Item;
+import Model.Person.Action;
 import Model.Person.NPC;
 import Model.Person.Player;
 import Model.Pokemon.Move;
@@ -108,21 +111,28 @@ public class Categories extends VBox {
                 button.setOnAction(e -> {
                     Pokemon chosenPokemon = player.getFrontPokemon();
                     if (chosenPokemon.getHP() < chosenPokemon.getMaxHP()) {
+                        player.setAction(Action.Item);
+                        executor.addEvent(new StartTurn(npc, player, item,executor));
                         SceneManager.switchStageTo(SceneManager.getFightView());
-                        BattleButtons.getHBox1().setVisible(false);
-                        BattleButtons.getHBox2().setVisible(false);
-                        executor.addEvent(new UseItemEvent(player, item, chosenPokemon, executor));
                         executor.executeNext(() -> {
-                            if (npcPokemon.getStatus() != Status.KO) {
-                                Move npcMove = npcPokemon.chooseMove();
-                                executor.addEvent(new AttackEvent(npcPokemon, playerPokemon, npcMove, BattleView.getTerrain(), executor));
-                            } else {
-                                executor.addEvent(new MessageEvent(npcPokemon.getName() + " fainted."));
-                            }
-                            executor.executeNext(() -> {
-                                BattleView.getFightButtons().resetFightButtons();
-                            });
+                            System.out.println(getClass().getSimpleName() + " Ending turn...");
+                            executor.addEvent(new EndTurn(BattleView.getFightButtons(), executor));
+                            executor.executeNext(null);
                         });
+//                        BattleButtons.getHBox1().setVisible(false);
+//                        BattleButtons.getHBox2().setVisible(false);
+//                        executor.addEvent(new UseItemEvent(player, item, chosenPokemon, executor));
+//                        executor.executeNext(() -> {
+//                            if (npcPokemon.getStatus() != Status.KO) {
+//                                Move npcMove = npcPokemon.chooseMove();
+//                                executor.addEvent(new AttackEvent(npcPokemon, playerPokemon, npcMove, BattleView.getTerrain(), executor));
+//                            } else {
+//                                executor.addEvent(new MessageEvent(npcPokemon.getName() + " fainted."));
+//                            }
+//                            executor.executeNext(() -> {
+//                                BattleView.getFightButtons().resetFightButtons();
+//                            });
+//                        });
                     } else {
                         bagBubble.showBubble();
                         bagBubble.showMessage("It won't have any effect.");
