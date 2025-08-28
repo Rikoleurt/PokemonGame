@@ -25,7 +25,7 @@ public class PlayerExample {
         LinkedList<Pokemon> team = new LinkedList<>();
 
         Pokemon pikachu = initiatePikachu();
-        Pokemon bulbizarre = initiateBulbizarre();
+//        Pokemon bulbizarre = initiateBulbizarre();
         Pokemon salameche = initiateSalameche();
         Pokemon abo = initiateEkans();
         Pokemon papilusion = initiateButterfree();
@@ -33,7 +33,7 @@ public class PlayerExample {
 
         team.add(salameche);
         team.add(pikachu);
-        team.add(bulbizarre);
+//        team.add(bulbizarre);
         team.add(roucool);
         team.add(papilusion);
         team.add(abo);

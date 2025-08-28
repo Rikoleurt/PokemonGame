@@ -27,5 +27,6 @@ public class FaintEvent extends BattleEvent {
         if(npc.getTeam().contains(pokemon)){
             battleButtons.handleNpcPokemonKO(pokemon);
         }
+        onFinish();
     }
 }

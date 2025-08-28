@@ -1,4 +1,4 @@
-package Controller.Fight.Battle.Events.ActionEvents;
+package Controller.Fight.Battle.Events.ActionEvents.Switch;
 
 import Controller.Fight.Battle.BattleExecutor;
 import Controller.Fight.Battle.Events.BattleEvent;
@@ -27,10 +27,9 @@ public class FoeSwitchEvent extends BattleEvent {
 
     @Override
     public void execute() {
-        executor.addEvent(new MessageEvent(npc.getFrontPokemon().getName() + " stop!"));
         npc.setFront(other, terrain);
         BattleView.refreshSprites();
-        executor.addEvent(new MessageEvent(npc.getFrontPokemon().getName() + " go!"));
+        executor.addEvent(new MessageEvent(npc.getName() + " sends " + npc.getFrontPokemon().getName() + "!"));
         BattleView.getOpponentBar().setPokemon(npc.getFrontPokemon());
         executor.executeNext(this::onFinish);
     }

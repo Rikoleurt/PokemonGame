@@ -1,6 +1,7 @@
 package View.Game.Battle;
 
 import Controller.Fight.Battle.BattleExecutor;
+import Controller.Fight.Battle.Events.ActionEvents.Switch.AskPlayerSwitchEvent;
 import Controller.Fight.Battle.Events.UIEvents.EndTurn;
 import Controller.Fight.Battle.Events.StartTurn;
 import Controller.Fight.Battle.Events.UIEvents.MessageEvent;
@@ -207,21 +208,13 @@ public class BattleButtons extends HBox {
         getHBox1().setVisible(false);
         getHBox2().setVisible(false);
         Pokemon next = npc.chooseSwitchTarget();
-        PauseTransition pt = new PauseTransition(Duration.seconds(1));
-        pt.setOnFinished(event -> {
-            if (next != null) {
-                npc.setFront(next, terrain);
-                executor.addEvent(new MessageEvent(npc.getName() + " sends " + npc.getFrontPokemon().getName() + "!"));
-                opponentBar.setPokemon(npc.getFrontPokemon());
-                opponentBar.resetPokeball();
-                executor.executeNext(() -> Platform.runLater(this::resetFightButtons));
-                refreshSprites();
-            } else {
-                Platform.runLater(this::resetFightButtons);
-                refreshSprites();
-            }
-        });
-        pt.play();
+        if(npc.getHealthyPokemon() > 0) executor.addEvent(new AskPlayerSwitchEvent(player, executor, npc, next, this));
+        else {
+            executor.addEvent(new EndTurn(this, executor));
+            executor.executeNext(null);
+            return;
+        }
+        executor.executeNext(() -> Platform.runLater(()-> resetFightButtons(getClass().getSimpleName())));
     }
 
     private String getAttackName(int index) {
@@ -237,7 +230,8 @@ public class BattleButtons extends HBox {
         return attacks.get(index);
     }
 
-    public void resetFightButtons() {
+    public void resetFightButtons(String className) {
+        System.out.println(className + " Reset FightButtons...");
         refreshFromCurrentPokemon();
         ObservableList<Node> components = this.getChildren();
         HBox1.getChildren().clear();
@@ -324,7 +318,7 @@ public class BattleButtons extends HBox {
         if (code == KeyCode.B){
             boolean onMainMenu = HBox1.getChildren().contains(attackButton) && HBox2.getChildren().contains(pokemonButton);
             if (!onMainMenu){
-                resetFightButtons();
+                resetFightButtons(getClass().getSimpleName());
                 attackButton.requestFocus();
             }
         }

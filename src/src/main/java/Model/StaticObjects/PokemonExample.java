@@ -23,9 +23,9 @@ public class PokemonExample {
     public static Pokemon initiateBulbizarre() {
         if(!bulbizarreMoves.contains(attacks.get(4)) || !bulbizarreMoves.contains(attacks.get(6))) {
             bulbizarreMoves.add(attacks.get(4));
-//            bulbizarreMoves.add(attacks.get(6));
+            bulbizarreMoves.add(attacks.get(6));
         }
-        return new Pokemon("bulbasaur", 31, 31, 18, 18, 23, 23, 17,
+        return new Pokemon("bulbasaur", 31, 1, 18, 18, 23, 23, 17,
                 45, 49, 49, 65, 65, 45,
                 10, 10, 10, 10, 10, 10,
                 0, 0, 0, 0, 0, 0,
@@ -63,7 +63,7 @@ public class PokemonExample {
         salamecheMoves.add(attacks.get(0));
         salamecheMoves.add(attacks.get(3));
         salamecheMoves.add(attacks.get(6));
-        return new Pokemon("charmander", 30, 1, 19, 17, 22, 19, 21,
+        return new Pokemon("charmander", 30, 30, 19, 17, 22, 19, 21,
                 39, 52, 43, 60, 50, 65,
                 10, 10, 10, 10, 10, 10,
                 0, 0, 0, 0, 0, 0,

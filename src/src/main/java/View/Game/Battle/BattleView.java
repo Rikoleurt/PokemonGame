@@ -1,5 +1,6 @@
 package View.Game.Battle;
 
+import Controller.Fight.Battle.Events.UIEvents.MessageEvent;
 import Model.Pokemon.Pokemon;
 import Model.Pokemon.Terrain;
 import Model.Pokemon.TerrainEnum.Debris;
@@ -15,11 +16,17 @@ import View.Game.SceneManager;
 import View.Game.Switch.SwitchView;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.stage.Popup;
+import javafx.stage.Stage;
 
 import java.text.Normalizer;
 import java.util.HashMap;
@@ -105,6 +112,22 @@ public class BattleView extends BorderPane {
         setCenter(centerPane);
 
         refreshSprites();
+    }
+
+    public static void askClosedQuestion(MessageEvent messageEvent, Stage primaryStage, Runnable onYes, Runnable onNo) {
+        String question = messageEvent.getMessage();
+        ButtonType yes = new ButtonType("Yes", ButtonBar.ButtonData.YES);
+        ButtonType no = new ButtonType("No", ButtonBar.ButtonData.NO);
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION,question, yes, no);
+        alert.setHeaderText(null);
+        alert.initOwner(primaryStage);
+        alert.showAndWait().ifPresent(response -> {
+            if (response == yes) {
+                if(onYes != null) onYes.run();
+            } else if(response == no) {
+                if(onNo != null) onNo.run();
+            }
+        });
     }
 
     private static String normalizeName(String raw, boolean back) {

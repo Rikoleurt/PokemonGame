@@ -42,7 +42,7 @@ public class NPC implements Fighter {
 
     public Action makeChoiceAction(){
         Random rand = new Random();
-        int randInt = rand.nextInt(0,100);
+        int randInt = rand.nextInt(10,100);
         int healthyPokemon = getHealthyPokemon();
         if (randInt < 10 && healthyPokemon > 1) {
             action = Action.Switch;

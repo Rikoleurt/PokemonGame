@@ -2,8 +2,9 @@ package Controller.Fight.Battle.Events;
 
 import Controller.Fight.Battle.BattleExecutor;
 import Controller.Fight.Battle.Events.ActionEvents.AttackEvent;
-import Controller.Fight.Battle.Events.ActionEvents.FoeSwitchEvent;
-import Controller.Fight.Battle.Events.ActionEvents.PlayerSwitchEvent;
+import Controller.Fight.Battle.Events.ActionEvents.Switch.AskPlayerSwitchEvent;
+import Controller.Fight.Battle.Events.ActionEvents.Switch.FoeSwitchEvent;
+import Controller.Fight.Battle.Events.ActionEvents.Switch.PlayerSwitchEvent;
 import Controller.Fight.Battle.Events.ActionEvents.UseItemEvent;
 import Controller.Fight.Battle.Events.ComputeEvents.FoeEvents.FoeChoiceEvent;
 import Controller.Fight.Battle.Events.ComputeEvents.FoeEvents.FoeItemChoiceEvent;
@@ -124,7 +125,6 @@ public class StartTurn extends BattleEvent {
 
         executor.executeNext(this::onFinish);
         if(npcPokemon.isKO()){
-            System.out.println(npcPokemon.getName() + " is KO");
             executor.addEvent(new FaintEvent(player, npc, npcPokemon, battleButtons));
             executor.executeNext(null);
         }

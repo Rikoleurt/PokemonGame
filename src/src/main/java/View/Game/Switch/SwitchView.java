@@ -1,18 +1,14 @@
 package View.Game.Switch;
 
 import Controller.Fight.Battle.BattleExecutor;
-import Controller.Fight.Battle.Events.ActionEvents.AttackEvent;
-import Controller.Fight.Battle.Events.ActionEvents.PlayerSwitchEvent;
+import Controller.Fight.Battle.Events.ActionEvents.Switch.PlayerSwitchEvent;
 import Controller.Fight.Battle.Events.StartTurn;
 import Controller.Fight.Battle.Events.UIEvents.EndTurn;
-import Controller.Fight.Battle.Events.UIEvents.MessageEvent;
 import Model.Person.Action;
 import Model.Person.NPC;
-import Model.Pokemon.Move;
 import Model.Pokemon.Pokemon;
 import Model.Pokemon.PokemonEnum.Status;
 import Model.Person.Player;
-import View.Game.Battle.BattleButtons;
 import View.Game.Battle.BattleView;
 import View.Game.Battle.InfoBars.Bar;
 import View.Game.Battle.Text.TextBubble;
@@ -38,8 +34,6 @@ import javafx.util.Duration;
 
 import java.util.List;
 import java.util.Objects;
-
-import static View.Game.Battle.BattleView.*;
 
 public class SwitchView extends BorderPane {
 
@@ -144,7 +138,7 @@ public class SwitchView extends BorderPane {
             button.setGraphic(buildSwitchContent(pokemon));
         }
         if(pokemon == player.getFrontPokemon()){
-            button.setOnAction(e -> {
+            button.setOnMousePressed(e -> {
                 switchBubble.showMessage("This Pokémon is already fighting!");
                 PauseTransition pause = new PauseTransition(new Duration(2));
                 pause.play();

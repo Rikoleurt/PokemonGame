@@ -1,6 +1,6 @@
 package View.Game.Switch;
 
-import Controller.Fight.Battle.Events.ActionEvents.PlayerSwitchEvent;
+import Controller.Fight.Battle.Events.ActionEvents.Switch.ForcePlayerSwitchEvent;
 import Model.Person.NPC;
 import Model.Person.Player;
 import Model.Pokemon.Pokemon;
@@ -31,8 +31,8 @@ public class SwitchKOView extends SwitchView {
         }
 
         if(isTurnDisable){
-            executor.addEvent(new PlayerSwitchEvent(player, pokemon, executor));
-            executor.executeNext(battleButtons::resetFightButtons);
+            executor.addEvent(new ForcePlayerSwitchEvent(player, pokemon, executor));
+            executor.executeNext(()-> battleButtons.resetFightButtons(getClass().getSimpleName()));
         }
     }
 }

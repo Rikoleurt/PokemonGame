@@ -13,6 +13,9 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.Objects;
 
+import static View.Game.Battle.BattleView.npc;
+import static View.Game.Battle.BattleView.player;
+
 public class Main extends Application {
 
     SocketServer server = new SocketServer();
@@ -57,7 +60,6 @@ public class Main extends Application {
 //        consoleStage.show();
 
         TextBubble textBubble = BattleView.getTextBubble();
-        scene.setOnKeyPressed(event -> textBubble.handleKeyPress(event.getCode()));
 
         new Thread(() -> {
             try {
@@ -67,6 +69,8 @@ public class Main extends Application {
                 System.out.println("Client connect failed " + e.getMessage());
             }
         }).start();
+         scene.setOnKeyPressed(event -> textBubble.handleKeyPress(event.getCode()));
+
     }
 
     static void main(String[] args) {

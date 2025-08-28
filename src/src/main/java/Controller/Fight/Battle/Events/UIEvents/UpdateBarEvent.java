@@ -23,7 +23,6 @@ public class UpdateBarEvent extends BattleEvent {
 
     private Bar resolveBar(Pokemon p){
         if (p == BattleView.getPlayer().getFrontPokemon()) return BattleView.getPlayerBar();
-        System.out.println(p.getName() + ", hp = " + p.getHP());
         return BattleView.getOpponentBar();
     }
 }
