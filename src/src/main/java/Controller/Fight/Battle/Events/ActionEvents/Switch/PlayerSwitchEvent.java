@@ -32,6 +32,6 @@ public class PlayerSwitchEvent extends BattleEvent {
         executor.addEvent(new MessageEvent(player.getFrontPokemon().getName() + " go!"));
         BattleView.getPlayerBar().setPokemon(player.getFrontPokemon());
         BattleView.getPlayerBar().setVisible(true);
-        executor.executeNext(this::onFinish);
+        executor.executeEvents(this::onFinish);
     }
 }

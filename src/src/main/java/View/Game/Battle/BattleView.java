@@ -99,8 +99,8 @@ public class BattleView extends BorderPane {
         opponentSprite.setPreserveRatio(true);
         playerSprite.setFitHeight(200);
         opponentSprite.setFitHeight(200);
-        playerSprite.setSmooth(true);
-        opponentSprite.setSmooth(true);
+        playerSprite.setSmooth(false);
+        opponentSprite.setSmooth(false);
 
         BorderPane.setAlignment(playerSprite, Pos.BOTTOM_LEFT);
         centerPane.setPadding(new Insets(0,0,0,200));
@@ -113,6 +113,7 @@ public class BattleView extends BorderPane {
 
         refreshSprites();
     }
+
 
     public static void askClosedQuestion(MessageEvent messageEvent, Stage primaryStage, Runnable onYes, Runnable onNo) {
         String question = messageEvent.getMessage();
@@ -157,8 +158,9 @@ public class BattleView extends BorderPane {
         String base = normalizeName(p.getName(), back);
         String path = resolveSpritePath(base);
         if (path == null) return null;
-        return new Image(Objects.requireNonNull(BattleView.class.getResource(path)).toExternalForm());
+        return new Image(Objects.requireNonNull(BattleView.class.getResource(path)).toExternalForm(), 200, 200, true, false);
     }
+
 
     private static String resolveSpritePath(String base) {
         String a = "/sprites/ani/" + base + ".gif";

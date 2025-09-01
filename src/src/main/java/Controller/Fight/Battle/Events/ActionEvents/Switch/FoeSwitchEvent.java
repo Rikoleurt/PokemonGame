@@ -2,6 +2,7 @@ package Controller.Fight.Battle.Events.ActionEvents.Switch;
 
 import Controller.Fight.Battle.BattleExecutor;
 import Controller.Fight.Battle.Events.BattleEvent;
+import Controller.Fight.Battle.Events.GameEvents.EndTurn;
 import Controller.Fight.Battle.Events.UIEvents.MessageEvent;
 import Model.Person.NPC;
 import Model.Pokemon.Pokemon;
@@ -14,23 +15,19 @@ public class FoeSwitchEvent extends BattleEvent {
     private final NPC npc;
     private final Pokemon other;
     private final Terrain terrain;
-    private final BattleButtons battleButtons;
-    private final BattleExecutor executor;
 
-    public FoeSwitchEvent(NPC npc, Pokemon other, Terrain terrain, BattleExecutor executor,  BattleButtons battleButtons) {
+    public FoeSwitchEvent(NPC npc, Pokemon other, Terrain terrain) {
         this.npc = npc;
         this.other = other;
         this.terrain = terrain;
-        this.executor = executor;
-        this.battleButtons = battleButtons;
     }
 
     @Override
     public void execute() {
         npc.setFront(other, terrain);
         BattleView.refreshSprites();
-        executor.addEvent(new MessageEvent(npc.getName() + " sends " + npc.getFrontPokemon().getName() + "!"));
         BattleView.getOpponentBar().setPokemon(npc.getFrontPokemon());
-        executor.executeNext(this::onFinish);
+        BattleView.getFightButtons().resetFightButtons(getClass().getSimpleName());
+        BattleView.getOpponentBar().refreshBar();
     }
 }

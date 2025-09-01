@@ -20,9 +20,9 @@ public class ForcePlayerSwitchEvent extends PlayerSwitchEvent {
         SceneManager.switchStageTo(SceneManager.getFightView());
         player.setFront(other, terrain);
         BattleView.refreshSprites();
-        executor.addEvent(new MessageEvent(player.getFrontPokemon().getName() + " go!"));
-        BattleView.getPlayerBar().setPokemon(player.getFrontPokemon());
+        executor.addEvent(new MessageEvent(other.getName() + " go!"));
+        BattleView.getPlayerBar().setPokemon(other);
         BattleView.getPlayerBar().setVisible(true);
-        executor.executeNext(this::onFinish);
+        executor.executeEvents(this::onFinish);
     }
 }

@@ -1,7 +1,6 @@
 package Controller.Fight.Battle;
 
 import Controller.Fight.Battle.Events.BattleEvent;
-import Controller.Fight.Battle.Events.Event;
 import Controller.Fight.Battle.Events.UIEvents.MessageEvent;
 
 import java.util.LinkedList;
@@ -12,6 +11,8 @@ public class BattleExecutor {
     private static BattleExecutor instance;
     private final Queue<BattleEvent> events;
     private int turn;
+    private Runnable onAllEventsFinishedPending;
+    private boolean isBusy;
 
     public BattleExecutor() {
         this.events = new LinkedList<>();
@@ -33,12 +34,11 @@ public class BattleExecutor {
         events.clear();
     }
 
-    public void executeNext(Runnable onAllEventsFinished) {
-//        getEventsFromQueue();
+    public void executeEvents(Runnable onAllEventsFinished) {
+        getEventsFromQueue();
         if (!events.isEmpty()) {
             BattleEvent event = events.poll();
-//            System.out.println("Next event: " + event.getName());
-            event.setOnFinish(() -> executeNext(onAllEventsFinished));
+            event.setOnFinish(() -> executeEvents(onAllEventsFinished));
             event.execute();
         } else {
             if (onAllEventsFinished != null) {
@@ -67,5 +67,27 @@ public class BattleExecutor {
     }
     public int getTurn() {
         return turn;
+    }
+
+    public void setOnAllEventsFinished(Runnable onAllEventsFinished) {
+        this.onAllEventsFinishedPending = onAllEventsFinished;
+    }
+
+    public void step() {
+        if (isBusy) return;
+        if (!events.isEmpty()) {
+            isBusy = true;
+            BattleEvent event = events.poll();
+            event.setOnFinish(() -> {
+                isBusy = false;
+            });
+            event.execute();
+        } else {
+            if (onAllEventsFinishedPending != null) {
+                Runnable r = onAllEventsFinishedPending;
+                onAllEventsFinishedPending = null;
+                r.run();
+            }
+        }
     }
 }

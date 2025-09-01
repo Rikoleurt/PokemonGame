@@ -10,24 +10,31 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import static Model.StaticObjects.PokemonExample.initiateBulbizarre;
-import static Model.StaticObjects.PokemonExample.initiateCarapuce;
+import static Model.StaticObjects.PokemonExample.*;
 
 public class NPCExample {
 
     public static Model.Person.NPC initiateEnemy()
     {
         Map<Item, Integer> items = new HashMap<>();
-        items.put(new Heal(Category.HEALTH, "Potion", "Heals 20HP", 20), 0);
+        items.put(new Heal(Category.HEALTH, "Potion", "Heals 20HP", 20), 3);
         Bag bag = new Bag(items);
 
         LinkedList<Pokemon> team = new LinkedList<>();
 
         Pokemon bulbizarre = initiateBulbizarre();
         Pokemon carapuce = initiateCarapuce();
+        Pokemon pikachu = initiatePikachu();
+        Pokemon salameche = initiateSalameche();
+        Pokemon abo = initiateEkans();
+        Pokemon papilusion = initiateButterfree();
 
         team.add(bulbizarre);
         team.add(carapuce);
+//        team.add(salameche);
+//        team.add(pikachu);
+//        team.add(abo);
+//        team.add(papilusion);
 
         return new Model.Person.NPC("npc", team, bag);
     }

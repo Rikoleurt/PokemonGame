@@ -22,7 +22,7 @@ public class UseItemEvent extends BattleEvent {
     @Override
     public void execute() {
         fighter.use(item, target);
-        executor.executeNext(this::onFinish);
+        executor.executeEvents(this::onFinish);
     }
 }
 

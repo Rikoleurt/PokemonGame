@@ -1,21 +1,15 @@
 package View.Game.Inventory.Bag.Component;
 
 import Controller.Fight.Battle.BattleExecutor;
-import Controller.Fight.Battle.Events.ActionEvents.AttackEvent;
 import Controller.Fight.Battle.Events.StartTurn;
-import Controller.Fight.Battle.Events.UIEvents.EndTurn;
-import Controller.Fight.Battle.Events.UIEvents.MessageEvent;
-import Controller.Fight.Battle.Events.ActionEvents.UseItemEvent;
+import Controller.Fight.Battle.Events.GameEvents.EndTurn;
 import Model.Inventory.Bag;
 import Model.Inventory.Category;
 import Model.Inventory.Items.Item;
 import Model.Person.Action;
 import Model.Person.NPC;
 import Model.Person.Player;
-import Model.Pokemon.Move;
 import Model.Pokemon.Pokemon;
-import Model.Pokemon.PokemonEnum.Status;
-import View.Game.Battle.BattleButtons;
 import View.Game.Battle.BattleView;
 import View.Game.Battle.Text.TextBubble;
 import View.Game.SceneManager;
@@ -114,10 +108,10 @@ public class Categories extends VBox {
                         player.setAction(Action.Item);
                         executor.addEvent(new StartTurn(npc, player, item,executor));
                         SceneManager.switchStageTo(SceneManager.getFightView());
-                        executor.executeNext(() -> {
+                        executor.executeEvents(() -> {
                             System.out.println(getClass().getSimpleName() + " Ending turn...");
                             executor.addEvent(new EndTurn(BattleView.getFightButtons(), executor));
-                            executor.executeNext(null);
+                            executor.executeEvents(null);
                         });
 //                        BattleButtons.getHBox1().setVisible(false);
 //                        BattleButtons.getHBox2().setVisible(false);

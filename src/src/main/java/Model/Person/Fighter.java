@@ -6,5 +6,6 @@ import View.Game.Battle.Text.TextBubble;
 
 public interface Fighter {
     void use(Item item, Pokemon target);
+    void setAction(Action action);
 }
 

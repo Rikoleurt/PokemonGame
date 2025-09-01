@@ -1,16 +1,15 @@
 package View.Game.Switch;
 
+import Controller.Fight.Battle.Events.ActionEvents.Switch.AskPlayerSwitchEvent;
 import Controller.Fight.Battle.Events.ActionEvents.Switch.FoeSwitchEvent;
 import Controller.Fight.Battle.Events.ActionEvents.Switch.PlayerSwitchEvent;
-import Controller.Fight.Battle.Events.UIEvents.EndTurn;
-import Controller.Fight.Battle.Events.UIEvents.MessageEvent;
+import Controller.Fight.Battle.Events.GameEvents.EndTurn;
 import Model.Person.NPC;
 import Model.Person.Player;
 import Model.Pokemon.Pokemon;
 import View.Game.Battle.BattleButtons;
 import View.Game.Battle.BattleView;
 import View.Game.Battle.Text.TextBubble;
-import javafx.scene.layout.HBox;
 
 public class SwitchAfterAskView extends SwitchView {
     BattleButtons battleButtons;
@@ -23,10 +22,11 @@ public class SwitchAfterAskView extends SwitchView {
     @Override
     protected void handleSwitch(Pokemon pokemon){
         executor.addEvent(new PlayerSwitchEvent(player, pokemon, executor));
-        executor.addEvent(new FoeSwitchEvent(npc, otherNpcPokemon, BattleView.getTerrain(), executor, battleButtons));
-        executor.executeNext(()-> {
+        executor.addEvent(new FoeSwitchEvent(npc, otherNpcPokemon, BattleView.getTerrain()));
+        executor.executeEvents(()-> {
             executor.addEvent(new EndTurn(battleButtons, executor));
-            executor.executeNext(null);
+            executor.executeEvents(null);
         });
+        AskPlayerSwitchEvent.setIsSwitching(false);
     }
 }

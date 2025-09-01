@@ -32,11 +32,11 @@ public class PlayerExample {
         Pokemon roucool = initiatePidgey();
 
         team.add(salameche);
-        team.add(pikachu);
+//        team.add(pikachu);
 //        team.add(bulbizarre);
-        team.add(roucool);
+//        team.add(roucool);
         team.add(papilusion);
-        team.add(abo);
+//        team.add(abo);
 
         return new Model.Person.Player("Jason", bag, team);
     }

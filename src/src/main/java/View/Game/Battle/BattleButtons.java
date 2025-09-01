@@ -1,11 +1,11 @@
 package View.Game.Battle;
 
 import Controller.Fight.Battle.BattleExecutor;
-import Controller.Fight.Battle.Events.ActionEvents.Switch.AskPlayerSwitchEvent;
-import Controller.Fight.Battle.Events.UIEvents.EndTurn;
+import Controller.Fight.Battle.Events.ActionEvents.Switch.FoeSwitchEvent;
+import Controller.Fight.Battle.Events.GameEvents.EndTurn;
 import Controller.Fight.Battle.Events.StartTurn;
-import Controller.Fight.Battle.Events.UIEvents.MessageEvent;
 
+import Controller.Fight.Battle.Events.UIEvents.MessageEvent;
 import Model.Person.Action;
 import Model.Pokemon.Pokemon;
 import Model.Pokemon.Move;
@@ -18,7 +18,6 @@ import View.Game.SceneManager;
 
 import View.Game.Switch.SwitchKOView;
 import View.Game.Switch.SwitchView;
-import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -31,7 +30,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-import javafx.util.Duration;
 
 import java.util.List;
 
@@ -176,45 +174,40 @@ public class BattleButtons extends HBox {
 
     private void onButtonPressed(Move move, Terrain terrain) {
         player.setAction(Action.Attack);
-
-        BattleView.refreshSprites();
         executor.addEvent(new StartTurn(npc, player, move, terrain, executor, this));
-        executor.executeNext(() -> {
-            System.out.println(getClass().getSimpleName() + " Ending turn...");
-            executor.addEvent(new EndTurn(this, executor));
-            executor.executeNext(null);
-        });
+//        executor.executeNext(() -> {
+//            if(!AskPlayerSwitchEvent.isSwitching()) {
+//                System.out.println(getClass().getSimpleName() + " Ending turn...");
+//                executor.addEvent(new EndTurn(this, executor));
+//                executor.executeNext(null);
+//            }
+//        });
+        executor.executeEvents(null);
     }
-
-    public void handlePlayerPokemonKO(Pokemon fainted){
-        executor.addEvent(new MessageEvent(fainted.getName() + " fainted."));
-        executor.executeNext(this::askPlayerForSwitch);
-    }
-
-    public void handleNpcPokemonKO(Pokemon fainted){
-        executor.addEvent(new MessageEvent(fainted.getName() + " fainted."));
-        executor.executeNext(this::askNPCForSwitch);
-    }
-
 
     public void askPlayerForSwitch(){
-        SwitchKOView switchView = new SwitchKOView(player, npc, textBubble, this, () -> SceneManager.switchStageTo(SceneManager.getFightView()));
-        SceneManager.switchStageTo(switchView);
-        switchView.setTurnDisable(true);
-        refreshSprites();
+        if(player.getHealthyPokemon() > 0) {
+            SwitchKOView switchView = new SwitchKOView(player, npc, textBubble, this, () -> SceneManager.switchStageTo(SceneManager.getFightView()));
+            SceneManager.switchStageTo(switchView);
+            switchView.setTurnDisable(true);
+            refreshSprites();
+        } else {
+            executor.addEvent(new EndTurn(this, executor));
+            executor.executeEvents(null);
+        }
     }
 
-    private void askNPCForSwitch() {
+    public void askNPCForSwitch() {
         getHBox1().setVisible(false);
         getHBox2().setVisible(false);
         Pokemon next = npc.chooseSwitchTarget();
-        if(npc.getHealthyPokemon() > 0) executor.addEvent(new AskPlayerSwitchEvent(player, executor, npc, next, this));
-        else {
-            executor.addEvent(new EndTurn(this, executor));
-            executor.executeNext(null);
-            return;
+        if(next != null) {
+            executor.addEvent(new FoeSwitchEvent(npc, next, terrain));
         }
-        executor.executeNext(() -> Platform.runLater(()-> resetFightButtons(getClass().getSimpleName())));
+        executor.executeEvents(() -> {
+            executor.addEvent(new EndTurn(this, executor));
+            executor.executeEvents(null);
+        });
     }
 
     private String getAttackName(int index) {
@@ -232,8 +225,12 @@ public class BattleButtons extends HBox {
 
     public void resetFightButtons(String className) {
         System.out.println(className + " Reset FightButtons...");
+        textBubble.showMessage("What will " + playerPokemon.getName() + " do?");
+
         refreshFromCurrentPokemon();
+
         ObservableList<Node> components = this.getChildren();
+
         HBox1.getChildren().clear();
         HBox2.getChildren().clear();
         vBox.getChildren().clear();
@@ -249,7 +246,6 @@ public class BattleButtons extends HBox {
         HBox2.setVisible(true);
         vBox.setVisible(true);
 
-        textBubble.showMessage("What will " + playerPokemon.getName() + " do?");
         attackButton.requestFocus();
     }
 

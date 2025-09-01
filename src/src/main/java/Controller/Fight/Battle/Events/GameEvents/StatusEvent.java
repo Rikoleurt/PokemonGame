@@ -1,7 +1,9 @@
-package Controller.Fight.Battle.Events;
+package Controller.Fight.Battle.Events.GameEvents;
 
 
+import Controller.Fight.Battle.Events.BattleEvent;
 import Model.Pokemon.Pokemon;
+import View.Game.Battle.BattleView;
 
 public class StatusEvent extends BattleEvent {
 
@@ -17,6 +19,7 @@ public class StatusEvent extends BattleEvent {
     public void execute(){
         if(p1.getStatus() != Model.Pokemon.PokemonEnum.Status.normal) p1.registerStatusEffect();
         if(p2.getStatus() != Model.Pokemon.PokemonEnum.Status.normal) p2.registerStatusEffect();
+        BattleView.refreshSprites();
         onFinish();
     }
 }

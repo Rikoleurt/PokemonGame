@@ -29,10 +29,10 @@ public class SwitchKOView extends SwitchView {
             delay.play();
             return;
         }
-
+        System.out.println(isTurnDisable);
         if(isTurnDisable){
             executor.addEvent(new ForcePlayerSwitchEvent(player, pokemon, executor));
-            executor.executeNext(()-> battleButtons.resetFightButtons(getClass().getSimpleName()));
+            executor.executeEvents(null);
         }
     }
 }

@@ -147,6 +147,7 @@ public class Bar extends VBox {
             getChildren().addAll(pokeHBox, hBox1, expBarBox, hBox2, hBox3);
         }
         refreshStatus();
+        refreshBar();
     }
 
 
@@ -338,6 +339,28 @@ public class Bar extends VBox {
         }
         if(this instanceof PlayerBar && pokemon.getStatus() != Status.normal) hBox1.setAlignment(Pos.CENTER);
         if(this instanceof OpponentBar && pokemon.getStatus() != Status.normal) hBox1.setAlignment(Pos.CENTER_LEFT);
+    }
+
+    public void refreshBar(){
+        String pName = pokemon.getName();
+        int pLevel = pokemon.getLevel();
+        int pHP = Math.max(0, pokemon.getHP());
+        int pMaxHP = Math.max(1, pokemon.getMaxHP());
+
+        name.setText(pName);
+        level.setText("Lvl : " + pLevel);
+        health.setText(pHP + "/" + pMaxHP);
+
+        double hpProgress = Math.max(0.0, Math.min(1.0, (double) pHP / pMaxHP));
+        HPBar.setProgress(hpProgress);
+        ApplyColor(new AtomicInteger(pHP), pMaxHP, HPBar);
+
+        int maxExp = Math.max(1, pokemon.calculateMaxExp());
+        double expProgress = Math.max(0.0, Math.min(1.0, (double) pokemon.getExp() / maxExp));
+        expBar.setProgress(expProgress);
+
+        refreshStatus();
+        resetPokeball();
     }
 }
 

@@ -18,7 +18,6 @@ public class NPC implements Fighter {
     String name;
     LinkedList<Pokemon> team;
     Bag bag;
-    String lastChoice;
     Action action = null;
 
     public NPC(String name, LinkedList<Pokemon> team, Bag bag) {
@@ -39,23 +38,21 @@ public class NPC implements Fighter {
     public Bag getBag() {
         return bag;
     }
-
     public Action makeChoiceAction(){
         Random rand = new Random();
-        int randInt = rand.nextInt(10,100);
+        int randInt = rand.nextInt(20,100);
         int healthyPokemon = getHealthyPokemon();
-        if (randInt < 10 && healthyPokemon > 1) {
+        if (randInt < 5 && healthyPokemon >= 0) {
             action = Action.Switch;
         } else if (randInt < 5 && team.size() == 1) {
             makeChoiceAction();
-        } else if (randInt < 20 && randInt >= 10) {
+        } else if (randInt < 20 && randInt >= 10 && getFrontPokemon().getHP() != getFrontPokemon().getMaxHP()){
             action = Action.Item;
         } else {
             action = Action.Attack;
         }
         return action;
     }
-
     @Override
     public void use(Item item, Pokemon target) {
         if (item instanceof Consumable && bag.getInventory().containsKey(item) && bag.getQuantity(item) > 0) {
@@ -63,16 +60,10 @@ public class NPC implements Fighter {
             bag.setQuantity(item, bag.getInventory().get(item) - 1);
         }
     }
-
-//    @Override
-//    public void use(Item item, Pokemon target) {
-//        if (!"Item".equals(lastChoice)) return;
-//        if (item instanceof Consumable && bag.getInventory().containsKey(item) && bag.getQuantity(item) > 0) {
-//            ((Consumable) item).consume(target);
-//            bag.setQuantity(item, bag.getInventory().get(item) - 1);
-//        }
-//    }
-
+    @Override
+    public void setAction(Action newAction) {
+        action = newAction;
+    }
     public Item itemChoice(Pokemon target) {
         Item itemChoice = null;
         if(target.getHP() < target.getMaxHP()/2) itemChoice = getBag().getFirstHeal();

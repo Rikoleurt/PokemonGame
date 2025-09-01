@@ -1,9 +1,8 @@
 package View.Game.Switch;
 
 import Controller.Fight.Battle.BattleExecutor;
-import Controller.Fight.Battle.Events.ActionEvents.Switch.PlayerSwitchEvent;
+import Controller.Fight.Battle.Events.ActionEvents.Switch.SwitchEvent;
 import Controller.Fight.Battle.Events.StartTurn;
-import Controller.Fight.Battle.Events.UIEvents.EndTurn;
 import Model.Person.Action;
 import Model.Person.NPC;
 import Model.Pokemon.Pokemon;
@@ -222,19 +221,13 @@ public class SwitchView extends BorderPane {
             delay.play();
             return;
         }
-
         if(isTurnDisable){
-            executor.addEvent(new PlayerSwitchEvent(player, pokemon, executor));
-            executor.executeNext(null);
+            executor.addEvent(new SwitchEvent(player, pokemon, BattleView.getTerrain(), executor));
+            executor.executeEvents(null);
         }
 
         player.setAction(Action.Switch);
         executor.addEvent(new StartTurn(npc, player, pokemon, executor));
-        executor.executeNext(() -> {
-//            System.out.println(getClass().getSimpleName() + " Ending turn...");
-            executor.addEvent(new EndTurn(BattleView.getFightButtons(), executor));
-            executor.executeNext(null);
-        });
     }
 
     public void setTurnDisable(boolean disable){
