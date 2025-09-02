@@ -62,32 +62,10 @@ public class BattleExecutor {
     }
 
     public void increaseTurn() {
-        System.out.println("Turn : " + turn);
+        System.out.println("-------------------------- Turn number " + turn + " --------------------------");
         turn++;
     }
     public int getTurn() {
         return turn;
-    }
-
-    public void setOnAllEventsFinished(Runnable onAllEventsFinished) {
-        this.onAllEventsFinishedPending = onAllEventsFinished;
-    }
-
-    public void step() {
-        if (isBusy) return;
-        if (!events.isEmpty()) {
-            isBusy = true;
-            BattleEvent event = events.poll();
-            event.setOnFinish(() -> {
-                isBusy = false;
-            });
-            event.execute();
-        } else {
-            if (onAllEventsFinishedPending != null) {
-                Runnable r = onAllEventsFinishedPending;
-                onAllEventsFinishedPending = null;
-                r.run();
-            }
-        }
     }
 }

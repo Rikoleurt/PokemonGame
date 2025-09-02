@@ -2,16 +2,14 @@ package Controller.Fight.Battle.Events;
 
 import Controller.Fight.Battle.BattleExecutor;
 import Controller.Fight.Battle.Events.ActionEvents.AttackEvent;
-import Controller.Fight.Battle.Events.ActionEvents.Switch.FoeSwitchEvent;
-import Controller.Fight.Battle.Events.ActionEvents.Switch.PlayerSwitchEvent;
-import Controller.Fight.Battle.Events.ActionEvents.Switch.SwitchEvent;
+import Controller.Fight.Battle.Events.ActionEvents.Switch.FoeSwitch.FoeSwitchEvent;
+import Controller.Fight.Battle.Events.ActionEvents.Switch.PlayerSwitch.PlayerSwitchEvent;
 import Controller.Fight.Battle.Events.ActionEvents.UseItemEvent;
 import Controller.Fight.Battle.Events.ComputeEvents.FoeEvents.FoeChoiceEvent;
 import Controller.Fight.Battle.Events.ComputeEvents.FoeEvents.FoeItemChoiceEvent;
 import Controller.Fight.Battle.Events.ComputeEvents.FoeEvents.FoePokemonChoiceEvent;
 import Controller.Fight.Battle.Events.ComputeEvents.Order;
 import Controller.Fight.Battle.Events.GameEvents.EndTurn;
-import Controller.Fight.Battle.Events.UIEvents.MessageEvent;
 import Model.Inventory.Items.Item;
 import Model.Person.Action;
 import Model.Person.NPC;
@@ -52,7 +50,7 @@ public class StartTurn extends BattleEvent {
         this.battleButtons = BattleView.getFightButtons();
     }
 
-    public StartTurn(NPC npc, Player player, Item playerItem, BattleExecutor executor) {
+    public StartTurn(NPC npc, Player player, Item playerItem, BattleExecutor executor, BattleButtons battleButtons) {
         this.npc = npc;
         this.player = player;
         this.playerItem = playerItem;
@@ -123,27 +121,11 @@ public class StartTurn extends BattleEvent {
                 }
             }
         }
-
-//
-//        if (playerPokemon.isKO() && player.getHealthyPokemon() > 0) {
-//            executor.addEvent(new MessageEvent(playerPokemon.getName() + " fainted."));
-//            executor.executeEvents(() -> {
-//                executor.addEvent(new SwitchEvent(player, terrain, executor));
-//                executor.executeEvents(null);
-//            });
-//        }
-
-//        if (playerPokemon.getStatus() != Status.normal) {
-//            System.out.println("Status");
-//            executor.addEvent(new StatusEvent(playerPokemon, npcPokemon));
-//        }
-
         onFinish();
     }
 
     @Override public void onFinish(){
-
-        executor.addEvent(new EndTurn(battleButtons, executor));
+        executor.addEvent(new EndTurn(executor));
         executor.executeEvents(null);
     }
 }

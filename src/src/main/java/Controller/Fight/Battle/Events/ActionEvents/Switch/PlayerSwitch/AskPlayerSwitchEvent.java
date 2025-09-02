@@ -1,6 +1,7 @@
-package Controller.Fight.Battle.Events.ActionEvents.Switch;
+package Controller.Fight.Battle.Events.ActionEvents.Switch.PlayerSwitch;
 
 import Controller.Fight.Battle.BattleExecutor;
+import Controller.Fight.Battle.Events.ActionEvents.Switch.FoeSwitch.FoeSwitchEvent;
 import Controller.Fight.Battle.Events.BattleEvent;
 import Controller.Fight.Battle.Events.GameEvents.EndTurn;
 import Controller.Fight.Battle.Events.UIEvents.MessageEvent;
@@ -39,7 +40,7 @@ public class AskPlayerSwitchEvent extends BattleEvent {
                 SceneManager.switchStageTo(SceneManager.getFightView());
                 executor.addEvent(new FoeSwitchEvent(npc, otherNpcPokemon, BattleView.getTerrain()));
                 executor.executeEvents(() -> {
-                    executor.addEvent(new EndTurn(battleButtons, executor));
+                    executor.addEvent(new EndTurn( executor));
                     executor.executeEvents(null);
                 });
             });
@@ -49,7 +50,7 @@ public class AskPlayerSwitchEvent extends BattleEvent {
                     }, () -> {
                         executor.addEvent(new FoeSwitchEvent(npc, otherNpcPokemon, BattleView.getTerrain()));
                         executor.executeEvents(() -> {
-                            executor.addEvent(new EndTurn(battleButtons, executor));
+                            executor.addEvent(new EndTurn(executor));
                             executor.executeEvents(null);
                         });
                     });

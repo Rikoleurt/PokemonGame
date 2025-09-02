@@ -1,20 +1,27 @@
 package View.Game.Switch;
 
-import Controller.Fight.Battle.Events.ActionEvents.Switch.ForcePlayerSwitchEvent;
+import Controller.Fight.Battle.Events.ActionEvents.Switch.PlayerSwitch.SwitchFaintedEvent;
+import Controller.Fight.Battle.Events.GameEvents.EndTurn;
+import Controller.Fight.Battle.Events.UIEvents.MessageEvent;
 import Model.Person.NPC;
 import Model.Person.Player;
 import Model.Pokemon.Pokemon;
 import View.Game.Battle.BattleButtons;
 import View.Game.Battle.BattleView;
 import View.Game.Battle.Text.TextBubble;
+import View.Game.SceneManager;
 import javafx.animation.PauseTransition;
 import javafx.util.Duration;
 
-public class SwitchKOView extends SwitchView {
+import static View.Game.Battle.BattleView.terrain;
+
+public class SwitchFaintedView extends SwitchView {
     BattleButtons battleButtons;
-    public SwitchKOView(Player player, NPC npc, TextBubble textBubble, BattleButtons battleButtons, Runnable onClose) {
+
+    public SwitchFaintedView(Player player, NPC npc, TextBubble textBubble, BattleButtons battleButtons, Runnable onClose) {
         super(player, npc, textBubble, onClose);
         this.battleButtons = battleButtons;
+
         cancelButton.setVisible(false);
     }
 
@@ -29,10 +36,13 @@ public class SwitchKOView extends SwitchView {
             delay.play();
             return;
         }
-        System.out.println(isTurnDisable);
         if(isTurnDisable){
-            executor.addEvent(new ForcePlayerSwitchEvent(player, pokemon, executor));
-            executor.executeEvents(null);
+            executor.addEvent(new SwitchFaintedEvent(player, pokemon, executor));
+            executor.addEvent(new MessageEvent(pokemon.getName() + " go!"));
+            executor.executeEvents(()->{
+                new EndTurn(executor).onFinish();
+            });
+
         }
     }
 }

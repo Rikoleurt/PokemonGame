@@ -1,11 +1,10 @@
 package View.Game.Battle;
 
 import Controller.Fight.Battle.BattleExecutor;
-import Controller.Fight.Battle.Events.ActionEvents.Switch.FoeSwitchEvent;
+import Controller.Fight.Battle.Events.ActionEvents.Switch.FoeSwitch.FoeSwitchEvent;
 import Controller.Fight.Battle.Events.GameEvents.EndTurn;
 import Controller.Fight.Battle.Events.StartTurn;
 
-import Controller.Fight.Battle.Events.UIEvents.MessageEvent;
 import Model.Person.Action;
 import Model.Pokemon.Pokemon;
 import Model.Pokemon.Move;
@@ -16,7 +15,6 @@ import View.Game.Battle.Text.TextBubble;
 import View.Game.Inventory.Bag.BagView;
 import View.Game.SceneManager;
 
-import View.Game.Switch.SwitchKOView;
 import View.Game.Switch.SwitchView;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -175,27 +173,20 @@ public class BattleButtons extends HBox {
     private void onButtonPressed(Move move, Terrain terrain) {
         player.setAction(Action.Attack);
         executor.addEvent(new StartTurn(npc, player, move, terrain, executor, this));
-//        executor.executeNext(() -> {
-//            if(!AskPlayerSwitchEvent.isSwitching()) {
-//                System.out.println(getClass().getSimpleName() + " Ending turn...");
-//                executor.addEvent(new EndTurn(this, executor));
-//                executor.executeNext(null);
-//            }
-//        });
         executor.executeEvents(null);
     }
 
-    public void askPlayerForSwitch(){
-        if(player.getHealthyPokemon() > 0) {
-            SwitchKOView switchView = new SwitchKOView(player, npc, textBubble, this, () -> SceneManager.switchStageTo(SceneManager.getFightView()));
-            SceneManager.switchStageTo(switchView);
-            switchView.setTurnDisable(true);
-            refreshSprites();
-        } else {
-            executor.addEvent(new EndTurn(this, executor));
-            executor.executeEvents(null);
-        }
-    }
+//    public void askPlayerForSwitch(){
+//        if(player.getHealthyPokemon() > 0) {
+//            SwitchKOView switchView = new SwitchKOView(player, npc, textBubble, this, () -> SceneManager.switchStageTo(SceneManager.getFightView()));
+//            SceneManager.switchStageTo(switchView);
+//            switchView.setTurnDisable(true);
+//            refreshSprites();
+//        } else {
+//            executor.addEvent(new EndTurn(this, executor));
+//            executor.executeEvents(null);
+//        }
+//    }
 
     public void askNPCForSwitch() {
         getHBox1().setVisible(false);
@@ -205,7 +196,7 @@ public class BattleButtons extends HBox {
             executor.addEvent(new FoeSwitchEvent(npc, next, terrain));
         }
         executor.executeEvents(() -> {
-            executor.addEvent(new EndTurn(this, executor));
+            executor.addEvent(new EndTurn(executor));
             executor.executeEvents(null);
         });
     }
@@ -225,7 +216,6 @@ public class BattleButtons extends HBox {
 
     public void resetFightButtons(String className) {
         System.out.println(className + " Reset FightButtons...");
-        textBubble.showMessage("What will " + playerPokemon.getName() + " do?");
 
         refreshFromCurrentPokemon();
 
@@ -245,7 +235,7 @@ public class BattleButtons extends HBox {
         HBox1.setVisible(true);
         HBox2.setVisible(true);
         vBox.setVisible(true);
-
+        textBubble.showMessage("What will " + playerPokemon.getName() + " do?");
         attackButton.requestFocus();
     }
 

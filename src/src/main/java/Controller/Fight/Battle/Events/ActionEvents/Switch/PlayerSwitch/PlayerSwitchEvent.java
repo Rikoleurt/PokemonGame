@@ -1,4 +1,4 @@
-package Controller.Fight.Battle.Events.ActionEvents.Switch;
+package Controller.Fight.Battle.Events.ActionEvents.Switch.PlayerSwitch;
 
 import Controller.Fight.Battle.BattleExecutor;
 import Controller.Fight.Battle.Events.BattleEvent;

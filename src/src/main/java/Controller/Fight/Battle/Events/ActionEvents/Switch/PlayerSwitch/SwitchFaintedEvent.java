@@ -1,4 +1,4 @@
-package Controller.Fight.Battle.Events.ActionEvents.Switch;
+package Controller.Fight.Battle.Events.ActionEvents.Switch.PlayerSwitch;
 
 import Controller.Fight.Battle.BattleExecutor;
 import Controller.Fight.Battle.Events.UIEvents.MessageEvent;
@@ -9,9 +9,9 @@ import View.Game.SceneManager;
 
 import static View.Game.Battle.BattleView.terrain;
 
-public class ForcePlayerSwitchEvent extends PlayerSwitchEvent {
+public class SwitchFaintedEvent extends PlayerSwitchEvent {
 
-    public ForcePlayerSwitchEvent(Player player, Pokemon other, BattleExecutor executor) {
+    public SwitchFaintedEvent(Player player, Pokemon other, BattleExecutor executor) {
         super(player, other, executor);
     }
     @Override
@@ -20,7 +20,6 @@ public class ForcePlayerSwitchEvent extends PlayerSwitchEvent {
         SceneManager.switchStageTo(SceneManager.getFightView());
         player.setFront(other, terrain);
         BattleView.refreshSprites();
-        executor.addEvent(new MessageEvent(other.getName() + " go!"));
         BattleView.getPlayerBar().setPokemon(other);
         BattleView.getPlayerBar().setVisible(true);
         executor.executeEvents(this::onFinish);

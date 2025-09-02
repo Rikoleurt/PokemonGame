@@ -1,7 +1,7 @@
 package Controller.Fight.Battle.Events.GameEvents;
 
 import Controller.Fight.Battle.BattleExecutor;
-import Controller.Fight.Battle.Events.ActionEvents.Switch.FoeSwitchEvent;
+import Controller.Fight.Battle.Events.ActionEvents.Switch.FoeSwitch.FoeSwitchEvent;
 import Controller.Fight.Battle.Events.BattleEvent;
 import Controller.Fight.Battle.Events.UIEvents.MessageEvent;
 import Model.Person.NPC;
@@ -10,7 +10,7 @@ import Model.Pokemon.Pokemon;
 import View.Game.Battle.BattleButtons;
 import View.Game.Battle.BattleView;
 import View.Game.SceneManager;
-import View.Game.Switch.SwitchKOView;
+import View.Game.Switch.SwitchFaintedView;
 
 import static View.Game.Battle.BattleView.*;
 
@@ -40,7 +40,7 @@ public class FaintEvent extends BattleEvent {
         }
         if(player.getTeam().contains(pokemon) && player.getHealthyPokemon() > 0){
             executor.executeEvents(()->{
-                SwitchKOView switchView = new SwitchKOView(player, npc, BattleView.getTextBubble(), battleButtons, () -> SceneManager.switchStageTo(SceneManager.getFightView()));
+                SwitchFaintedView switchView = new SwitchFaintedView(player, npc, BattleView.getTextBubble(), battleButtons, () -> SceneManager.switchStageTo(SceneManager.getFightView()));
                 SceneManager.switchStageTo(switchView);
                 switchView.setTurnDisable(true);
                 refreshSprites();

@@ -106,27 +106,9 @@ public class Categories extends VBox {
                     Pokemon chosenPokemon = player.getFrontPokemon();
                     if (chosenPokemon.getHP() < chosenPokemon.getMaxHP()) {
                         player.setAction(Action.Item);
-                        executor.addEvent(new StartTurn(npc, player, item,executor));
                         SceneManager.switchStageTo(SceneManager.getFightView());
-                        executor.executeEvents(() -> {
-                            System.out.println(getClass().getSimpleName() + " Ending turn...");
-                            executor.addEvent(new EndTurn(BattleView.getFightButtons(), executor));
-                            executor.executeEvents(null);
-                        });
-//                        BattleButtons.getHBox1().setVisible(false);
-//                        BattleButtons.getHBox2().setVisible(false);
-//                        executor.addEvent(new UseItemEvent(player, item, chosenPokemon, executor));
-//                        executor.executeNext(() -> {
-//                            if (npcPokemon.getStatus() != Status.KO) {
-//                                Move npcMove = npcPokemon.chooseMove();
-//                                executor.addEvent(new AttackEvent(npcPokemon, playerPokemon, npcMove, BattleView.getTerrain(), executor));
-//                            } else {
-//                                executor.addEvent(new MessageEvent(npcPokemon.getName() + " fainted."));
-//                            }
-//                            executor.executeNext(() -> {
-//                                BattleView.getFightButtons().resetFightButtons();
-//                            });
-//                        });
+                        executor.addEvent(new StartTurn(npc, player, item, executor, BattleView.getFightButtons()));
+                        executor.executeEvents(null);
                     } else {
                         bagBubble.showBubble();
                         bagBubble.showMessage("It won't have any effect.");

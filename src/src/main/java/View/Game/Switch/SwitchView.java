@@ -221,13 +221,10 @@ public class SwitchView extends BorderPane {
             delay.play();
             return;
         }
-        if(isTurnDisable){
-            executor.addEvent(new SwitchEvent(player, pokemon, BattleView.getTerrain(), executor));
-            executor.executeEvents(null);
-        }
 
         player.setAction(Action.Switch);
         executor.addEvent(new StartTurn(npc, player, pokemon, executor));
+        executor.executeEvents(null);
     }
 
     public void setTurnDisable(boolean disable){

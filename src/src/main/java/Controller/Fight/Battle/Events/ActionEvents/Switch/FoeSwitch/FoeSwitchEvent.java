@@ -1,13 +1,9 @@
-package Controller.Fight.Battle.Events.ActionEvents.Switch;
+package Controller.Fight.Battle.Events.ActionEvents.Switch.FoeSwitch;
 
-import Controller.Fight.Battle.BattleExecutor;
 import Controller.Fight.Battle.Events.BattleEvent;
-import Controller.Fight.Battle.Events.GameEvents.EndTurn;
-import Controller.Fight.Battle.Events.UIEvents.MessageEvent;
 import Model.Person.NPC;
 import Model.Pokemon.Pokemon;
 import Model.Pokemon.Terrain;
-import View.Game.Battle.BattleButtons;
 import View.Game.Battle.BattleView;
 
 public class FoeSwitchEvent extends BattleEvent {

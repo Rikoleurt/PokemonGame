@@ -280,6 +280,7 @@ public class Pokemon {
      * @param terrain The terrain the Pokémon are on
      */
     public void attack(Pokemon target, Move move, Terrain terrain) {
+        isTurn = true;
         Move m = getAttack(move); // Gets the move from the move pool
         applyStatusEffect(target, move); // Apply the effect of the status
         if(m instanceof Attack attack && isTurn){
@@ -460,6 +461,8 @@ public class Pokemon {
         if(status == Status.paralyzed){
             boolean paralyzed = random.nextInt(0,4) == 0;
             executor.addEvent(new MessageEvent( name + " is paralyzed!"));
+            System.out.println("isTurn : " + isTurn);
+            System.out.println("paralyzed : " + paralyzed);
             if(paralyzed){
                 executor.addEvent(new MessageEvent(name + " can't move!"));
                 isTurn = false;

@@ -5,31 +5,40 @@ import Controller.Fight.Battle.Events.ActionEvents.Switch.SwitchEvent;
 import Controller.Fight.Battle.Events.BattleEvent;
 import Controller.Fight.Battle.Events.UIEvents.MessageEvent;
 import Model.Pokemon.Pokemon;
+import Model.Pokemon.Terrain;
 import View.Game.Battle.BattleButtons;
 import View.Game.Battle.BattleView;
+import View.Game.SceneManager;
+import View.Game.Switch.SwitchFaintedView;
 
-import static View.Game.Battle.BattleView.npc;
-import static View.Game.Battle.BattleView.player;
+import static View.Game.Battle.BattleView.*;
 
 public class EndTurn extends BattleEvent {
     BattleButtons battleButtons;
     BattleExecutor executor;
 
-    public EndTurn(BattleButtons battleButtons,  BattleExecutor executor) {
-        this.battleButtons = battleButtons;
+    public EndTurn(BattleExecutor executor) {
+        this.battleButtons = getFightButtons();
         this.executor = executor;
     }
 
     @Override
     public void execute() {
         Pokemon npcPokemon = npc.getFrontPokemon();
+        Pokemon playerPokemon = player.getFrontPokemon();
+
+        Terrain terrain = BattleView.getTerrain();
         if (npcPokemon.isKO() && npc.getHealthyPokemon() > 0) {
             executor.addEvent(new MessageEvent(npcPokemon.getName() + " fainted."));
             Pokemon next = npc.chooseSwitchTarget();
             if(next != null){
                 executor.addEvent(new MessageEvent(npc.getName() + " sends " + next.getName() + "!"));
-                executor.addEvent(new SwitchEvent(npc, next, BattleView.getTerrain(), executor));
+                executor.addEvent(new SwitchEvent(npc, next, terrain, executor));
             }
+        }
+        if(playerPokemon.isKO() && npc.getHealthyPokemon() > 0) {
+            executor.addEvent(new MessageEvent(playerPokemon.getName() + " fainted."));
+            executor.addEvent(new SwitchEvent(player, playerPokemon, terrain, executor));
         }
         if(npc.getHealthyPokemon() == 0){
             executor.addEvent(new MessageEvent(npc.getName() + " has been defeated."));

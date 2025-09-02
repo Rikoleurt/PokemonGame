@@ -1,8 +1,8 @@
 package View.Game.Switch;
 
-import Controller.Fight.Battle.Events.ActionEvents.Switch.AskPlayerSwitchEvent;
-import Controller.Fight.Battle.Events.ActionEvents.Switch.FoeSwitchEvent;
-import Controller.Fight.Battle.Events.ActionEvents.Switch.PlayerSwitchEvent;
+import Controller.Fight.Battle.Events.ActionEvents.Switch.PlayerSwitch.AskPlayerSwitchEvent;
+import Controller.Fight.Battle.Events.ActionEvents.Switch.FoeSwitch.FoeSwitchEvent;
+import Controller.Fight.Battle.Events.ActionEvents.Switch.PlayerSwitch.PlayerSwitchEvent;
 import Controller.Fight.Battle.Events.GameEvents.EndTurn;
 import Model.Person.NPC;
 import Model.Person.Player;
@@ -24,7 +24,7 @@ public class SwitchAfterAskView extends SwitchView {
         executor.addEvent(new PlayerSwitchEvent(player, pokemon, executor));
         executor.addEvent(new FoeSwitchEvent(npc, otherNpcPokemon, BattleView.getTerrain()));
         executor.executeEvents(()-> {
-            executor.addEvent(new EndTurn(battleButtons, executor));
+            executor.addEvent(new EndTurn(executor));
             executor.executeEvents(null);
         });
         AskPlayerSwitchEvent.setIsSwitching(false);
