@@ -15,6 +15,7 @@ import Model.Pokemon.Attacks.DebrisAttack;
 import java.io.*;
 import java.util.*;
 import View.Console.BattleLayout.BattleConsole;
+import View.Game.Battle.BattleView;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
 
@@ -305,6 +306,8 @@ public class Pokemon {
                 return;
             } else {
                 target.status = setStatus(target, statusAttack);
+                BattleView.getOpponentBar().refreshStatus();
+                BattleView.getPlayerBar().refreshStatus();
             }
         }
         if(m instanceof SetUpMove setUpMove && isTurn){
@@ -479,6 +482,8 @@ public class Pokemon {
             } else {
                 executor.addEvent(new MessageEvent(name + " is not frozen anymore!"));
                 setStatus(Status.normal);
+                BattleView.getOpponentBar().refreshStatus();
+                BattleView.getPlayerBar().refreshStatus();
             }
         }
 
@@ -487,6 +492,8 @@ public class Pokemon {
             if(asleep == 0){
                 executor.addEvent(new MessageEvent(name + " woke up!"));
                 setStatus(Status.normal);
+                BattleView.getOpponentBar().refreshStatus();
+                BattleView.getPlayerBar().refreshStatus();
             }
             if(asleep > 0){
                 executor.addEvent(new MessageEvent(name + " is asleep!"));
@@ -494,6 +501,8 @@ public class Pokemon {
                 if(wakeUp == 4){
                     executor.addEvent(new MessageEvent(name + " woke up!"));
                     setStatus(Status.normal);
+                    BattleView.getOpponentBar().refreshStatus();
+                    BattleView.getPlayerBar().refreshStatus();
                 }
                 if(wakeUp != 4) {
                     isTurn = false;
@@ -531,6 +540,8 @@ public class Pokemon {
             if(healConfusion > 4){
                 executor.addEvent(new MessageEvent(name + " snapped out of confusion!"));
                 setStatus(Status.normal);
+                BattleView.getOpponentBar().refreshStatus();
+                BattleView.getPlayerBar().refreshStatus();
                 healConfusion = 0;
                 executor.addEvent(new MessageEvent(name + " uses " + move.getName()));
                 target.HP -= (int) totalDamage((Attack) getAttack(move), this, target)/2;

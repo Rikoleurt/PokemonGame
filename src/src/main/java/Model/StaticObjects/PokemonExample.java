@@ -69,7 +69,7 @@ public class PokemonExample {
             salamecheMoves.add(attacks.get(3));
             salamecheMoves.add(attacks.get(6));
         }
-        return new Pokemon("charmander", 30, 1, 19, 17, 22, 19, 21,
+        return new Pokemon("charmander", 30, 30, 19, 17, 22, 19, 21,
                 39, 52, 43, 60, 50, 65,
                 10, 10, 10, 10, 10, 10,
                 0, 0, 0, 0, 0, 0,

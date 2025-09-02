@@ -56,6 +56,7 @@ public class Bar extends VBox {
         statusImg.setPreserveRatio(true);
         statusImg.setFitHeight(30);
         statusImg.setFitWidth(30);
+
         if(pStatus != Status.normal) {
             statusImg.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/" + pStatus.toString() + ".png"))));
         } else {
@@ -150,11 +151,9 @@ public class Bar extends VBox {
         refreshBar();
     }
 
-
     public Label getHealth() {
         return health;
     }
-
     public Label getName() {
         return name;
     }
