@@ -31,7 +31,7 @@ public class Heal extends Item implements Consumable {
         }
         int newHP = Math.min(target.getHP() + HP, target.getMaxHP());
         target.setHP(newHP);
-        executor.addEvent(new UpdateBarEvent(target));
+        executor.addEvent(new UpdateBarEvent(target, newHP));
         executor.addEvent(new MessageEvent(target.getName() + " regained some health!"));
     }
 

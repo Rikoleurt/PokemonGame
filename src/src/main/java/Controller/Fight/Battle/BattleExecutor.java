@@ -35,7 +35,7 @@ public class BattleExecutor {
     }
 
     public void executeEvents(Runnable onAllEventsFinished) {
-        getEventsFromQueue();
+//        getEventsFromQueue();
         if (!events.isEmpty()) {
             BattleEvent event = events.poll();
             event.setOnFinish(() -> executeEvents(onAllEventsFinished));

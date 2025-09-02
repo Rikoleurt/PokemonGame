@@ -75,7 +75,7 @@ public class PokemonExample {
                 0, 0, 0, 0, 0, 0,
                 0, 0, 0, 0, 0,
                 11, Type.fire, salamecheMoves, "male",
-                1000, 0, Experience.Fast, Status.normal);
+                1000, 0, Experience.Fast, Status.confused);
     }
 
     public static Pokemon initiatePidgey() {

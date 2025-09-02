@@ -1,21 +1,22 @@
-package Controller.Fight.Battle.Events;
+package Controller.Fight.Battle.Events.GameEvents;
 
 import Controller.Fight.Battle.BattleExecutor;
 import Controller.Fight.Battle.Events.ActionEvents.AttackEvent;
 import Controller.Fight.Battle.Events.ActionEvents.Switch.FoeSwitch.FoeSwitchEvent;
 import Controller.Fight.Battle.Events.ActionEvents.Switch.PlayerSwitch.PlayerSwitchEvent;
 import Controller.Fight.Battle.Events.ActionEvents.UseItemEvent;
+import Controller.Fight.Battle.Events.BattleEvent;
 import Controller.Fight.Battle.Events.ComputeEvents.FoeEvents.FoeChoiceEvent;
 import Controller.Fight.Battle.Events.ComputeEvents.FoeEvents.FoeItemChoiceEvent;
 import Controller.Fight.Battle.Events.ComputeEvents.FoeEvents.FoePokemonChoiceEvent;
 import Controller.Fight.Battle.Events.ComputeEvents.Order;
-import Controller.Fight.Battle.Events.GameEvents.EndTurn;
 import Model.Inventory.Items.Item;
 import Model.Person.Action;
 import Model.Person.NPC;
 import Model.Person.Player;
 import Model.Pokemon.Move;
 import Model.Pokemon.Pokemon;
+import Model.Pokemon.PokemonEnum.Status;
 import Model.Pokemon.Terrain;
 import View.Game.Battle.BattleButtons;
 import View.Game.Battle.BattleView;
@@ -121,6 +122,7 @@ public class StartTurn extends BattleEvent {
                 }
             }
         }
+
         onFinish();
     }
 

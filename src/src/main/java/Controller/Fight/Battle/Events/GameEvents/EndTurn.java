@@ -5,9 +5,11 @@ import Controller.Fight.Battle.Events.ActionEvents.Switch.SwitchEvent;
 import Controller.Fight.Battle.Events.BattleEvent;
 import Controller.Fight.Battle.Events.UIEvents.MessageEvent;
 import Model.Pokemon.Pokemon;
+import Model.Pokemon.PokemonEnum.Status;
 import Model.Pokemon.Terrain;
 import View.Game.Battle.BattleButtons;
 import View.Game.Battle.BattleView;
+import View.Game.Battle.InfoBars.Bar;
 import View.Game.SceneManager;
 import View.Game.Switch.SwitchFaintedView;
 
@@ -28,6 +30,10 @@ public class EndTurn extends BattleEvent {
         Pokemon playerPokemon = player.getFrontPokemon();
 
         Terrain terrain = BattleView.getTerrain();
+
+        if(playerPokemon.getStatus() != Status.normal) executor.addEvent(new StatusEvent(playerPokemon));
+        if(npcPokemon.getStatus() != Status.normal) executor.addEvent(new StatusEvent(npcPokemon));
+
         if (npcPokemon.isKO() && npc.getHealthyPokemon() > 0) {
             executor.addEvent(new MessageEvent(npcPokemon.getName() + " fainted."));
             Pokemon next = npc.chooseSwitchTarget();
@@ -58,6 +64,9 @@ public class EndTurn extends BattleEvent {
         executor.clearEvents();
         battleButtons.resetFightButtons(getClass().getSimpleName());
         battleButtons.requestFocus();
+        BattleView.refreshSprites();
+        getPlayerBar().refreshBar();
+        getOpponentBar().refreshBar();
     }
 
 }

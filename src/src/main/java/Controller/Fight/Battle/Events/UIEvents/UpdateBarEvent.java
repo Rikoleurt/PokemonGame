@@ -8,16 +8,18 @@ import javafx.application.Platform;
 
 public class UpdateBarEvent extends BattleEvent {
     Pokemon pokemon;
+    int currentHP;
 
-    public UpdateBarEvent(Pokemon pokemon) {
+    public UpdateBarEvent(Pokemon pokemon, int currentHP) {
         this.pokemon = pokemon;
+        this.currentHP = currentHP;
     }
 
     @Override
     public void execute() {
         Platform.runLater(() -> {
             Bar bar = resolveBar(pokemon);
-            bar.updateHPBars(this::onFinish);
+            bar.updateHPBars(currentHP, this::onFinish);
         });
     }
 

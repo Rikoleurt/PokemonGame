@@ -125,7 +125,6 @@ public class Pokemon {
 
 
     //region Getter
-
     public String getName(){
         return name;
     }
@@ -186,7 +185,9 @@ public class Pokemon {
     }
     public void levelUp() {
         level++;
+
         int oldHP = HP;
+
         double atkNature = getNatureMultiplier("atk");
         double defNature = getNatureMultiplier("def");
         double atkSpeNature = getNatureMultiplier("atkSpe");
@@ -194,12 +195,12 @@ public class Pokemon {
         double speedNature = getNatureMultiplier("speed");
 
         maxHP = (int) Math.floor(((2 * baseHP + hpIV + Math.floor(hpEV / 4.0)) * level) / 100) + level + 10;
-
         atk = (int) Math.floor((Math.floor(((2 * baseAtk + atkIV + Math.floor(atkEV / 4.0)) * level) / 100) + 5) * atkNature);
         def = (int) Math.floor((Math.floor(((2 * baseDef + defIV + Math.floor(defEV / 4.0)) * level) / 100) + 5) * defNature);
         atkSpe = (int) Math.floor((Math.floor(((2 * baseAtkSpe + atkSpeIV + Math.floor(atkSpeEV / 4.0)) * level) / 100) + 5) * atkSpeNature);
         defSpe = (int) Math.floor((Math.floor(((2 * baseDefSpe + defSpeIV + Math.floor(defSpeEV / 4.0)) * level) / 100) + 5) * defSpeNature);
         speed = (int) Math.floor((Math.floor(((2 * baseSpeed + speedIV + Math.floor(speedEV / 4.0)) * level) / 100) + 5) * speedNature);
+
         if(HP < maxHP) HP += maxHP-oldHP;
         if(HP > maxHP) HP = maxHP;
         System.out.println(name + " is now " + level + " !");
@@ -284,15 +285,15 @@ public class Pokemon {
         isTurn = true;
         Move m = getAttack(move); // Gets the move from the move pool
         applyStatusEffect(target, move); // Apply the effect of the status
+
         if(m instanceof Attack attack && isTurn){
             executor.addEvent(new MessageEvent(name + " uses " + attack.getName()));
             if(!canHit(m)){
                 executor.addEvent(new MessageEvent("It missed!"));
             } else if((status == Status.normal || status == Status.cursed || status == Status.burned || status == Status.paralyzed || status == Status.freeze || status == Status.attracted || status == Status.confused || status == Status.asleep || status == Status.poisoned || status == Status.badlyPoisoned)){
                 int damage = (int) totalDamage((Attack) getAttack(attack), this, target);
-                target.setHP(Math.max(0, target.getHP() - damage)); // Apply the damage
-//                System.out.println(target.getHP() + ", damage : " + damage);
-                executor.addEvent(new UpdateBarEvent(target));
+                target.setHP(Math.max(0, target.HP - damage)); // Apply the damage
+                executor.addEvent(new UpdateBarEvent(target, target.HP));
             }
         }
         if(m instanceof DebrisAttack debrisAttack && isTurn){
@@ -455,8 +456,8 @@ public class Pokemon {
         Random random = new Random();
         if(getAttack(move).getMode() == AttackMode.physical && status == Status.burned){
             executor.addEvent(new MessageEvent(name + " uses " + move.getName()));
-            target.HP -= (int) totalDamage((Attack) getAttack(move), this, target)/2;
-            executor.addEvent(new UpdateBarEvent(target));
+            target.setHP(Math.max(0, HP - (int) totalDamage((Attack) getAttack(move), this, target)/2));
+            executor.addEvent(new UpdateBarEvent(this, target.HP));
             isTurn = false;
             return;
         }
@@ -464,8 +465,6 @@ public class Pokemon {
         if(status == Status.paralyzed){
             boolean paralyzed = random.nextInt(0,4) == 0;
             executor.addEvent(new MessageEvent( name + " is paralyzed!"));
-            System.out.println("isTurn : " + isTurn);
-            System.out.println("paralyzed : " + paralyzed);
             if(paralyzed){
                 executor.addEvent(new MessageEvent(name + " can't move!"));
                 isTurn = false;
@@ -532,20 +531,16 @@ public class Pokemon {
             if(confused == 1){
                 executor.addEvent(new MessageEvent(name + " is confused!"));
                 executor.addEvent(new MessageEvent(name + " hurt itself in its confusion!"));
-                HP -= (int) (((((level * 0.4 + 2) * atk * 40) / def) / 50) + 2);
-                executor.addEvent(new UpdateBarEvent(this));
+                int damage = (int) (((((level * 0.4 + 2) * atk * 40) / def) / 50) + 2);
+                setHP(Math.max(0, HP - damage));
+                executor.addEvent(new UpdateBarEvent(this, HP));
                 isTurn = false;
                 return;
             }
             if(healConfusion > 4){
                 executor.addEvent(new MessageEvent(name + " snapped out of confusion!"));
                 setStatus(Status.normal);
-                BattleView.getOpponentBar().refreshStatus();
-                BattleView.getPlayerBar().refreshStatus();
                 healConfusion = 0;
-                executor.addEvent(new MessageEvent(name + " uses " + move.getName()));
-                target.HP -= (int) totalDamage((Attack) getAttack(move), this, target)/2;
-                executor.addEvent(new UpdateBarEvent(target));
             }
         }
         // To implement
@@ -560,41 +555,29 @@ public class Pokemon {
      */
     public void registerStatusEffect(){
         switch(status){
-            case attracted, asleep:
+            case attracted, confused, asleep:
                 break;
             case burned:
                 executor.addEvent(new MessageEvent(name + " is burned!"));
-                setHP(Math.max(0,HP - (maxHP/16)));
+                setHP(Math.max(0, HP - (maxHP/16)));
                 executor.addEvent(new MessageEvent(name + " suffers from its burn!"));
-                executor.addEvent(new UpdateBarEvent(this));
+                executor.addEvent(new UpdateBarEvent(this,HP - (maxHP/16)));
                 break;
             case poisoned:
                 executor.addEvent(new MessageEvent(name + " is poisoned!"));
-                setHP(Math.max(0,HP - (maxHP/8)));
+                setHP(Math.max(0, HP - (maxHP/8)));
                 executor.addEvent(new MessageEvent(name + " suffers from poison!"));
-                executor.addEvent(new UpdateBarEvent(this));
+                executor.addEvent(new UpdateBarEvent(this, HP - (maxHP/8)));
                 break;
             case badlyPoisoned:
                 executor.addEvent(new MessageEvent(name + " is badly poisoned!"));
-                setHP(Math.max(0,HP - (maxHP/16) * poisonCoefficient));
+                setHP(Math.max(0, HP - (maxHP/16) * poisonCoefficient));
                 executor.addEvent(new MessageEvent(name + " suffers from poison!"));
-                executor.addEvent(new UpdateBarEvent(this));
+                executor.addEvent(new UpdateBarEvent(this, HP - (maxHP/16) * poisonCoefficient ));
                 ++poisonCoefficient;
                 break;
-            case confused:
-//            case fear:
-//                healFear++;
-//                if(healFear == 1) {
-//                    this.setStatus(Status.normal);
-//                    healFear = 0;
-//                }
-//                break;
-//            case cursed:
-//                HP = HP - (maxHP/4);
         }
-//        System.out.println("isDead : " + isDeadFromStatus());
         if(status == Status.KO) isDeadFromStatus = true;
-//        System.out.println("isDead : " + isDeadFromStatus());
     }
 
     public boolean isDeadFromStatus(){

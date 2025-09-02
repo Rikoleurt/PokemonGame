@@ -1,8 +1,7 @@
 package View.Game.Switch;
 
 import Controller.Fight.Battle.BattleExecutor;
-import Controller.Fight.Battle.Events.ActionEvents.Switch.SwitchEvent;
-import Controller.Fight.Battle.Events.StartTurn;
+import Controller.Fight.Battle.Events.GameEvents.StartTurn;
 import Model.Person.Action;
 import Model.Person.NPC;
 import Model.Pokemon.Pokemon;

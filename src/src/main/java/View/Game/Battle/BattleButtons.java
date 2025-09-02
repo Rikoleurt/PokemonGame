@@ -3,11 +3,12 @@ package View.Game.Battle;
 import Controller.Fight.Battle.BattleExecutor;
 import Controller.Fight.Battle.Events.ActionEvents.Switch.FoeSwitch.FoeSwitchEvent;
 import Controller.Fight.Battle.Events.GameEvents.EndTurn;
-import Controller.Fight.Battle.Events.StartTurn;
+import Controller.Fight.Battle.Events.GameEvents.StartTurn;
 
 import Model.Person.Action;
 import Model.Pokemon.Pokemon;
 import Model.Pokemon.Move;
+import Model.Pokemon.PokemonEnum.Status;
 import Model.Pokemon.Terrain;
 
 import View.Game.Battle.InfoBars.Bar;
@@ -174,31 +175,6 @@ public class BattleButtons extends HBox {
         player.setAction(Action.Attack);
         executor.addEvent(new StartTurn(npc, player, move, terrain, executor, this));
         executor.executeEvents(null);
-    }
-
-//    public void askPlayerForSwitch(){
-//        if(player.getHealthyPokemon() > 0) {
-//            SwitchKOView switchView = new SwitchKOView(player, npc, textBubble, this, () -> SceneManager.switchStageTo(SceneManager.getFightView()));
-//            SceneManager.switchStageTo(switchView);
-//            switchView.setTurnDisable(true);
-//            refreshSprites();
-//        } else {
-//            executor.addEvent(new EndTurn(this, executor));
-//            executor.executeEvents(null);
-//        }
-//    }
-
-    public void askNPCForSwitch() {
-        getHBox1().setVisible(false);
-        getHBox2().setVisible(false);
-        Pokemon next = npc.chooseSwitchTarget();
-        if(next != null) {
-            executor.addEvent(new FoeSwitchEvent(npc, next, terrain));
-        }
-        executor.executeEvents(() -> {
-            executor.addEvent(new EndTurn(executor));
-            executor.executeEvents(null);
-        });
     }
 
     private String getAttackName(int index) {

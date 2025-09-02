@@ -1,8 +1,7 @@
 package View.Game.Inventory.Bag.Component;
 
 import Controller.Fight.Battle.BattleExecutor;
-import Controller.Fight.Battle.Events.StartTurn;
-import Controller.Fight.Battle.Events.GameEvents.EndTurn;
+import Controller.Fight.Battle.Events.GameEvents.StartTurn;
 import Model.Inventory.Bag;
 import Model.Inventory.Category;
 import Model.Inventory.Items.Item;
