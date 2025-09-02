@@ -25,7 +25,7 @@ public class PokemonExample {
             bulbizarreMoves.add(attacks.get(4));
 //            bulbizarreMoves.add(attacks.get(6));
         }
-        return new Pokemon("bulbasaur", 31, 31, 18, 18, 23, 23, 22,
+        return new Pokemon("bulbasaur", 31, 31, 18, 18, 23, 23, 17,
                 45, 49, 49, 65, 65, 45,
                 10, 10, 10, 10, 10, 10,
                 0, 0, 0, 0, 0, 0,
@@ -54,7 +54,7 @@ public class PokemonExample {
             carapuceMoves.add(attacks.get(5));
             carapuceMoves.add(attacks.get(7));
         }
-        return new Pokemon("squirtle", 31, 31, 17, 23, 19, 22, 22,
+        return new Pokemon("squirtle", 31, 31, 17, 23, 19, 22, 17,
                 44, 48, 65, 50, 64, 43,
                 10, 10, 10, 10, 10, 10,
                 0, 0, 0, 0, 0, 0,
