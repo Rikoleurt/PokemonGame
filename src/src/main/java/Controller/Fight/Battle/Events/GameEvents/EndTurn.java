@@ -7,11 +7,15 @@ import Controller.Fight.Battle.Events.UIEvents.MessageEvent;
 import Model.Pokemon.Pokemon;
 import Model.Pokemon.PokemonEnum.Status;
 import Model.Pokemon.Terrain;
+import Server.SocketServer;
 import View.Game.Battle.BattleButtons;
 import View.Game.Battle.BattleView;
 import View.Game.Battle.InfoBars.Bar;
 import View.Game.SceneManager;
 import View.Game.Switch.SwitchFaintedView;
+
+import java.io.IOException;
+import java.net.ServerSocket;
 
 import static View.Game.Battle.BattleView.*;
 
@@ -67,6 +71,11 @@ public class EndTurn extends BattleEvent {
         BattleView.refreshSprites();
         getPlayerBar().refreshBar();
         getOpponentBar().refreshBar();
-    }
 
+        try {
+            Server.SocketServer.getInstance().sendState(Server.SocketServer.getInstance().refreshState());
+        } catch (IOException e) {
+            System.out.println("IOException : " + e.getMessage());
+        }
+    }
 }

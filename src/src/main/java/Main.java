@@ -18,7 +18,6 @@ import static View.Game.Battle.BattleView.player;
 
 public class Main extends Application {
 
-    SocketServer server = new SocketServer();
     @Override
     public void start(Stage primaryStage) {
 
@@ -60,17 +59,16 @@ public class Main extends Application {
 //        consoleStage.show();
 
         TextBubble textBubble = BattleView.getTextBubble();
+        scene.setOnKeyPressed(event -> textBubble.handleKeyPress(event.getCode()));
+        SocketServer server = new SocketServer();
 
         new Thread(() -> {
             try {
                 server.start(5000);
-                System.out.println("Client connected to server");
             } catch (IOException e) {
                 System.out.println("Client connect failed " + e.getMessage());
             }
         }).start();
-         scene.setOnKeyPressed(event -> textBubble.handleKeyPress(event.getCode()));
-
     }
 
     static void main(String[] args) {
