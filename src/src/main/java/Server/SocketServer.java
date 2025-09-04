@@ -21,7 +21,8 @@ public class SocketServer {
     private Socket clientSocket;
     private BufferedReader in;
     private BufferedWriter out;
-    private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    private final Gson gsonPretty = new GsonBuilder().setPrettyPrinting().create();
+    private final Gson gson = new Gson();
     private final Player player = BattleView.getPlayer();
     private final Pokemon pokemon = player.getFrontPokemon();
     private final NPC npc = BattleView.getNpc();
@@ -44,13 +45,13 @@ public class SocketServer {
         System.out.println("Client connected !");
         in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         out = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
-        String initState = jsonPokemonState(player, pokemon, npc, pokemon2, executor.getTurn());
+        System.out.println("Streams initialized: in=" + (in != null) + ", out=" + (out != null));
+        String initState = jsonGameState(player, pokemon, npc, pokemon2, executor.getTurn());
         sendState(initState);
     }
 
 
-    public synchronized void sendState(String json) {
-        if (out == null) return;
+    public synchronized void sendState(String json) throws IOException {
         try {
             out.write(json + "\n");
             out.flush();
@@ -73,7 +74,7 @@ public class SocketServer {
         serverSocket.close();
     }
 
-    private JsonObject getSelfInfos(Pokemon pokemon) {
+    private JsonObject getSelfPokemonInfos(Pokemon pokemon) {
         JsonObject jsonPokemon = new JsonObject();
 
         jsonPokemon.addProperty("name", pokemon.getName());
@@ -102,7 +103,7 @@ public class SocketServer {
         return jsonPokemon;
     }
 
-    private JsonObject getOpponentInfos(Pokemon opponent) {
+    private JsonObject getOpponentPokemonInfos(Pokemon opponent) {
         JsonObject jsonPokemon = new JsonObject();
         jsonPokemon.addProperty("name", opponent.getName());
         jsonPokemon.addProperty("level", opponent.getLevel());
@@ -114,11 +115,21 @@ public class SocketServer {
     }
 
 
-    private String jsonPokemonState(Player p, Pokemon opponent, NPC n, Pokemon self, int turn) {
+    private String jsonGameState(Player p, Pokemon opponent, NPC n, Pokemon self, int turn) {
+        JsonObject nState = new JsonObject();
+        nState.addProperty("name", n.getName());
+        nState.addProperty("pokemonNb", n.getHealthyPokemon());
+
+        JsonObject pState = new JsonObject();
+        pState.addProperty("name", p.getName());
+        pState.addProperty("pokemonNb", p.getHealthyPokemon());
+
         JsonObject pokemonState = new JsonObject();
 
-        pokemonState.add("opponent", getOpponentInfos(opponent));
-        pokemonState.add("self", getSelfInfos(self));
+        pokemonState.add("npc", nState);
+        pokemonState.add("player", pState);
+        pokemonState.add("opponent", getOpponentPokemonInfos(opponent));
+        pokemonState.add("self", getSelfPokemonInfos(self));
 
         JsonArray actions = new JsonArray();
         actions.add(Action.Switch.toString());
@@ -156,6 +167,7 @@ public class SocketServer {
         pokemonState.add("actions", actions);
         pokemonState.add("action_choices", choices);
         pokemonState.addProperty("turn", turn);
+        System.out.println(gsonPretty.toJson(pokemonState));
         return gson.toJson(pokemonState);
     }
 
@@ -164,6 +176,6 @@ public class SocketServer {
         Pokemon refreshedOpponent = refreshedPlayer.getFrontPokemon();
         NPC refreshedNPC = BattleView.getNpc();
         Pokemon refreshedSelf = refreshedNPC.getFrontPokemon();
-        return jsonPokemonState(refreshedPlayer, refreshedOpponent, refreshedNPC, refreshedSelf, executor.getTurn());
+        return jsonGameState(refreshedPlayer, refreshedOpponent, refreshedNPC, refreshedSelf, executor.getTurn());
     }
 }

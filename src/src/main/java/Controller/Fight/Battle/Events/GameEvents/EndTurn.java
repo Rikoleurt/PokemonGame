@@ -22,6 +22,7 @@ import static View.Game.Battle.BattleView.*;
 public class EndTurn extends BattleEvent {
     BattleButtons battleButtons;
     BattleExecutor executor;
+    SocketServer socketServer = SocketServer.getInstance();
 
     public EndTurn(BattleExecutor executor) {
         this.battleButtons = getFightButtons();
@@ -44,22 +45,42 @@ public class EndTurn extends BattleEvent {
             if(next != null){
                 executor.addEvent(new MessageEvent(npc.getName() + " sends " + next.getName() + "!"));
                 executor.addEvent(new SwitchEvent(npc, next, terrain, executor));
+                try {
+                    socketServer.sendState(socketServer.refreshState());
+                } catch (IOException e) {
+                    System.out.println("IOException : " + e.getMessage());
+                }
             }
         }
         if(playerPokemon.isKO() && npc.getHealthyPokemon() > 0) {
             executor.addEvent(new MessageEvent(playerPokemon.getName() + " fainted."));
             executor.addEvent(new SwitchEvent(player, playerPokemon, terrain, executor));
+            try {
+                socketServer.sendState(socketServer.refreshState());
+            } catch (IOException e) {
+                System.out.println("IOException : " + e.getMessage());
+            }
         }
         if(npc.getHealthyPokemon() == 0){
             executor.addEvent(new MessageEvent(npc.getName() + " has been defeated."));
             executor.addEvent(new MessageEvent(npc.getName() + " gives you 1000 Poké dollars."));
             executor.executeEvents(null);
+            try {
+                socketServer.sendState(socketServer.refreshState());
+            } catch (IOException e) {
+                System.out.println("IOException : " + e.getMessage());
+            }
             return;
 
         } else if(player.getHealthyPokemon() == 0) {
             executor.addEvent(new MessageEvent(player.getName() + " is out of usable Pokémon."));
             executor.addEvent(new MessageEvent(player.getName() + " scurried to a Pokémon Center, protecting the exhausted and fainted Pokémon from further harm"));
             executor.executeEvents(null);
+            try {
+                socketServer.sendState(socketServer.refreshState());
+            } catch (IOException e) {
+                System.out.println("IOException : " + e.getMessage());
+            }
             return;
         }
         executor.executeEvents(this::onFinish);
@@ -73,7 +94,7 @@ public class EndTurn extends BattleEvent {
         getOpponentBar().refreshBar();
 
         try {
-            Server.SocketServer.getInstance().sendState(Server.SocketServer.getInstance().refreshState());
+            socketServer.sendState(socketServer.refreshState());
         } catch (IOException e) {
             System.out.println("IOException : " + e.getMessage());
         }

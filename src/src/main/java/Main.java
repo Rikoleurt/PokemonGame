@@ -60,8 +60,8 @@ public class Main extends Application {
 
         TextBubble textBubble = BattleView.getTextBubble();
         scene.setOnKeyPressed(event -> textBubble.handleKeyPress(event.getCode()));
-        SocketServer server = new SocketServer();
 
+        SocketServer server = SocketServer.getInstance();
         new Thread(() -> {
             try {
                 server.start(5000);
