@@ -40,12 +40,14 @@ public class SocketServer {
 
     public void start(int port) throws IOException {
         serverSocket = new ServerSocket(port);
+
         System.out.println("Java TCP server waits on port " + port + "...");
         clientSocket = serverSocket.accept();
         System.out.println("Client connected !");
+
         in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         out = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
-        System.out.println("Streams initialized: in=" + (in != null) + ", out=" + (out != null));
+
         String initState = jsonGameState(player, pokemon, npc, pokemon2, executor.getTurn());
         sendState(initState);
     }
@@ -53,8 +55,10 @@ public class SocketServer {
 
     public synchronized void sendState(String json) throws IOException {
         try {
-            out.write(json + "\n");
-            out.flush();
+            if(out != null) {
+                out.write(json + "\n");
+                out.flush();
+            }
         } catch (IOException e) {
             System.out.println("IOException : " + e.getMessage());
         }

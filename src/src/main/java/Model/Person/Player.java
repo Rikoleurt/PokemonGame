@@ -30,19 +30,15 @@ public class Player implements Fighter {
     public LinkedList<Pokemon> getTeam() {
         return team;
     }
-
     public String getName() {
         return name;
     }
-
     public Pokemon getPokemon(Pokemon pokemon) {
         return team.get(getTeam().indexOf(pokemon));
     }
-
     public Pokemon getFrontPokemon() {
         return team.getFirst();
     }
-
     public Action getAction() {
         return action;
     }
@@ -59,7 +55,6 @@ public class Player implements Fighter {
             System.out.println("Not possible because " + otherPokemon.getName() + " is not at the front");
         }
     }
-
     private void exchangePositionOf(Pokemon pokemon, Pokemon otherPokemon) {
         int temp = team.indexOf(otherPokemon); // Bulbizarre at position 1
         Pokemon tempPokemon = getPokemon(pokemon); // temp is pikachu
@@ -67,19 +62,15 @@ public class Player implements Fighter {
         team.set(index, otherPokemon);
         team.set(temp, tempPokemon);
     }
-
     public boolean isFront(Pokemon pokemon) {
         return getFrontPokemon() == pokemon;
     }
-
     public int getIndexOf(Pokemon pokemon) {
         return team.indexOf(pokemon);
     }
-
     public void setInventory(Bag bag) {
         this.bag = bag;
     }
-
     public void setName(String name) {
         this.name = name;
     }
@@ -87,11 +78,6 @@ public class Player implements Fighter {
     /// ------------------------------------------------------------------------------------------------------------------
     // Player's choices in fights
     /// ------------------------------------------------------------------------------------------------------------------
-
-    // sendPokemon() should be called automatically at the beginning of the fights
-    public void sendPokemon(Terrain terrain){
-        terrain.getTeam().add(getFrontPokemon());
-    }
 
     // After sending a first Pokémon, the player has multiple choices in fights
     public void setFront(Pokemon pokemon, Terrain terrain){

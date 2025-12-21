@@ -12,12 +12,14 @@ public class Move {
     Type type;
     AttackMode mode;
     int PP;
+    int maxPP;
 
-    public Move(String name, Type type, AttackMode mode, int PP){
+    public Move(String name, Type type, AttackMode mode, int PP, int maxPP) {
         this.name = name;
         this.type = type;
         this.mode = mode;
         this.PP = PP;
+        this.maxPP = maxPP;
     }
 
     public Type getType() {
@@ -35,6 +37,8 @@ public class Move {
     public int getPP() {
         return PP;
     }
+
+    public int getMaxPP() { return maxPP; }
 
     protected boolean isStab(Pokemon pokemon) {
         return pokemon.getType().equals(pokemon.getAttack(this).getType());

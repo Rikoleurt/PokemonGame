@@ -20,6 +20,7 @@ import Model.Pokemon.PokemonEnum.Status;
 import Model.Pokemon.Terrain;
 import View.Game.Battle.BattleButtons;
 import View.Game.Battle.BattleView;
+import View.Training.Console.View.BattleConsole;
 
 public class StartTurn extends BattleEvent {
 
@@ -31,6 +32,7 @@ public class StartTurn extends BattleEvent {
     private Item playerItem;
     private Pokemon switchTarget;
     private BattleButtons battleButtons;
+    BattleConsole console = BattleConsole.getInstance();
 
     public StartTurn(NPC npc, Player player, Move move, Terrain terrain, BattleExecutor executor, BattleButtons battleButtons) {
         this.npc = npc;
@@ -64,8 +66,12 @@ public class StartTurn extends BattleEvent {
     @Override
     public void execute() {
         executor.increaseTurn();
+
+        console.log("Turn: " + executor.getTurn());
+
         BattleButtons.getHBox1().setVisible(false);
         BattleButtons.getHBox2().setVisible(false);
+
 
         Action npcAction = new FoeChoiceEvent(npc).compute();
         Action playerAction = player.getAction();

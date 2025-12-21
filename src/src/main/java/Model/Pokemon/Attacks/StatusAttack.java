@@ -10,8 +10,8 @@ public class StatusAttack extends Move {
     double precision;
     Status status;
 
-    public StatusAttack(String name, double precision, Status status, Type type, AttackMode Mode, int PP) {
-        super(name, type, Mode, PP);
+    public StatusAttack(String name, double precision, Status status, Type type, AttackMode Mode, int PP, int maxPP) {
+        super(name, type, Mode, PP, maxPP);
         this.precision = precision;
         this.status = status;
     }

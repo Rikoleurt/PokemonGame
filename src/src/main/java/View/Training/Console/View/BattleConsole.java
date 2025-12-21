@@ -1,4 +1,4 @@
-package View.Console.BattleLayout;
+package View.Training.Console.View;
 
 import View.Game.Battle.BattleButtons;
 import javafx.scene.control.TextArea;

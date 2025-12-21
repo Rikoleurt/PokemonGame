@@ -9,8 +9,8 @@ public class SetUpMove extends Move {
     private final String stat;
     private final int raiseLevel;
 
-    public SetUpMove(String name, String stat, int raiseLevel, Type type, AttackMode Mode, int PP) {
-        super(name, type, Mode, PP);
+    public SetUpMove(String name, String stat, int raiseLevel, Type type, AttackMode Mode, int PP, int maxPP) {
+        super(name, type, Mode, PP, maxPP);
         this.stat = stat;
         this.raiseLevel = raiseLevel;
     }

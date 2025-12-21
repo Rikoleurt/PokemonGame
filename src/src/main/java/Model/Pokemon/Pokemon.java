@@ -14,14 +14,14 @@ import Model.Pokemon.PokemonEnum.Type;
 import Model.Pokemon.Attacks.DebrisAttack;
 import java.io.*;
 import java.util.*;
-import View.Console.BattleLayout.BattleConsole;
+import View.Training.Console.View.BattleConsole;
 import View.Game.Battle.BattleView;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
 
 
 public class Pokemon {
-    //region Variable
+    // region Variable
     int HP;
     int maxHP;
     int hpIV;
@@ -123,7 +123,18 @@ public class Pokemon {
         this.status = status;
     }
 
-
+    public Pokemon(String name, int maxHP, int HP, int atk, int def, int atkSpe, int defSpe, int speed, Type type, ArrayList<Move> moves){
+        this.name = name;
+        this.maxHP = maxHP;
+        this.HP = HP;
+        this.atk = atk;
+        this.def = def;
+        this.atkSpe = atkSpe;
+        this.defSpe = defSpe;
+        this.speed = speed;
+        this.type = type;
+        this.moves = moves;
+    }
     //region Getter
     public String getName(){
         return name;
@@ -342,6 +353,15 @@ public class Pokemon {
             updateStatChanges();
         }
     }
+
+    public void attack(Pokemon target, Move move) {
+        Move m = getAttack(move); // Gets the move from the move pool
+        boolean isAttack = m instanceof Attack;
+        if(isAttack){ // Check
+            int damage = (int) totalDamage((Attack) getAttack(m), this, target);
+            target.setHP(Math.max(0, target.HP - damage)); // Apply the damage
+        }
+    }
     /**
      * Calculates the total damage (includes critical hits and the stab)
      * @param attack The attack
@@ -355,11 +375,12 @@ public class Pokemon {
         if(attack.isStab(launcher)) {
             power *= 1.5f;
         }
-        if(attack.isCritical(launcher)){
-            augmentedDamage = launcher.getAttack(attack).criticalDamage(launcher);
-            executor.addEvent(new MessageEvent( "Critical hit !"));
-            return calculateEffectiveness(attack, launcher, target, power) * augmentedDamage;
-        }
+        // I decided to erase critical hits to test
+//        if (attack.isCritical(launcher)) {
+//            augmentedDamage = launcher.getAttack(attack).criticalDamage(launcher);
+//            executor.addEvent(new MessageEvent("Critical hit !"));
+//            return calculateEffectiveness(attack, launcher, target, power) * augmentedDamage;
+//        }
         return calculateEffectiveness(attack, launcher, target, power);
     }
     /**
