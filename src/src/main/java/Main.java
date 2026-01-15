@@ -40,20 +40,20 @@ public class Main extends Application {
 
         SceneManager.setStage(primaryStage);
 
-        BattleView battleView = new BattleView();
-        SceneManager.setFightView(battleView);
-
-        Font globalFont = Font.loadFont(Objects.requireNonNull(getClass().getResource("/font/pokemonFont.ttf")).toExternalForm(), 18);
-        Scene scene = new Scene(battleView, gameWidth, screenHeight);
-        scene.getRoot().setStyle("-fx-font-family: '" + globalFont.getName() + "'; -fx-font-size: 18px;");
-        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/style/style.css")).toExternalForm());
-        SceneManager.getStage().setScene(scene);
-        SceneManager.getStage().setX(consoleWidth);
-        SceneManager.getStage().setY(0);
-        SceneManager.getStage().setWidth(gameWidth);
-        SceneManager.getStage().setHeight(screenHeight);
-        SceneManager.getStage().setTitle("Pokémon Game");
-        SceneManager.getStage().show();
+//        BattleView battleView = new BattleView();
+//        SceneManager.setFightView(battleView);
+//
+//        Font globalFont = Font.loadFont(Objects.requireNonNull(getClass().getResource("/font/pokemonFont.ttf")).toExternalForm(), 18);
+//        Scene scene = new Scene(battleView, gameWidth, screenHeight);
+//        scene.getRoot().setStyle("-fx-font-family: '" + globalFont.getName() + "'; -fx-font-size: 18px;");
+//        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/style/style.css")).toExternalForm());
+//        SceneManager.getStage().setScene(scene);
+//        SceneManager.getStage().setX(consoleWidth);
+//        SceneManager.getStage().setY(0);
+//        SceneManager.getStage().setWidth(gameWidth);
+//        SceneManager.getStage().setHeight(screenHeight);
+//        SceneManager.getStage().setTitle("Pokémon Game");
+//        SceneManager.getStage().show();
 
 
         ConsoleView consoleView = new ConsoleView();
@@ -69,22 +69,23 @@ public class Main extends Application {
         consoleStage.show();
 
         TextBubble textBubble = BattleView.getTextBubble();
-        scene.setOnKeyPressed(event -> textBubble.handleKeyPress(event.getCode()));
+//        scene.setOnKeyPressed(event -> textBubble.handleKeyPress(event.getCode()));
 
-        SocketServer server = SocketServer.getInstance();
-        new Thread(() -> {
-            try {
-                server.start(5001);
-            } catch (IOException e) {
-                System.out.println("Client connect failed " + e.getMessage());
-            }
-        }).start();
+//        SocketServer server = SocketServer.getInstance();
+//        new Thread(() -> {
+//            try {
+//                server.start(5001);
+//            } catch (IOException e) {
+//                System.out.println("Client connect failed " + e.getMessage());
+//            }
+//        }).start();
 
         Pokemon pikachu = initiatePikachu();
         Pokemon salameche = initiateSalameche();
 
         LinkedList<Pokemon> playerTeam = new LinkedList<>();
         playerTeam.add(pikachu);
+        playerTeam.add(salameche);
 
         LinkedList<Pokemon> opponentTeam = new LinkedList<>();
         opponentTeam.add(salameche);
