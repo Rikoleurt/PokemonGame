@@ -1,7 +1,9 @@
 package Model;
 
 import Model.Person.Trainer;
+import View.Training.Console.View.BattleConsole;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
@@ -27,9 +29,11 @@ public class GameState {
         JsonArray opponentInfos = new JsonArray();
         opponentInfos.add(opponent.getName());
         opponentInfos.add(opponent.getTeam().getFirst().getName());
+
         obj.add("playerInfos", playerInfos);
         obj.add("opponentInfos", opponentInfos);
-        Gson gson = new Gson();
+
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();;
         return gson.toJson(obj);
     }
 

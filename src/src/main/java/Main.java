@@ -6,6 +6,7 @@ import View.Game.Battle.BattleView;
 import View.Game.Battle.Text.TextBubble;
 import View.Game.SceneManager;
 
+import View.Training.Console.View.BattleConsole;
 import View.Training.Console.View.ConsoleView;
 import javafx.application.Application;
 import javafx.geometry.Rectangle2D;
@@ -24,6 +25,8 @@ import static Model.StaticObjects.PokemonSample.*;
 import static Model.StaticObjects.MovesSample.*;
 
 public class Main extends Application {
+
+    BattleConsole console = BattleConsole.getInstance();
 
     @Override
     public void start(Stage primaryStage) {
@@ -89,7 +92,7 @@ public class Main extends Application {
         Trainer opponent = new Trainer("opponent", opponentTeam);
 
         GameState gs = new GameState(player, opponent, 0);
-        System.out.println(gs.state());
+        console.log(gs.state());
     }
 
     static void main(String[] args) {
