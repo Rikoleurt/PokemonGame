@@ -8,7 +8,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import java.util.LinkedList;
-import java.util.Objects;
 
 public class GameState {
     Trainer player;
@@ -62,11 +61,13 @@ public class GameState {
         addTeamInfos(p11, opponentTeam);
         addTeamInfos(p12, opponentTeam);
 
+        JsonObject first = new JsonObject();
+        first.addProperty("name", first(player.getFrontPokemon(), opponent.getFrontPokemon()));
         playerInfos.add("player_team", playerTeam);
         opponentInfos.add("opponent_team", opponentTeam);
         obj.add("player_infos", playerInfos);
         obj.add("opponent_infos", opponentInfos);
-
+        obj.add("Priority", first);
         Gson gson = new GsonBuilder().setPrettyPrinting().create();;
         return gson.toJson(obj);
     }
@@ -105,5 +106,14 @@ public class GameState {
         pokemonData.addProperty("name", p.getName());
         pokemonData.addProperty("HP", p.getHP());
         pokemonData.addProperty("maxHP", p.getMaxHP());
+    }
+
+    private boolean is_player_first(Pokemon p, Pokemon op){
+        return p.getSpeed() >= op.getSpeed();
+    }
+
+    public String first(Pokemon p, Pokemon op){
+        if(is_player_first(p, op)) return p.getName();
+        else return op.getName();
     }
 }

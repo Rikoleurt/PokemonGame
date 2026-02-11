@@ -91,7 +91,6 @@ public class Main extends Application {
         opponentTeam.add(salameche);
         Trainer player = new Trainer("player", playerTeam);
         Trainer opponent = new Trainer("opponent", opponentTeam);
-
         GameState gs = new GameState(player, opponent, 0);
         console.log(gs.state());
     }
