@@ -123,7 +123,7 @@ public class Pokemon {
         this.status = status;
     }
 
-    public Pokemon(String name, int maxHP, int HP, int atk, int def, int atkSpe, int defSpe, int speed, Type type, ArrayList<Move> moves){
+    public Pokemon(String name, int maxHP, int HP, int atk, int def, int atkSpe, int defSpe, int speed, Type type, ArrayList<Move> moves, Status status){
         this.name = name;
         this.maxHP = maxHP;
         this.HP = HP;
@@ -134,6 +134,7 @@ public class Pokemon {
         this.speed = speed;
         this.type = type;
         this.moves = moves;
+        this.status = status;
     }
     //region Getter
     public String getName(){

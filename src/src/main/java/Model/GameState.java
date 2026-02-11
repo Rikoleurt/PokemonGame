@@ -1,13 +1,16 @@
 package Model;
 
+import Model.Person.Action;
 import Model.Person.Trainer;
 import Model.Pokemon.Pokemon;
+import Model.Pokemon.PokemonEnum.Status;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import java.util.LinkedList;
+import java.util.Random;
 
 public class GameState {
     Trainer player;
@@ -18,23 +21,24 @@ public class GameState {
         this.player = player;
         this.opponent = opponent;
         this.turn = turn;
+
     }
 
     public String state(){
 
         Pokemon p1 = player.getFrontPokemon();
-        Pokemon p2 = getPokemonFromIndex(player, 1);
-        Pokemon p3 = getPokemonFromIndex(player, 2);
-        Pokemon p4 = getPokemonFromIndex(player, 3);
-        Pokemon p5 = getPokemonFromIndex(player, 4);
-        Pokemon p6 = getPokemonFromIndex(player, 5);
+//        Pokemon p2 = getPokemonFromIndex(player, 1);
+//        Pokemon p3 = getPokemonFromIndex(player, 2);
+//        Pokemon p4 = getPokemonFromIndex(player, 3);
+//        Pokemon p5 = getPokemonFromIndex(player, 4);
+//        Pokemon p6 = getPokemonFromIndex(player, 5);
 
         Pokemon p7 = opponent.getFrontPokemon();
-        Pokemon p8 = getPokemonFromIndex(opponent, 1);
-        Pokemon p9 = getPokemonFromIndex(opponent, 2);
-        Pokemon p10 = getPokemonFromIndex(opponent, 3);
-        Pokemon p11 = getPokemonFromIndex(opponent, 4);
-        Pokemon p12 = getPokemonFromIndex(opponent, 5);
+//        Pokemon p8 = getPokemonFromIndex(opponent, 1);
+//        Pokemon p9 = getPokemonFromIndex(opponent, 2);
+//        Pokemon p10 = getPokemonFromIndex(opponent, 3);
+//        Pokemon p11 = getPokemonFromIndex(opponent, 4);
+//        Pokemon p12 = getPokemonFromIndex(opponent, 5);
 
         JsonObject obj = new JsonObject();
         obj.addProperty("turn", turn);
@@ -47,24 +51,26 @@ public class GameState {
 
         JsonArray playerTeam = new JsonArray();
         addTeamInfos(p1, playerTeam);
-        addTeamInfos(p2, playerTeam);
-        addTeamInfos(p3, playerTeam);
-        addTeamInfos(p4, playerTeam);
-        addTeamInfos(p5, playerTeam);
-        addTeamInfos(p6, playerTeam);
+//        addTeamInfos(p2, playerTeam);
+//        addTeamInfos(p3, playerTeam);
+//        addTeamInfos(p4, playerTeam);
+//        addTeamInfos(p5, playerTeam);
+//        addTeamInfos(p6, playerTeam);
 
         JsonArray opponentTeam = new JsonArray();
         addTeamInfos(p7, opponentTeam);
-        addTeamInfos(p8, opponentTeam);
-        addTeamInfos(p9, opponentTeam);
-        addTeamInfos(p10, opponentTeam);
-        addTeamInfos(p11, opponentTeam);
-        addTeamInfos(p12, opponentTeam);
+//        addTeamInfos(p8, opponentTeam);
+//        addTeamInfos(p9, opponentTeam);
+//        addTeamInfos(p10, opponentTeam);
+//        addTeamInfos(p11, opponentTeam);
+//        addTeamInfos(p12, opponentTeam);
 
         JsonObject first = new JsonObject();
-        first.addProperty("name", first(player.getFrontPokemon(), opponent.getFrontPokemon()));
+        first.addProperty("name", is_player_first());
         playerInfos.add("player_team", playerTeam);
+        playerInfos.addProperty("healthy_pokemons", player.getHealthyPokemon());
         opponentInfos.add("opponent_team", opponentTeam);
+        opponentInfos.addProperty("healthy_pokemons", opponent.getHealthyPokemon());
         obj.add("player_infos", playerInfos);
         obj.add("opponent_infos", opponentInfos);
         obj.add("Priority", first);
@@ -106,14 +112,44 @@ public class GameState {
         pokemonData.addProperty("name", p.getName());
         pokemonData.addProperty("HP", p.getHP());
         pokemonData.addProperty("maxHP", p.getMaxHP());
+        pokemonData.addProperty("status", p.getStatus().toString());
     }
 
-    private boolean is_player_first(Pokemon p, Pokemon op){
-        return p.getSpeed() >= op.getSpeed();
+    public boolean is_player_first(){
+        return computeOrder();
     }
 
-    public String first(Pokemon p, Pokemon op){
-        if(is_player_first(p, op)) return p.getName();
-        else return op.getName();
+    private boolean computeOrder(){
+        Action playerAction = player.getAction();
+        Action opponentAction = opponent.getAction();
+
+        Pokemon playerPkmn = player.getFrontPokemon();
+        Pokemon foe = opponent.getFrontPokemon();
+
+        int playerPriority = priorityOf(playerAction);
+        int npcPriority = priorityOf(opponentAction);
+
+        if (playerPriority > npcPriority) return true;
+        if (playerPriority < npcPriority) return false;
+
+        int playerSpeed = playerPkmn.getEffectiveSpeed();
+        int npcSpeed = foe.getEffectiveSpeed();
+
+        if (playerSpeed > npcSpeed) {
+//            System.out.println("Player speed is greater than npc speed");
+            return true;
+        } else if (playerSpeed < npcSpeed) {
+//            System.out.println("Player speed is less than npc speed");
+            return false;
+        }
+
+        return new Random().nextBoolean();
+    }
+
+    private int priorityOf(Action action) {
+        if (action == Action.Switch) return 6;
+        if (action == Action.Item) return 6;
+        if (action == Action.Run) return 6;
+        return 0;
     }
 }

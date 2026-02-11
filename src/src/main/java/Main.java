@@ -1,5 +1,7 @@
 import Model.GameState;
+import Model.Person.Action;
 import Model.Person.Trainer;
+import Model.Pokemon.Move;
 import Model.Pokemon.Pokemon;
 import Server.SocketServer;
 import View.Game.Battle.BattleView;
@@ -85,16 +87,46 @@ public class Main extends Application {
 
         LinkedList<Pokemon> playerTeam = new LinkedList<>();
         playerTeam.add(pikachu);
-        playerTeam.add(salameche);
 
         LinkedList<Pokemon> opponentTeam = new LinkedList<>();
         opponentTeam.add(salameche);
         Trainer player = new Trainer("player", playerTeam);
         Trainer opponent = new Trainer("opponent", opponentTeam);
         GameState gs = new GameState(player, opponent, 0);
-        console.log(gs.state());
+        System.out.println(player.getFrontPokemon().getStatus());
+        while(opponent.getHealthyPokemon() > 0 && player.getHealthyPokemon() > 0) {
+            System.out.println("opponent : " + opponent.getHealthyPokemon());
+            System.out.println("player : " + player.getHealthyPokemon());
+            opponent.setAction(Action.Attack);
+            player.setAction(Action.Attack);
+
+            handle_attack(gs);
+            console.log(gs.state());
+        }
     }
 
     static void main(String[] args) {
+    }
+
+    private void handle_attack(GameState gs) {
+        Trainer player = gs.getPlayer();
+        Trainer opponent = gs.getOpponent();
+
+        Pokemon player_pokemon = player.getFrontPokemon();
+        Pokemon opponent_pokemon = opponent.getFrontPokemon();
+
+        if(gs.is_player_first()){
+            Move m1 = player.getFrontPokemon().chooseMove();
+            player_pokemon.attack(opponent_pokemon, m1);
+
+            Move m2 = opponent.getFrontPokemon().chooseMove();
+            opponent_pokemon.attack(player_pokemon, m2);
+        } else {
+            Move m2 = opponent.getFrontPokemon().chooseMove();
+            opponent_pokemon.attack(player_pokemon, m2);
+
+            Move m1 = player.getFrontPokemon().chooseMove();
+            player_pokemon.attack(opponent_pokemon, m1);
+        }
     }
 }

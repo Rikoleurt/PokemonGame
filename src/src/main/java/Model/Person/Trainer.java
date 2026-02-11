@@ -2,6 +2,7 @@ package Model.Person;
 
 import Model.Inventory.Bag;
 import Model.Pokemon.Pokemon;
+import Model.Pokemon.PokemonEnum.Status;
 import Model.Pokemon.Terrain;
 import Model.Pokemon.TerrainEnum.Debris;
 
@@ -10,6 +11,7 @@ import java.util.LinkedList;
 public class Trainer {
     String name;
     LinkedList<Pokemon> team;
+    Action action;
 
     public Trainer(String name, LinkedList<Pokemon> team) {
         this.name = name;
@@ -28,6 +30,10 @@ public class Trainer {
     public Pokemon getFrontPokemon() {
         return team.getFirst();
     }
+    public Action getAction() {
+        return action;
+    }
+    public void setAction(Action action) { this.action = action; }
     public boolean isFront(Pokemon pokemon) {
         return getFrontPokemon() == pokemon;
     }
@@ -39,6 +45,13 @@ public class Trainer {
     }
     public void setFront(Pokemon pokemon){
         exchangePokemonToFront(getFrontPokemon(), pokemon);
+    }
+    public int getHealthyPokemon() {
+        int healthyPokemon = 0;
+        for (Pokemon p : team) {
+            if(p.getStatus() != Status.KO) healthyPokemon++;
+        }
+        return healthyPokemon;
     }
     private void exchangePokemonToFront(Pokemon pokemon, Pokemon otherPokemon) {
         if(this.isFront(pokemon)) {

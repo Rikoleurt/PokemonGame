@@ -72,7 +72,6 @@ public class StartTurn extends BattleEvent {
         BattleButtons.getHBox1().setVisible(false);
         BattleButtons.getHBox2().setVisible(false);
 
-
         Action npcAction = new FoeChoiceEvent(npc).compute();
         Action playerAction = player.getAction();
 
