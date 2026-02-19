@@ -12,10 +12,11 @@ import Model.Pokemon.TerrainEnum.Debris;
 import java.util.HashMap;
 
 public class MovesExample {
+    static HashMap<Integer, Move> attackDB = new HashMap<>();
+    static HashMap<String, Integer> ids = new HashMap<>();
 
     public static HashMap<Integer, Move> initiateAttacks()
     {
-        HashMap<Integer, Move> attackDB = new HashMap<>();
 
         Attack tackle = new Attack("Tackle",40,100, Type.normal, AttackMode.physical,40, 40);
         Attack thunderBolt = new Attack("Thunder Bolt", 90, 100, Type.electric, AttackMode.special, 20, 20);
@@ -59,6 +60,21 @@ public class MovesExample {
         attackDB.put(16, poisonSting);
         attackDB.put(17, stunSpore);
 
+        ids.clear();
+        for (var entry : attackDB.entrySet()) {
+            ids.put(entry.getValue().getName(), entry.getKey());
+        }
+
+
         return attackDB;
+    }
+
+    public static int getIdByName(String attackName) {
+        return ids.getOrDefault(attackName, 255);
+    }
+
+    public static int getIdByMove(Move move) {
+        if (move == null) return 255;
+        return getIdByName(move.getName());
     }
 }
