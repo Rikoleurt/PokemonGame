@@ -49,17 +49,14 @@ public class SocketServer {
         System.out.println("Client connected !");
         in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         out = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
-        String initialState = jsonGameState(gs);
+        String initialState = gs.state();
         sendState(initialState);
         gs.launchFight();
-//        String initState = jsonGameState(player, pokemon, npc, pokemon2, executor.getTurn());
-//        sendState(initState);
     }
 
 
     public synchronized void sendState(String json) throws IOException {
         try {
-            System.out.println(out == null);
             if(out != null) {
                 System.out.println("sending this : " + json);
                 out.write(json + "\n");

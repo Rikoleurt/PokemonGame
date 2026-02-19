@@ -4,7 +4,6 @@ import Model.Person.Action;
 import Model.Person.Trainer;
 import Model.Pokemon.Move;
 import Model.Pokemon.Pokemon;
-import Model.Pokemon.PokemonEnum.Status;
 import Server.SocketServer;
 import View.Training.Console.View.BattleConsole;
 import com.google.gson.Gson;
@@ -32,7 +31,6 @@ public class GameState {
     }
 
     public String state(){
-
         Pokemon p1 = player.getFrontPokemon();
 //        Pokemon p2 = getPokemonFromIndex(player, 1);
 //        Pokemon p3 = getPokemonFromIndex(player, 2);
@@ -84,6 +82,58 @@ public class GameState {
         Gson gson = new Gson();
         return gson.toJson(obj);
     }
+    public String pretty_state(){
+        Pokemon p1 = player.getFrontPokemon();
+//        Pokemon p2 = getPokemonFromIndex(player, 1);
+//        Pokemon p3 = getPokemonFromIndex(player, 2);
+//        Pokemon p4 = getPokemonFromIndex(player, 3);
+//        Pokemon p5 = getPokemonFromIndex(player, 4);
+//        Pokemon p6 = getPokemonFromIndex(player, 5);
+
+        Pokemon p7 = opponent.getFrontPokemon();
+//        Pokemon p8 = getPokemonFromIndex(opponent, 1);
+//        Pokemon p9 = getPokemonFromIndex(opponent, 2);
+//        Pokemon p10 = getPokemonFromIndex(opponent, 3);
+//        Pokemon p11 = getPokemonFromIndex(opponent, 4);
+//        Pokemon p12 = getPokemonFromIndex(opponent, 5);
+
+        JsonObject obj = new JsonObject();
+        obj.addProperty("turn", turn);
+
+        JsonObject playerInfos = new JsonObject();
+        playerInfos.addProperty("name", player.getName());
+
+        JsonObject opponentInfos = new JsonObject();
+        opponentInfos.addProperty("name", opponent.getName());
+
+        JsonArray playerTeam = new JsonArray();
+        addTeamInfos(p1, playerTeam);
+//        addTeamInfos(p2, playerTeam);
+//        addTeamInfos(p3, playerTeam);
+//        addTeamInfos(p4, playerTeam);
+//        addTeamInfos(p5, playerTeam);
+//        addTeamInfos(p6, playerTeam);
+
+        JsonArray opponentTeam = new JsonArray();
+        addTeamInfos(p7, opponentTeam);
+//        addTeamInfos(p8, opponentTeam);
+//        addTeamInfos(p9, opponentTeam);
+//        addTeamInfos(p10, opponentTeam);
+//        addTeamInfos(p11, opponentTeam);
+//        addTeamInfos(p12, opponentTeam);
+
+        JsonObject first = new JsonObject();
+        first.addProperty("name", is_player_first());
+        playerInfos.add("player_team", playerTeam);
+        playerInfos.addProperty("healthy_pokemons", player.getHealthyPokemon());
+        opponentInfos.add("opponent_team", opponentTeam);
+        opponentInfos.addProperty("healthy_pokemons", opponent.getHealthyPokemon());
+        obj.add("player_infos", playerInfos);
+        obj.add("opponent_infos", opponentInfos);
+        obj.add("Priority", first);
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        return gson.toJson(obj);
+    }
 
     public int getTurn() {
         return turn;
@@ -110,6 +160,7 @@ public class GameState {
         System.out.println(opponentName + " sends " + opName + "!");
         fightLoop();
     }
+
     private void fightLoop() throws IOException {
         Pokemon p = player.getFrontPokemon();
         Pokemon op = opponent.getFrontPokemon();
@@ -125,7 +176,7 @@ public class GameState {
                 if(!p.isKO()) p.attack(op, m1);
             }
             turn++;
-            console.log(state());
+            console.log(pretty_state());
             server.sendState(state());
         }
     }
@@ -154,6 +205,8 @@ public class GameState {
         pokemonData.addProperty("name", p.getName());
         pokemonData.addProperty("HP", p.getHP());
         pokemonData.addProperty("maxHP", p.getMaxHP());
+        pokemonData.addProperty("level", p.getLevel());
+        pokemonData.addProperty("type", p.getType().toString());
         pokemonData.addProperty("status", p.getStatus().toString());
     }
 

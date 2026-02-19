@@ -83,9 +83,12 @@ public class Main extends Application {
 
         LinkedList<Pokemon> opponentTeam = new LinkedList<>();
         opponentTeam.add(salameche);
+
         Trainer player = new Trainer("player", playerTeam);
         Trainer opponent = new Trainer("opponent", opponentTeam);
+
         gs = new GameState(player, opponent, 0);
+
         SocketServer server = SocketServer.getInstance();
         new Thread(() -> {
             try {
@@ -94,9 +97,7 @@ public class Main extends Application {
                 System.out.println("Client connect failed " + e.getMessage());
             }
         }).start();
-        System.out.println("Buffered writer " + server.getBufferedWriter());
     }
 
-    static void main(String[] args) {
-    }
+    static void main(String[] args) {}
 }
