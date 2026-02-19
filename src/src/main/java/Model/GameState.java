@@ -2,13 +2,17 @@ package Model;
 
 import Model.Person.Action;
 import Model.Person.Trainer;
+import Model.Pokemon.Move;
 import Model.Pokemon.Pokemon;
 import Model.Pokemon.PokemonEnum.Status;
+import Server.SocketServer;
+import View.Training.Console.View.BattleConsole;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Random;
 
@@ -16,6 +20,9 @@ public class GameState {
     Trainer player;
     Trainer opponent;
     int turn;
+
+    BattleConsole console = BattleConsole.getInstance();
+    SocketServer server = SocketServer.getInstance();
 
     public GameState(Trainer player, Trainer opponent, int turn) {
         this.player = player;
@@ -74,7 +81,7 @@ public class GameState {
         obj.add("player_infos", playerInfos);
         obj.add("opponent_infos", opponentInfos);
         obj.add("Priority", first);
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();;
+        Gson gson = new Gson();
         return gson.toJson(obj);
     }
 
@@ -86,6 +93,41 @@ public class GameState {
     }
     public Trainer getPlayer() {
         return player;
+    }
+    public void launchFight() throws IOException {
+
+        String opponentName = opponent.getName();
+        String playerName = player.getName();
+
+        Pokemon p = player.getFrontPokemon();
+        Pokemon op = opponent.getFrontPokemon();
+
+        String pName = p.getName();
+        String opName = op.getName();
+
+        System.out.println(opponentName + " wants to battle!");
+        System.out.println(pName + ", go!");
+        System.out.println(opponentName + " sends " + opName + "!");
+        fightLoop();
+    }
+    private void fightLoop() throws IOException {
+        Pokemon p = player.getFrontPokemon();
+        Pokemon op = opponent.getFrontPokemon();
+        while(opponent.getHealthyPokemon() > 0 && player.getHealthyPokemon() > 0) {
+            Move m1 = player.getFrontPokemon().chooseMove();
+            Move m2 = opponent.getFrontPokemon().chooseMove();
+            if(is_player_first() && !p.isKO()){
+                p.attack(op, m1);
+                if(!op.isKO()) op.attack(p, m2);
+
+            } else if (is_player_first() && !op.isKO()){
+                op.attack(p, m2);
+                if(!p.isKO()) p.attack(op, m1);
+            }
+            turn++;
+            console.log(state());
+            server.sendState(state());
+        }
     }
 
     private Pokemon getPokemonFromIndex(Trainer t, int index){

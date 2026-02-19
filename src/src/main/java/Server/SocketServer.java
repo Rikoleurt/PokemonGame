@@ -6,10 +6,12 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 import Controller.Fight.Battle.BattleExecutor;
+import Model.GameState;
 import Model.Inventory.Items.Item;
 import Model.Person.Action;
 import Model.Person.NPC;
 import Model.Person.Player;
+import Model.Person.Trainer;
 import Model.Pokemon.Move;
 import Model.Pokemon.Pokemon;
 import View.Game.Battle.BattleView;
@@ -23,6 +25,7 @@ public class SocketServer {
     private BufferedWriter out;
     private final Gson gsonPretty = new GsonBuilder().setPrettyPrinting().create();
     private final Gson gson = new Gson();
+
     private final Player player = BattleView.getPlayer();
     private final Pokemon pokemon = player.getFrontPokemon();
     private final NPC npc = BattleView.getNpc();
@@ -38,24 +41,27 @@ public class SocketServer {
         return instance;
     }
 
-    public void start(int port) throws IOException {
+    public void start(int port, GameState gs) throws IOException {
         serverSocket = new ServerSocket(port);
 
         System.out.println("Java TCP server waits on port " + port + "...");
         clientSocket = serverSocket.accept();
         System.out.println("Client connected !");
-
         in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         out = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
-
-        String initState = jsonGameState(player, pokemon, npc, pokemon2, executor.getTurn());
-        sendState(initState);
+        String initialState = jsonGameState(gs);
+        sendState(initialState);
+        gs.launchFight();
+//        String initState = jsonGameState(player, pokemon, npc, pokemon2, executor.getTurn());
+//        sendState(initState);
     }
 
 
     public synchronized void sendState(String json) throws IOException {
         try {
+            System.out.println(out == null);
             if(out != null) {
+                System.out.println("sending this : " + json);
                 out.write(json + "\n");
                 out.flush();
             }
@@ -118,6 +124,32 @@ public class SocketServer {
         return jsonPokemon;
     }
 
+    private String jsonGameState(GameState gameState) {
+        Trainer p = gameState.getPlayer();
+        Trainer o = gameState.getOpponent();
+
+        Pokemon p1 = p.getFrontPokemon();
+        Pokemon p2 = o.getFrontPokemon();
+
+        int turn = gameState.getTurn();
+
+        JsonObject pState = new JsonObject();
+        pState.addProperty("name", p.getName());
+        pState.addProperty("pokemonNb", p.getHealthyPokemon());
+
+        JsonObject oState = new JsonObject();
+        oState.addProperty("name", o.getName());
+        oState.addProperty("pokemonNb", o.getHealthyPokemon());
+
+        JsonObject pokemonState = new JsonObject();
+        pokemonState.add("player", pState);
+        pokemonState.add("enemy", oState);
+        pokemonState.add("player_pokemon", getSelfPokemonInfos(p1));
+        pokemonState.add("enemy_pokemon", getOpponentPokemonInfos(p2));
+        pokemonState.addProperty("turn", turn);
+        System.out.println(gson.toJson(pokemonState));
+        return gson.toJson(pokemonState);
+    }
 
     private String jsonGameState(Player p, Pokemon opponent, NPC n, Pokemon self, int turn) {
         JsonObject nState = new JsonObject();
@@ -181,5 +213,9 @@ public class SocketServer {
         NPC refreshedNPC = BattleView.getNpc();
         Pokemon refreshedSelf = refreshedNPC.getFrontPokemon();
         return jsonGameState(refreshedPlayer, refreshedOpponent, refreshedNPC, refreshedSelf, executor.getTurn());
+    }
+
+    public BufferedWriter getBufferedWriter() {
+        return out;
     }
 }

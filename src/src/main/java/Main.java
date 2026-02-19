@@ -29,9 +29,10 @@ import static Model.StaticObjects.MovesSample.*;
 public class Main extends Application {
 
     BattleConsole console = BattleConsole.getInstance();
+    GameState gs;
 
     @Override
-    public void start(Stage primaryStage) {
+    public void start(Stage primaryStage) throws IOException {
 
         Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
         double screenWidth = screenBounds.getWidth();
@@ -73,14 +74,6 @@ public class Main extends Application {
         TextBubble textBubble = BattleView.getTextBubble();
 //        scene.setOnKeyPressed(event -> textBubble.handleKeyPress(event.getCode()));
 
-//        SocketServer server = SocketServer.getInstance();
-//        new Thread(() -> {
-//            try {
-//                server.start(5001);
-//            } catch (IOException e) {
-//                System.out.println("Client connect failed " + e.getMessage());
-//            }
-//        }).start();
 
         Pokemon pikachu = initiatePikachu();
         Pokemon salameche = initiateSalameche();
@@ -92,41 +85,18 @@ public class Main extends Application {
         opponentTeam.add(salameche);
         Trainer player = new Trainer("player", playerTeam);
         Trainer opponent = new Trainer("opponent", opponentTeam);
-        GameState gs = new GameState(player, opponent, 0);
-        System.out.println(player.getFrontPokemon().getStatus());
-        while(opponent.getHealthyPokemon() > 0 && player.getHealthyPokemon() > 0) {
-            System.out.println("opponent : " + opponent.getHealthyPokemon());
-            System.out.println("player : " + player.getHealthyPokemon());
-            opponent.setAction(Action.Attack);
-            player.setAction(Action.Attack);
-
-            handle_attack(gs);
-            console.log(gs.state());
-        }
+        gs = new GameState(player, opponent, 0);
+        SocketServer server = SocketServer.getInstance();
+        new Thread(() -> {
+            try {
+                server.start(5001, gs);
+            } catch (IOException e) {
+                System.out.println("Client connect failed " + e.getMessage());
+            }
+        }).start();
+        System.out.println("Buffered writer " + server.getBufferedWriter());
     }
 
     static void main(String[] args) {
-    }
-
-    private void handle_attack(GameState gs) {
-        Trainer player = gs.getPlayer();
-        Trainer opponent = gs.getOpponent();
-
-        Pokemon player_pokemon = player.getFrontPokemon();
-        Pokemon opponent_pokemon = opponent.getFrontPokemon();
-
-        if(gs.is_player_first()){
-            Move m1 = player.getFrontPokemon().chooseMove();
-            player_pokemon.attack(opponent_pokemon, m1);
-
-            Move m2 = opponent.getFrontPokemon().chooseMove();
-            opponent_pokemon.attack(player_pokemon, m2);
-        } else {
-            Move m2 = opponent.getFrontPokemon().chooseMove();
-            opponent_pokemon.attack(player_pokemon, m2);
-
-            Move m1 = player.getFrontPokemon().chooseMove();
-            player_pokemon.attack(opponent_pokemon, m1);
-        }
     }
 }
