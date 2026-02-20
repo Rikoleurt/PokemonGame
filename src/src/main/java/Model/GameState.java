@@ -166,7 +166,7 @@ public class GameState {
         System.out.println(opponentName + " wants to battle!");
         System.out.println(pName + ", go!");
         System.out.println(opponentName + " sends " + opName + "!");
-        fightLoop();
+        fightLoop2();
     }
 
     private void fightLoop() throws IOException {
@@ -179,7 +179,7 @@ public class GameState {
                 p.attack(op, m1);
                 if(!op.isKO()) op.attack(p, m2);
 
-            } else if (is_player_first() && !op.isKO()){
+            } else if (!is_player_first() && !op.isKO()){
                 op.attack(p, m2);
                 if(!p.isKO()) p.attack(op, m1);
             }
@@ -199,6 +199,7 @@ public class GameState {
             } catch (Exception e) {
                 moveIndex = 0;
             }
+            System.out.println("Move index answer from the agent : " + moveIndex);
 
             Pokemon p = player.getFrontPokemon();
             Pokemon op = opponent.getFrontPokemon();

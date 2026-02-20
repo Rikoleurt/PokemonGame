@@ -69,6 +69,7 @@ public class SocketServer {
 
 
     public String sendStateWaitForAction(String jsonState) throws IOException {
+        System.out.println("sending this (wait action): " + jsonState);
         out.write(jsonState + "\n");
         out.flush();
         return in.readLine(); // wait for an answer
@@ -212,7 +213,5 @@ public class SocketServer {
         return jsonGameState(refreshedPlayer, refreshedOpponent, refreshedNPC, refreshedSelf, executor.getTurn());
     }
 
-    public BufferedWriter getBufferedWriter() {
-        return out;
-    }
+
 }
