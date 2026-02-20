@@ -2,6 +2,7 @@ package Model;
 
 import Model.Person.Action;
 import Model.Person.Trainer;
+import Model.Pokemon.Attacks.Attack;
 import Model.Pokemon.Move;
 import Model.Pokemon.Pokemon;
 import Model.StaticObjects.MovesExample;
@@ -73,7 +74,8 @@ public class GameState {
 //        addTeamInfos(p12, opponentTeam);
 
         JsonObject first = new JsonObject();
-        first.addProperty("name", is_player_first());
+        String starter = starterName();
+        first.addProperty("name", starter);
         playerInfos.add("player_team", playerTeam);
         playerInfos.addProperty("healthy_pokemons", player.getHealthyPokemon());
         opponentInfos.add("opponent_team", opponentTeam);
@@ -85,6 +87,9 @@ public class GameState {
         return gson.toJson(obj);
     }
 
+    private String starterName(){
+        if(is_player_first()) return this.player.getName(); else return this.opponent.getName();
+    }
     public String pretty_state(){
         Pokemon p1 = player.getFrontPokemon();
 //        Pokemon p2 = getPokemonFromIndex(player, 1);
@@ -255,11 +260,19 @@ public class GameState {
 
         JsonArray attacksData = new JsonArray();
         ArrayList<String> attacks = movesToList(p);
+        ArrayList<Move> attacks1 = p.getAttacks();
         for(int i = 0; i < attacks.size(); i++){
             JsonObject obj = new JsonObject();
+            Move m1 = attacks1.get(i);
             obj.addProperty("slot", i);
             obj.addProperty("id", MovesExample.getIdByName(attacks.get(i)));
             obj.addProperty("name", attacks.get(i));
+            obj.addProperty("type", m1.getType().toString());
+            if(m1 instanceof Attack) obj.addProperty("Power", ((Attack) m1).getPower());
+            if(m1 instanceof Attack) obj.addProperty("Precision", ((Attack) m1).getPrecision());
+            obj.addProperty("Mode", m1.getMode().toString());
+            obj.addProperty("PP", m1.getPP());
+            obj.addProperty("maxPP", m1.getMaxPP());
             attacksData.add(obj);
         }
 
