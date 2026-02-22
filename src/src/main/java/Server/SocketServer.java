@@ -49,8 +49,6 @@ public class SocketServer {
         System.out.println("Client connected !");
         in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         out = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
-        String initialState = gs.state();
-        sendState(initialState);
         gs.launchFight();
     }
 
@@ -69,7 +67,7 @@ public class SocketServer {
 
 
     public String sendStateWaitForAction(String jsonState) throws IOException {
-        System.out.println("sending this (wait action): " + jsonState);
+        System.out.println("sending this : " + jsonState);
         out.write(jsonState + "\n");
         out.flush();
         return in.readLine(); // wait for an answer

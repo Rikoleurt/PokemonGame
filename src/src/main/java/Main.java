@@ -75,14 +75,15 @@ public class Main extends Application {
 //        scene.setOnKeyPressed(event -> textBubble.handleKeyPress(event.getCode()));
 
 
-        Pokemon pikachu = initiatePikachu();
+        Pokemon pikachu1 = initiatePikachu();
+        Pokemon pikachu2 = initiatePikachu();
         Pokemon salameche = initiateSalameche();
 
         LinkedList<Pokemon> playerTeam = new LinkedList<>();
-        playerTeam.add(pikachu);
+        playerTeam.add(pikachu1);
 
         LinkedList<Pokemon> opponentTeam = new LinkedList<>();
-        opponentTeam.add(salameche);
+        opponentTeam.add(pikachu2);
 
         Trainer player = new Trainer("player", playerTeam);
         Trainer opponent = new Trainer("opponent", opponentTeam);

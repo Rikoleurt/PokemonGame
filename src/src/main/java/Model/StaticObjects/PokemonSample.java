@@ -8,7 +8,7 @@ import Model.Pokemon.Pokemon;
 import Model.Pokemon.PokemonEnum.Status;
 import Model.Pokemon.PokemonEnum.Type;
 
-import static Model.StaticObjects.MovesExample.initiateAttacks;
+import static Model.StaticObjects.MovesSample.initiateAttacks;
 
 public class PokemonSample {
 
