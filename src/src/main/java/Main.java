@@ -59,19 +59,19 @@ public class Main extends Application {
 //        SceneManager.getStage().show();
 
 
-        ConsoleView consoleView = new ConsoleView();
-        Scene consoleScene = new Scene(consoleView, consoleWidth, screenHeight);
-
-        Stage consoleStage = new Stage();
-        consoleStage.setTitle("Battle Console");
-        consoleStage.setScene(consoleScene);
-        consoleStage.setX(0);
-        consoleStage.setY(0);
-        consoleStage.setWidth(consoleWidth);
-        consoleStage.setHeight(screenHeight);
-        consoleStage.show();
-
-        TextBubble textBubble = BattleView.getTextBubble();
+//        ConsoleView consoleView = new ConsoleView();
+//        Scene consoleScene = new Scene(consoleView, consoleWidth, screenHeight);
+//
+//        Stage consoleStage = new Stage();
+//        consoleStage.setTitle("Battle Console");
+//        consoleStage.setScene(consoleScene);
+//        consoleStage.setX(0);
+//        consoleStage.setY(0);
+//        consoleStage.setWidth(consoleWidth);
+//        consoleStage.setHeight(screenHeight);
+//        consoleStage.show();
+//
+//        TextBubble textBubble = BattleView.getTextBubble();
 //        scene.setOnKeyPressed(event -> textBubble.handleKeyPress(event.getCode()));
 
 

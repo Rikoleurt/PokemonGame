@@ -10,12 +10,8 @@ import Model.Pokemon.Terrain;
 import Server.SocketServer;
 import View.Game.Battle.BattleButtons;
 import View.Game.Battle.BattleView;
-import View.Game.Battle.InfoBars.Bar;
-import View.Game.SceneManager;
-import View.Game.Switch.SwitchFaintedView;
 
 import java.io.IOException;
-import java.net.ServerSocket;
 
 import static View.Game.Battle.BattleView.*;
 
@@ -46,7 +42,7 @@ public class EndTurn extends BattleEvent {
                 executor.addEvent(new MessageEvent(npc.getName() + " sends " + next.getName() + "!"));
                 executor.addEvent(new SwitchEvent(npc, next, terrain, executor));
                 try {
-                    socketServer.sendState(socketServer.refreshState());
+                    socketServer.send(socketServer.refreshState());
                 } catch (IOException e) {
                     System.out.println("IOException : " + e.getMessage());
                 }
@@ -56,7 +52,7 @@ public class EndTurn extends BattleEvent {
             executor.addEvent(new MessageEvent(playerPokemon.getName() + " fainted."));
             executor.addEvent(new SwitchEvent(player, playerPokemon, terrain, executor));
             try {
-                socketServer.sendState(socketServer.refreshState());
+                socketServer.send(socketServer.refreshState());
             } catch (IOException e) {
                 System.out.println("IOException : " + e.getMessage());
             }
@@ -66,7 +62,7 @@ public class EndTurn extends BattleEvent {
             executor.addEvent(new MessageEvent(npc.getName() + " gives you 1000 Poké dollars."));
             executor.executeEvents(null);
             try {
-                socketServer.sendState(socketServer.refreshState());
+                socketServer.send(socketServer.refreshState());
             } catch (IOException e) {
                 System.out.println("IOException : " + e.getMessage());
             }
@@ -77,7 +73,7 @@ public class EndTurn extends BattleEvent {
             executor.addEvent(new MessageEvent(player.getName() + " scurried to a Pokémon Center, protecting the exhausted and fainted Pokémon from further harm"));
             executor.executeEvents(null);
             try {
-                socketServer.sendState(socketServer.refreshState());
+                socketServer.send(socketServer.refreshState());
             } catch (IOException e) {
                 System.out.println("IOException : " + e.getMessage());
             }
@@ -94,7 +90,7 @@ public class EndTurn extends BattleEvent {
         getOpponentBar().refreshBar();
 
         try {
-            socketServer.sendState(socketServer.refreshState());
+            socketServer.send(socketServer.refreshState());
         } catch (IOException e) {
             System.out.println("IOException : " + e.getMessage());
         }

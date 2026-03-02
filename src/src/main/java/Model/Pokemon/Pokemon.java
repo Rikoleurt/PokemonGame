@@ -217,6 +217,10 @@ public class Pokemon {
         if(HP > maxHP) HP = maxHP;
         System.out.println(name + " is now " + level + " !");
     }
+    public void heal(){
+        HP = maxHP;
+        status = Status.normal;
+    }
     private double getNatureMultiplier(String stat) {
         if (nature == null) return 1.0;
 

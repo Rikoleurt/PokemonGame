@@ -53,7 +53,7 @@ public class SocketServer {
     }
 
 
-    public synchronized void sendState(String json) throws IOException {
+    public synchronized void send(String json) throws IOException {
         try {
             if(out != null) {
                 System.out.println("sending this : " + json);
@@ -65,9 +65,12 @@ public class SocketServer {
         }
     }
 
+    public synchronized String readMessage() throws IOException {
+        return in.readLine();
+    }
 
-    public String sendStateWaitForAction(String jsonState) throws IOException {
-        System.out.println("sending this : " + jsonState);
+    public String sendAndRead(String jsonState) throws IOException {
+        System.out.println("Sending: " + jsonState);
         out.write(jsonState + "\n");
         out.flush();
         return in.readLine(); // wait for an answer

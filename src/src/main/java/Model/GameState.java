@@ -166,67 +166,67 @@ public class GameState {
         System.out.println(opponentName + " wants to battle!");
         System.out.println(pName + ", go!");
         System.out.println(opponentName + " sends " + opName + "!");
-        fightLoop2();
+        fightLoop();
     }
 
     private void fightLoop() throws IOException {
-        Pokemon p = player.getFrontPokemon();
-        Pokemon op = opponent.getFrontPokemon();
-        while(opponent.getHealthyPokemon() > 0 && player.getHealthyPokemon() > 0) {
-            Move m1 = player.getFrontPokemon().chooseMove();
-            Move m2 = opponent.getFrontPokemon().chooseMove();
-            if(is_player_first() && !p.isKO()){
-                p.attack(op, m1);
-                if(!op.isKO()) op.attack(p, m2);
+        int episodeCount = 0;
+        while (true) {
+            resetState();
+            System.out.println("Episode: " + episodeCount);
 
-            } else if (!is_player_first() && !op.isKO()){
-                op.attack(p, m2);
-                if(!p.isKO()) p.attack(op, m1);
+            if (episodeCount > 0) {
+                String resetSignal = server.readMessage();
+                System.out.println("Received: " + resetSignal);
+
+                if (resetSignal == null) {
+                    System.out.println("Stop training");
+                    break;
+                }
+
+                if ("DONE".equalsIgnoreCase(resetSignal.trim())) {
+                    System.out.println("Training complete. (DONE)");
+                    break;
+                }
             }
-            turn++;
-            console.log(pretty_state());
-            server.sendState(state());
+
+            while (opponent.getHealthyPokemon() > 0 && player.getHealthyPokemon() > 0) {
+
+                String actionLine = server.sendAndRead(state());
+                int moveIndex;
+                try {
+                    moveIndex = Integer.parseInt(actionLine.trim());
+                } catch (Exception e) {
+                    moveIndex = 0;
+                }
+                System.out.println("Answer: " + moveIndex);
+
+                Pokemon p = player.getFrontPokemon();
+                Pokemon op = opponent.getFrontPokemon();
+
+                Move m1 = p.chooseMove();
+
+                Move m2 = null;
+                if (op.getAttacks() != null && !op.getAttacks().isEmpty()) {
+                    int maxIdx = Math.min(3, op.getAttacks().size() - 1);
+                    int idx = Math.max(0, Math.min(moveIndex, maxIdx));
+                    m2 = op.getAttacks().get(idx);
+                }
+                if (m2 == null) m2 = op.chooseMove();
+
+                if (is_player_first() && !p.isKO()) {
+                    p.attack(op, m1);
+                    if (!op.isKO()) op.attack(p, m2);
+                } else if (!is_player_first() && !op.isKO()) {
+                    op.attack(p, m2);
+                    if (!p.isKO()) p.attack(op, m1);
+                }
+                turn++;
+            }
+            server.send(state());
+            episodeCount++;
         }
-    }
-
-    private void fightLoop2() throws IOException {
-        while(opponent.getHealthyPokemon() > 0 && player.getHealthyPokemon() > 0) {
-
-            String actionLine = server.sendStateWaitForAction(state());
-            int moveIndex;
-            try {
-                moveIndex = Integer.parseInt(actionLine.trim());
-            } catch (Exception e) {
-                moveIndex = 0;
-            }
-            System.out.println("Move index answer from the agent : " + moveIndex);
-
-            Pokemon p = player.getFrontPokemon();
-            Pokemon op = opponent.getFrontPokemon();
-
-            Move m1 = p.chooseMove();
-
-            Move m2 = null;
-            if (op.getAttacks() != null && !op.getAttacks().isEmpty()) {
-                int maxIdx = Math.min(3, op.getAttacks().size() - 1);
-                int idx = Math.max(0, Math.min(moveIndex, maxIdx));
-                m2 = op.getAttacks().get(idx);
-            }
-            if (m2 == null) m2 = op.chooseMove(); // fallback sécurité
-
-            if(is_player_first() && !p.isKO()){
-                p.attack(op, m1);
-                if(!op.isKO()) op.attack(p, m2);
-            } else if (!is_player_first() && !op.isKO()){
-                op.attack(p, m2);
-                if(!p.isKO()) p.attack(op, m1);
-            }
-
-            turn++;
-            console.log(pretty_state());
-        }
-
-        server.sendState(state());
+        System.out.println("Total episodes done: " + episodeCount);
     }
 
 
@@ -327,5 +327,15 @@ public class GameState {
             }
         }
         return array;
+    }
+
+    private void resetState(){
+        for(Pokemon p : player.getTeam()){
+            p.heal();
+        }
+        for(Pokemon p : opponent.getTeam()){
+            p.heal();
+        }
+        turn = 0;
     }
 }
