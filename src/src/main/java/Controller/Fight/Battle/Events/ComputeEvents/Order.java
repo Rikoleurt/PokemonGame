@@ -1,11 +1,11 @@
 package Controller.Fight.Battle.Events.ComputeEvents;
 
 import Controller.Fight.Battle.Events.ComputeEvent;
-import Controller.Fight.Battle.Events.ComputeEvents.FoeEvents.FoeChoiceEvent;
 import Model.Person.Action;
 import Model.Person.NPC;
 import Model.Person.Player;
 import Model.Pokemon.Pokemon;
+import Utils.SeedManager;
 
 import java.util.Random;
 
@@ -49,7 +49,7 @@ public class Order extends ComputeEvent<Boolean> {
         if (playerSpeed > npcSpeed) return true;
         if (playerSpeed < npcSpeed) return false;
 
-        return new Random().nextBoolean();
+        return new Random(SeedManager.getSeed()).nextBoolean();
     }
 
     private int priorityOf(Action action) {

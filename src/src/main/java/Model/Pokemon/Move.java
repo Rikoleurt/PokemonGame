@@ -2,6 +2,7 @@ package Model.Pokemon;
 
 import Model.Pokemon.AttackEnum.AttackMode;
 import Model.Pokemon.PokemonEnum.Type;
+import Utils.SeedManager;
 
 import java.util.Random;
 
@@ -49,7 +50,7 @@ public class Move {
     }
 
     protected boolean isCritical(Pokemon pokemon) {
-        Random random = new Random();
+        Random random = new Random(SeedManager.getSeed());
         double rand = random.nextDouble(256)/256;
         double criticalProb = criticalProb(pokemon)/256;
         return rand < criticalProb;

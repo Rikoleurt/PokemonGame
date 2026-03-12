@@ -12,6 +12,7 @@ import Model.Pokemon.PokemonEnum.Status;
 import Model.Pokemon.PokemonEnum.Nature;
 import Model.Pokemon.PokemonEnum.Type;
 import Model.Pokemon.Attacks.DebrisAttack;
+import Utils.SeedManager;
 import java.io.*;
 import java.util.*;
 import View.Training.Console.View.BattleConsole;
@@ -479,7 +480,7 @@ public class Pokemon {
      * @param move Move it uses
      */
     private void applyStatusEffect(Pokemon target, Move move){
-        Random random = new Random();
+        Random random = new Random(SeedManager.getSeed());
         if(getAttack(move).getMode() == AttackMode.physical && status == Status.burned){
             executor.addEvent(new MessageEvent(name + " uses " + move.getName()));
             target.setHP(Math.max(0, HP - (int) totalDamage((Attack) getAttack(move), this, target)/2));
@@ -995,7 +996,7 @@ public class Pokemon {
         for (Move move : movePool) if (move != null) pool.add(move);
 
         if (pool.isEmpty()) return null;
-        Random random = new Random();
+        Random random = new Random(SeedManager.getSeed());
 
         return pool.get(random.nextInt(pool.size()));
     }
@@ -1026,7 +1027,7 @@ public class Pokemon {
     private boolean canHit(Move move){
         boolean canHit = false;
         double precision;
-        Random rand = new Random();
+        Random rand = new Random(SeedManager.getSeed());
         int imprecision = rand.nextInt(1,100);
 
         if(move instanceof Attack){

@@ -57,8 +57,8 @@ public class Main extends Application {
 //        SceneManager.getStage().setHeight(screenHeight);
 //        SceneManager.getStage().setTitle("Pokémon Game");
 //        SceneManager.getStage().show();
-
-
+//
+//
 //        ConsoleView consoleView = new ConsoleView();
 //        Scene consoleScene = new Scene(consoleView, consoleWidth, screenHeight);
 //
@@ -73,7 +73,6 @@ public class Main extends Application {
 //
 //        TextBubble textBubble = BattleView.getTextBubble();
 //        scene.setOnKeyPressed(event -> textBubble.handleKeyPress(event.getCode()));
-
 
         Pokemon pikachu1 = initiatePikachu();
         Pokemon pikachu2 = initiatePikachu();

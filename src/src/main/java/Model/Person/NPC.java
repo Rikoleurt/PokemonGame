@@ -7,8 +7,7 @@ import Model.Pokemon.Pokemon;
 import Model.Pokemon.PokemonEnum.Status;
 import Model.Pokemon.Terrain;
 import Model.Pokemon.TerrainEnum.Debris;
-
-import View.Game.Battle.Text.TextBubble;
+import Utils.SeedManager;
 
 import java.util.LinkedList;
 import java.util.Random;
@@ -39,7 +38,7 @@ public class NPC implements Fighter {
         return bag;
     }
     public Action makeChoiceAction(){
-        Random rand = new Random();
+        Random rand = new Random(SeedManager.getSeed());
         int randInt = rand.nextInt(20,100);
         int healthyPokemon = getHealthyPokemon();
         if (randInt < 5 && healthyPokemon >= 0) {

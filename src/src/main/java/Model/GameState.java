@@ -7,6 +7,7 @@ import Model.Pokemon.Move;
 import Model.Pokemon.Pokemon;
 import Model.StaticObjects.MovesExample;
 import Server.SocketServer;
+import Utils.SeedManager;
 import View.Training.Console.View.BattleConsole;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -22,6 +23,7 @@ public class GameState {
     Trainer player;
     Trainer opponent;
     int turn;
+    Boolean isPlayerFirst = null;
 
     BattleConsole console = BattleConsole.getInstance();
     SocketServer server = SocketServer.getInstance();
@@ -87,9 +89,6 @@ public class GameState {
         return gson.toJson(obj);
     }
 
-    private String starterName(){
-        if(is_player_first()) return this.player.getName(); else return this.opponent.getName();
-    }
     public String pretty_state(){
         Pokemon p1 = player.getFrontPokemon();
 //        Pokemon p2 = getPokemonFromIndex(player, 1);
@@ -131,7 +130,7 @@ public class GameState {
 //        addTeamInfos(p12, opponentTeam);
 
         JsonObject first = new JsonObject();
-        first.addProperty("name", is_player_first());
+        first.addProperty("name", starterName());
         playerInfos.add("player_team", playerTeam);
         playerInfos.addProperty("healthy_pokemons", player.getHealthyPokemon());
         opponentInfos.add("opponent_team", opponentTeam);
@@ -143,19 +142,10 @@ public class GameState {
         return gson.toJson(obj);
     }
 
-    public int getTurn() {
-        return turn;
-    }
-    public Trainer getOpponent() {
-        return opponent;
-    }
-    public Trainer getPlayer() {
-        return player;
-    }
     public void launchFight() throws IOException {
 
         String opponentName = opponent.getName();
-        String playerName = player.getName();
+        // String playerName = player.getName();
 
         Pokemon p = player.getFrontPokemon();
         Pokemon op = opponent.getFrontPokemon();
@@ -163,73 +153,146 @@ public class GameState {
         String pName = p.getName();
         String opName = op.getName();
 
-        System.out.println(opponentName + " wants to battle!");
-        System.out.println(pName + ", go!");
-        System.out.println(opponentName + " sends " + opName + "!");
+        System.out.println("---------------- Fight begins ----------------");
         fightLoop();
     }
 
     private void fightLoop() throws IOException {
         int episodeCount = 0;
+        String pendingMsg = null;
+
         while (true) {
-            resetState();
-            System.out.println("Episode: " + episodeCount);
+            String msg;
 
-            if (episodeCount > 0) {
-                String resetSignal = server.readMessage();
-                System.out.println("Received: " + resetSignal);
-
-                if (resetSignal == null) {
-                    System.out.println("Stop training");
-                    break;
-                }
-
-                if ("DONE".equalsIgnoreCase(resetSignal.trim())) {
-                    System.out.println("Training complete. (DONE)");
-                    break;
-                }
+            if (pendingMsg != null) {
+                msg = pendingMsg;
+                pendingMsg = null;
+            } else {
+                msg = server.readMessage();
             }
 
-            while (opponent.getHealthyPokemon() > 0 && player.getHealthyPokemon() > 0) {
+            System.out.println("Received: " + msg);
 
-                String actionLine = server.sendAndRead(state());
-                int moveIndex;
+            if (msg == null) {
+                System.out.println("Client disconnected.");
+                break;
+            }
+
+            msg = msg.trim();
+
+            if ("DONE".equalsIgnoreCase(msg)) {
+                System.out.println("Training complete.");
+                break;
+            }
+
+            if (!msg.startsWith("RESET")) {
+                System.out.println("Protocol error: expected RESET, got: " + msg);
+                continue;
+            }
+
+            long seed = SeedManager.getSeed();
+            String[] parts = msg.split("\\s+");
+            if (parts.length == 2) {
                 try {
-                    moveIndex = Integer.parseInt(actionLine.trim());
-                } catch (Exception e) {
-                    moveIndex = 0;
+                    seed = Long.parseLong(parts[1]);
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid seed format: " + parts[1] + ", using default seed 123");
                 }
-                System.out.println("Answer: " + moveIndex);
-
-                Pokemon p = player.getFrontPokemon();
-                Pokemon op = opponent.getFrontPokemon();
-
-                Move m1 = p.chooseMove();
-
-                Move m2 = null;
-                if (op.getAttacks() != null && !op.getAttacks().isEmpty()) {
-                    int maxIdx = Math.min(3, op.getAttacks().size() - 1);
-                    int idx = Math.max(0, Math.min(moveIndex, maxIdx));
-                    m2 = op.getAttacks().get(idx);
-                }
-                if (m2 == null) m2 = op.chooseMove();
-
-                if (is_player_first() && !p.isKO()) {
-                    p.attack(op, m1);
-                    if (!op.isKO()) op.attack(p, m2);
-                } else if (!is_player_first() && !op.isKO()) {
-                    op.attack(p, m2);
-                    if (!p.isKO()) p.attack(op, m1);
-                }
-                turn++;
             }
+
+            resetState();
+            turn = 0;
+
+            System.out.println("Episode: " + episodeCount + " with seed " + seed);
             server.send(state());
+
+            while (true) {
+                if (player.getHealthyPokemon() <= 0 || opponent.getHealthyPokemon() <= 0) break;
+
+                String actionMsg = server.readMessage();
+                // System.out.println("Received action message: " + actionMsg);
+
+                if (actionMsg == null) {
+                    System.out.println("Client disconnected (2nd while loop).");
+                    return;
+                }
+
+                actionMsg = actionMsg.trim();
+
+                if ("DONE".equalsIgnoreCase(actionMsg)) {
+                    System.out.println("Training complete");
+                    return;
+                }
+
+                if (actionMsg.startsWith("RESET")) {
+                    pendingMsg = actionMsg;
+                    break;
+                }
+
+                int moveIndex;
+
+                moveIndex = Integer.parseInt(actionMsg);
+
+
+                // System.out.println("Parsed action index: " + moveIndex);
+                step(moveIndex);
+                turn++;
+                server.send(state());
+            }
             episodeCount++;
         }
         System.out.println("Total episodes done: " + episodeCount);
     }
 
+    private void step(int moveIndex) {
+        Pokemon p = player.getFrontPokemon();
+        Pokemon op = opponent.getFrontPokemon();
 
+        if (p == null || op == null) return;
+        if (p.isKO() || op.isKO()) return;
+
+        Move m1 = p.chooseMove();
+
+        Move m2 = null;
+        if (op.getAttacks() != null && !op.getAttacks().isEmpty()) {
+            int maxIdx = Math.min(3, op.getAttacks().size() - 1);
+            int idx = Math.max(0, Math.min(moveIndex, maxIdx));
+
+//            if (moveIndex < 0 || moveIndex >= op.getAttacks().size()) {
+//                throw new IllegalArgumentException(
+//                        "Invalid action index: " + moveIndex + " for " + op.getAttacks().size() + " actions"
+//                );
+//            }
+
+            m2 = op.getAttacks().get(idx);
+        }
+        if (m2 == null) {
+            m2 = op.chooseMove();
+        }
+
+        isPlayerFirst = is_player_first();
+
+        if (isPlayerFirst) {
+            if (!p.isKO()) {
+                p.attack(op, m1);
+            }
+            if (!op.isKO()) {
+                op.attack(p, m2);
+            }
+        } else {
+            if (!op.isKO()) {
+                op.attack(p, m2);
+            }
+            if (!p.isKO()) {
+                p.attack(op, m1);
+            }
+        }
+    }
+
+    private String starterName(){
+        if (isPlayerFirst == null) return player.getName();
+        return isPlayerFirst ? player.getName() : opponent.getName();
+    }
 
     private Pokemon getPokemonFromIndex(Trainer t, int index){
         LinkedList<Pokemon> pokemons = t.getTeam();
@@ -280,11 +343,11 @@ public class GameState {
         pokemonData.add("attacks", attacksData);
     }
 
-    public boolean is_player_first(){
+    public boolean is_player_first() {
         return computeOrder();
     }
 
-    private boolean computeOrder(){
+    private boolean computeOrder() {
         Action playerAction = player.getAction();
         Action opponentAction = opponent.getAction();
 
@@ -300,15 +363,10 @@ public class GameState {
         int playerSpeed = playerPkmn.getEffectiveSpeed();
         int npcSpeed = foe.getEffectiveSpeed();
 
-        if (playerSpeed > npcSpeed) {
-//            System.out.println("Player speed is greater than npc speed");
-            return true;
-        } else if (playerSpeed < npcSpeed) {
-//            System.out.println("Player speed is less than npc speed");
-            return false;
-        }
+        if (playerSpeed > npcSpeed) return true;
+        if (playerSpeed < npcSpeed) return false;
 
-        return new Random().nextBoolean();
+        return SeedManager.getRng().nextBoolean();
     }
 
     private int priorityOf(Action action) {
@@ -318,10 +376,10 @@ public class GameState {
         return 0;
     }
 
-    private ArrayList<String> movesToList(Pokemon pk) {
+    private ArrayList<String> movesToList(Pokemon p) {
         ArrayList<String> array = new ArrayList<>();
-        if (pk.getAttacks() == null) return array;
-        for (Move m : pk.getAttacks()) {
+        if (p.getAttacks() == null) return array;
+        for (Move m : p.getAttacks()) {
             if (m != null){
                 array.add(m.getName());
             }
@@ -330,12 +388,27 @@ public class GameState {
     }
 
     private void resetState(){
+        turn = 0;
+        isPlayerFirst = null;
         for(Pokemon p : player.getTeam()){
             p.heal();
         }
         for(Pokemon p : opponent.getTeam()){
             p.heal();
         }
-        turn = 0;
+        SeedManager.incrementSeed();
+        SeedManager.setSeed(SeedManager.getSeed());
+    }
+
+    public int getTurn() {
+        return turn;
+    }
+
+    public Trainer getOpponent() {
+        return opponent;
+    }
+
+    public Trainer getPlayer() {
+        return player;
     }
 }

@@ -214,5 +214,4 @@ public class SocketServer {
         return jsonGameState(refreshedPlayer, refreshedOpponent, refreshedNPC, refreshedSelf, executor.getTurn());
     }
 
-
 }
