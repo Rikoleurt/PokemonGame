@@ -10,7 +10,7 @@ import Model.Person.Player;
 import View.Game.Battle.BattleView;
 import View.Game.Battle.InfoBars.Bar;
 import View.Game.Battle.Text.TextBubble;
-import View.Game.SceneManager;
+import Utils.SceneManager;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -42,9 +42,6 @@ public class SwitchView extends BorderPane {
     TextBubble textBubble;
     TextBubble switchBubble = new TextBubble();
     VBox root = new VBox();
-    HBox hBox = new HBox();
-    HBox hBox2 = new HBox();
-    HBox hBox3 = new HBox();
     BattleExecutor executor = BattleExecutor.getInstance();
     boolean isTurnDisable = false;
     Button cancelButton;
@@ -83,16 +80,7 @@ public class SwitchView extends BorderPane {
         setPadding(new Insets(20));
 
         setFocusTraversable(true);
-        Platform.runLater(() -> {
-            Scene scene = SceneManager.getStage().getScene();
-            if (scene != null) {
-                scene.addEventFilter(KeyEvent.KEY_PRESSED, ev -> {
-                    if (ev.getCode() == KeyCode.B) {
-                        cancelButton.fire();
-                    }
-                });
-            }
-        });
+        onBackPressed(cancelButton);
     }
 
     private void setButtons() {
@@ -230,11 +218,16 @@ public class SwitchView extends BorderPane {
         isTurnDisable = disable;
     }
 
-    public HBox getWrapper() {
-        return wrapper;
-    }
-
-    public Button getCancelButton() {
-        return cancelButton;
+    private void onBackPressed(Button backButton) {
+        Platform.runLater(() -> {
+            Scene scene = SceneManager.getStage().getScene();
+            if (scene != null) {
+                scene.addEventFilter(KeyEvent.KEY_PRESSED, ev -> {
+                    if (ev.getCode() == KeyCode.B) {
+                        backButton.fire();
+                    }
+                });
+            }
+        });
     }
 }

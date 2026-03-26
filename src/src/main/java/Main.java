@@ -1,12 +1,11 @@
 import Model.GameState;
-import Model.Person.Action;
 import Model.Person.Trainer;
-import Model.Pokemon.Move;
 import Model.Pokemon.Pokemon;
 import Server.SocketServer;
+import Utils.SongManager;
 import View.Game.Battle.BattleView;
 import View.Game.Battle.Text.TextBubble;
-import View.Game.SceneManager;
+import Utils.SceneManager;
 
 import View.Training.Console.View.BattleConsole;
 import View.Training.Console.View.ConsoleView;
@@ -21,15 +20,13 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Objects;
 
-import static View.Game.Battle.BattleView.npc;
-import static View.Game.Battle.BattleView.player;
 import static Model.StaticObjects.PokemonSample.*;
-import static Model.StaticObjects.MovesSample.*;
 
-public class Main extends Application {
+public class Main extends Application { // extends Application
 
     BattleConsole console = BattleConsole.getInstance();
     GameState gs;
+    SongManager songManager = SongManager.getInstance();
 
     @Override
     public void start(Stage primaryStage) throws IOException {
@@ -42,37 +39,40 @@ public class Main extends Application {
         double gameWidth = screenWidth - consoleWidth;
 
         SceneManager.setStage(primaryStage);
+        BattleView battleView = new BattleView();
+        SceneManager.setFightView(battleView);
 
-//        BattleView battleView = new BattleView();
-//        SceneManager.setFightView(battleView);
-//
-//        Font globalFont = Font.loadFont(Objects.requireNonNull(getClass().getResource("/font/pokemonFont.ttf")).toExternalForm(), 18);
-//        Scene scene = new Scene(battleView, gameWidth, screenHeight);
-//        scene.getRoot().setStyle("-fx-font-family: '" + globalFont.getName() + "'; -fx-font-size: 18px;");
-//        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/style/style.css")).toExternalForm());
-//        SceneManager.getStage().setScene(scene);
-//        SceneManager.getStage().setX(consoleWidth);
-//        SceneManager.getStage().setY(0);
-//        SceneManager.getStage().setWidth(gameWidth);
-//        SceneManager.getStage().setHeight(screenHeight);
-//        SceneManager.getStage().setTitle("Pokémon Game");
-//        SceneManager.getStage().show();
-//
-//
-//        ConsoleView consoleView = new ConsoleView();
-//        Scene consoleScene = new Scene(consoleView, consoleWidth, screenHeight);
-//
-//        Stage consoleStage = new Stage();
-//        consoleStage.setTitle("Battle Console");
-//        consoleStage.setScene(consoleScene);
-//        consoleStage.setX(0);
-//        consoleStage.setY(0);
-//        consoleStage.setWidth(consoleWidth);
-//        consoleStage.setHeight(screenHeight);
-//        consoleStage.show();
-//
-//        TextBubble textBubble = BattleView.getTextBubble();
-//        scene.setOnKeyPressed(event -> textBubble.handleKeyPress(event.getCode()));
+        Font globalFont = Font.loadFont(Objects.requireNonNull(getClass().getResource("/font/pokemonFont.ttf")).toExternalForm(), 18);
+
+        Scene scene = new Scene(battleView, gameWidth, screenHeight);
+        scene.getRoot().setStyle("-fx-font-family: '" + globalFont.getName() + "'; -fx-font-size: 18px;");
+        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/style/style.css")).toExternalForm());
+
+        SceneManager.getStage().setScene(scene);
+        SceneManager.getStage().setX(consoleWidth);
+        SceneManager.getStage().setY(0);
+        SceneManager.getStage().setWidth(gameWidth);
+        SceneManager.getStage().setHeight(screenHeight);
+        SceneManager.getStage().setTitle("Pokémon Game");
+        SceneManager.getStage().show();
+
+
+        ConsoleView consoleView = new ConsoleView();
+        Scene consoleScene = new Scene(consoleView, consoleWidth, screenHeight);
+
+        Stage consoleStage = new Stage();
+        consoleStage.setTitle("Battle Console");
+        consoleStage.setScene(consoleScene);
+        consoleStage.setX(0);
+        consoleStage.setY(0);
+        consoleStage.setWidth(consoleWidth);
+        consoleStage.setHeight(screenHeight);
+        consoleStage.show();
+
+        TextBubble textBubble = BattleView.getTextBubble();
+        scene.setOnKeyPressed(event -> textBubble.handleKeyPress(event.getCode()));
+
+        songManager.playSong("/music/champion_steven.mp3");
 
         Pokemon pikachu1 = initiatePikachu();
         Pokemon pikachu2 = initiatePikachu();
@@ -99,5 +99,6 @@ public class Main extends Application {
         }).start();
     }
 
-    static void main(String[] args) {}
+    static void main(String[] args) {
+    }
 }

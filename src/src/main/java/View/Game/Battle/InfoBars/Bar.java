@@ -35,23 +35,29 @@ public class Bar extends VBox {
     HBox hBox1 = new HBox();
     ImageView statusImg;
 
-    Bar(double spacing, Pokemon pokemon) {
+    public Bar(double spacing, Pokemon pokemon) {
         this.pokemon = pokemon;
         this.setSpacing(spacing);
+
         String pName = pokemon.getName();
+
         int pLevel = pokemon.getLevel();
         int pHP = pokemon.getHP();
         int pMaxHP = pokemon.getMaxHP();
+
         Status pStatus = pokemon.getStatus();
+
         statusImg = new ImageView();
         statusImg.setPreserveRatio(true);
         statusImg.setFitHeight(30);
         statusImg.setFitWidth(30);
+
         if (pStatus == Status.asleep || pStatus == Status.freeze || pStatus == Status.burned || pStatus == Status.paralyzed || pStatus == Status.badlyPoisoned || pStatus == Status.poisoned) {
-            statusImg.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/" + pStatus.toString() + ".png"))));
+            statusImg.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/images/" + pStatus + ".png"))));
         } else {
             statusImg.setImage(null);
         }
+
         name.setText(pName);
         HP.setText("HP : ");
         level.setText("Lvl : " + pLevel);
@@ -69,20 +75,25 @@ public class Bar extends VBox {
         expBar.setPrefSize(175, 12);
         expBar.setStyle("-fx-accent: #994ee4;");
         hBox1.getChildren().addAll(name, statusImg, level);
+
         HBox expBarBox = new HBox(expBar, HPBar);
         HBox hBox2 = new HBox(HP, HPBar);
         HBox hBox3 = new HBox(health);
+
         if (this instanceof PlayerBar && pokemon.getStatus() != Status.normal) hBox1.setAlignment(Pos.CENTER);
         if (this instanceof OpponentBar && pokemon.getStatus() != Status.normal) hBox1.setAlignment(Pos.CENTER_LEFT);
+
         hBox1.setSpacing(spacing * 2);
         hBox2.setSpacing(spacing);
         hBox3.setSpacing(spacing);
         hBox3.setAlignment(Pos.CENTER_LEFT);
         setPadding(new Insets(15));
+
         Image image2 = new Image(Objects.requireNonNull(Bar.class.getResource("/images/pokeballKO.png")).toExternalForm());
         ImageView imageView2 = new ImageView(image2);
         imageView2.setFitWidth(20);
         imageView2.setPreserveRatio(true);
+
         if (this instanceof OpponentBar) {
             int size = npc.getTeam().size();
             HBox pokeHBox = new HBox();

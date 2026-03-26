@@ -7,9 +7,8 @@ import Model.Person.NPC;
 import Model.Person.Player;
 import Model.Pokemon.Pokemon;
 import Model.Pokemon.Terrain;
-import View.Game.Battle.BattleButtons;
 import View.Game.Battle.BattleView;
-import View.Game.SceneManager;
+import Utils.SceneManager;
 import View.Game.Switch.SwitchFaintedView;
 
 import static View.Game.Battle.BattleView.*;

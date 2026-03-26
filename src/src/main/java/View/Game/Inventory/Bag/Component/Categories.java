@@ -11,7 +11,7 @@ import Model.Person.Player;
 import Model.Pokemon.Pokemon;
 import View.Game.Battle.BattleView;
 import View.Game.Battle.Text.TextBubble;
-import View.Game.SceneManager;
+import Utils.SceneManager;
 import javafx.animation.PauseTransition;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;

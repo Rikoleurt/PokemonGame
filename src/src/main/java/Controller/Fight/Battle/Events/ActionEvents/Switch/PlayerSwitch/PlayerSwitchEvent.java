@@ -6,7 +6,7 @@ import Controller.Fight.Battle.Events.UIEvents.MessageEvent;
 import Model.Person.Player;
 import Model.Pokemon.Pokemon;
 import View.Game.Battle.BattleView;
-import View.Game.SceneManager;
+import Utils.SceneManager;
 
 import static View.Game.Battle.BattleView.terrain;
 

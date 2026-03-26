@@ -7,25 +7,22 @@ import Model.Pokemon.TerrainEnum.Debris;
 import Model.Pokemon.TerrainEnum.Weather;
 import Model.Person.NPC;
 import Model.Person.Player;
+import Utils.SceneManager;
 import View.Game.Battle.InfoBars.Bar;
 import View.Game.Battle.InfoBars.OpponentBar;
 import View.Game.Battle.InfoBars.PlayerBar;
 import View.Game.Battle.Text.StatBubble;
 import View.Game.Battle.Text.TextBubble;
-import View.Game.SceneManager;
-import View.Game.Switch.SwitchView;
+import View.SettingView.AudioView;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonType;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import javafx.stage.Popup;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.text.Normalizer;
@@ -50,7 +47,7 @@ public class BattleView extends BorderPane {
     static Bar playerBar = new PlayerBar(5, playerPokemon);
     public static Terrain terrain = new Terrain(player.getTeam(), npc.getTeam(), Debris.normal, Weather.normal);
 
-     static BattleButtons battleButtons = new BattleButtons(textBubble, opponentBar, playerBar);
+    static BattleButtons battleButtons = new BattleButtons(textBubble, opponentBar, playerBar);
 
     static ImageView playerSprite;
     static ImageView opponentSprite;
@@ -68,6 +65,7 @@ public class BattleView extends BorderPane {
     }
 
     public BattleView() {
+        // Set up player and opponent bars
         HBox bottomBox = new HBox();
         bottomBox.setSpacing(20);
         bottomBox.setPadding(new Insets(10));
@@ -79,7 +77,6 @@ public class BattleView extends BorderPane {
         HBox.setHgrow(textBubble, Priority.ALWAYS);
         bottomBox.getChildren().addAll(textBubble, battleButtons);
 
-        setTop(opponentBar);
         setRight(playerBar);
         setBottom(bottomBox);
 
@@ -111,9 +108,48 @@ public class BattleView extends BorderPane {
 
         setCenter(centerPane);
 
+        MenuBar menuBar = makeMenuBar();
+
+        VBox topContainer = new VBox();
+        topContainer.getChildren().addAll(menuBar, opponentBar);
+        setTop(topContainer);
+
         refreshSprites();
     }
 
+    public MenuBar makeMenuBar() {
+        // Set up the menu
+        MenuBar menuBar = new MenuBar();
+        Menu settingsMenu = new Menu("Settings");
+
+        MenuItem audioItem = new MenuItem("Audio");
+        MenuItem videoItem = new MenuItem("Video");
+        MenuItem controlsItem = new MenuItem("Controls");
+
+        audioItem.setOnAction(e -> onAudioPressed());
+        videoItem.setOnAction(e -> System.out.println("Video"));
+        controlsItem.setOnAction(e -> System.out.println("Controls"));
+
+        settingsMenu.getItems().addAll(audioItem, videoItem, controlsItem);
+
+        Menu helpMenu = new Menu("Help");
+        MenuItem helpItem = new MenuItem("Help");
+
+        helpMenu.getItems().addAll(helpItem);
+        helpItem.setOnAction(e -> System.out.println("Help"));
+
+        Menu exitMenu = new Menu("Exit");
+        MenuItem exitItem = new MenuItem("Exit");
+        exitItem.setOnAction(e -> System.exit(0));
+
+        exitMenu.getItems().addAll(exitItem);
+        menuBar.getMenus().addAll(settingsMenu, helpMenu, exitMenu);
+        return menuBar;
+    }
+
+    public void onAudioPressed() {
+        SceneManager.switchStageTo(new AudioView(() -> SceneManager.switchStageTo(SceneManager.getFightView())));
+    }
 
     public static void askClosedQuestion(MessageEvent messageEvent, Stage primaryStage, Runnable onYes, Runnable onNo) {
         String question = messageEvent.getMessage();
@@ -193,39 +229,21 @@ public class BattleView extends BorderPane {
     public static TextBubble getTextBubble() {
         return textBubble;
     }
-
     public static Bar getOpponentBar() {
         return opponentBar;
     }
-
     public static Bar getPlayerBar() {
         return playerBar;
     }
-
     public static BattleButtons getFightButtons() {
         return battleButtons;
     }
-
     public static Model.Person.NPC getNpc() {
         return npc;
     }
-
     public static Model.Person.Player getPlayer() {
         return player;
     }
-
-    public static Pokemon getNpcPokemon() {
-        return npcPokemon;
-    }
-
-    public static Pokemon getPlayerPokemon() {
-        return playerPokemon;
-    }
-
-    public static StatBubble getStatBubble() {
-        return statBubble;
-    }
-
     public static Terrain getTerrain() {
         return terrain;
     }

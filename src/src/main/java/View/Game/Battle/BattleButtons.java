@@ -1,20 +1,17 @@
 package View.Game.Battle;
 
 import Controller.Fight.Battle.BattleExecutor;
-import Controller.Fight.Battle.Events.ActionEvents.Switch.FoeSwitch.FoeSwitchEvent;
-import Controller.Fight.Battle.Events.GameEvents.EndTurn;
 import Controller.Fight.Battle.Events.GameEvents.StartTurn;
 
 import Model.Person.Action;
 import Model.Pokemon.Pokemon;
 import Model.Pokemon.Move;
-import Model.Pokemon.PokemonEnum.Status;
 import Model.Pokemon.Terrain;
 
 import View.Game.Battle.InfoBars.Bar;
 import View.Game.Battle.Text.TextBubble;
 import View.Game.Inventory.Bag.BagView;
-import View.Game.SceneManager;
+import Utils.SceneManager;
 
 import View.Game.Switch.SwitchView;
 import javafx.application.Platform;
@@ -35,8 +32,6 @@ import java.util.List;
 import static View.Game.Battle.BattleView.*;
 
 public class BattleButtons extends HBox {
-
-    static Font font = Font.loadFont(BattleButtons.class.getResource("/font/pokemonFont.ttf").toExternalForm(), 18);
 
     private Pokemon playerPokemon = player.getFrontPokemon();
     private Pokemon npcPokemon = npc.getFrontPokemon();

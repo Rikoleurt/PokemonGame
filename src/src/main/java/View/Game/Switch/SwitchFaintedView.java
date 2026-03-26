@@ -9,11 +9,8 @@ import Model.Pokemon.Pokemon;
 import View.Game.Battle.BattleButtons;
 import View.Game.Battle.BattleView;
 import View.Game.Battle.Text.TextBubble;
-import View.Game.SceneManager;
 import javafx.animation.PauseTransition;
 import javafx.util.Duration;
-
-import static View.Game.Battle.BattleView.terrain;
 
 public class SwitchFaintedView extends SwitchView {
     BattleButtons battleButtons;
