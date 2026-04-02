@@ -31,7 +31,7 @@ public class PokemonSample {
 
     public static Pokemon initiatePikachu() {
         if (!pikachuMoves.contains(attacks.get(0))) pikachuMoves.add(attacks.get(0)); // Tackle
-        if (!pikachuMoves.contains(attacks.get(1))) pikachuMoves.add(attacks.get(1)); // Thunder Bolt
+        if (!pikachuMoves.contains(attacks.get(12))) pikachuMoves.add(attacks.get(12)); // Thunder Shock
         if (!pikachuMoves.contains(attacks.get(2))) pikachuMoves.add(attacks.get(2)); // Thunder Punch
 
         return new Pokemon("pikachu", 29, 29, 20, 16, 19, 19, 28, Type.electric, pikachuMoves, Status.normal);
@@ -46,6 +46,7 @@ public class PokemonSample {
     public static Pokemon initiateSalameche() {
         if (!salamecheMoves.contains(attacks.get(0))) salamecheMoves.add(attacks.get(0)); // Tackle
         if (!salamecheMoves.contains(attacks.get(3))) salamecheMoves.add(attacks.get(3)); // Ember
+        if (!salamecheMoves.contains(attacks.get(11))) salamecheMoves.add(attacks.get(11)); // Fire Punch
 
         return new Pokemon("charmander", 30, 30, 19, 17, 22, 19, 21, Type.fire, salamecheMoves, Status.normal);
     }

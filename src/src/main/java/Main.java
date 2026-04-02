@@ -1,6 +1,7 @@
 import Model.GameState;
 import Model.Person.Action;
 import Model.Person.Trainer;
+import Model.Pokemon.Attacks.Attack;
 import Model.Pokemon.Move;
 import Model.Pokemon.Pokemon;
 import Server.SocketServer;
@@ -81,8 +82,18 @@ public class Main extends Application {
         LinkedList<Pokemon> playerTeam = new LinkedList<>();
         playerTeam.add(pikachu1);
 
+        System.out.println("Pikachu attacks :");
+        for(Move a : pikachu1.getAttacks()){
+            System.out.println(a.getName() + ", slot : " + pikachu1.getAttacks().indexOf(a));
+        }
+
         LinkedList<Pokemon> opponentTeam = new LinkedList<>();
-        opponentTeam.add(pikachu2);
+        opponentTeam.add(salameche);
+
+        System.out.println("Salameche attacks :");
+        for(Move a : salameche.getAttacks()){
+            System.out.println(a.getName() + ", slot : " + salameche.getAttacks().indexOf(a));
+        }
 
         Trainer player = new Trainer("player", playerTeam);
         Trainer opponent = new Trainer("opponent", opponentTeam);

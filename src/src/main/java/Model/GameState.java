@@ -5,6 +5,7 @@ import Model.Person.Trainer;
 import Model.Pokemon.Attacks.Attack;
 import Model.Pokemon.Move;
 import Model.Pokemon.Pokemon;
+import Model.Pokemon.PokemonEnum.Status;
 import Model.StaticObjects.MovesExample;
 import Server.SocketServer;
 import Utils.SeedManager;
@@ -230,10 +231,7 @@ public class GameState {
                 }
 
                 int moveIndex;
-
                 moveIndex = Integer.parseInt(actionMsg);
-
-
                 // System.out.println("Parsed action index: " + moveIndex);
                 step(moveIndex);
                 turn++;
@@ -258,12 +256,6 @@ public class GameState {
             int maxIdx = Math.min(3, op.getAttacks().size() - 1);
             int idx = Math.max(0, Math.min(moveIndex, maxIdx));
 
-//            if (moveIndex < 0 || moveIndex >= op.getAttacks().size()) {
-//                throw new IllegalArgumentException(
-//                        "Invalid action index: " + moveIndex + " for " + op.getAttacks().size() + " actions"
-//                );
-//            }
-
             m2 = op.getAttacks().get(idx);
         }
         if (m2 == null) {
@@ -272,23 +264,41 @@ public class GameState {
 
         isPlayerFirst = is_player_first();
 
+//        if (isPlayerFirst) {
+//            if (!p.isKO()) {
+//                p.attack(op, m1);
+//            }
+//            if (!op.isKO()) {
+//                op.attack(p, m2);
+//            }
+//        } else {
+//            if (!op.isKO()) {
+//                op.attack(p, m2);
+//            }
+//            if (!p.isKO()) {
+//                p.attack(op, m1);
+//            }
+//        }
+
         if (isPlayerFirst) {
-            if (!p.isKO()) {
-                p.attack(op, m1);
-            }
-            if (!op.isKO()) {
-                op.attack(p, m2);
-            }
+            if (!p.isKO()) p.attack(op, m1);
+            if (!op.isKO()) op.attack(p, m2);
+            if(p.isKO() && player.getHealthyPokemon() > 0) player.setFront(getNextPokemon(player));
+            if(op.isKO() && opponent.getHealthyPokemon() > 0) opponent.setFront(getNextPokemon(opponent));
         } else {
-            if (!op.isKO()) {
-                op.attack(p, m2);
-            }
-            if (!p.isKO()) {
-                p.attack(op, m1);
-            }
+            if (!op.isKO()) op.attack(p, m2);
+            if (!p.isKO()) p.attack(op, m1);
+            if(p.isKO() && player.getHealthyPokemon() > 0) player.setFront(getNextPokemon(player));
+            if(op.isKO() && opponent.getHealthyPokemon() > 0) opponent.setFront(getNextPokemon(opponent));
         }
     }
 
+    private Pokemon getNextPokemon(Trainer trainer){
+        for(Pokemon p : trainer.getTeam()){
+            if (p.getStatus() != Status.KO && p != trainer.getFrontPokemon()) return p;
+        }
+        return null;
+    }
     private String starterName(){
         if (isPlayerFirst == null) return player.getName();
         return isPlayerFirst ? player.getName() : opponent.getName();

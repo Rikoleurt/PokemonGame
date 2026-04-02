@@ -26,6 +26,8 @@ public class MovesSample {
         Attack bugBite      = new Attack("Bug Bite", 60, Type.bug,   AttackMode.physical, 20, 20);
         Attack bite         = new Attack("Bite", 60, Type.dark,      AttackMode.physical, 25, 25);
         Attack poisonSting  = new Attack("Poison Sting", 15, Type.poison, AttackMode.physical, 35, 35);
+        Attack firePunch    = new Attack("Fire Punch", 75, Type.fire, AttackMode.physical, 10, 10);
+        Attack thunderShock = new Attack("Thunder Shock", 40, Type.electric, AttackMode.special, 25, 25);
 
         attackDB.put(0, tackle);
         attackDB.put(1, thunderBolt);
@@ -38,6 +40,8 @@ public class MovesSample {
         attackDB.put(8, bugBite);
         attackDB.put(9, bite);
         attackDB.put(10, poisonSting);
+        attackDB.put(11, firePunch);
+        attackDB.put(12, thunderShock);
 
         return attackDB;
     }
