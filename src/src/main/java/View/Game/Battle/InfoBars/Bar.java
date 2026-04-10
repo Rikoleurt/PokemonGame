@@ -1,6 +1,5 @@
 package View.Game.Battle.InfoBars;
 
-import Model.Person.Player;
 import Model.Pokemon.Pokemon;
 import Model.Pokemon.PokemonEnum.Status;
 import View.Game.Battle.Text.TextBubble;

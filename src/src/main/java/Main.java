@@ -1,4 +1,6 @@
 import Model.GameState;
+import Model.Inventory.Bag;
+import Model.Inventory.Items.Item;
 import Model.Person.Trainer;
 import Model.Pokemon.Pokemon;
 import Server.SocketServer;
@@ -17,7 +19,9 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Objects;
 
 import static Model.StaticObjects.PokemonSample.*;
@@ -78,14 +82,16 @@ public class Main extends Application { // extends Application
         Pokemon pikachu2 = initiatePikachu();
         Pokemon salameche = initiateSalameche();
 
+        Map<Item, Integer> inventory = new HashMap<>();
+        Bag bag = new Bag(inventory);
         LinkedList<Pokemon> playerTeam = new LinkedList<>();
         playerTeam.add(pikachu1);
 
         LinkedList<Pokemon> opponentTeam = new LinkedList<>();
         opponentTeam.add(pikachu2);
 
-        Trainer player = new Trainer("player", playerTeam);
-        Trainer opponent = new Trainer("opponent", opponentTeam);
+        Trainer player = new Trainer("player", bag, playerTeam);
+        Trainer opponent = new Trainer("opponent", bag, opponentTeam);
 
         gs = new GameState(player, opponent, 0);
 

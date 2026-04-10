@@ -2,14 +2,14 @@ package Controller.Fight.Battle.Events.ComputeEvents.FoeEvents;
 
 import Controller.Fight.Battle.Events.ComputeEvent;
 import Model.Inventory.Items.Item;
-import Model.Person.NPC;
+import Model.Person.Trainer;
 import Model.Pokemon.Pokemon;
 
 public class FoeItemChoiceEvent extends ComputeEvent<Item> {
-    NPC npc;
+    Trainer npc;
     Pokemon pokemon;
 
-    public FoeItemChoiceEvent(NPC npc) {
+    public FoeItemChoiceEvent(Trainer npc) {
         this.npc = npc;
         this.pokemon = npc.getFrontPokemon();
     }

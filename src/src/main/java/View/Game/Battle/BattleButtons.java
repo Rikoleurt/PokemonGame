@@ -4,6 +4,7 @@ import Controller.Fight.Battle.BattleExecutor;
 import Controller.Fight.Battle.Events.GameEvents.StartTurn;
 
 import Model.Person.Action;
+import Model.Person.Trainer;
 import Model.Pokemon.Pokemon;
 import Model.Pokemon.Move;
 import Model.Pokemon.Terrain;
@@ -53,8 +54,6 @@ public class BattleButtons extends HBox {
     Button atk3Button = createBaseButtons(getColorFromAttack(pAtk3), getAttackName(2));
     Button atk4Button = createBaseButtons(getColorFromAttack(pAtk4), getAttackName(3));
 
-    private final Bar opponentBar;
-    private final Bar playerBar;
     private final TextBubble textBubble;
 
     VBox vBox = new VBox();
@@ -65,10 +64,8 @@ public class BattleButtons extends HBox {
 
     BattleExecutor executor = BattleExecutor.getInstance();
 
-    public BattleButtons(TextBubble textBubble, Bar opponentBar, Bar playerBar) {
+    public BattleButtons(TextBubble textBubble) {
         this.textBubble = textBubble;
-        this.opponentBar = opponentBar;
-        this.playerBar = playerBar;
 
         ObservableList<Node> components = getChildren();
 

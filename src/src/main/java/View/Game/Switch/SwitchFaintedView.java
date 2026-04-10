@@ -3,8 +3,7 @@ package View.Game.Switch;
 import Controller.Fight.Battle.Events.ActionEvents.Switch.PlayerSwitch.SwitchFaintedEvent;
 import Controller.Fight.Battle.Events.GameEvents.EndTurn;
 import Controller.Fight.Battle.Events.UIEvents.MessageEvent;
-import Model.Person.NPC;
-import Model.Person.Player;
+import Model.Person.Trainer;
 import Model.Pokemon.Pokemon;
 import View.Game.Battle.BattleButtons;
 import View.Game.Battle.BattleView;
@@ -15,7 +14,7 @@ import javafx.util.Duration;
 public class SwitchFaintedView extends SwitchView {
     BattleButtons battleButtons;
 
-    public SwitchFaintedView(Player player, NPC npc, TextBubble textBubble, BattleButtons battleButtons, Runnable onClose) {
+    public SwitchFaintedView(Trainer player, Trainer npc, TextBubble textBubble, BattleButtons battleButtons, Runnable onClose) {
         super(player, npc, textBubble, onClose);
         this.battleButtons = battleButtons;
 

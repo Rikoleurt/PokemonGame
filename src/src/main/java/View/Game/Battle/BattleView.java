@@ -1,12 +1,11 @@
 package View.Game.Battle;
 
 import Controller.Fight.Battle.Events.UIEvents.MessageEvent;
+import Model.Person.Trainer;
 import Model.Pokemon.Pokemon;
 import Model.Pokemon.Terrain;
 import Model.Pokemon.TerrainEnum.Debris;
 import Model.Pokemon.TerrainEnum.Weather;
-import Model.Person.NPC;
-import Model.Person.Player;
 import Utils.SceneManager;
 import View.Game.Battle.InfoBars.Bar;
 import View.Game.Battle.InfoBars.OpponentBar;
@@ -37,8 +36,8 @@ public class BattleView extends BorderPane {
     static TextBubble textBubble = new TextBubble();
     static StatBubble statBubble = new StatBubble();
 
-    public static Player player = initiatePlayer();
-    public static NPC npc = initiateEnemy();
+    public static Trainer player = initiatePlayer();
+    public static Trainer npc = initiateEnemy();
 
     static Pokemon playerPokemon = player.getFrontPokemon();
     static Pokemon npcPokemon = npc.getFrontPokemon();
@@ -47,7 +46,7 @@ public class BattleView extends BorderPane {
     static Bar playerBar = new PlayerBar(5, playerPokemon);
     public static Terrain terrain = new Terrain(player.getTeam(), npc.getTeam(), Debris.normal, Weather.normal);
 
-    static BattleButtons battleButtons = new BattleButtons(textBubble, opponentBar, playerBar);
+    static BattleButtons battleButtons = new BattleButtons(textBubble);
 
     static ImageView playerSprite;
     static ImageView opponentSprite;
@@ -238,10 +237,10 @@ public class BattleView extends BorderPane {
     public static BattleButtons getFightButtons() {
         return battleButtons;
     }
-    public static Model.Person.NPC getNpc() {
+    public static Trainer getNpc() {
         return npc;
     }
-    public static Model.Person.Player getPlayer() {
+    public static Trainer getPlayer() {
         return player;
     }
     public static Terrain getTerrain() {

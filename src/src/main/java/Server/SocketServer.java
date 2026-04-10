@@ -9,8 +9,6 @@ import Controller.Fight.Battle.BattleExecutor;
 import Model.GameState;
 import Model.Inventory.Items.Item;
 import Model.Person.Action;
-import Model.Person.NPC;
-import Model.Person.Player;
 import Model.Person.Trainer;
 import Model.Pokemon.Move;
 import Model.Pokemon.Pokemon;
@@ -26,9 +24,9 @@ public class SocketServer {
     private final Gson gsonPretty = new GsonBuilder().setPrettyPrinting().create();
     private final Gson gson = new Gson();
 
-    private final Player player = BattleView.getPlayer();
+    private final Trainer player = BattleView.getPlayer();
     private final Pokemon pokemon = player.getFrontPokemon();
-    private final NPC npc = BattleView.getNpc();
+    private final Trainer npc = BattleView.getNpc();
     private final Pokemon pokemon2 = npc.getFrontPokemon();
     private final BattleExecutor executor = BattleExecutor.getInstance();
     private static SocketServer instance;
@@ -150,7 +148,7 @@ public class SocketServer {
         return gson.toJson(pokemonState);
     }
 
-    private String jsonGameState(Player p, Pokemon opponent, NPC n, Pokemon self, int turn) {
+    private String jsonGameState(Trainer p, Pokemon opponent, Trainer n, Pokemon self, int turn) {
         JsonObject nState = new JsonObject();
         nState.addProperty("name", n.getName());
         nState.addProperty("pokemonNb", n.getHealthyPokemon());
@@ -207,9 +205,9 @@ public class SocketServer {
     }
 
     public String refreshState() throws IOException{
-        Player refreshedPlayer = BattleView.getPlayer();
+        Trainer refreshedPlayer = BattleView.getPlayer();
         Pokemon refreshedOpponent = refreshedPlayer.getFrontPokemon();
-        NPC refreshedNPC = BattleView.getNpc();
+        Trainer refreshedNPC = BattleView.getNpc();
         Pokemon refreshedSelf = refreshedNPC.getFrontPokemon();
         return jsonGameState(refreshedPlayer, refreshedOpponent, refreshedNPC, refreshedSelf, executor.getTurn());
     }

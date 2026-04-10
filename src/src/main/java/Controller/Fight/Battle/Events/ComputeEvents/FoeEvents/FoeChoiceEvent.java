@@ -2,12 +2,12 @@ package Controller.Fight.Battle.Events.ComputeEvents.FoeEvents;
 
 import Controller.Fight.Battle.Events.ComputeEvent;
 import Model.Person.Action;
-import Model.Person.NPC;
+import Model.Person.Trainer;
 
 public class FoeChoiceEvent extends ComputeEvent<Action> {
-    NPC npc;
+    Trainer npc;
 
-    public FoeChoiceEvent(NPC npc) {
+    public FoeChoiceEvent(Trainer npc) {
         this.npc = npc;
     }
 

@@ -6,8 +6,7 @@ import Model.Inventory.Bag;
 import Model.Inventory.Category;
 import Model.Inventory.Items.Item;
 import Model.Person.Action;
-import Model.Person.NPC;
-import Model.Person.Player;
+import Model.Person.Trainer;
 import Model.Pokemon.Pokemon;
 import View.Game.Battle.BattleView;
 import View.Game.Battle.Text.TextBubble;
@@ -30,8 +29,8 @@ import java.util.Set;
 
 public class Categories extends VBox {
 
-    Player player;
-    NPC npc;
+    Trainer player;
+    Trainer npc;
     HBox hBox;
     TextBubble textBubble;
     TextBubble bagBubble = new TextBubble();
@@ -39,7 +38,7 @@ public class Categories extends VBox {
 
     private final TilePane grid = new TilePane();
 
-    public Categories(Player player, int spacing, TextBubble textBubble, NPC npc) {
+    public Categories(Trainer player, int spacing, TextBubble textBubble, Trainer npc) {
         this.player = player;
         this.npc = npc;
         this.textBubble = textBubble;

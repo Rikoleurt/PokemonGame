@@ -1,8 +1,7 @@
 package View.Game.Inventory.Bag.Component;
 
 import Model.Inventory.Category;
-import Model.Person.NPC;
-import Model.Person.Player;
+import Model.Person.Trainer;
 import View.Game.Battle.Text.TextBubble;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -22,20 +21,20 @@ import java.util.function.Consumer;
 
 public class CategoryMenu extends HBox {
 
-    Player player;
+    Trainer player;
     private final ToggleGroup group = new ToggleGroup();
     private final Map<ToggleButton, Category> map = new LinkedHashMap<>();
     private final ObjectProperty<Category> selectedCategory = new SimpleObjectProperty<>();
     private Consumer<Category> onCategorySelected;
     TextBubble textBubble;
-    NPC npc;
+    Trainer npc;
 
     VBox vWrapper;
     HBox menuBox;
     ScrollPane sp;
     Categories categories;
 
-    public CategoryMenu(Player player, int spacing, TextBubble textBubble, NPC npc) {
+    public CategoryMenu(Trainer player, int spacing, TextBubble textBubble, Trainer npc) {
         this.player = player;
         this.npc = npc;
         this.textBubble = textBubble;

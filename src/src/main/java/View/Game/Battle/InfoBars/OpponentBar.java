@@ -1,6 +1,5 @@
 package View.Game.Battle.InfoBars;
 
-import Model.Person.Player;
 import Model.Pokemon.Pokemon;
 import javafx.scene.control.Label;
 

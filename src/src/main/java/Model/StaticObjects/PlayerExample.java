@@ -4,6 +4,7 @@ import Model.Inventory.Bag;
 import Model.Inventory.Category;
 import Model.Inventory.Items.Heal.Heal;
 import Model.Inventory.Items.Item;
+import Model.Person.Trainer;
 import Model.Pokemon.Pokemon;
 import Model.Pokemon.PokemonEnum.Status;
 
@@ -15,7 +16,7 @@ import static Model.StaticObjects.PokemonExample.*;
 
 public class PlayerExample {
 
-    public static Model.Person.Player initiatePlayer() {
+    public static Trainer initiatePlayer() {
         Map<Item, Integer> items = new HashMap<>();
         items.put(new Heal(Category.HEALTH, "Potion", "Heals 20HP", 20), 1);
         items.put(new Heal(Category.HEALTH, "Super Potion", "Heals 50HP", 50), 2);
@@ -38,7 +39,7 @@ public class PlayerExample {
         team.add(papilusion);
         team.add(abo);
 
-        return new Model.Person.Player("Jason", bag, team);
+        return new Trainer("Jason", bag, team);
     }
 }
 

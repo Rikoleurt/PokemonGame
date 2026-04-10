@@ -3,7 +3,7 @@ package Controller.Fight.Battle.Events.ActionEvents.Switch.PlayerSwitch;
 import Controller.Fight.Battle.BattleExecutor;
 import Controller.Fight.Battle.Events.BattleEvent;
 import Controller.Fight.Battle.Events.UIEvents.MessageEvent;
-import Model.Person.Player;
+import Model.Person.Trainer;
 import Model.Pokemon.Pokemon;
 import View.Game.Battle.BattleView;
 import Utils.SceneManager;
@@ -12,11 +12,11 @@ import static View.Game.Battle.BattleView.terrain;
 
 public class PlayerSwitchEvent extends BattleEvent {
 
-    Player player;
+    Trainer player;
     Pokemon other;
     BattleExecutor executor;
 
-    public PlayerSwitchEvent(Player player, Pokemon other, BattleExecutor executor) {
+    public PlayerSwitchEvent(Trainer player, Pokemon other, BattleExecutor executor) {
         this.player = player;
         this.other = other;
         this.executor = executor;

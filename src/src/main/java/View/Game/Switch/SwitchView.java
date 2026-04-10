@@ -3,10 +3,9 @@ package View.Game.Switch;
 import Controller.Fight.Battle.BattleExecutor;
 import Controller.Fight.Battle.Events.GameEvents.StartTurn;
 import Model.Person.Action;
-import Model.Person.NPC;
+import Model.Person.Trainer;
 import Model.Pokemon.Pokemon;
 import Model.Pokemon.PokemonEnum.Status;
-import Model.Person.Player;
 import View.Game.Battle.BattleView;
 import View.Game.Battle.InfoBars.Bar;
 import View.Game.Battle.Text.TextBubble;
@@ -35,10 +34,8 @@ import java.util.Objects;
 
 public class SwitchView extends BorderPane {
 
-    static Font font = Font.loadFont(Objects.requireNonNull(Bar.class.getResource("/font/pokemonFont.ttf")).toExternalForm(), 18);
-
-    Player player;
-    NPC npc;
+    Trainer player;
+    Trainer npc;
     TextBubble textBubble;
     TextBubble switchBubble = new TextBubble();
     VBox root = new VBox();
@@ -47,7 +44,7 @@ public class SwitchView extends BorderPane {
     Button cancelButton;
     HBox wrapper;
 
-    public SwitchView(Player player, NPC npc, TextBubble textBubble, Runnable onClose) {
+    public SwitchView(Trainer player, Trainer npc, TextBubble textBubble, Runnable onClose) {
         this.player = player;
         this.npc = npc;
         this.textBubble = textBubble;

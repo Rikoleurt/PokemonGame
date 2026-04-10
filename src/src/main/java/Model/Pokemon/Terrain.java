@@ -1,11 +1,10 @@
 package Model.Pokemon;
 
-import Model.Person.NPC;
+import Model.Person.Trainer;
 import Model.Pokemon.PokemonEnum.Status;
 import Model.Pokemon.PokemonEnum.Type;
 import Model.Pokemon.TerrainEnum.Debris;
 import Model.Pokemon.TerrainEnum.Weather;
-import Model.Person.Player;
 
 
 import java.util.LinkedList;
@@ -86,12 +85,8 @@ public class Terrain {
 
 
     // debrisEffect is only called when the player or the npc changes its pokemon i.e changePokemon();
-    public void debrisEffect(Player player, Terrain terrain) {
-            updateDebris(player.getFrontPokemon(), terrain);
-    }
-
-    public void debrisEffect(NPC npc, Terrain terrain) {
-        updateDebris(npc.getFrontPokemon(), terrain);
+    public void debrisEffect(Trainer trainer, Terrain terrain) {
+            updateDebris(trainer.getFrontPokemon(), terrain);
     }
 
     public void updateDebris(Pokemon pokemon, Terrain terrain) {

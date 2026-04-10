@@ -1,7 +1,7 @@
 package Controller.Fight.Battle.Events.ActionEvents.Switch.PlayerSwitch;
 
 import Controller.Fight.Battle.BattleExecutor;
-import Model.Person.Player;
+import Model.Person.Trainer;
 import Model.Pokemon.Pokemon;
 import View.Game.Battle.BattleView;
 import Utils.SceneManager;
@@ -10,7 +10,7 @@ import static View.Game.Battle.BattleView.terrain;
 
 public class SwitchFaintedEvent extends PlayerSwitchEvent {
 
-    public SwitchFaintedEvent(Player player, Pokemon other, BattleExecutor executor) {
+    public SwitchFaintedEvent(Trainer player, Pokemon other, BattleExecutor executor) {
         super(player, other, executor);
     }
     @Override

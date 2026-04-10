@@ -12,11 +12,9 @@ import Controller.Fight.Battle.Events.ComputeEvents.FoeEvents.FoePokemonChoiceEv
 import Controller.Fight.Battle.Events.ComputeEvents.Order;
 import Model.Inventory.Items.Item;
 import Model.Person.Action;
-import Model.Person.NPC;
-import Model.Person.Player;
+import Model.Person.Trainer;
 import Model.Pokemon.Move;
 import Model.Pokemon.Pokemon;
-import Model.Pokemon.PokemonEnum.Status;
 import Model.Pokemon.Terrain;
 import View.Game.Battle.BattleButtons;
 import View.Game.Battle.BattleView;
@@ -25,8 +23,8 @@ import View.Training.Console.View.BattleConsole;
 public class StartTurn extends BattleEvent {
 
     private final BattleExecutor executor;
-    private final NPC npc;
-    private final Player player;
+    private final Trainer npc;
+    private final Trainer player;
     private final Move move;
     private final Terrain terrain;
     private Item playerItem;
@@ -34,7 +32,7 @@ public class StartTurn extends BattleEvent {
     private BattleButtons battleButtons;
     BattleConsole console = BattleConsole.getInstance();
 
-    public StartTurn(NPC npc, Player player, Move move, Terrain terrain, BattleExecutor executor, BattleButtons battleButtons) {
+    public StartTurn(Trainer npc, Trainer player, Move move, Terrain terrain, BattleExecutor executor, BattleButtons battleButtons) {
         this.npc = npc;
         this.player = player;
         this.move = move;
@@ -43,7 +41,7 @@ public class StartTurn extends BattleEvent {
         this.battleButtons = battleButtons;
     }
 
-    public StartTurn(NPC npc, Player player, Pokemon switchTarget, BattleExecutor executor) {
+    public StartTurn(Trainer npc, Trainer player, Pokemon switchTarget, BattleExecutor executor) {
         this.npc = npc;
         this.player = player;
         this.switchTarget = switchTarget;
@@ -53,7 +51,7 @@ public class StartTurn extends BattleEvent {
         this.battleButtons = BattleView.getFightButtons();
     }
 
-    public StartTurn(NPC npc, Player player, Item playerItem, BattleExecutor executor, BattleButtons battleButtons) {
+    public StartTurn(Trainer npc, Trainer player, Item playerItem, BattleExecutor executor, BattleButtons battleButtons) {
         this.npc = npc;
         this.player = player;
         this.playerItem = playerItem;
@@ -66,8 +64,6 @@ public class StartTurn extends BattleEvent {
     @Override
     public void execute() {
         executor.increaseTurn();
-
-        console.log("Turn: " + executor.getTurn());
 
         BattleButtons.getHBox1().setVisible(false);
         BattleButtons.getHBox2().setVisible(false);

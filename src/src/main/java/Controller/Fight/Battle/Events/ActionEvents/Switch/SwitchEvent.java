@@ -3,8 +3,7 @@ package Controller.Fight.Battle.Events.ActionEvents.Switch;
 import Controller.Fight.Battle.BattleExecutor;
 import Controller.Fight.Battle.Events.BattleEvent;
 import Model.Person.Fighter;
-import Model.Person.NPC;
-import Model.Person.Player;
+import Model.Person.Trainer;
 import Model.Pokemon.Pokemon;
 import Model.Pokemon.Terrain;
 import View.Game.Battle.BattleView;
@@ -29,19 +28,20 @@ public class SwitchEvent extends BattleEvent {
 
     @Override
     public void execute() {
-        if(fighter instanceof Player p) {
-            SwitchFaintedView switchView = new SwitchFaintedView(p, npc, BattleView.getTextBubble(), BattleView.getFightButtons(), () -> SceneManager.switchStageTo(SceneManager.getFightView()));
+        if (fighter == player) {
+            SwitchFaintedView switchView = new SwitchFaintedView(player, npc, BattleView.getTextBubble(), BattleView.getFightButtons(), () -> SceneManager.switchStageTo(SceneManager.getFightView()));
             SceneManager.switchStageTo(switchView);
             switchView.setTurnDisable(true);
             refreshSprites();
+            return;
         }
-        if(fighter instanceof NPC n) {
-            n.setFront(other, terrain);
+
+        if (fighter == npc) {
+            npc.setFront(other, terrain);
             BattleView.refreshSprites();
-            BattleView.getOpponentBar().setPokemon(n.getFrontPokemon());
+            BattleView.getOpponentBar().setPokemon(npc.getFrontPokemon());
             BattleView.getFightButtons().resetFightButtons(getClass().getSimpleName());
             BattleView.getOpponentBar().refreshBar();
         }
     }
-
 }

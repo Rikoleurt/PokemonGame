@@ -1,6 +1,6 @@
 package View.Game.Inventory.Bag.Component;
 
-import Model.Person.Player;
+import Model.Person.Trainer;
 import Model.Pokemon.Pokemon;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
@@ -14,9 +14,9 @@ import javafx.scene.layout.VBox;
 import java.util.Objects;
 
 public class PokemonList extends VBox {
-    Player player;
+    Trainer player;
 
-    public PokemonList(Player player, int spacing) {
+    public PokemonList(Trainer player, int spacing) {
         this.player = player;
         setSpacing(spacing);
         ObservableList<Node> components = getChildren();

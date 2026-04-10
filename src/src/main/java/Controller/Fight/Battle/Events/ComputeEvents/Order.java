@@ -2,8 +2,7 @@ package Controller.Fight.Battle.Events.ComputeEvents;
 
 import Controller.Fight.Battle.Events.ComputeEvent;
 import Model.Person.Action;
-import Model.Person.NPC;
-import Model.Person.Player;
+import Model.Person.Trainer;
 import Model.Pokemon.Pokemon;
 import Utils.SeedManager;
 
@@ -14,11 +13,11 @@ import java.util.Random;
  */
 public class Order extends ComputeEvent<Boolean> {
 
-    private final Player player;
-    private final NPC npc;
+    private final Trainer player;
+    private final Trainer npc;
     Action npcAction;
 
-    public Order(Player player, NPC npc, Action action) {
+    public Order(Trainer player, Trainer npc, Action action) {
         this.player = player;
         this.npc = npc;
         this.npcAction = action;

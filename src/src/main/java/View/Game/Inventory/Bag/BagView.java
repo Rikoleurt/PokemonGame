@@ -1,8 +1,6 @@
 package View.Game.Inventory.Bag;
 
-import Model.Person.NPC;
-import Model.Person.Player;
-
+import Model.Person.Trainer;
 import View.Game.Battle.Text.TextBubble;
 import View.Game.Inventory.Bag.Component.CategoryMenu;
 import View.Game.Inventory.Bag.Component.PokemonList;
@@ -21,13 +19,13 @@ import javafx.scene.layout.VBox;
 
 public class BagView extends BorderPane {
 
-    Player player;
-    NPC npc;
+    Trainer player;
+    Trainer npc;
     PokemonList pokemonList;
     CategoryMenu categoryMenu;
     TextBubble textBubble;
 
-    public BagView(Player player, NPC npc, TextBubble textBubble, Runnable onClose) {
+    public BagView(Trainer player, Trainer npc, TextBubble textBubble, Runnable onClose) {
         this.player = player;
         this.npc = npc;
         this.textBubble = textBubble;
