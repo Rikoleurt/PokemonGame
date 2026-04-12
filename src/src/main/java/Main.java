@@ -58,7 +58,7 @@ public class Main extends Application { // extends Application
         SceneManager.getStage().setWidth(gameWidth);
         SceneManager.getStage().setHeight(screenHeight);
         SceneManager.getStage().setTitle("Pokémon Game");
-        SceneManager.getStage().show();
+//        SceneManager.getStage().show();
 
 
         ConsoleView consoleView = new ConsoleView();
@@ -71,12 +71,12 @@ public class Main extends Application { // extends Application
         consoleStage.setY(0);
         consoleStage.setWidth(consoleWidth);
         consoleStage.setHeight(screenHeight);
-        consoleStage.show();
+//        consoleStage.show();
 
         TextBubble textBubble = BattleView.getTextBubble();
         scene.setOnKeyPressed(event -> textBubble.handleKeyPress(event.getCode()));
 
-        songManager.playSong("/music/champion_steven.mp3");
+//        songManager.playSong("/music/champion_steven.mp3");
 
         Pokemon pikachu1 = initiatePikachu();
         Pokemon pikachu2 = initiatePikachu();

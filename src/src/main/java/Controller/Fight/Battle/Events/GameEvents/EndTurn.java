@@ -48,7 +48,7 @@ public class EndTurn extends BattleEvent {
                 }
             }
         }
-        if(playerPokemon.isKO() && npc.getHealthyPokemon() > 0) {
+        if(playerPokemon.isKO() && player.getHealthyPokemon() > 0) {
             executor.addEvent(new MessageEvent(playerPokemon.getName() + " fainted."));
             executor.addEvent(new SwitchEvent(player, playerPokemon, terrain, executor));
             try {

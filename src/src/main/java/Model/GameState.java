@@ -37,14 +37,14 @@ public class GameState {
 
     public String state(){
         Pokemon p1 = player.getFrontPokemon();
-//        Pokemon p2 = getPokemonFromIndex(player, 1);
+        Pokemon p2 = getPokemonFromIndex(player, 1);
 //        Pokemon p3 = getPokemonFromIndex(player, 2);
 //        Pokemon p4 = getPokemonFromIndex(player, 3);
 //        Pokemon p5 = getPokemonFromIndex(player, 4);
 //        Pokemon p6 = getPokemonFromIndex(player, 5);
 
         Pokemon p7 = opponent.getFrontPokemon();
-//        Pokemon p8 = getPokemonFromIndex(opponent, 1);
+        Pokemon p8 = getPokemonFromIndex(opponent, 1);
 //        Pokemon p9 = getPokemonFromIndex(opponent, 2);
 //        Pokemon p10 = getPokemonFromIndex(opponent, 3);
 //        Pokemon p11 = getPokemonFromIndex(opponent, 4);
@@ -61,7 +61,7 @@ public class GameState {
 
         JsonArray playerTeam = new JsonArray();
         addTeamInfos(p1, playerTeam);
-//        addTeamInfos(p2, playerTeam);
+        addTeamInfos(p2, playerTeam);
 //        addTeamInfos(p3, playerTeam);
 //        addTeamInfos(p4, playerTeam);
 //        addTeamInfos(p5, playerTeam);
@@ -69,7 +69,7 @@ public class GameState {
 
         JsonArray opponentTeam = new JsonArray();
         addTeamInfos(p7, opponentTeam);
-//        addTeamInfos(p8, opponentTeam);
+        addTeamInfos(p8, opponentTeam);
 //        addTeamInfos(p9, opponentTeam);
 //        addTeamInfos(p10, opponentTeam);
 //        addTeamInfos(p11, opponentTeam);
@@ -91,14 +91,14 @@ public class GameState {
 
     public String pretty_state(){
         Pokemon p1 = player.getFrontPokemon();
-//        Pokemon p2 = getPokemonFromIndex(player, 1);
+        Pokemon p2 = getPokemonFromIndex(player, 1);
 //        Pokemon p3 = getPokemonFromIndex(player, 2);
 //        Pokemon p4 = getPokemonFromIndex(player, 3);
 //        Pokemon p5 = getPokemonFromIndex(player, 4);
 //        Pokemon p6 = getPokemonFromIndex(player, 5);
 
         Pokemon p7 = opponent.getFrontPokemon();
-//        Pokemon p8 = getPokemonFromIndex(opponent, 1);
+        Pokemon p8 = getPokemonFromIndex(opponent, 1);
 //        Pokemon p9 = getPokemonFromIndex(opponent, 2);
 //        Pokemon p10 = getPokemonFromIndex(opponent, 3);
 //        Pokemon p11 = getPokemonFromIndex(opponent, 4);
@@ -115,7 +115,7 @@ public class GameState {
 
         JsonArray playerTeam = new JsonArray();
         addTeamInfos(p1, playerTeam);
-//        addTeamInfos(p2, playerTeam);
+        addTeamInfos(p2, playerTeam);
 //        addTeamInfos(p3, playerTeam);
 //        addTeamInfos(p4, playerTeam);
 //        addTeamInfos(p5, playerTeam);
@@ -123,7 +123,7 @@ public class GameState {
 
         JsonArray opponentTeam = new JsonArray();
         addTeamInfos(p7, opponentTeam);
-//        addTeamInfos(p8, opponentTeam);
+        addTeamInfos(p8, opponentTeam);
 //        addTeamInfos(p9, opponentTeam);
 //        addTeamInfos(p10, opponentTeam);
 //        addTeamInfos(p11, opponentTeam);
