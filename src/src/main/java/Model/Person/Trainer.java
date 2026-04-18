@@ -64,6 +64,9 @@ public class Trainer implements Fighter {
             terrain.debrisEffect(this, terrain);
         }
     }
+    public void setFront(Pokemon pokemon){
+        exchangePokemonToFront(getFrontPokemon(), pokemon);
+    }
     public Action makeChoiceAction(){
         Random rand = new Random(SeedManager.getSeed());
         int randInt = rand.nextInt(20,100);

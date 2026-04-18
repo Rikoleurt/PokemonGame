@@ -1,4 +1,4 @@
-package Model.StaticObjects;
+package Model.StaticObjects.TestVersion;
 
 import Model.Inventory.Bag;
 import Model.Inventory.Category;
@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import static Model.StaticObjects.PokemonExample.*;
+import static Model.StaticObjects.TestVersion.PokemonExample.*;
 
 public class NPCExample {
 

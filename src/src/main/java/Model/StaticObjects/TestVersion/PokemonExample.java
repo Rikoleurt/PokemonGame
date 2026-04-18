@@ -1,4 +1,4 @@
-package Model.StaticObjects;
+package Model.StaticObjects.TestVersion;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,7 +8,7 @@ import Model.Pokemon.PokemonEnum.Experience;
 import Model.Pokemon.PokemonEnum.Status;
 import Model.Pokemon.PokemonEnum.Type;
 
-import static Model.StaticObjects.MovesExample.initiateAttacks;
+import static Model.StaticObjects.TestVersion.MovesExample.initiateAttacks;
 
 public class PokemonExample {
     static HashMap<Integer, Move> attacks = initiateAttacks();
@@ -124,4 +124,5 @@ public class PokemonExample {
                 12, Type.poison, ekansMoves, "male",
                 0, 100, Experience.Medium, Status.normal);
     }
+
 }

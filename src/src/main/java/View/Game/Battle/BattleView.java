@@ -29,8 +29,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import static Model.StaticObjects.NPCExample.initiateEnemy;
-import static Model.StaticObjects.PlayerExample.initiatePlayer;
+import static Model.StaticObjects.TestVersion.NPCExample.initiateEnemy;
+import static Model.StaticObjects.TestVersion.PlayerExample.initiatePlayer;
 
 public class BattleView extends BorderPane {
     static TextBubble textBubble = new TextBubble();

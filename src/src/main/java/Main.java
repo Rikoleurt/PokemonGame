@@ -19,12 +19,9 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
-import static Model.StaticObjects.PokemonSample.*;
+import static Model.StaticObjects.TrainingVersion.PokemonSample.*;
 
 public class Main extends Application { // extends Application
 
@@ -78,33 +75,57 @@ public class Main extends Application { // extends Application
 
 //        songManager.playSong("/music/champion_steven.mp3");
 
-        Pokemon pikachu1 = initiatePikachu();
-        Pokemon pikachu2 = initiatePikachu();
-        Pokemon salameche = initiateSalameche();
+//        Pokemon pikachu1 = initiatePikachu();
+//        Pokemon roucool = initiatePidgey();
+//        Pokemon bulbizarre = initiateBulbizarre();
+        Pokemon carapuce = initiateCarapuce();
+//        Pokemon salameche = initiateSalameche();
+//
+//        Map<Item, Integer> inventory = new HashMap<>();
+//        Bag bag = new Bag(inventory);
+//        LinkedList<Pokemon> playerTeam = new LinkedList<>();
+//        playerTeam.add(carapuce);
+//        playerTeam.add(pikachu1);
+//        playerTeam.add(roucool);
+//
+//        LinkedList<Pokemon> opponentTeam = new LinkedList<>();
+//        opponentTeam.add(bulbizarre);
+//        opponentTeam.add(salameche);
+//
+//
+//        Trainer player = new Trainer("player", bag, playerTeam);
+//        Trainer opponent = new Trainer("opponent", bag, opponentTeam);
+//
+//        gs = new GameState(player, opponent, 0);
 
-        Map<Item, Integer> inventory = new HashMap<>();
-        Bag bag = new Bag(inventory);
-        LinkedList<Pokemon> playerTeam = new LinkedList<>();
-        playerTeam.add(pikachu1);
+//        SocketServer server = SocketServer.getInstance();
+//        new Thread(() -> {
+//            try {
+//                server.start(5001, gs);
+//            } catch (IOException e) {
+//                System.out.println("Client connect failed " + e.getMessage());
+//            }
+//        }).start();
 
-        LinkedList<Pokemon> opponentTeam = new LinkedList<>();
-        opponentTeam.add(pikachu2);
+        Pokemon jungko = initiateJungko();
+        Pokemon laggron = initiateLaggron();
+        Pokemon cizayox = initiateCizayox();
 
-        Trainer player = new Trainer("player", bag, playerTeam);
-        Trainer opponent = new Trainer("opponent", bag, opponentTeam);
+        jungko.attack(laggron, jungko.getAttacks().getFirst());
+        jungko.attack(laggron, jungko.getAttacks().get(1));
 
-        gs = new GameState(player, opponent, 0);
+        jungko.attack(cizayox, jungko.getAttacks().getFirst());
+        jungko.attack(cizayox, jungko.getAttacks().get(1));
 
-        SocketServer server = SocketServer.getInstance();
-        new Thread(() -> {
-            try {
-                server.start(5001, gs);
-            } catch (IOException e) {
-                System.out.println("Client connect failed " + e.getMessage());
-            }
-        }).start();
+
+        jungko.attack(carapuce, jungko.getAttacks().getFirst());
+        System.out.println("Jungko has two types? = " + jungko.hasTwoTypes());
+        System.out.println("Carapuce has two types? = " + carapuce.hasTwoTypes());
+        System.out.println("Cizayox has two types? = " + cizayox.hasTwoTypes());
+        System.out.println("Laggron has two types? = " + laggron.hasTwoTypes());
     }
 
-    static void main(String[] args) {
+    public static void main(String[] args) {
+        launch(args);
     }
 }

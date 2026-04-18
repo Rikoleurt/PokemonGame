@@ -1,4 +1,4 @@
-package Model.StaticObjects;
+package Model.StaticObjects.TestVersion;
 
 import Model.Pokemon.Attacks.*;
 

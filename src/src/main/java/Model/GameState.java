@@ -5,7 +5,8 @@ import Model.Person.Trainer;
 import Model.Pokemon.Attacks.Attack;
 import Model.Pokemon.Move;
 import Model.Pokemon.Pokemon;
-import Model.StaticObjects.MovesExample;
+import Model.Pokemon.PokemonEnum.Status;
+import Model.StaticObjects.TestVersion.MovesExample;
 import Server.SocketServer;
 import Utils.SeedManager;
 import View.Training.Console.View.BattleConsole;
@@ -17,7 +18,6 @@ import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.Random;
 
 public class GameState {
     Trainer player;
@@ -32,23 +32,12 @@ public class GameState {
         this.player = player;
         this.opponent = opponent;
         this.turn = turn;
-
     }
 
-    public String state(){
-        Pokemon p1 = player.getFrontPokemon();
-        Pokemon p2 = getPokemonFromIndex(player, 1);
-//        Pokemon p3 = getPokemonFromIndex(player, 2);
-//        Pokemon p4 = getPokemonFromIndex(player, 3);
-//        Pokemon p5 = getPokemonFromIndex(player, 4);
-//        Pokemon p6 = getPokemonFromIndex(player, 5);
-
-        Pokemon p7 = opponent.getFrontPokemon();
-        Pokemon p8 = getPokemonFromIndex(opponent, 1);
-//        Pokemon p9 = getPokemonFromIndex(opponent, 2);
-//        Pokemon p10 = getPokemonFromIndex(opponent, 3);
-//        Pokemon p11 = getPokemonFromIndex(opponent, 4);
-//        Pokemon p12 = getPokemonFromIndex(opponent, 5);
+    public String state() {
+        Pokemon p1 = player.getFrontPokemon();      // adversaire visible seulement
+        Pokemon p7 = opponent.getFrontPokemon();    // front agent
+        Pokemon p8 = getPokemonFromIndex(opponent, 1); // back agent en 2v2
 
         JsonObject obj = new JsonObject();
         obj.addProperty("turn", turn);
@@ -61,48 +50,32 @@ public class GameState {
 
         JsonArray playerTeam = new JsonArray();
         addTeamInfos(p1, playerTeam);
-        addTeamInfos(p2, playerTeam);
-//        addTeamInfos(p3, playerTeam);
-//        addTeamInfos(p4, playerTeam);
-//        addTeamInfos(p5, playerTeam);
-//        addTeamInfos(p6, playerTeam);
 
         JsonArray opponentTeam = new JsonArray();
         addTeamInfos(p7, opponentTeam);
         addTeamInfos(p8, opponentTeam);
-//        addTeamInfos(p9, opponentTeam);
-//        addTeamInfos(p10, opponentTeam);
-//        addTeamInfos(p11, opponentTeam);
-//        addTeamInfos(p12, opponentTeam);
 
         JsonObject first = new JsonObject();
-        String starter = starterName();
-        first.addProperty("name", starter);
+        first.addProperty("name", starterName());
+
         playerInfos.add("player_team", playerTeam);
         playerInfos.addProperty("healthy_pokemons", player.getHealthyPokemon());
+
         opponentInfos.add("opponent_team", opponentTeam);
         opponentInfos.addProperty("healthy_pokemons", opponent.getHealthyPokemon());
+
         obj.add("player_infos", playerInfos);
         obj.add("opponent_infos", opponentInfos);
         obj.add("Priority", first);
+
         Gson gson = new Gson();
         return gson.toJson(obj);
     }
 
-    public String pretty_state(){
+    public String pretty_state() {
         Pokemon p1 = player.getFrontPokemon();
-        Pokemon p2 = getPokemonFromIndex(player, 1);
-//        Pokemon p3 = getPokemonFromIndex(player, 2);
-//        Pokemon p4 = getPokemonFromIndex(player, 3);
-//        Pokemon p5 = getPokemonFromIndex(player, 4);
-//        Pokemon p6 = getPokemonFromIndex(player, 5);
-
         Pokemon p7 = opponent.getFrontPokemon();
         Pokemon p8 = getPokemonFromIndex(opponent, 1);
-//        Pokemon p9 = getPokemonFromIndex(opponent, 2);
-//        Pokemon p10 = getPokemonFromIndex(opponent, 3);
-//        Pokemon p11 = getPokemonFromIndex(opponent, 4);
-//        Pokemon p12 = getPokemonFromIndex(opponent, 5);
 
         JsonObject obj = new JsonObject();
         obj.addProperty("turn", turn);
@@ -115,44 +88,29 @@ public class GameState {
 
         JsonArray playerTeam = new JsonArray();
         addTeamInfos(p1, playerTeam);
-        addTeamInfos(p2, playerTeam);
-//        addTeamInfos(p3, playerTeam);
-//        addTeamInfos(p4, playerTeam);
-//        addTeamInfos(p5, playerTeam);
-//        addTeamInfos(p6, playerTeam);
 
         JsonArray opponentTeam = new JsonArray();
         addTeamInfos(p7, opponentTeam);
         addTeamInfos(p8, opponentTeam);
-//        addTeamInfos(p9, opponentTeam);
-//        addTeamInfos(p10, opponentTeam);
-//        addTeamInfos(p11, opponentTeam);
-//        addTeamInfos(p12, opponentTeam);
 
         JsonObject first = new JsonObject();
         first.addProperty("name", starterName());
+
         playerInfos.add("player_team", playerTeam);
         playerInfos.addProperty("healthy_pokemons", player.getHealthyPokemon());
+
         opponentInfos.add("opponent_team", opponentTeam);
         opponentInfos.addProperty("healthy_pokemons", opponent.getHealthyPokemon());
+
         obj.add("player_infos", playerInfos);
         obj.add("opponent_infos", opponentInfos);
         obj.add("Priority", first);
+
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         return gson.toJson(obj);
     }
 
     public void launchFight() throws IOException {
-
-        String opponentName = opponent.getName();
-        // String playerName = player.getName();
-
-        Pokemon p = player.getFrontPokemon();
-        Pokemon op = opponent.getFrontPokemon();
-
-        String pName = p.getName();
-        String opName = op.getName();
-
         System.out.println("---------------- Fight begins ----------------");
         fightLoop();
     }
@@ -207,10 +165,11 @@ public class GameState {
             server.send(state());
 
             while (true) {
-                if (player.getHealthyPokemon() <= 0 || opponent.getHealthyPokemon() <= 0) break;
+                if (player.getHealthyPokemon() <= 0 || opponent.getHealthyPokemon() <= 0) {
+                    break;
+                }
 
                 String actionMsg = server.readMessage();
-                // System.out.println("Received action message: " + actionMsg);
 
                 if (actionMsg == null) {
                     System.out.println("Client disconnected (2nd while loop).");
@@ -229,18 +188,16 @@ public class GameState {
                     break;
                 }
 
-                int moveIndex;
+                int moveIndex = Integer.parseInt(actionMsg);
 
-                moveIndex = Integer.parseInt(actionMsg);
-
-
-                // System.out.println("Parsed action index: " + moveIndex);
                 step(moveIndex);
                 turn++;
                 server.send(state());
             }
+
             episodeCount++;
         }
+
         System.out.println("Total episodes done: " + episodeCount);
     }
 
@@ -257,15 +214,9 @@ public class GameState {
         if (op.getAttacks() != null && !op.getAttacks().isEmpty()) {
             int maxIdx = Math.min(3, op.getAttacks().size() - 1);
             int idx = Math.max(0, Math.min(moveIndex, maxIdx));
-
-//            if (moveIndex < 0 || moveIndex >= op.getAttacks().size()) {
-//                throw new IllegalArgumentException(
-//                        "Invalid action index: " + moveIndex + " for " + op.getAttacks().size() + " actions"
-//                );
-//            }
-
             m2 = op.getAttacks().get(idx);
         }
+
         if (m2 == null) {
             m2 = op.chooseMove();
         }
@@ -273,48 +224,59 @@ public class GameState {
         isPlayerFirst = is_player_first();
 
         if (isPlayerFirst) {
-            if (!p.isKO()) {
-                p.attack(op, m1);
-            }
-            if (!op.isKO()) {
-                op.attack(p, m2);
-            }
+            if (!p.isKO()) p.attack(op, m1);
+            if (!op.isKO()) op.attack(p, m2);
         } else {
-            if (!op.isKO()) {
-                op.attack(p, m2);
-            }
-            if (!p.isKO()) {
-                p.attack(op, m1);
-            }
+            if (!op.isKO()) op.attack(p, m2);
+            if (!p.isKO()) p.attack(op, m1);
+        }
+
+        if (p.isKO()) {
+            Pokemon nextPokemon = getNextPokemon(player);
+            if (nextPokemon != null) player.setFront(nextPokemon);
+        }
+
+        if (op.isKO()) {
+            Pokemon nextPokemon = getNextPokemon(opponent);
+            if (nextPokemon != null) opponent.setFront(nextPokemon);
         }
     }
 
-    private String starterName(){
+    private Pokemon getNextPokemon(Trainer trainer) {
+        for (Pokemon p : trainer.getTeam()) {
+            if (p != null && p.getStatus() != Status.KO && p != trainer.getFrontPokemon()) {
+                return p;
+            }
+        }
+        return null;
+    }
+
+    private String starterName() {
         if (isPlayerFirst == null) return player.getName();
         return isPlayerFirst ? player.getName() : opponent.getName();
     }
 
-    private Pokemon getPokemonFromIndex(Trainer t, int index){
+    private Pokemon getPokemonFromIndex(Trainer t, int index) {
         LinkedList<Pokemon> pokemons = t.getTeam();
         try {
             return pokemons.get(index);
-        } catch (Exception e){
+        } catch (Exception e) {
             System.out.println("No pokemon found at index : " + index + ", " + e.getMessage());
             return null;
         }
     }
 
-    private void addTeamInfos(Pokemon p, JsonArray playerTeam){
+    private void addTeamInfos(Pokemon p, JsonArray team) {
         try {
             JsonObject pokemonData = new JsonObject();
             addPokemonInfos(p, pokemonData);
-            playerTeam.add(pokemonData);
-        } catch (Exception e){
+            team.add(pokemonData);
+        } catch (Exception e) {
             System.out.println("This Pokémon can't be added to the team");
         }
     }
 
-    private void addPokemonInfos(Pokemon p, JsonObject pokemonData){
+    private void addPokemonInfos(Pokemon p, JsonObject pokemonData) {
         pokemonData.addProperty("name", p.getName());
         pokemonData.addProperty("HP", p.getHP());
         pokemonData.addProperty("maxHP", p.getMaxHP());
@@ -325,18 +287,23 @@ public class GameState {
         JsonArray attacksData = new JsonArray();
         ArrayList<String> attacks = movesToList(p);
         ArrayList<Move> attacks1 = p.getAttacks();
-        for(int i = 0; i < attacks.size(); i++){
+
+        for (int i = 0; i < attacks.size(); i++) {
             JsonObject obj = new JsonObject();
             Move m1 = attacks1.get(i);
+
             obj.addProperty("slot", i);
             obj.addProperty("id", MovesExample.getIdByName(attacks.get(i)));
             obj.addProperty("name", attacks.get(i));
             obj.addProperty("type", m1.getType().toString());
-            if(m1 instanceof Attack) obj.addProperty("Power", ((Attack) m1).getPower());
-            if(m1 instanceof Attack) obj.addProperty("Precision", ((Attack) m1).getPrecision());
+
+            if (m1 instanceof Attack) obj.addProperty("Power", ((Attack) m1).getPower());
+            if (m1 instanceof Attack) obj.addProperty("Precision", ((Attack) m1).getPrecision());
+
             obj.addProperty("Mode", m1.getMode().toString());
             obj.addProperty("PP", m1.getPP());
             obj.addProperty("maxPP", m1.getMaxPP());
+
             attacksData.add(obj);
         }
 
@@ -379,23 +346,26 @@ public class GameState {
     private ArrayList<String> movesToList(Pokemon p) {
         ArrayList<String> array = new ArrayList<>();
         if (p.getAttacks() == null) return array;
+
         for (Move m : p.getAttacks()) {
-            if (m != null){
+            if (m != null) {
                 array.add(m.getName());
             }
         }
         return array;
     }
 
-    private void resetState(){
+    private void resetState() {
         turn = 0;
         isPlayerFirst = null;
-        for(Pokemon p : player.getTeam()){
+
+        for (Pokemon p : player.getTeam()) {
             p.heal();
         }
-        for(Pokemon p : opponent.getTeam()){
+        for (Pokemon p : opponent.getTeam()) {
             p.heal();
         }
+
         SeedManager.incrementSeed();
         SeedManager.setSeed(SeedManager.getSeed());
     }

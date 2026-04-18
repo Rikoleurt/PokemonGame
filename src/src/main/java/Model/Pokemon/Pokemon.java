@@ -74,7 +74,6 @@ public class Pokemon {
 
     boolean isTurn = true;
     boolean isDeadFromStatus = false;
-
     BattleExecutor executor = BattleExecutor.getInstance();
     BattleConsole console = BattleConsole.getInstance();
     //endregion
@@ -124,7 +123,7 @@ public class Pokemon {
         this.status = status;
     }
 
-    public Pokemon(String name, int maxHP, int HP, int atk, int def, int atkSpe, int defSpe, int speed, Type type, ArrayList<Move> moves, Status status){
+    public Pokemon(String name, int maxHP, int HP, int atk, int def, int atkSpe, int defSpe, int speed, Type type, ArrayList<Move> moves, Status status, int level){
         this.name = name;
         this.maxHP = maxHP;
         this.HP = HP;
@@ -136,13 +135,34 @@ public class Pokemon {
         this.type = type;
         this.moves = moves;
         this.status = status;
+        this.level = level;
     }
+
+    public Pokemon(String name, int maxHP, int HP, int atk, int def, int atkSpe, int defSpe, int speed, Type type, Type type2, ArrayList<Move> moves, Status status, int level){
+        this.name = name;
+        this.maxHP = maxHP;
+        this.HP = HP;
+        this.atk = atk;
+        this.def = def;
+        this.atkSpe = atkSpe;
+        this.defSpe = defSpe;
+        this.speed = speed;
+        this.type = type;
+        this.type2 = type2;
+        this.moves = moves;
+        this.status = status;
+        this.level = level;
+    }
+
     //region Getter
     public String getName(){
         return name;
     }
     public Type getType() {
         return type;
+    }
+    public Type getType2() {
+        return type2;
     }
     public int getHP() {
         return HP;
@@ -185,6 +205,9 @@ public class Pokemon {
     }
     public boolean isKO(){
         return HP <= 0;
+    }
+    public boolean hasTwoTypes(){
+        return type2 != null;
     }
     public ArrayList<Move> getAttacks() {
         return moves;
@@ -293,7 +316,7 @@ public class Pokemon {
     //region Attack
     /**
      * Verifies which instance is the player Pokémon's next move and applies the effect on the target according to the
-     * move category (i.e. physical/special attack, a debris attack, a status attack or an upgrade move)
+     * move category (i.e., physical/special attack, a debris attack, a status attack, or an upgrade move)
      * @param target The target of the player
      * @param move The move it uses
      * @param terrain The terrain the Pokémon are on
@@ -398,8 +421,10 @@ public class Pokemon {
      * @return The attack damage without taking into account critical/stab hits
      */
     private double calculateEffectiveness(Move move, Pokemon launcher, Pokemon target, float power) {
-        List<Type> targetWeaknesses = weaknessesTable(target);
-        List<Type> targetResistances = resistancesTable(target);
+        List<Type> targetWeaknesses1 = weaknessesTable(target);
+        List<Type> targetWeaknesses2 = weaknessesTable(target);
+        List<Type> targetResistances1 = resistancesTable(target);
+        List<Type> targetResistances2 = resistancesTable(target);
         List<Type> targetImmunities = immunitiesTable(target);
 
         int launcherLevel = this.getLevel();
@@ -413,37 +438,57 @@ public class Pokemon {
         switch (launcher.getAttack(move).getMode()) {
             case physical:
                 double physicalDamages = ((((launcherLevel * 0.4 + 2) * launcherAtk * power) / targetDef) / 50) + 2;
-                if (targetWeaknesses.contains(move.getType())) {
+                if (targetWeaknesses1.contains(move.getType())) {
                     effectivenessCoefficient = 2;
+                    if(targetWeaknesses2.contains(move.getType()) && target.hasTwoTypes()){
+                        effectivenessCoefficient = 4;
+                        System.out.println("Coef = " + effectivenessCoefficient);
+                    }
                     executor.addEvent(new MessageEvent("The attack is super effective !"));
+                    System.out.println("2 - Coef = " + effectivenessCoefficient);
                     return physicalDamages * effectivenessCoefficient;
                 }
                 if (targetImmunities.contains(move.getType())) {
                     console.log("This attack does not affect the pokemon");
                     return 0;
                 }
-                if (targetResistances.contains(move.getType())) {
+                if (targetResistances1.contains(move.getType())) {
                     effectivenessCoefficient = 0.5f;
+                    if(targetResistances2.contains(move.getType()) && target.hasTwoTypes()){
+                        effectivenessCoefficient = 0.25f;
+                        System.out.println("Coef = " + effectivenessCoefficient);
+                    }
                     executor.addEvent(new MessageEvent("The attack is not very effective..."));
+                    System.out.println("2 - Coef = " + effectivenessCoefficient);
                     return physicalDamages * effectivenessCoefficient;
                 } else {
                     return physicalDamages;
                 }
             case special:
                 double specialDamages = ((((launcherLevel * 0.4 + 2) * launcherAtkSpe * power) / targetDefSpe) / 50) + 2;
-                if (targetWeaknesses.contains(move.getType())) {
+                if (targetWeaknesses1.contains(move.getType())) {
                     effectivenessCoefficient = 2;
+                    if(targetWeaknesses2.contains(move.getType()) && target.hasTwoTypes()){
+                        effectivenessCoefficient = 4;
+                        System.out.println("Coef = " + effectivenessCoefficient);
+                    }
                     console.log("The attack is super effective !");
                     executor.addEvent(new MessageEvent("The attack is super effective !"));
+                    System.out.println("2 - Coef = " + effectivenessCoefficient);
                     return specialDamages * effectivenessCoefficient;
                 }
                 if (targetImmunities.contains(move.getType())) {
                     executor.addEvent(new MessageEvent( "The attack does not affect " + target.name));
                     return 0;
                 }
-                if (targetResistances.contains(move.getType())) {
+                if (targetResistances1.contains(move.getType())) {
                     effectivenessCoefficient = 0.5f;
+                    if(targetResistances2.contains(move.getType()) && target.hasTwoTypes()){
+                        effectivenessCoefficient = 0.25f;
+                        System.out.println("Coef = " + effectivenessCoefficient);
+                    }
                     executor.addEvent(new MessageEvent( "The attack is not very effective..."));
+                    System.out.println("2 -Coef = " + effectivenessCoefficient);
                     return specialDamages * effectivenessCoefficient;
                 } else {
                     return specialDamages;
@@ -456,7 +501,7 @@ public class Pokemon {
     //region Status
     /**
      * Sets the status according to the element table
-     * @param target The target the player's Pokémon attacks
+     * @param target The target of the player's Pokémon attacks
      * @param statusMove The status attack it uses
      * @return The status of the target
      */
@@ -572,9 +617,9 @@ public class Pokemon {
         }
         // To implement
 //        if(status == Status.fear){
-//            console.log(name + " is feared! It can't move!");
-//            System.out.println(name + " is feared! It can't move!");
-//            executor.addEvent(new MessageEvent(name + " is feared! It can't move!"));
+//            console.log(name + "is feared! It can't move!");
+//            System.out.println(name + "is feared! It can't move!");
+//            executor.addEvent(new MessageEvent(name +" is feared! It can't move!"));
 //        }
     }
     /**
