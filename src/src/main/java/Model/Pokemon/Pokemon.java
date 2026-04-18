@@ -319,9 +319,9 @@ public class Pokemon {
      * move category (i.e., physical/special attack, a debris attack, a status attack, or an upgrade move)
      * @param target The target of the player
      * @param move The move it uses
-     * @param terrain The terrain the Pokémon are on
+     * @param field The terrain the Pokémon are on
      */
-    public void attack(Pokemon target, Move move, Terrain terrain) {
+    public void attack(Pokemon target, Move move, Field field) {
         isTurn = true;
         Move m = getAttack(move); // Gets the move from the move pool
         applyStatusEffect(target, move); // Apply the effect of the status
@@ -338,7 +338,7 @@ public class Pokemon {
         }
         if(m instanceof DebrisAttack debrisAttack && isTurn){
             executor.addEvent(new MessageEvent(name + " uses " + debrisAttack.getName()));
-            terrain.setDebris(debrisAttack.getDebris());
+            field.setDebris(debrisAttack.getDebris());
         }
         if(m instanceof StatusAttack statusAttack && isTurn){
             executor.addEvent(new MessageEvent(name + " uses " + statusAttack.getName()));
@@ -421,82 +421,55 @@ public class Pokemon {
      * @return The attack damage without taking into account critical/stab hits
      */
     private double calculateEffectiveness(Move move, Pokemon launcher, Pokemon target, float power) {
-        List<Type> targetWeaknesses1 = weaknessesTable(target);
-        List<Type> targetWeaknesses2 = weaknessesTable(target);
-        List<Type> targetResistances1 = resistancesTable(target);
-        List<Type> targetResistances2 = resistancesTable(target);
-        List<Type> targetImmunities = immunitiesTable(target);
-
-        int launcherLevel = this.getLevel();
-        int launcherAtk = this.getAtk();
-        int launcherAtkSpe = this.getAtkSpe();
+        int launcherLevel = launcher.getLevel();
+        int launcherAtk = launcher.getAtk();
+        int launcherAtkSpe = launcher.getAtkSpe();
 
         int targetDef = target.getDef();
         int targetDefSpe = target.getDefSpe();
 
-        float effectivenessCoefficient;
+        float coefType1 = getTypeCoefficient(move.getType(), target.getType());
+        float coefType2 = getTypeCoefficient(move.getType(), target.getType2());
+        float effectivenessCoefficient = coefType1 * coefType2;
+
         switch (launcher.getAttack(move).getMode()) {
-            case physical:
+            case physical -> {
                 double physicalDamages = ((((launcherLevel * 0.4 + 2) * launcherAtk * power) / targetDef) / 50) + 2;
-                if (targetWeaknesses1.contains(move.getType())) {
-                    effectivenessCoefficient = 2;
-                    if(targetWeaknesses2.contains(move.getType()) && target.hasTwoTypes()){
-                        effectivenessCoefficient = 4;
-                        System.out.println("Coef = " + effectivenessCoefficient);
-                    }
-                    executor.addEvent(new MessageEvent("The attack is super effective !"));
-                    System.out.println("2 - Coef = " + effectivenessCoefficient);
-                    return physicalDamages * effectivenessCoefficient;
-                }
-                if (targetImmunities.contains(move.getType())) {
-                    console.log("This attack does not affect the pokemon");
+
+                if (effectivenessCoefficient == 0.0f) {
+                    executor.addEvent(new MessageEvent("The attack does not affect " + target.name));
                     return 0;
                 }
-                if (targetResistances1.contains(move.getType())) {
-                    effectivenessCoefficient = 0.5f;
-                    if(targetResistances2.contains(move.getType()) && target.hasTwoTypes()){
-                        effectivenessCoefficient = 0.25f;
-                        System.out.println("Coef = " + effectivenessCoefficient);
-                    }
+                if (effectivenessCoefficient > 1.0f) {
+                    executor.addEvent(new MessageEvent("The attack is super effective !"));
+                } else if (effectivenessCoefficient < 1.0f) {
                     executor.addEvent(new MessageEvent("The attack is not very effective..."));
-                    System.out.println("2 - Coef = " + effectivenessCoefficient);
-                    return physicalDamages * effectivenessCoefficient;
-                } else {
-                    return physicalDamages;
                 }
-            case special:
+
+                System.out.println("Coef = " + effectivenessCoefficient);
+                return physicalDamages * effectivenessCoefficient;
+            }
+
+            case special -> {
                 double specialDamages = ((((launcherLevel * 0.4 + 2) * launcherAtkSpe * power) / targetDefSpe) / 50) + 2;
-                if (targetWeaknesses1.contains(move.getType())) {
-                    effectivenessCoefficient = 2;
-                    if(targetWeaknesses2.contains(move.getType()) && target.hasTwoTypes()){
-                        effectivenessCoefficient = 4;
-                        System.out.println("Coef = " + effectivenessCoefficient);
-                    }
-                    console.log("The attack is super effective !");
-                    executor.addEvent(new MessageEvent("The attack is super effective !"));
-                    System.out.println("2 - Coef = " + effectivenessCoefficient);
-                    return specialDamages * effectivenessCoefficient;
-                }
-                if (targetImmunities.contains(move.getType())) {
-                    executor.addEvent(new MessageEvent( "The attack does not affect " + target.name));
+
+                if (effectivenessCoefficient == 0.0f) {
+                    executor.addEvent(new MessageEvent("The attack does not affect " + target.name));
                     return 0;
                 }
-                if (targetResistances1.contains(move.getType())) {
-                    effectivenessCoefficient = 0.5f;
-                    if(targetResistances2.contains(move.getType()) && target.hasTwoTypes()){
-                        effectivenessCoefficient = 0.25f;
-                        System.out.println("Coef = " + effectivenessCoefficient);
-                    }
-                    executor.addEvent(new MessageEvent( "The attack is not very effective..."));
-                    System.out.println("2 -Coef = " + effectivenessCoefficient);
-                    return specialDamages * effectivenessCoefficient;
-                } else {
-                    return specialDamages;
+                if (effectivenessCoefficient > 1.0f) {
+                    executor.addEvent(new MessageEvent("The attack is super effective !"));
+                } else if (effectivenessCoefficient < 1.0f) {
+                    executor.addEvent(new MessageEvent("The attack is not very effective..."));
                 }
+
+                System.out.println("Coef = " + effectivenessCoefficient);
+                return specialDamages * effectivenessCoefficient;
+            }
         }
+
         return 0;
     }
-    //endregion
 
     //region Status
     /**
@@ -506,17 +479,24 @@ public class Pokemon {
      * @return The status of the target
      */
     private Status setStatus(Pokemon target, StatusAttack statusMove) {
-        if(target.getStatus() != Status.normal){
-            executor.addEvent(new MessageEvent(target.name + " is already " + target.getStatus() + "! It won't have any effect."));
+        if (target.getStatus() != Status.normal) {
+            executor.addEvent(new MessageEvent(
+                    target.name + " is already " + target.getStatus() + "! It won't have any effect."
+            ));
+            return target.getStatus();
         }
-        if(immunitiesTable(target).contains(statusMove.getType())){
-            executor.addEvent(new MessageEvent("This attack does not affect " + name));
-            return null;
+
+        Type moveType = statusMove.getType();
+
+        boolean immuneType1 = immunitiesTable(target.getType()).contains(moveType);
+        boolean immuneType2 = target.hasTwoTypes() && immunitiesTable(target.getType2()).contains(moveType);
+
+        if (immuneType1 || immuneType2) {
+            executor.addEvent(new MessageEvent("This attack does not affect " + target.name));
+            return target.getStatus();
         }
-        if(target.getStatus() == Status.normal){
-            return statusMove.getStatus();
-        }
-        return target.status;
+
+        return statusMove.getStatus();
     }
 
     /**
@@ -659,11 +639,12 @@ public class Pokemon {
     //endregion
 
     //region Type table
-    public List<Type> weaknessesTable(Pokemon pokemon) {
-
+    public List<Type> weaknessesTable(Type type) {
         List<Type> weaknesses = new ArrayList<>();
 
-        switch (pokemon.getType()) {
+        if (type == null) return weaknesses;
+
+        switch (type) {
             case normal:
                 weaknesses.add(Type.fighting);
                 break;
@@ -752,18 +733,19 @@ public class Pokemon {
                 weaknesses.add(Type.steel);
                 break;
             default:
-                weaknesses = new ArrayList<>();
                 break;
         }
+
         return weaknesses;
     }
-    public List<Type> resistancesTable(Pokemon pokemon) {
 
+    public List<Type> resistancesTable(Type type) {
         List<Type> resistances = new ArrayList<>();
 
-        switch (pokemon.getType()) {
+        if (type == null) return resistances;
+
+        switch (type) {
             case normal:
-                // No resistances
                 break;
             case fire:
                 resistances.add(Type.fire);
@@ -813,7 +795,6 @@ public class Pokemon {
                 resistances.add(Type.grass);
                 resistances.add(Type.fighting);
                 resistances.add(Type.bug);
-                resistances.add(Type.ground);
                 break;
             case psychic:
                 resistances.add(Type.fighting);
@@ -833,8 +814,6 @@ public class Pokemon {
             case ghost:
                 resistances.add(Type.poison);
                 resistances.add(Type.bug);
-                resistances.add(Type.normal);
-                resistances.add(Type.fighting);
                 break;
             case dragon:
                 resistances.add(Type.fire);
@@ -845,7 +824,6 @@ public class Pokemon {
             case dark:
                 resistances.add(Type.ghost);
                 resistances.add(Type.dark);
-                resistances.add(Type.psychic);
                 break;
             case steel:
                 resistances.add(Type.normal);
@@ -863,24 +841,22 @@ public class Pokemon {
                 resistances.add(Type.fighting);
                 resistances.add(Type.bug);
                 resistances.add(Type.dark);
-                resistances.add(Type.dragon);
                 break;
             default:
-                resistances = new ArrayList<>();
                 break;
         }
 
         return resistances;
     }
-    public  List<Type> immunitiesTable(Pokemon pokemon) {
 
+    public List<Type> immunitiesTable(Type type) {
         List<Type> immunities = new ArrayList<>();
 
-        switch (pokemon.getType()) {
+        if (type == null) return immunities;
+
+        switch (type) {
             case normal:
                 immunities.add(Type.ghost);
-                break;
-            case fire, water, grass, electric, ice, fighting, poison, psychic, bug, rock, dragon, steel:
                 break;
             case ground:
                 immunities.add(Type.electric);
@@ -899,11 +875,20 @@ public class Pokemon {
                 immunities.add(Type.dragon);
                 break;
             default:
-                immunities = new ArrayList<>();
                 break;
         }
 
         return immunities;
+    }
+
+    private float getTypeCoefficient(Type attackType, Type defenseType) {
+        if (defenseType == null) return 1.0f;
+
+        if (immunitiesTable(defenseType).contains(attackType)) return 0.0f;
+        if (weaknessesTable(defenseType).contains(attackType)) return 2.0f;
+        if (resistancesTable(defenseType).contains(attackType)) return 0.5f;
+
+        return 1.0f;
     }
     //endregion
 
@@ -1136,6 +1121,11 @@ public class Pokemon {
         return s;
     }
 
+    public float getOverallTypeCoefficient(Type attackType) {
+        float coef1 = getTypeCoefficient(attackType, this.getType());
+        float coef2 = getTypeCoefficient(attackType, this.getType2());
+        return coef1 * coef2;
+    }
 
     //endregion
 }

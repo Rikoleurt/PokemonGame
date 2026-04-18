@@ -5,7 +5,7 @@ import Model.Inventory.Items.Consumable;
 import Model.Inventory.Items.Item;
 import Model.Pokemon.Pokemon;
 import Model.Pokemon.PokemonEnum.Status;
-import Model.Pokemon.Terrain;
+import Model.Pokemon.Field;
 import Model.Pokemon.TerrainEnum.Debris;
 import Utils.SeedManager;
 
@@ -58,10 +58,10 @@ public class Trainer implements Fighter {
     public void setName(String name) {
         this.name = name;
     }
-    public void setFront(Pokemon pokemon, Terrain terrain) {
+    public void setFront(Pokemon pokemon, Field field) {
         exchangePokemonToFront(getFrontPokemon(), pokemon);
-        if(terrain.getDebris() != Debris.normal){
-            terrain.debrisEffect(this, terrain);
+        if(field.getDebris() != Debris.normal){
+            field.debrisEffect(this, field);
         }
     }
     public void setFront(Pokemon pokemon){

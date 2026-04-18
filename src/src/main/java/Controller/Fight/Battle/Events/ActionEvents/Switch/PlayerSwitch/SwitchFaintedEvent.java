@@ -6,7 +6,7 @@ import Model.Pokemon.Pokemon;
 import View.Game.Battle.BattleView;
 import Utils.SceneManager;
 
-import static View.Game.Battle.BattleView.terrain;
+import static View.Game.Battle.BattleView.field;
 
 public class SwitchFaintedEvent extends PlayerSwitchEvent {
 
@@ -17,7 +17,7 @@ public class SwitchFaintedEvent extends PlayerSwitchEvent {
     public void execute(){
         BattleView.getPlayerBar().setVisible(false);
         SceneManager.switchStageTo(SceneManager.getFightView());
-        player.setFront(other, terrain);
+        player.setFront(other, field);
         BattleView.refreshSprites();
         BattleView.getPlayerBar().setPokemon(other);
         BattleView.getPlayerBar().setVisible(true);

@@ -8,7 +8,7 @@ import Model.Pokemon.Pokemon;
 import View.Game.Battle.BattleView;
 import Utils.SceneManager;
 
-import static View.Game.Battle.BattleView.terrain;
+import static View.Game.Battle.BattleView.field;
 
 public class PlayerSwitchEvent extends BattleEvent {
 
@@ -27,7 +27,7 @@ public class PlayerSwitchEvent extends BattleEvent {
         BattleView.getPlayerBar().setVisible(false);
         SceneManager.switchStageTo(SceneManager.getFightView());
         executor.addEvent(new MessageEvent(player.getFrontPokemon().getName() + " stop!"));
-        player.setFront(other, terrain);
+        player.setFront(other, field);
         BattleView.refreshSprites();
         executor.addEvent(new MessageEvent(player.getFrontPokemon().getName() + " go!"));
         BattleView.getPlayerBar().setPokemon(player.getFrontPokemon());

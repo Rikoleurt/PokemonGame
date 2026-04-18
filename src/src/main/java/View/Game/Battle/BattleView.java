@@ -2,8 +2,8 @@ package View.Game.Battle;
 
 import Controller.Fight.Battle.Events.UIEvents.MessageEvent;
 import Model.Person.Trainer;
+import Model.Pokemon.Field;
 import Model.Pokemon.Pokemon;
-import Model.Pokemon.Terrain;
 import Model.Pokemon.TerrainEnum.Debris;
 import Model.Pokemon.TerrainEnum.Weather;
 import Utils.SceneManager;
@@ -44,7 +44,7 @@ public class BattleView extends BorderPane {
 
     static Bar opponentBar = new OpponentBar(5, npcPokemon);
     static Bar playerBar = new PlayerBar(5, playerPokemon);
-    public static Terrain terrain = new Terrain(player.getTeam(), npc.getTeam(), Debris.normal, Weather.normal);
+    public static Field field = new Field(player.getTeam(), npc.getTeam(), Debris.normal, Weather.normal);
 
     static BattleButtons battleButtons = new BattleButtons(textBubble);
 
@@ -243,8 +243,8 @@ public class BattleView extends BorderPane {
     public static Trainer getPlayer() {
         return player;
     }
-    public static Terrain getTerrain() {
-        return terrain;
+    public static Field getTerrain() {
+        return field;
     }
 
 }

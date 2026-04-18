@@ -6,7 +6,7 @@ import Controller.Fight.Battle.Events.BattleEvent;
 import Controller.Fight.Battle.Events.UIEvents.MessageEvent;
 import Model.Pokemon.Pokemon;
 import Model.Pokemon.PokemonEnum.Status;
-import Model.Pokemon.Terrain;
+import Model.Pokemon.Field;
 import Server.SocketServer;
 import View.Game.Battle.BattleButtons;
 import View.Game.Battle.BattleView;
@@ -30,7 +30,7 @@ public class EndTurn extends BattleEvent {
         Pokemon npcPokemon = npc.getFrontPokemon();
         Pokemon playerPokemon = player.getFrontPokemon();
 
-        Terrain terrain = BattleView.getTerrain();
+        Field field = BattleView.getTerrain();
 
         if(playerPokemon.getStatus() != Status.normal) executor.addEvent(new StatusEvent(playerPokemon));
         if(npcPokemon.getStatus() != Status.normal) executor.addEvent(new StatusEvent(npcPokemon));
@@ -40,7 +40,7 @@ public class EndTurn extends BattleEvent {
             Pokemon next = npc.chooseSwitchTarget();
             if(next != null){
                 executor.addEvent(new MessageEvent(npc.getName() + " sends " + next.getName() + "!"));
-                executor.addEvent(new SwitchEvent(npc, next, terrain, executor));
+                executor.addEvent(new SwitchEvent(npc, next, field, executor));
                 try {
                     socketServer.send(socketServer.refreshState());
                 } catch (IOException e) {
@@ -50,7 +50,7 @@ public class EndTurn extends BattleEvent {
         }
         if(playerPokemon.isKO() && player.getHealthyPokemon() > 0) {
             executor.addEvent(new MessageEvent(playerPokemon.getName() + " fainted."));
-            executor.addEvent(new SwitchEvent(player, playerPokemon, terrain, executor));
+            executor.addEvent(new SwitchEvent(player, playerPokemon, field, executor));
             try {
                 socketServer.send(socketServer.refreshState());
             } catch (IOException e) {

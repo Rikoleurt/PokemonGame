@@ -13,9 +13,9 @@ import Controller.Fight.Battle.Events.ComputeEvents.Order;
 import Model.Inventory.Items.Item;
 import Model.Person.Action;
 import Model.Person.Trainer;
+import Model.Pokemon.Field;
 import Model.Pokemon.Move;
 import Model.Pokemon.Pokemon;
-import Model.Pokemon.Terrain;
 import View.Game.Battle.BattleButtons;
 import View.Game.Battle.BattleView;
 import View.Training.Console.View.BattleConsole;
@@ -26,17 +26,17 @@ public class StartTurn extends BattleEvent {
     private final Trainer npc;
     private final Trainer player;
     private final Move move;
-    private final Terrain terrain;
+    private final Field field;
     private Item playerItem;
     private Pokemon switchTarget;
     private BattleButtons battleButtons;
     BattleConsole console = BattleConsole.getInstance();
 
-    public StartTurn(Trainer npc, Trainer player, Move move, Terrain terrain, BattleExecutor executor, BattleButtons battleButtons) {
+    public StartTurn(Trainer npc, Trainer player, Move move, Field field, BattleExecutor executor, BattleButtons battleButtons) {
         this.npc = npc;
         this.player = player;
         this.move = move;
-        this.terrain = terrain;
+        this.field = field;
         this.executor = executor;
         this.battleButtons = battleButtons;
     }
@@ -46,7 +46,7 @@ public class StartTurn extends BattleEvent {
         this.player = player;
         this.switchTarget = switchTarget;
         this.move = null;
-        this.terrain = BattleView.getTerrain();
+        this.field = BattleView.getTerrain();
         this.executor = executor;
         this.battleButtons = BattleView.getFightButtons();
     }
@@ -57,7 +57,7 @@ public class StartTurn extends BattleEvent {
         this.playerItem = playerItem;
         this.switchTarget = null;
         this.move = null;
-        this.terrain = BattleView.getTerrain();
+        this.field = BattleView.getTerrain();
         this.executor = executor;
     }
 
@@ -81,7 +81,7 @@ public class StartTurn extends BattleEvent {
 
         if (playerPriority && !playerPokemon.isKO()) {
             switch (playerAction) {
-                case Attack -> executor.addEvent(new AttackEvent(playerPokemon, npcPokemon, move, terrain, executor));
+                case Attack -> executor.addEvent(new AttackEvent(playerPokemon, npcPokemon, move, field, executor));
                 case Item -> executor.addEvent(new UseItemEvent(player, playerItem, playerPokemon, executor));
                 case Switch -> {
                     executor.addEvent(new PlayerSwitchEvent(player, switchTarget, executor));
@@ -91,11 +91,11 @@ public class StartTurn extends BattleEvent {
             if (!npcPokemon.isKO()) {
                 switch (npcAction) {
                     case Attack ->
-                            executor.addEvent(new AttackEvent(npcPokemon, playerPokemon, npcPokemon.chooseMove(), terrain, executor));
+                            executor.addEvent(new AttackEvent(npcPokemon, playerPokemon, npcPokemon.chooseMove(), field, executor));
                     case Item -> executor.addEvent(new UseItemEvent(npc, item, npcPokemon, executor));
                     case Switch -> {
                         Pokemon npcSwitchTarget = new FoePokemonChoiceEvent(npc).compute();
-                        executor.addEvent(new FoeSwitchEvent(npc, npcSwitchTarget, terrain));
+                        executor.addEvent(new FoeSwitchEvent(npc, npcSwitchTarget, field));
                         npcPokemon = npcSwitchTarget;
                     }
                 }
@@ -103,18 +103,18 @@ public class StartTurn extends BattleEvent {
         } else if (!npcPokemon.isKO()) {
             switch (npcAction) {
                 case Attack ->
-                        executor.addEvent(new AttackEvent(npcPokemon, playerPokemon, npcPokemon.chooseMove(), terrain, executor));
+                        executor.addEvent(new AttackEvent(npcPokemon, playerPokemon, npcPokemon.chooseMove(), field, executor));
                 case Item -> executor.addEvent(new UseItemEvent(npc, item, npcPokemon, executor));
                 case Switch -> {
                     Pokemon npcSwitchTarget = new FoePokemonChoiceEvent(npc).compute();
-                    executor.addEvent(new FoeSwitchEvent(npc, npcSwitchTarget, terrain));
+                    executor.addEvent(new FoeSwitchEvent(npc, npcSwitchTarget, field));
                     npcPokemon = npcSwitchTarget;
                 }
             }
             if (!playerPokemon.isKO()) {
                 switch (playerAction) {
                     case Attack ->
-                            executor.addEvent(new AttackEvent(playerPokemon, npcPokemon, move, terrain, executor));
+                            executor.addEvent(new AttackEvent(playerPokemon, npcPokemon, move, field, executor));
                     case Item -> executor.addEvent(new UseItemEvent(player, playerItem, playerPokemon, executor));
                     case Switch -> {
                         executor.addEvent(new PlayerSwitchEvent(player, switchTarget, executor));

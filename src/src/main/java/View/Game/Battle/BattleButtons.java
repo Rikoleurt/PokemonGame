@@ -4,12 +4,10 @@ import Controller.Fight.Battle.BattleExecutor;
 import Controller.Fight.Battle.Events.GameEvents.StartTurn;
 
 import Model.Person.Action;
-import Model.Person.Trainer;
+import Model.Pokemon.Field;
 import Model.Pokemon.Pokemon;
 import Model.Pokemon.Move;
-import Model.Pokemon.Terrain;
 
-import View.Game.Battle.InfoBars.Bar;
 import View.Game.Battle.Text.TextBubble;
 import View.Game.Inventory.Bag.BagView;
 import Utils.SceneManager;
@@ -26,7 +24,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
 
 import java.util.List;
 
@@ -139,33 +136,33 @@ public class BattleButtons extends HBox {
     private void onMoveButton() {
         atk1Button.setOnAction(e -> {
             if(pAtk1 != null) {
-                onButtonPressed(pAtk1, terrain);
+                onButtonPressed(pAtk1, field);
             }
         });
 
         atk2Button.setOnAction(e -> {
             if(pAtk2 != null) {
-                onButtonPressed(pAtk2, terrain);
+                onButtonPressed(pAtk2, field);
             }
 
         });
 
         atk3Button.setOnAction(e -> {
             if(pAtk3 != null) {
-                onButtonPressed(pAtk3, terrain);
+                onButtonPressed(pAtk3, field);
             }
         });
 
         atk4Button.setOnAction(e -> {
             if(pAtk4 != null) {
-                onButtonPressed(pAtk4, terrain);
+                onButtonPressed(pAtk4, field);
             }
         });
     }
 
-    private void onButtonPressed(Move move, Terrain terrain) {
+    private void onButtonPressed(Move move, Field field) {
         player.setAction(Action.Attack);
-        executor.addEvent(new StartTurn(npc, player, move, terrain, executor, this));
+        executor.addEvent(new StartTurn(npc, player, move, field, executor, this));
         executor.executeEvents(null);
     }
 
