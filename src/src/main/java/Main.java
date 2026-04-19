@@ -3,6 +3,7 @@ import Model.Inventory.Bag;
 import Model.Inventory.Items.Item;
 import Model.Person.Trainer;
 import Model.Pokemon.Pokemon;
+import Model.StaticObjects.TrainingVersion.Matchup;
 import Server.SocketServer;
 import Utils.SongManager;
 import View.Game.Battle.BattleView;
@@ -75,54 +76,19 @@ public class Main extends Application { // extends Application
 
 //        songManager.playSong("/music/champion_steven.mp3");
 
-//        Pokemon pikachu1 = initiatePikachu();
-//        Pokemon roucool = initiatePidgey();
-//        Pokemon bulbizarre = initiateBulbizarre();
-        Pokemon carapuce = initiateCarapuce();
-//        Pokemon salameche = initiateSalameche();
-//
-//        Map<Item, Integer> inventory = new HashMap<>();
-//        Bag bag = new Bag(inventory);
-//        LinkedList<Pokemon> playerTeam = new LinkedList<>();
-//        playerTeam.add(carapuce);
-//        playerTeam.add(pikachu1);
-//        playerTeam.add(roucool);
-//
-//        LinkedList<Pokemon> opponentTeam = new LinkedList<>();
-//        opponentTeam.add(bulbizarre);
-//        opponentTeam.add(salameche);
-//
-//
-//        Trainer player = new Trainer("player", bag, playerTeam);
-//        Trainer opponent = new Trainer("opponent", bag, opponentTeam);
-//
-//        gs = new GameState(player, opponent, 0);
+        Matchup matchup = Matchup.pikachuVsCarapuce();
+        gs = matchup.createGameState();
 
-//        SocketServer server = SocketServer.getInstance();
-//        new Thread(() -> {
-//            try {
-//                server.start(5001, gs);
-//            } catch (IOException e) {
-//                System.out.println("Client connect failed " + e.getMessage());
-//            }
-//        }).start();
+        System.out.println(gs.state());
+        SocketServer server = SocketServer.getInstance();
+        new Thread(() -> {
+            try {
+                server.start(5001, gs);
+            } catch (IOException e) {
+                System.out.println("Client connect failed " + e.getMessage());
+            }
+        }).start();
 
-        Pokemon jungko = initiateJungko();
-        Pokemon laggron = initiateLaggron();
-        Pokemon cizayox = initiateCizayox();
-
-        jungko.attack(laggron, jungko.getAttacks().getFirst());
-        jungko.attack(laggron, jungko.getAttacks().get(1));
-
-        jungko.attack(cizayox, jungko.getAttacks().getFirst());
-        jungko.attack(cizayox, jungko.getAttacks().get(1));
-
-
-        jungko.attack(carapuce, jungko.getAttacks().getFirst());
-        System.out.println("Jungko has two types? = " + jungko.hasTwoTypes());
-        System.out.println("Carapuce has two types? = " + carapuce.hasTwoTypes());
-        System.out.println("Cizayox has two types? = " + cizayox.hasTwoTypes());
-        System.out.println("Laggron has two types? = " + laggron.hasTwoTypes());
     }
 
     public static void main(String[] args) {

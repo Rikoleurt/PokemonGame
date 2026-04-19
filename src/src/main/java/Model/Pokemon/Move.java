@@ -39,10 +39,37 @@ public class Move {
         return PP;
     }
 
-    public int getMaxPP() { return maxPP; }
+    public int getMaxPP() {
+        return maxPP;
+    }
 
-    protected boolean isStab(Pokemon pokemon) {
-        return pokemon.getType().equals(pokemon.getAttack(this).getType());
+    public void setPP(int PP) {
+        this.PP = Math.max(0, Math.min(PP, maxPP));
+    }
+
+    public boolean hasPP() {
+        return PP > 0;
+    }
+
+    public boolean consumePP() {
+        if (PP <= 0) {
+            return false;
+        }
+        PP--;
+        return true;
+    }
+
+    public void restorePP() {
+        PP = maxPP;
+    }
+
+    public boolean isStab(Pokemon pokemon) {
+        if (pokemon == null || this.type == null) {
+            return false;
+        }
+
+        return this.type == pokemon.getType()
+                || (pokemon.getType2() != null && this.type == pokemon.getType2());
     }
 
     double criticalProb(Pokemon pokemon) {
@@ -51,8 +78,8 @@ public class Move {
 
     protected boolean isCritical(Pokemon pokemon) {
         Random random = new Random(SeedManager.getSeed());
-        double rand = random.nextDouble(256)/256;
-        double criticalProb = criticalProb(pokemon)/256;
+        double rand = random.nextDouble(256) / 256;
+        double criticalProb = criticalProb(pokemon) / 256;
         return rand < criticalProb;
     }
 

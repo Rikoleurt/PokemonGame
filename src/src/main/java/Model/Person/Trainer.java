@@ -27,15 +27,19 @@ public class Trainer implements Fighter {
     public LinkedList<Pokemon> getTeam() {
         return team;
     }
+
     public String getName() {
         return name;
     }
+
     public Pokemon getPokemon(Pokemon pokemon) {
         return team.get(getTeam().indexOf(pokemon));
     }
+
     public Pokemon getFrontPokemon() {
         return team.getFirst();
     }
+
     public Action getAction() {
         return action;
     }
@@ -48,50 +52,80 @@ public class Trainer implements Fighter {
         }
     }
 
-    public void setAction(Action action) { this.action = action; }
+    public void setAction(Action action) {
+        this.action = action;
+    }
+
     public boolean isFront(Pokemon pokemon) {
         return getFrontPokemon() == pokemon;
     }
+
     public int getIndexOf(Pokemon pokemon) {
         return team.indexOf(pokemon);
     }
+
     public void setName(String name) {
         this.name = name;
     }
+
     public void setFront(Pokemon pokemon, Field field) {
         exchangePokemonToFront(getFrontPokemon(), pokemon);
-        if(field.getDebris() != Debris.normal){
+        if (field.getDebris() != Debris.normal) {
             field.debrisEffect(this, field);
         }
     }
-    public void setFront(Pokemon pokemon){
+
+    public void setFront(Pokemon pokemon) {
         exchangePokemonToFront(getFrontPokemon(), pokemon);
     }
-    public Action makeChoiceAction(){
+
+    public Action makeChoiceAction() {
         Random rand = new Random(SeedManager.getSeed());
-        int randInt = rand.nextInt(20,100);
-        int healthyPokemon = getHealthyPokemon();
-        if (randInt < 5 && healthyPokemon >= 0) {
+        int randInt = rand.nextInt(20, 100);
+
+        Pokemon front = getFrontPokemon();
+
+        boolean canAttack = front != null && front.hasUsableMove();
+        boolean canSwitch = getHealthyPokemon() > 1 && chooseSwitchTarget() != null;
+        boolean canUseItem = bag != null
+                && front != null
+                && front.getHP() != front.getMaxHP()
+                && bag.getFirstHeal() != null;
+
+        if (!canAttack) {
+            if (canSwitch) {
+                action = Action.Switch;
+            } else if (canUseItem) {
+                action = Action.Item;
+            } else {
+                action = Action.Attack;
+            }
+            return action;
+        }
+
+        if (randInt < 5 && canSwitch) {
             action = Action.Switch;
-        } else if (randInt < 5 && team.size() == 1) {
-            makeChoiceAction();
-        } else if (randInt < 20 && randInt >= 10 && getFrontPokemon().getHP() != getFrontPokemon().getMaxHP()){
+        } else if (randInt < 20 && randInt >= 10 && canUseItem) {
             action = Action.Item;
         } else {
             action = Action.Attack;
         }
+
         return action;
     }
+
     public Bag getBag() {
         return bag;
     }
+
     public int getHealthyPokemon() {
         int healthyPokemon = 0;
         for (Pokemon p : team) {
-            if(p.getStatus() != Status.KO) healthyPokemon++;
+            if (p.getStatus() != Status.KO) healthyPokemon++;
         }
         return healthyPokemon;
     }
+
     public Pokemon chooseSwitchTarget() {
         for (Pokemon p : team) {
             if (p != getFrontPokemon() && p.getStatus() != Status.KO) {
@@ -100,27 +134,29 @@ public class Trainer implements Fighter {
         }
         return null;
     }
+
     public Item itemChoice(Pokemon target) {
         Item itemChoice = null;
-        if(target.getHP() < target.getMaxHP()/2) itemChoice = getBag().getFirstHeal();
+        if (target.getHP() < target.getMaxHP() / 2) itemChoice = getBag().getFirstHeal();
         return itemChoice;
     }
+
     private void exchangePokemonToFront(Pokemon pokemon, Pokemon otherPokemon) {
-        if(this.isFront(pokemon)) {
-            int temp = team.indexOf(otherPokemon); // bulbizarre at ?
-            Pokemon tempPokemon = team.getFirst(); // temp Model.Pokemon is pikachu
-            team.set(0, otherPokemon); // set to 0 bulbizarre
-            team.set(temp, tempPokemon); // set to ? pikachu
+        if (this.isFront(pokemon)) {
+            int temp = team.indexOf(otherPokemon);
+            Pokemon tempPokemon = team.getFirst();
+            team.set(0, otherPokemon);
+            team.set(temp, tempPokemon);
         } else {
             System.out.println("Not possible because " + otherPokemon.getName() + " is not at the front");
         }
     }
+
     private void exchangePositionOf(Pokemon pokemon, Pokemon otherPokemon) {
-        int temp = team.indexOf(otherPokemon); // Bulbizarre at position 1
-        Pokemon tempPokemon = getPokemon(pokemon); // temp is pikachu
-        int index = team.indexOf(tempPokemon); // index of pikachu is 0
+        int temp = team.indexOf(otherPokemon);
+        Pokemon tempPokemon = getPokemon(pokemon);
+        int index = team.indexOf(tempPokemon);
         team.set(index, otherPokemon);
         team.set(temp, tempPokemon);
     }
-
 }

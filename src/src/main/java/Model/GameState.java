@@ -35,9 +35,19 @@ public class GameState {
     }
 
     public String state() {
-        Pokemon p1 = player.getFrontPokemon();      // adversaire visible seulement
-        Pokemon p7 = opponent.getFrontPokemon();    // front agent
-        Pokemon p8 = getPokemonFromIndex(opponent, 1); // back agent en 2v2
+        Pokemon p1 = player.getFrontPokemon();
+        Pokemon p2 = getPokemonFromIndex(player, 1);
+        Pokemon p3 = getPokemonFromIndex(player, 2);
+        Pokemon p4 = getPokemonFromIndex(player, 3);
+        Pokemon p5 = getPokemonFromIndex(player, 4);
+        Pokemon p6 = getPokemonFromIndex(player, 5);
+
+        Pokemon p7 = opponent.getFrontPokemon();
+        Pokemon p8 = getPokemonFromIndex(opponent, 1);
+        Pokemon p9 = getPokemonFromIndex(opponent, 2);
+        Pokemon p10 = getPokemonFromIndex(opponent, 3);
+        Pokemon p11 = getPokemonFromIndex(opponent, 4);
+        Pokemon p12 = getPokemonFromIndex(opponent, 5);
 
         JsonObject obj = new JsonObject();
         obj.addProperty("turn", turn);
@@ -50,10 +60,19 @@ public class GameState {
 
         JsonArray playerTeam = new JsonArray();
         addTeamInfos(p1, playerTeam);
+//        addTeamInfos(p2, playerTeam);
+//        addTeamInfos(p3, playerTeam);
+//        addTeamInfos(p4, playerTeam);
+//        addTeamInfos(p5, playerTeam);
+//        addTeamInfos(p6, playerTeam);
 
         JsonArray opponentTeam = new JsonArray();
         addTeamInfos(p7, opponentTeam);
-        addTeamInfos(p8, opponentTeam);
+//        addTeamInfos(p8, opponentTeam);
+//        addTeamInfos(p9, opponentTeam);
+//        addTeamInfos(p10, opponentTeam);
+//        addTeamInfos(p11, opponentTeam);
+//        addTeamInfos(p12, opponentTeam);
 
         JsonObject first = new JsonObject();
         first.addProperty("name", starterName());
@@ -278,11 +297,22 @@ public class GameState {
 
     private void addPokemonInfos(Pokemon p, JsonObject pokemonData) {
         pokemonData.addProperty("name", p.getName());
+
         pokemonData.addProperty("HP", p.getHP());
         pokemonData.addProperty("maxHP", p.getMaxHP());
+        pokemonData.addProperty("hp_ratio", (double) p.getHP() / p.getMaxHP());
         pokemonData.addProperty("level", p.getLevel());
         pokemonData.addProperty("type", p.getType().toString());
+        if (p.getType2() != null) pokemonData.addProperty("type2", p.getType2().toString());
         pokemonData.addProperty("status", p.getStatus().toString());
+
+        JsonObject statsData = new JsonObject();
+        statsData.addProperty("atk", p.getAtk());
+        statsData.addProperty("def", p.getDef());
+        statsData.addProperty("atkSpe", p.getAtkSpe());
+        statsData.addProperty("defSpe", p.getDefSpe());
+        statsData.addProperty("speed", p.getSpeed());
+        pokemonData.add("stats", statsData);
 
         JsonArray attacksData = new JsonArray();
         ArrayList<String> attacks = movesToList(p);
@@ -296,13 +326,14 @@ public class GameState {
             obj.addProperty("id", MovesExample.getIdByName(attacks.get(i)));
             obj.addProperty("name", attacks.get(i));
             obj.addProperty("type", m1.getType().toString());
-
-            if (m1 instanceof Attack) obj.addProperty("Power", ((Attack) m1).getPower());
-            if (m1 instanceof Attack) obj.addProperty("Precision", ((Attack) m1).getPrecision());
-
             obj.addProperty("Mode", m1.getMode().toString());
             obj.addProperty("PP", m1.getPP());
             obj.addProperty("maxPP", m1.getMaxPP());
+
+            if (m1 instanceof Attack) {
+                obj.addProperty("Power", ((Attack) m1).getPower());
+                obj.addProperty("Precision", ((Attack) m1).getPrecision());
+            }
 
             attacksData.add(obj);
         }

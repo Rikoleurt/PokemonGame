@@ -15,11 +15,6 @@ public class Attack extends Move {
         this.precision = precision;
     }
 
-    public Attack(String name, int power, Type type, AttackMode mode, int PP, int maxPP) {
-        super(name, type, mode, PP, maxPP);
-        this.power = power;
-    }
-
     public void setPrecision(double precision) {
         this.precision = precision;
     }

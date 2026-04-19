@@ -12,163 +12,166 @@ import static Model.StaticObjects.TrainingVersion.MovesSample.initiateAttacks;
 
 public class PokemonSample {
 
-    static HashMap<Integer, Move> attacks = initiateAttacks();
-
-    static ArrayList<Move> bulbizarreMoves = new ArrayList<>();
-    static ArrayList<Move> pikachuMoves = new ArrayList<>();
-    static ArrayList<Move> carapuceMoves = new ArrayList<>();
-    static ArrayList<Move> salamecheMoves = new ArrayList<>();
-    static ArrayList<Move> ekansMoves = new ArrayList<>();
-    static ArrayList<Move> pidgeyMoves = new ArrayList<>();
-    static ArrayList<Move> butterfreeMoves = new ArrayList<>();
-    static ArrayList<Move> laggronMoves = new ArrayList<>();
-    static ArrayList<Move> cizayoxMoves = new ArrayList<>();
-    static ArrayList<Move> jungkoMoves = new ArrayList<>();
+    static HashMap<String, Move> attacks = initiateAttacks();
 
     public static Pokemon initiateBulbizarre() {
-        if (!bulbizarreMoves.contains(attacks.get(0))) bulbizarreMoves.add(attacks.get(0)); // Tackle
-        if (!bulbizarreMoves.contains(attacks.get(4))) bulbizarreMoves.add(attacks.get(4)); // Vine Whip
+        ArrayList<Move> moves = new ArrayList<>();
+        moves.add(attacks.get("tackle"));
+        moves.add(attacks.get("vine_whip"));
 
         return new Pokemon(
                 "bulbasaur",
-                30, 30,
-                16, 16, 19, 19, 15,
+                112, 112,
+                61, 61, 72, 72, 57,
                 Type.grass,
-                bulbizarreMoves,
+                moves,
                 Status.normal,
-                10
+                50
         );
     }
 
     public static Pokemon initiatePikachu() {
-        if (!pikachuMoves.contains(attacks.get(0))) pikachuMoves.add(attacks.get(0));   // Tackle
-        if (!pikachuMoves.contains(attacks.get(11))) pikachuMoves.add(attacks.get(11)); // Thunder Shock
+        ArrayList<Move> moves = new ArrayList<>();
+        moves.add(attacks.get("tackle"));
+        moves.add(attacks.get("thunder_shock"));
+        moves.add(attacks.get("rock_tomb"));
 
         return new Pokemon(
                 "pikachu",
-                28, 28,
-                17, 12, 16, 14, 24,
+                102, 102,
+                67, 52, 62, 62, 102,
                 Type.electric,
-                pikachuMoves,
+                moves,
                 Status.normal,
-                10
+                50
         );
     }
 
     public static Pokemon initiateCarapuce() {
-        if (!carapuceMoves.contains(attacks.get(0))) carapuceMoves.add(attacks.get(0)); // Tackle
-        if (!carapuceMoves.contains(attacks.get(5))) carapuceMoves.add(attacks.get(5)); // Water Gun
+        ArrayList<Move> moves = new ArrayList<>();
+        moves.add(attacks.get("tackle"));
+        moves.add(attacks.get("water_gun"));
 
         return new Pokemon(
                 "squirtle",
-                30, 30,
-                16, 19, 16, 19, 15,
+                111, 111,
+                61, 77, 62, 76, 55,
                 Type.water,
-                carapuceMoves,
+                moves,
                 Status.normal,
-                10
+                50
         );
     }
 
     public static Pokemon initiateSalameche() {
-        if (!salamecheMoves.contains(attacks.get(0))) salamecheMoves.add(attacks.get(0)); // Tackle
-        if (!salamecheMoves.contains(attacks.get(3))) salamecheMoves.add(attacks.get(3)); // Ember
+        ArrayList<Move> moves = new ArrayList<>();
+        moves.add(attacks.get("tackle"));
+        moves.add(attacks.get("ember"));
 
         return new Pokemon(
                 "charmander",
-                29, 29,
-                16, 15, 18, 16, 19,
+                106, 106,
+                64, 55, 72, 62, 77,
                 Type.fire,
-                salamecheMoves,
+                moves,
                 Status.normal,
-                10
+                50
         );
     }
 
     public static Pokemon initiatePidgey() {
-        if (!pidgeyMoves.contains(attacks.get(0))) pidgeyMoves.add(attacks.get(0)); // Tackle
-        if (!pidgeyMoves.contains(attacks.get(6))) pidgeyMoves.add(attacks.get(6)); // Gust
+        ArrayList<Move> moves = new ArrayList<>();
+        moves.add(attacks.get("tackle"));
+        moves.add(attacks.get("gust"));
 
         return new Pokemon(
                 "pidgey",
-                29, 29,
-                15, 14, 13, 13, 17,
+                107, 107,
+                57, 52, 47, 47, 68,
                 Type.normal, Type.flying,
-                pidgeyMoves,
+                moves,
                 Status.normal,
-                10
+                50
         );
     }
 
     public static Pokemon initiateButterfree() {
-        if (!butterfreeMoves.contains(attacks.get(0))) butterfreeMoves.add(attacks.get(0)); // Tackle
-        if (!butterfreeMoves.contains(attacks.get(7))) butterfreeMoves.add(attacks.get(7)); // Confusion
-        if (!butterfreeMoves.contains(attacks.get(8))) butterfreeMoves.add(attacks.get(8)); // Bug Bite
+        ArrayList<Move> moves = new ArrayList<>();
+        moves.add(attacks.get("tackle"));
+        moves.add(attacks.get("confusion"));
+        moves.add(attacks.get("bug_bite"));
 
         return new Pokemon(
                 "butterfree",
-                33, 33,
-                15, 16, 24, 22, 20,
+                127, 127,
+                57, 62, 102, 92, 82,
                 Type.bug, Type.flying,
-                butterfreeMoves,
+                moves,
                 Status.normal,
-                10
+                50
         );
     }
 
     public static Pokemon initiateEkans() {
-        if (!ekansMoves.contains(attacks.get(9))) ekansMoves.add(attacks.get(9));   // Bite
-        if (!ekansMoves.contains(attacks.get(10))) ekansMoves.add(attacks.get(10)); // Poison Sting
+        ArrayList<Move> moves = new ArrayList<>();
+        moves.add(attacks.get("bite"));
+        moves.add(attacks.get("poison_sting"));
 
         return new Pokemon(
                 "ekans",
-                28, 28,
-                18, 15, 14, 17, 17,
+                102, 102,
+                72, 56, 52, 66, 67,
                 Type.poison,
-                ekansMoves,
-                Status.normal,
-                10
-        );
-    }
-
-    public static Pokemon initiateLaggron() {
-        if(!laggronMoves.contains(attacks.get(15))) laggronMoves.add(attacks.get(15)); // Surf
-
-        return new Pokemon(
-                "laggron",
-                167, 167,
-                122, 102, 97, 102, 72,
-                Type.water, Type.ground,
-                laggronMoves,
+                moves,
                 Status.normal,
                 50
         );
     }
 
-    public static Pokemon initiateCizayox() {
-        if(!cizayoxMoves.contains(attacks.get(14))) cizayoxMoves.add(attacks.get(14)); // Iron Head
+    public static Pokemon initiateLeviator() {
+        ArrayList<Move> moves = new ArrayList<>();
+        moves.add(attacks.get("bite"));
+        moves.add(attacks.get("surf"));
 
         return new Pokemon(
-                "cizayox",
-                137, 137,
-                142, 112, 67, 92, 77,
-                Type.bug, Type.steel,
-                cizayoxMoves,
+                "gyarados",
+                162, 162,
+                137, 91, 72, 112, 93,
+                Type.water, Type.flying,
+                moves,
                 Status.normal,
                 50
         );
     }
 
-    public static Pokemon initiateJungko() {
-        if (!jungkoMoves.contains(attacks.get(12))) jungkoMoves.add(attacks.get(12)); // Leaf Blade
-        if (!jungkoMoves.contains(attacks.get(13))) jungkoMoves.add(attacks.get(13)); // Energy Ball
+    public static Pokemon initiateParas() {
+        ArrayList<Move> moves = new ArrayList<>();
+        moves.add(attacks.get("tackle"));
+        moves.add(attacks.get("vine_whip"));
+        moves.add(attacks.get("bug_bite"));
 
         return new Pokemon(
-                "jungko",
-                137, 137,
-                97, 77, 117, 97, 132,
-                Type.grass,
-                jungkoMoves,
+                "paras",
+                102, 102,
+                82, 67, 57, 67, 37,
+                Type.bug, Type.grass,
+                moves,
+                Status.normal,
+                50
+        );
+    }
+
+    public static Pokemon initiateEvoli() {
+        ArrayList<Move> moves = new ArrayList<>();
+        moves.add(attacks.get("tackle"));
+        moves.add(attacks.get("bite"));
+
+        return new Pokemon(
+                "eevee",
+                122, 122,
+                67, 62, 57, 77, 67,
+                Type.normal,
+                moves,
                 Status.normal,
                 50
         );

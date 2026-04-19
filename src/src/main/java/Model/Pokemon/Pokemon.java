@@ -241,10 +241,23 @@ public class Pokemon {
         if(HP > maxHP) HP = maxHP;
         System.out.println(name + " is now " + level + " !");
     }
-    public void heal(){
+    public void heal() {
         HP = maxHP;
         status = Status.normal;
+
+        if (moves != null) {
+            for (Move move : moves) {
+                if (move != null) {
+                    move.restorePP();
+                }
+            }
+        }
     }
+
+    private boolean canUseMove(Move move) {
+        return move != null && move.hasPP();
+    }
+
     private double getNatureMultiplier(String stat) {
         if (nature == null) return 1.0;
 
@@ -323,26 +336,48 @@ public class Pokemon {
      */
     public void attack(Pokemon target, Move move, Field field) {
         isTurn = true;
-        Move m = getAttack(move); // Gets the move from the move pool
-        applyStatusEffect(target, move); // Apply the effect of the status
+        Move m = getAttack(move);
 
-        if(m instanceof Attack attack && isTurn){
+        if (m == null) return;
+
+        if (!canUseMove(m)) {
+            executor.addEvent(new MessageEvent(name + " has no PP left for " + m.getName() + "!"));
+            return;
+        }
+
+        applyStatusEffect(target, move);
+
+        if (!isTurn) {
+            return;
+        }
+
+        if (!m.consumePP()) {
+            executor.addEvent(new MessageEvent(name + " has no PP left for " + m.getName() + "!"));
+            return;
+        }
+
+        if (m instanceof Attack attack) {
             executor.addEvent(new MessageEvent(name + " uses " + attack.getName()));
-            if(!canHit(m)){
+            if (!canHit(m)) {
                 executor.addEvent(new MessageEvent("It missed!"));
-            } else if((status == Status.normal || status == Status.cursed || status == Status.burned || status == Status.paralyzed || status == Status.freeze || status == Status.attracted || status == Status.confused || status == Status.asleep || status == Status.poisoned || status == Status.badlyPoisoned)){
+            } else if (status == Status.normal || status == Status.cursed || status == Status.burned
+                    || status == Status.paralyzed || status == Status.freeze || status == Status.attracted
+                    || status == Status.confused || status == Status.asleep || status == Status.poisoned
+                    || status == Status.badlyPoisoned) {
                 int damage = (int) totalDamage((Attack) getAttack(attack), this, target);
-                target.setHP(Math.max(0, target.HP - damage)); // Apply the damage
+                target.setHP(Math.max(0, target.HP - damage));
                 executor.addEvent(new UpdateBarEvent(target, target.HP));
             }
         }
-        if(m instanceof DebrisAttack debrisAttack && isTurn){
+
+        if (m instanceof DebrisAttack debrisAttack) {
             executor.addEvent(new MessageEvent(name + " uses " + debrisAttack.getName()));
             field.setDebris(debrisAttack.getDebris());
         }
-        if(m instanceof StatusAttack statusAttack && isTurn){
+
+        if (m instanceof StatusAttack statusAttack) {
             executor.addEvent(new MessageEvent(name + " uses " + statusAttack.getName()));
-            if(!canHit(m)){
+            if (!canHit(m)) {
                 executor.addEvent(new MessageEvent("It missed!"));
                 return;
             } else {
@@ -351,7 +386,8 @@ public class Pokemon {
                 BattleView.getPlayerBar().refreshStatus();
             }
         }
-        if(m instanceof SetUpMove setUpMove && isTurn){
+
+        if (m instanceof SetUpMove setUpMove) {
             executor.addEvent(new MessageEvent(name + " uses " + setUpMove.getName()));
             switch (setUpMove.getStat()) {
                 case "atk" -> {
@@ -383,12 +419,26 @@ public class Pokemon {
         }
     }
 
+    /**
+     * Attack the target with a move (For agent training purposes only)
+     * @param target
+     * @param move
+     */
     public void attack(Pokemon target, Move move) {
-        Move m = getAttack(move); // Gets the move from the move pool
-        boolean isAttack = m instanceof Attack;
-        if(isAttack){ // Check
+        Move m = getAttack(move);
+        if (m == null) return;
+
+        if (!canUseMove(m)) {
+            return;
+        }
+
+        if (!m.consumePP()) {
+            return;
+        }
+
+        if (m instanceof Attack) {
             int damage = (int) totalDamage((Attack) getAttack(m), this, target);
-            target.setHP(Math.max(0, target.HP - damage)); // Apply the damage
+            target.setHP(Math.max(0, target.HP - damage));
         }
     }
     /**
@@ -1023,12 +1073,30 @@ public class Pokemon {
 
         ArrayList<Move> pool = new ArrayList<>();
 
-        for (Move move : movePool) if (move != null) pool.add(move);
+        for (Move move : movePool) {
+            if (move != null && move.hasPP()) {
+                pool.add(move);
+            }
+        }
 
         if (pool.isEmpty()) return null;
-        Random random = new Random(SeedManager.getSeed());
 
+        Random random = new Random(SeedManager.getSeed());
         return pool.get(random.nextInt(pool.size()));
+    }
+
+    public boolean hasUsableMove() {
+        if (moves == null || moves.isEmpty()) {
+            return false;
+        }
+
+        for (Move move : moves) {
+            if (move != null && move.hasPP()) {
+                return true;
+            }
+        }
+
+        return false;
     }
     //endregion
 
