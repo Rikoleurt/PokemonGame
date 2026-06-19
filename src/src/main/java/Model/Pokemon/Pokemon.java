@@ -427,18 +427,12 @@ public class Pokemon {
     public void attack(Pokemon target, Move move) {
         Move m = getAttack(move);
         if (m == null) return;
-
-        if (!canUseMove(m)) {
-            return;
-        }
-
-        if (!m.consumePP()) {
-            return;
-        }
-
+        if (!canUseMove(m)) return;
+        if (!m.consumePP()) return;
         if (m instanceof Attack) {
             int damage = (int) totalDamage((Attack) getAttack(m), this, target);
             target.setHP(Math.max(0, target.HP - damage));
+            if(((Attack) m).isStatusApplied() && target.status == Status.normal) target.setStatus(((Attack) m).getStatus());
         }
     }
     /**

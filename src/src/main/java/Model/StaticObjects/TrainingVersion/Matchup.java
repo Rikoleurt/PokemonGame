@@ -2,6 +2,8 @@ package Model.StaticObjects.TrainingVersion;
 
 import Model.GameState;
 import Model.Inventory.Bag;
+import Model.Inventory.Category;
+import Model.Inventory.Items.Heal.Heal;
 import Model.Inventory.Items.Item;
 import Model.Person.Trainer;
 import Model.Pokemon.Pokemon;
@@ -23,6 +25,7 @@ public record Matchup(LinkedList<Pokemon> playerTeam, LinkedList<Pokemon> oppone
     public Trainer createOpponentTrainer() {
         Map<Item, Integer> inventory = new HashMap<>();
         Bag bag = new Bag(inventory);
+//        bag.setItem(new Heal(Category.HEALTH, "Potion", "", 20), 1);
         return new Trainer("opponent", bag, opponentTeam);
     }
 
@@ -127,7 +130,7 @@ public record Matchup(LinkedList<Pokemon> playerTeam, LinkedList<Pokemon> oppone
     }
 
     // Switch : lead défavorable, switch évident possible
-    public static Matchup switchSalamecheToBulbizarreVsCarapuce() {
+    public static Matchup switchMatchup() {
         LinkedList<Pokemon> playerTeam = new LinkedList<>();
         playerTeam.add(initiateCarapuce());
 
@@ -138,7 +141,6 @@ public record Matchup(LinkedList<Pokemon> playerTeam, LinkedList<Pokemon> oppone
         return new Matchup(playerTeam, opponentTeam);
     }
 
-    // Switch : triangle starter simple
     public static Matchup switchCoreStarters() {
         LinkedList<Pokemon> playerTeam = new LinkedList<>();
         playerTeam.add(initiateCarapuce());
@@ -171,6 +173,28 @@ public record Matchup(LinkedList<Pokemon> playerTeam, LinkedList<Pokemon> oppone
 
         LinkedList<Pokemon> opponentTeam = new LinkedList<>();
         opponentTeam.add(initiateButterfree());
+
+        return new Matchup(playerTeam, opponentTeam);
+    }
+
+    public static Matchup lucarioVsBlisseyThenAvalugg() {
+        LinkedList<Pokemon> playerTeam = new LinkedList<>();
+        playerTeam.add(initiateBlissey());
+        playerTeam.add(initiateAvalugg());
+
+        LinkedList<Pokemon> opponentTeam = new LinkedList<>();
+        opponentTeam.add(initiateLucario());
+
+        return new Matchup(playerTeam, opponentTeam);
+    }
+
+    public static Matchup lucarioVsAvaluggThenBlissey() {
+        LinkedList<Pokemon> playerTeam = new LinkedList<>();
+        playerTeam.add(initiateAvalugg());
+        playerTeam.add(initiateBlissey());
+
+        LinkedList<Pokemon> opponentTeam = new LinkedList<>();
+        opponentTeam.add(initiateLucario());
 
         return new Matchup(playerTeam, opponentTeam);
     }

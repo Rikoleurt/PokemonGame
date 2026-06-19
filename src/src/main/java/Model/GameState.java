@@ -1,5 +1,6 @@
 package Model;
 
+import Model.Inventory.Items.Item;
 import Model.Person.Action;
 import Model.Person.Trainer;
 import Model.Pokemon.Attacks.Attack;
@@ -24,6 +25,9 @@ public class GameState {
     Trainer opponent;
     int turn;
     Boolean isPlayerFirst = null;
+
+    boolean lastOpponentActionInvalid = false;
+    String lastOpponentInvalidReason = "";
 
     BattleConsole console = BattleConsole.getInstance();
     SocketServer server = SocketServer.getInstance();
@@ -60,19 +64,19 @@ public class GameState {
 
         JsonArray playerTeam = new JsonArray();
         addTeamInfos(p1, playerTeam);
-//        addTeamInfos(p2, playerTeam);
-//        addTeamInfos(p3, playerTeam);
-//        addTeamInfos(p4, playerTeam);
-//        addTeamInfos(p5, playerTeam);
-//        addTeamInfos(p6, playerTeam);
+        addTeamInfos(p2, playerTeam);
+        addTeamInfos(p3, playerTeam);
+        addTeamInfos(p4, playerTeam);
+        addTeamInfos(p5, playerTeam);
+        addTeamInfos(p6, playerTeam);
 
         JsonArray opponentTeam = new JsonArray();
         addTeamInfos(p7, opponentTeam);
-//        addTeamInfos(p8, opponentTeam);
-//        addTeamInfos(p9, opponentTeam);
-//        addTeamInfos(p10, opponentTeam);
-//        addTeamInfos(p11, opponentTeam);
-//        addTeamInfos(p12, opponentTeam);
+        addTeamInfos(p8, opponentTeam);
+        addTeamInfos(p9, opponentTeam);
+        addTeamInfos(p10, opponentTeam);
+        addTeamInfos(p11, opponentTeam);
+        addTeamInfos(p12, opponentTeam);
 
         JsonObject first = new JsonObject();
         first.addProperty("name", starterName());
@@ -86,6 +90,11 @@ public class GameState {
         obj.add("player_infos", playerInfos);
         obj.add("opponent_infos", opponentInfos);
         obj.add("Priority", first);
+
+        JsonObject actionFeedback = new JsonObject();
+        actionFeedback.addProperty("opponent_invalid", lastOpponentActionInvalid);
+        actionFeedback.addProperty("opponent_invalid_reason", lastOpponentInvalidReason);
+        obj.add("action_feedback", actionFeedback);
 
         Gson gson = new Gson();
         return gson.toJson(obj);
@@ -124,6 +133,11 @@ public class GameState {
         obj.add("player_infos", playerInfos);
         obj.add("opponent_infos", opponentInfos);
         obj.add("Priority", first);
+
+        JsonObject actionFeedback = new JsonObject();
+        actionFeedback.addProperty("opponent_invalid", lastOpponentActionInvalid);
+        actionFeedback.addProperty("opponent_invalid_reason", lastOpponentInvalidReason);
+        obj.add("action_feedback", actionFeedback);
 
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         return gson.toJson(obj);
@@ -207,9 +221,9 @@ public class GameState {
                     break;
                 }
 
-                int moveIndex = Integer.parseInt(actionMsg);
+                int actionIndex = Integer.parseInt(actionMsg);
 
-                step(moveIndex);
+                step(actionIndex);
                 turn++;
                 server.send(state());
             }
@@ -220,44 +234,156 @@ public class GameState {
         System.out.println("Total episodes done: " + episodeCount);
     }
 
-    private void step(int moveIndex) {
-        Pokemon p = player.getFrontPokemon();
-        Pokemon op = opponent.getFrontPokemon();
+    private void step(int actionIndex) {
+        clearLastActionFlags();
 
-        if (p == null || op == null) return;
-        if (p.isKO() || op.isKO()) return;
+        Pokemon playerPokemon = player.getFrontPokemon();
+        Pokemon opponentPokemon = opponent.getFrontPokemon();
 
-        Move m1 = p.chooseMove();
+        if (playerPokemon == null || opponentPokemon == null) return;
+        if (playerPokemon.isKO() || opponentPokemon.isKO()) return;
 
-        Move m2 = null;
-        if (op.getAttacks() != null && !op.getAttacks().isEmpty()) {
-            int maxIdx = Math.min(3, op.getAttacks().size() - 1);
-            int idx = Math.max(0, Math.min(moveIndex, maxIdx));
-            m2 = op.getAttacks().get(idx);
+        Action playerAction = player.makeChoiceAction();
+        player.setAction(playerAction);
+
+        Move playerMove = null;
+        Pokemon playerSwitchTarget = null;
+        Item playerItem = null;
+
+        switch (playerAction) {
+            case Attack -> playerMove = playerPokemon.chooseMove();
+            case Switch -> playerSwitchTarget = player.chooseSwitchTarget();
+            case Item -> playerItem = player.itemChoice(playerPokemon);
+            default -> {
+            }
         }
 
-        if (m2 == null) {
-            m2 = op.chooseMove();
+        // 0..3 = attaques, 4 = switch, 5 = item
+        Action opponentAction = decodeOpponentAction(actionIndex);
+        opponent.setAction(opponentAction);
+
+        Move opponentMove = null;
+        Pokemon opponentSwitchTarget = null;
+        Item opponentItem = null;
+
+        switch (opponentAction) {
+            case Attack -> opponentMove = chooseMoveFromActionIndex(opponentPokemon, actionIndex);
+            case Switch -> opponentSwitchTarget = opponent.chooseSwitchTarget();
+            case Item -> opponentItem = opponent.itemChoice(opponentPokemon);
+            default -> {
+            }
         }
 
         isPlayerFirst = is_player_first();
 
         if (isPlayerFirst) {
-            if (!p.isKO()) p.attack(op, m1);
-            if (!op.isKO()) op.attack(p, m2);
+            executeTrainerAction(player, opponent, playerAction, playerMove, playerSwitchTarget, playerItem, false);
+            if (opponent.getFrontPokemon() != null && !opponent.getFrontPokemon().isKO()) {
+                executeTrainerAction(opponent, player, opponentAction, opponentMove, opponentSwitchTarget, opponentItem, true);
+            }
         } else {
-            if (!op.isKO()) op.attack(p, m2);
-            if (!p.isKO()) p.attack(op, m1);
+            executeTrainerAction(opponent, player, opponentAction, opponentMove, opponentSwitchTarget, opponentItem, true);
+            if (player.getFrontPokemon() != null && !player.getFrontPokemon().isKO()) {
+                executeTrainerAction(player, opponent, playerAction, playerMove, playerSwitchTarget, playerItem, false);
+            }
         }
 
-        if (p.isKO()) {
+        if (player.getFrontPokemon() != null && player.getFrontPokemon().isKO()) {
             Pokemon nextPokemon = getNextPokemon(player);
             if (nextPokemon != null) player.setFront(nextPokemon);
         }
 
-        if (op.isKO()) {
+        if (opponent.getFrontPokemon() != null && opponent.getFrontPokemon().isKO()) {
             Pokemon nextPokemon = getNextPokemon(opponent);
             if (nextPokemon != null) opponent.setFront(nextPokemon);
+        }
+    }
+
+    private Action decodeOpponentAction(int actionIndex) {
+        if (actionIndex >= 0 && actionIndex <= 3) return Action.Attack;
+        if (actionIndex == 4) return Action.Switch;
+        if (actionIndex == 5) return Action.Item;
+        return Action.Attack;
+    }
+
+    private Move chooseMoveFromActionIndex(Pokemon pokemon, int actionIndex) {
+        if (pokemon == null || pokemon.getAttacks() == null || pokemon.getAttacks().isEmpty()) {
+            return null;
+        }
+
+        if (actionIndex < 0 || actionIndex > 3) {
+            return null;
+        }
+
+        if (actionIndex >= pokemon.getAttacks().size()) {
+            return null;
+        }
+
+        Move move = pokemon.getAttacks().get(actionIndex);
+        if (move == null) {
+            return null;
+        }
+
+        if (move.getPP() <= 0) {
+            return null;
+        }
+
+        return move;
+    }
+
+    private void executeTrainerAction(
+            Trainer attackerTrainer,
+            Trainer defenderTrainer,
+            Action action,
+            Move move,
+            Pokemon switchTarget,
+            Item item,
+            boolean markInvalidForOpponent
+    ) {
+        Pokemon attacker = attackerTrainer.getFrontPokemon();
+        Pokemon defender = defenderTrainer.getFrontPokemon();
+
+        if (attacker == null || attacker.isKO()) return;
+
+        switch (action) {
+            case Attack -> {
+                if (defender == null || defender.isKO()) return;
+
+                if (move == null) {
+                    if (markInvalidForOpponent) {
+                        markOpponentInvalidAction("invalid_attack_choice");
+                    }
+                    return;
+                }
+
+                attacker.attack(defender, move);
+            }
+
+            case Switch -> {
+                if (switchTarget == null || switchTarget == attacker || switchTarget.getStatus() == Status.KO) {
+                    if (markInvalidForOpponent) {
+                        markOpponentInvalidAction("invalid_switch_choice");
+                    }
+                    return;
+                }
+                attackerTrainer.setFront(switchTarget);
+            }
+
+            case Item -> {
+                if (item == null) {
+                    if (markInvalidForOpponent) {
+                        markOpponentInvalidAction("invalid_item_choice");
+                    }
+                    return;
+                }
+                attackerTrainer.use(item, attacker);
+            }
+
+            default -> {
+                if (markInvalidForOpponent) {
+                    markOpponentInvalidAction("invalid_action");
+                }
+            }
         }
     }
 
@@ -277,21 +403,18 @@ public class GameState {
 
     private Pokemon getPokemonFromIndex(Trainer t, int index) {
         LinkedList<Pokemon> pokemons = t.getTeam();
-        try {
-            return pokemons.get(index);
-        } catch (Exception e) {
-            System.out.println("No pokemon found at index : " + index + ", " + e.getMessage());
+        if(index < 0 || index >= pokemons.size()) {
+            // System.out.println("No pokemon found at index : " + index);
             return null;
         }
+        return pokemons.get(index);
     }
 
     private void addTeamInfos(Pokemon p, JsonArray team) {
-        try {
+        if(p != null){
             JsonObject pokemonData = new JsonObject();
             addPokemonInfos(p, pokemonData);
             team.add(pokemonData);
-        } catch (Exception e) {
-            System.out.println("This Pokémon can't be added to the team");
         }
     }
 
@@ -329,6 +452,7 @@ public class GameState {
             obj.addProperty("Mode", m1.getMode().toString());
             obj.addProperty("PP", m1.getPP());
             obj.addProperty("maxPP", m1.getMaxPP());
+            obj.addProperty("isSTAB", m1.isStab(p));
 
             if (m1 instanceof Attack) {
                 obj.addProperty("Power", ((Attack) m1).getPower());
@@ -386,9 +510,20 @@ public class GameState {
         return array;
     }
 
+    private void clearLastActionFlags() {
+        lastOpponentActionInvalid = false;
+        lastOpponentInvalidReason = "";
+    }
+
+    private void markOpponentInvalidAction(String reason) {
+        lastOpponentActionInvalid = true;
+        lastOpponentInvalidReason = reason;
+    }
+
     private void resetState() {
         turn = 0;
         isPlayerFirst = null;
+        clearLastActionFlags();
 
         for (Pokemon p : player.getTeam()) {
             p.heal();

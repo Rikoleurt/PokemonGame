@@ -176,4 +176,50 @@ public class PokemonSample {
                 50
         );
     }
+
+    public static Pokemon initiateLucario() {
+        ArrayList<Move> moves = new ArrayList<>();
+        moves.add(attacks.get("brick_break"));
+        moves.add(attacks.get("aura_sphere"));
+
+        return new Pokemon(
+                "lucario",
+                145, 145,
+                115, 80, 120, 80, 95,
+                Type.fighting, Type.steel,
+                moves,
+                Status.normal,
+                50
+        );
+    }
+
+    public static Pokemon initiateBlissey() {
+        ArrayList<Move> moves = new ArrayList<>();
+        moves.add(attacks.get("tackle"));
+
+        return new Pokemon(
+                "blissey",
+                330, 330,
+                30, 35, 95, 135, 55,
+                Type.normal,
+                moves,
+                Status.normal,
+                50
+        );
+    }
+
+    public static Pokemon initiateAvalugg() {
+        ArrayList<Move> moves = new ArrayList<>();
+        moves.add(attacks.get("tackle"));
+
+        return new Pokemon(
+                "avalugg",
+                170, 170,
+                95, 150, 50, 45, 40,
+                Type.ice,
+                moves,
+                Status.normal,
+                50
+        );
+    }
 }

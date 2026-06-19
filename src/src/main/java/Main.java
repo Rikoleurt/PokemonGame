@@ -1,8 +1,4 @@
 import Model.GameState;
-import Model.Inventory.Bag;
-import Model.Inventory.Items.Item;
-import Model.Person.Trainer;
-import Model.Pokemon.Pokemon;
 import Model.StaticObjects.TrainingVersion.Matchup;
 import Server.SocketServer;
 import Utils.SongManager;
@@ -21,8 +17,6 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.*;
-
-import static Model.StaticObjects.TrainingVersion.PokemonSample.*;
 
 public class Main extends Application { // extends Application
 
@@ -76,7 +70,7 @@ public class Main extends Application { // extends Application
 
 //        songManager.playSong("/music/champion_steven.mp3");
 
-        Matchup matchup = Matchup.pikachuVsCarapuce();
+        Matchup matchup = Matchup.switchMatchup();
         gs = matchup.createGameState();
 
         System.out.println(gs.state());

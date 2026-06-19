@@ -29,6 +29,8 @@ public class MovesSample {
         Attack ironHead     = new Attack("Iron Head", 80, 100, Type.steel, AttackMode.physical, 10, 10);
         Attack surf         = new Attack("Surf", 90, 100, Type.water, AttackMode.special, 15, 15);
         Attack rockTomb     = new Attack("Rock Tomb", 50, 95, Type.rock, AttackMode.physical, 15, 15);
+        Attack brickBreak   = new Attack("Brick Break", 75, 100, Type.fighting, AttackMode.physical, 15, 15);
+        Attack auraSphere   = new Attack("Aura Sphere", 80, 100, Type.fighting, AttackMode.special, 20, 20);
 
         attackDB.put("tackle", tackle);
         attackDB.put("thunder_bolt", thunderBolt);
@@ -47,6 +49,8 @@ public class MovesSample {
         attackDB.put("iron_head", ironHead);
         attackDB.put("surf", surf);
         attackDB.put("rock_tomb", rockTomb);
+        attackDB.put("brick_break", brickBreak);
+        attackDB.put("aura_sphere", auraSphere);
 
         return attackDB;
     }
