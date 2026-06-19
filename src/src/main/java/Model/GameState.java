@@ -4,6 +4,8 @@ import Model.Inventory.Items.Item;
 import Model.Person.Action;
 import Model.Person.Trainer;
 import Model.Pokemon.Attacks.Attack;
+import Model.Pokemon.Attacks.SetUpMove;
+import Model.Pokemon.Attacks.StatusAttack;
 import Model.Pokemon.Move;
 import Model.Pokemon.Pokemon;
 import Model.Pokemon.PokemonEnum.Status;
@@ -457,8 +459,21 @@ public class GameState {
             if (m1 instanceof Attack) {
                 obj.addProperty("Power", ((Attack) m1).getPower());
                 obj.addProperty("Precision", ((Attack) m1).getPrecision());
+                if(((Attack) m1).getStatus() != null){
+                    obj.addProperty("Status", ((Attack) m1).getStatus().toString());
+                    obj.addProperty("ChanceOfApplyingStatus", ((Attack) m1).getStatusChance());
+                }
             }
 
+            if(m1 instanceof StatusAttack){
+                obj.addProperty("Precision", ((StatusAttack) m1).getPrecision());
+                obj.addProperty("Status", ((StatusAttack) m1).getStatus().toString());
+            }
+
+            if(m1 instanceof SetUpMove){
+                obj.addProperty("Statistic", ((SetUpMove) m1).getStat());
+                obj.addProperty("RaiseLevel", ((SetUpMove) m1).getRaiseLevel());
+            }
             attacksData.add(obj);
         }
 

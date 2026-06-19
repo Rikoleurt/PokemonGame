@@ -61,4 +61,8 @@ public class Attack extends Move {
     public Status getStatus(){
         return status;
     }
+
+    public float getStatusChance() {
+        return statusChance;
+    }
 }
