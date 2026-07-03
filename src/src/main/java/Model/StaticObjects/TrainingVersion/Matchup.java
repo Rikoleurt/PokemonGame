@@ -2,8 +2,6 @@ package Model.StaticObjects.TrainingVersion;
 
 import Model.GameState;
 import Model.Inventory.Bag;
-import Model.Inventory.Category;
-import Model.Inventory.Items.Heal.Heal;
 import Model.Inventory.Items.Item;
 import Model.Person.Trainer;
 import Model.Pokemon.Pokemon;
@@ -198,4 +196,99 @@ public record Matchup(LinkedList<Pokemon> playerTeam, LinkedList<Pokemon> oppone
 
         return new Matchup(playerTeam, opponentTeam);
     }
+
+    /*
+     * =========================
+     * Matchups de test des statuts
+     * =========================
+     */
+
+    // Paralysie : Wattouat ralentit un adversaire plus rapide qui ne le one-shot pas
+    public static Matchup paralysisMatchup() {
+        LinkedList<Pokemon> playerTeam = new LinkedList<>();
+        playerTeam.add(initiateSalameche());
+
+        LinkedList<Pokemon> opponentTeam = new LinkedList<>();
+        opponentTeam.add(initiateMareep());
+
+        return new Matchup(playerTeam, opponentTeam);
+    }
+
+    // Poison classique : Gaz Toxik applique poisoned de manière déterministe
+    public static Matchup poisonMatchup() {
+        LinkedList<Pokemon> playerTeam = new LinkedList<>();
+        playerTeam.add(initiateShuckle());
+
+        LinkedList<Pokemon> opponentTeam = new LinkedList<>();
+        opponentTeam.add(initiateCrobat());
+
+        return new Matchup(playerTeam, opponentTeam);
+    }
+
+    // Gravement empoisonné : Toxic applique badlyPoisoned de manière déterministe
+    public static Matchup badlyPoisonedMatchup() {
+        LinkedList<Pokemon> playerTeam = new LinkedList<>();
+        playerTeam.add(initiateShuckle());
+
+        LinkedList<Pokemon> opponentTeam = new LinkedList<>();
+        opponentTeam.add(initiateNostenferToxic());
+
+        return new Matchup(playerTeam, opponentTeam);
+    }
+
+    // Brûlure utile : Feu-Follet contre attaquant physique
+    public static Matchup burnAndPhysicalMatchup() {
+        LinkedList<Pokemon> playerTeam = new LinkedList<>();
+        playerTeam.add(initiateMachop());
+
+        LinkedList<Pokemon> opponentTeam = new LinkedList<>();
+        opponentTeam.add(initiateNinetales());
+
+        return new Matchup(playerTeam, opponentTeam);
+    }
+
+    // Brûlure moins utile : Feu-Follet contre attaquant spécial
+    public static Matchup burnAndSpecialMatchup() {
+        LinkedList<Pokemon> playerTeam = new LinkedList<>();
+        playerTeam.add(initiateGardevoir());
+
+        LinkedList<Pokemon> opponentTeam = new LinkedList<>();
+        opponentTeam.add(initiateNinetales());
+
+        return new Matchup(playerTeam, opponentTeam);
+    }
+
+    // Confusion utile : Onde Folie contre attaquant physique
+    public static Matchup confuseAndPhysicalMatchup() {
+        LinkedList<Pokemon> playerTeam = new LinkedList<>();
+        playerTeam.add(initiateBrasegali());
+
+        LinkedList<Pokemon> opponentTeam = new LinkedList<>();
+        opponentTeam.add(initiateGardevoirConfuseRay());
+
+        return new Matchup(playerTeam, opponentTeam);
+    }
+
+    // Confusion moins utile : Onde Folie contre attaquant spécial
+    public static Matchup confuseAndSpecialMatchup() {
+        LinkedList<Pokemon> playerTeam = new LinkedList<>();
+        playerTeam.add(initiateAlakazam());
+
+        LinkedList<Pokemon> opponentTeam = new LinkedList<>();
+        opponentTeam.add(initiateGardevoirConfuseRay());
+
+        return new Matchup(playerTeam, opponentTeam);
+    }
+
+    // Sommeil : Poudre Dodo contre un Pokémon de force globalement équivalente
+    public static Matchup sleepMatchup() {
+        LinkedList<Pokemon> playerTeam = new LinkedList<>();
+        playerTeam.add(initiateEvoli());
+
+        LinkedList<Pokemon> opponentTeam = new LinkedList<>();
+        opponentTeam.add(initiateRaflesia());
+
+        return new Matchup(playerTeam, opponentTeam);
+    }
+
 }

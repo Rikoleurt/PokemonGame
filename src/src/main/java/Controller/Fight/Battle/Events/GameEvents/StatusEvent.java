@@ -12,7 +12,7 @@ public class StatusEvent extends BattleEvent {
 
     @Override
     public void execute() {
-        pokemon.registerStatusEffect();
+        pokemon.statusEffectAtEnd();
         onFinish();
     }
 }

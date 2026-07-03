@@ -70,10 +70,10 @@ public class Main extends Application { // extends Application
 
 //        songManager.playSong("/music/champion_steven.mp3");
 
-        Matchup matchup = Matchup.switchMatchup();
+        Matchup matchup = Matchup.burnAndSpecialMatchup();
         gs = matchup.createGameState();
 
-        System.out.println(gs.state());
+        System.out.println(gs.pretty_state());
         SocketServer server = SocketServer.getInstance();
         new Thread(() -> {
             try {

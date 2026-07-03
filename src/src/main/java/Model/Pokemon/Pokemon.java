@@ -147,6 +147,13 @@ public class Pokemon {
         this.atkSpe = atkSpe;
         this.defSpe = defSpe;
         this.speed = speed;
+
+        this.baseAtk = atk;
+        this.baseDef = def;
+        this.baseAtkSpe = atkSpe;
+        this.baseDefSpe = defSpe;
+        this.baseSpeed = speed;
+
         this.type = type;
         this.type2 = type2;
         this.moves = moves;
@@ -184,6 +191,21 @@ public class Pokemon {
     }
     public int getSpeed() {
         return speed;
+    }
+    public int getAtkRaise() {
+        return atkRaise;
+    }
+    public int getDefRaise() {
+        return defRaise;
+    }
+    public int getAtkSpeRaise() {
+        return atkSpeRaise;
+    }
+    public int getDefSpeRaise() {
+        return defSpeRaise;
+    }
+    public int getSpeedRaise() {
+        return speedRaise;
     }
     public int getLevel() {
         return level;
@@ -244,6 +266,14 @@ public class Pokemon {
     public void heal() {
         HP = maxHP;
         status = Status.normal;
+
+        atkRaise = 0;
+        defRaise = 0;
+        atkSpeRaise = 0;
+        defSpeRaise = 0;
+        speedRaise = 0;
+
+        updateStatChanges();
 
         if (moves != null) {
             for (Move move : moves) {
@@ -345,7 +375,7 @@ public class Pokemon {
             return;
         }
 
-        applyStatusEffect(target, move);
+        statusEffectAtStart(target, move);
 
         if (!isTurn) {
             return;
@@ -389,33 +419,21 @@ public class Pokemon {
 
         if (m instanceof SetUpMove setUpMove) {
             executor.addEvent(new MessageEvent(name + " uses " + setUpMove.getName()));
+
+            Pokemon affectedPokemon = setUpMove.isTargetSelf() ? this : target;
+            int delta = setUpMove.getStageDelta();
+
             switch (setUpMove.getStat()) {
-                case "atk" -> {
-                    target.atkRaise += setUpMove.getRaiseLevel();
-                    writeStatUpgradeMsg(target, "attack", setUpMove);
-                }
-                case "def" -> {
-                    target.defRaise += setUpMove.getRaiseLevel();
-                    writeStatUpgradeMsg(target, "defense", setUpMove);
-                }
-                case "speed" -> {
-                    target.speedRaise += setUpMove.getRaiseLevel();
-                    writeStatUpgradeMsg(target, "speed", setUpMove);
-                }
-                case "atkSpe" -> {
-                    target.atkSpeRaise += setUpMove.getRaiseLevel();
-                    writeStatUpgradeMsg(target, "special attack", setUpMove);
-                }
-                case "defSpe" -> {
-                    target.defSpeRaise += setUpMove.getRaiseLevel();
-                    writeStatUpgradeMsg(target, "special defense", setUpMove);
-                }
-                case "precision" -> {
-                    updatePrecision(target, setUpMove.getRaiseLevel());
-                    writeStatUpgradeMsg(target, "precision", setUpMove);
-                }
+                case "atk" -> affectedPokemon.atkRaise = clampStage(affectedPokemon.atkRaise + delta);
+                case "def" -> affectedPokemon.defRaise = clampStage(affectedPokemon.defRaise + delta);
+                case "speed" -> affectedPokemon.speedRaise = clampStage(affectedPokemon.speedRaise + delta);
+                case "atkSpe" -> affectedPokemon.atkSpeRaise = clampStage(affectedPokemon.atkSpeRaise + delta);
+                case "defSpe" -> affectedPokemon.defSpeRaise = clampStage(affectedPokemon.defSpeRaise + delta);
+                case "precision" -> affectedPokemon.updatePrecision(affectedPokemon, delta);
             }
-            updateStatChanges();
+
+            writeStatUpgradeMsg(affectedPokemon, setUpMove.getStat(), setUpMove);
+            affectedPokemon.updateStatChanges();
         }
     }
 
@@ -428,13 +446,140 @@ public class Pokemon {
         Move m = getAttack(move);
         if (m == null) return;
         if (!canUseMove(m)) return;
+
+        boolean doesStatusAffect = hasStatusAffected(this, target);
+
+        if (doesStatusAffect) {
+            applyStatusMalusHP();
+            return;
+        }
         if (!m.consumePP()) return;
-        if (m instanceof Attack) {
+        if (m instanceof Attack attack) {
+            if(!canHit(m)) {
+                applyStatusMalusHP();
+                return;
+            }
+
             int damage = (int) totalDamage((Attack) getAttack(m), this, target);
+
+            if (this.status == Status.burned && attack.getMode() == AttackMode.physical) damage /= 2;
+
             target.setHP(Math.max(0, target.HP - damage));
-            if(((Attack) m).isStatusApplied() && target.status == Status.normal) target.setStatus(((Attack) m).getStatus());
+
+            if (attack.isStatusApplied() && target.status == Status.normal) {
+                System.out.println("Applying status from an attack");
+                target.setStatus(attack.getStatus());
+            }
+        }
+
+        if (m instanceof StatusAttack statusAttack) {
+            if(!canHit(m)) {
+                applyStatusMalusHP();
+                return;
+            }
+            if (target.getStatus() == Status.normal) {
+                target.setStatus(statusAttack.getStatus());
+            }
+        }
+
+        if (m instanceof SetUpMove setUpMove) {
+            if(!canHit(m)) {
+                applyStatusMalusHP();
+                return;
+            }
+            Pokemon affectedPokemon = setUpMove.isTargetSelf() ? this : target;
+            int delta = setUpMove.getStageDelta();
+
+            switch (setUpMove.getStat()) {
+                case "atk" -> affectedPokemon.atkRaise = clampStage(affectedPokemon.atkRaise + delta);
+                case "def" -> affectedPokemon.defRaise = clampStage(affectedPokemon.defRaise + delta);
+                case "speed" -> affectedPokemon.speedRaise = clampStage(affectedPokemon.speedRaise + delta);
+                case "atkSpe" -> affectedPokemon.atkSpeRaise = clampStage(affectedPokemon.atkSpeRaise + delta);
+                case "defSpe" -> affectedPokemon.defSpeRaise = clampStage(affectedPokemon.defSpeRaise + delta);
+                case "precision" -> affectedPokemon.updatePrecision(affectedPokemon, delta);
+            }
+
+            affectedPokemon.updateStatChanges();
+        }
+
+        applyStatusMalusHP();
+    }
+
+    private boolean hasStatusAffected(Pokemon myPokemon, Pokemon target){
+        Random random = SeedManager.getRng();
+        Status status = myPokemon.getStatus();
+        if(status == Status.paralyzed){
+            return random.nextInt(0,4) == 0;
+        }
+
+        if(status == Status.freeze){
+            boolean frozen = random.nextInt(0,5) < 4;
+            if (frozen) return true;
+            else {
+                setStatus(Status.normal);
+                return false;
+            }
+        }
+
+        if(status == Status.asleep){
+            int asleep = random.nextInt(0,3);
+            if(asleep == 0) {
+                setStatus(Status.normal);
+                wakeUp = 0;
+                return false;
+            }
+            ++wakeUp;
+            if(wakeUp == 4){
+                setStatus(Status.normal);
+                wakeUp = 0;
+                return false;
+            }
+            return true;
+        }
+
+        if(status == Status.attracted && !Objects.equals(gender, target.gender)){
+            return random.nextInt(0,2) == 1;
+        }
+
+        if(status == Status.confused){
+            ++healConfusion;
+
+            if(healConfusion > 4){
+                setStatus(Status.normal);
+                healConfusion = 0;
+                return false;
+            }
+
+            boolean hurtsItself = random.nextInt(2) == 0;
+
+            if(hurtsItself){
+                int damage = (int) (((((level * 0.4 + 2) * atk * 40) / Math.max(1, def)) / 50) + 2);
+                setHP(Math.max(0, HP - damage));
+                return true;
+            }
+            return false;
+        }
+        return false;
+    }
+
+    private void applyStatusMalusHP(){
+        if (isKO()) return;
+
+        switch(status){
+            case burned, poisoned:
+                setHP(Math.max(0, HP - Math.max(1, maxHP / 8)));
+                break;
+
+            case badlyPoisoned:
+                setHP(Math.max(0, HP - Math.max(1, (maxHP / 16) * poisonCoefficient)));
+                ++poisonCoefficient;
+                break;
+
+            case attracted, confused, asleep, paralyzed, freeze, normal, KO:
+                break;
         }
     }
+
     /**
      * Calculates the total damage (includes critical hits and the stab)
      * @param attack The attack
@@ -548,7 +693,7 @@ public class Pokemon {
      * @param target The target the player's Pokémon attacks
      * @param move Move it uses
      */
-    private void applyStatusEffect(Pokemon target, Move move){
+    private void statusEffectAtStart(Pokemon target, Move move){
         Random random = new Random(SeedManager.getSeed());
         if(getAttack(move).getMode() == AttackMode.physical && status == Status.burned){
             executor.addEvent(new MessageEvent(name + " uses " + move.getName()));
@@ -649,7 +794,7 @@ public class Pokemon {
     /**
      * Updates the status of the Pokémon
      */
-    public void registerStatusEffect(){
+    public void statusEffectAtEnd(){
         switch(status){
             case attracted, confused, asleep:
                 break;
@@ -782,7 +927,6 @@ public class Pokemon {
 
         return weaknesses;
     }
-
     public List<Type> resistancesTable(Type type) {
         List<Type> resistances = new ArrayList<>();
 
@@ -892,7 +1036,6 @@ public class Pokemon {
 
         return resistances;
     }
-
     public List<Type> immunitiesTable(Type type) {
         List<Type> immunities = new ArrayList<>();
 
@@ -1096,7 +1239,7 @@ public class Pokemon {
 
     //region Helpers
     private void writeStatUpgradeMsg(Pokemon target, String stat, SetUpMove move) {
-        switch (move.getRaiseLevel()){
+        switch (move.getStageDelta()){
             case 1 -> {
                 console.log(target.name + " raises its " + stat);
                 executor.addEvent(new MessageEvent(target.name  + " raises its " + stat));
@@ -1142,16 +1285,19 @@ public class Pokemon {
      * Update the stat modifier each turn
      */
     private void updateStatChanges(){
-        this.atk = applyStatModifier(atk, atkRaise);
-        this.def = applyStatModifier(def, defRaise);
-        this.speed = applyStatModifier(speed, speedRaise);
-        this.atkSpe = applyStatModifier(atkSpe, atkSpeRaise);
-        this.defSpe = applyStatModifier(defSpe, defSpeRaise);
+        this.atk = applyStatModifier(baseAtk, atkRaise);
+        this.def = applyStatModifier(baseDef, defRaise);
+        this.speed = applyStatModifier(baseSpeed, speedRaise);
+        this.atkSpe = applyStatModifier(baseAtkSpe, atkSpeRaise);
+        this.defSpe = applyStatModifier(baseDefSpe, defSpeRaise);
+    }
+
+    private int clampStage(int stage){
+        return Math.clamp(stage, -6, 6);
     }
 
     private int applyStatModifier(int baseStat, int stage){
-        if (stage > 6) stage = 6;
-        if (stage < -6) stage = -6;
+        stage = Math.clamp(stage, -6, 6);
         int[] multipliersNumerator = {2, 2, 2, 2, 2, 2, 2, 3, 4, 5, 6, 7, 8};
         int[] multipliersDenominator = {8, 7, 6, 5, 4, 3, 2, 2, 2, 2, 2, 2, 2};
         return (baseStat * multipliersNumerator[stage + 6]) / multipliersDenominator[stage + 6];

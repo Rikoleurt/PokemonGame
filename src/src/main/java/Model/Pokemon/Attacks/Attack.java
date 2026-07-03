@@ -44,11 +44,9 @@ public class Attack extends Move {
     public void setPrecision(double precision) {
         this.precision = precision;
     }
-
     public int getPower() {
         return power;
     }
-
     public double getPrecision() {
         return precision;
     }
@@ -61,7 +59,6 @@ public class Attack extends Move {
     public Status getStatus(){
         return status;
     }
-
     public float getStatusChance() {
         return statusChance;
     }

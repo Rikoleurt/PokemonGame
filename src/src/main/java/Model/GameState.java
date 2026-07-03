@@ -104,8 +104,18 @@ public class GameState {
 
     public String pretty_state() {
         Pokemon p1 = player.getFrontPokemon();
+        Pokemon p2 = getPokemonFromIndex(player, 1);
+        Pokemon p3 = getPokemonFromIndex(player, 2);
+        Pokemon p4 = getPokemonFromIndex(player, 3);
+        Pokemon p5 = getPokemonFromIndex(player, 4);
+        Pokemon p6 = getPokemonFromIndex(player, 5);
+
         Pokemon p7 = opponent.getFrontPokemon();
         Pokemon p8 = getPokemonFromIndex(opponent, 1);
+        Pokemon p9 = getPokemonFromIndex(opponent, 2);
+        Pokemon p10 = getPokemonFromIndex(opponent, 3);
+        Pokemon p11 = getPokemonFromIndex(opponent, 4);
+        Pokemon p12 = getPokemonFromIndex(opponent, 5);
 
         JsonObject obj = new JsonObject();
         obj.addProperty("turn", turn);
@@ -118,10 +128,19 @@ public class GameState {
 
         JsonArray playerTeam = new JsonArray();
         addTeamInfos(p1, playerTeam);
+        addTeamInfos(p2, playerTeam);
+        addTeamInfos(p3, playerTeam);
+        addTeamInfos(p4, playerTeam);
+        addTeamInfos(p5, playerTeam);
+        addTeamInfos(p6, playerTeam);
 
         JsonArray opponentTeam = new JsonArray();
         addTeamInfos(p7, opponentTeam);
         addTeamInfos(p8, opponentTeam);
+        addTeamInfos(p9, opponentTeam);
+        addTeamInfos(p10, opponentTeam);
+        addTeamInfos(p11, opponentTeam);
+        addTeamInfos(p12, opponentTeam);
 
         JsonObject first = new JsonObject();
         first.addProperty("name", starterName());
@@ -141,7 +160,7 @@ public class GameState {
         actionFeedback.addProperty("opponent_invalid_reason", lastOpponentInvalidReason);
         obj.add("action_feedback", actionFeedback);
 
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        Gson gson = new Gson().newBuilder().setPrettyPrinting().create();
         return gson.toJson(obj);
     }
 
@@ -256,11 +275,10 @@ public class GameState {
             case Attack -> playerMove = playerPokemon.chooseMove();
             case Switch -> playerSwitchTarget = player.chooseSwitchTarget();
             case Item -> playerItem = player.itemChoice(playerPokemon);
-            default -> {
-            }
+            default -> {}
         }
 
-        // 0..3 = attaques, 4 = switch, 5 = item
+        // 0..3 = attack, 4 = switch, 5 = item
         Action opponentAction = decodeOpponentAction(actionIndex);
         opponent.setAction(opponentAction);
 
@@ -437,6 +455,16 @@ public class GameState {
         statsData.addProperty("atkSpe", p.getAtkSpe());
         statsData.addProperty("defSpe", p.getDefSpe());
         statsData.addProperty("speed", p.getSpeed());
+
+        JsonObject statisticsStages = new JsonObject();
+        statisticsStages.addProperty("atk", p.getAtkRaise());
+        statisticsStages.addProperty("def",p.getDefRaise());
+        statisticsStages.addProperty("atkSpe", p.getAtkSpeRaise());
+        statisticsStages.addProperty("defSpe", p.getDefSpeRaise());
+        statisticsStages.addProperty("speed", p.getSpeedRaise());
+
+        statsData.add("statisticsStages", statisticsStages);
+
         pokemonData.add("stats", statsData);
 
         JsonArray attacksData = new JsonArray();
@@ -466,13 +494,14 @@ public class GameState {
             }
 
             if(m1 instanceof StatusAttack){
-                obj.addProperty("Precision", ((StatusAttack) m1).getPrecision());
                 obj.addProperty("Status", ((StatusAttack) m1).getStatus().toString());
+                obj.addProperty("Precision", ((StatusAttack) m1).getPrecision());
             }
 
             if(m1 instanceof SetUpMove){
+                obj.addProperty("Target", ((SetUpMove) m1).isTargetSelf() ? "self" : "opponent");
                 obj.addProperty("Statistic", ((SetUpMove) m1).getStat());
-                obj.addProperty("RaiseLevel", ((SetUpMove) m1).getRaiseLevel());
+                obj.addProperty("StageDelta", ((SetUpMove) m1).getStageDelta());
             }
             attacksData.add(obj);
         }

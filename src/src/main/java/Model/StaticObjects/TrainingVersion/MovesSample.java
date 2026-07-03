@@ -1,8 +1,10 @@
 package Model.StaticObjects.TrainingVersion;
 
 import Model.Pokemon.Attacks.Attack;
+import Model.Pokemon.Attacks.StatusAttack;
 import Model.Pokemon.Move;
 import Model.Pokemon.PokemonEnum.Type;
+import Model.Pokemon.PokemonEnum.Status;
 import Model.Pokemon.AttackEnum.AttackMode;
 
 import java.util.HashMap;
@@ -32,6 +34,13 @@ public class MovesSample {
         Attack brickBreak   = new Attack("Brick Break", 75, 100, Type.fighting, AttackMode.physical, 15, 15);
         Attack auraSphere   = new Attack("Aura Sphere", 80, 100, Type.fighting, AttackMode.special, 20, 20);
 
+        StatusAttack thunderWave = new StatusAttack("Thunder Wave", 100, Status.paralyzed, Type.electric, AttackMode.status,20, 20);
+        StatusAttack poisonGas   = new StatusAttack("Poison Gas", 100, Status.poisoned, Type.poison, AttackMode.status,40, 40);
+        StatusAttack toxic       = new StatusAttack("Toxic", 100, Status.badlyPoisoned, Type.poison, AttackMode.status,10, 10);
+        StatusAttack willOWisp   = new StatusAttack("Will-O-Wisp", 100, Status.burned, Type.fire, AttackMode.status,15, 15);
+        StatusAttack confuseRay  = new StatusAttack("Confuse Ray", 100, Status.confused, Type.ghost, AttackMode.status, 10, 10);
+        StatusAttack sleepPowder = new StatusAttack("Sleep Powder", 75, Status.asleep, Type.grass, AttackMode.status, 15, 15);
+
         attackDB.put("tackle", tackle);
         attackDB.put("thunder_bolt", thunderBolt);
         attackDB.put("thunder_punch", thunderPunch);
@@ -51,6 +60,12 @@ public class MovesSample {
         attackDB.put("rock_tomb", rockTomb);
         attackDB.put("brick_break", brickBreak);
         attackDB.put("aura_sphere", auraSphere);
+        attackDB.put("thunder_wave", thunderWave);
+        attackDB.put("poison_gas", poisonGas);
+        attackDB.put("toxic", toxic);
+        attackDB.put("will_o_wisp", willOWisp);
+        attackDB.put("confuse_ray", confuseRay);
+        attackDB.put("sleep_powder", sleepPowder);
 
         return attackDB;
     }

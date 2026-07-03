@@ -31,9 +31,9 @@ public class MovesExample {
         Attack poisonSting = new Attack("Poison Sting", 15, 100, Type.poison, AttackMode.physical, 35, 35);
 
         // UpgradeMove sandAttack = new UpgradeMove("Sand Attack", "precision", -1, Type.ground, AttackMode.status, 15);
-        SetUpMove leer = new SetUpMove("Leer", "def", -1, Type.normal, AttackMode.status, 30, 30);
-        SetUpMove tailWhip = new SetUpMove("Tail Whip", "def", -1, Type.normal, AttackMode.status, 30, 30);
-        SetUpMove swordDance = new SetUpMove("Sword Dance", "atk", -2, Type.normal, AttackMode.status, 20, 20);
+        SetUpMove leer = new SetUpMove("Leer", "def", -1, Type.normal, AttackMode.status, 30, 30, false);
+        SetUpMove tailWhip = new SetUpMove("Tail Whip", "def", -1, Type.normal, AttackMode.status, 30, 30, false);
+        SetUpMove swordDance = new SetUpMove("Sword Dance", "atk", 2, Type.normal, AttackMode.status, 20, 20, true);
 
         StatusAttack stunSpore = new StatusAttack("Stun Spore", 100, Status.paralyzed, Type.electric, AttackMode.status, 30, 30);
 
