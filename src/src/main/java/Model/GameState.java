@@ -491,6 +491,20 @@ public class GameState {
                     obj.addProperty("Status", ((Attack) m1).getStatus().toString());
                     obj.addProperty("ChanceOfApplyingStatus", ((Attack) m1).getStatusChance());
                 }
+                if(((Attack) m1).isTargetSelf()){
+                    obj.addProperty("Target", ((Attack) m1).isTargetSelf() ? "self" : "opponent");
+
+                    JsonArray stats = new JsonArray();
+                    for(String stat : ((Attack) m1).getAllStat()){
+                        JsonObject actualStat = new JsonObject();
+                        actualStat.addProperty("Statistic", stat);
+                        actualStat.addProperty("StageDelta", ((Attack) m1).getDeltaStage(stat));
+                        stats.add(actualStat);
+                    }
+
+                    obj.add("StatisticsChange", stats);
+                    obj.add("StatisticsChange", stats);
+                }
             }
 
             if(m1 instanceof StatusAttack){
@@ -500,8 +514,17 @@ public class GameState {
 
             if(m1 instanceof SetUpMove){
                 obj.addProperty("Target", ((SetUpMove) m1).isTargetSelf() ? "self" : "opponent");
-                obj.addProperty("Statistic", ((SetUpMove) m1).getStat());
-                obj.addProperty("StageDelta", ((SetUpMove) m1).getStageDelta());
+
+                JsonArray stats = new JsonArray();
+
+                for(String stat : ((SetUpMove) m1).getAllStat()){
+                    JsonObject actualStat = new JsonObject();
+                    actualStat.addProperty("Statistic", stat);
+                    actualStat.addProperty("StageDelta", ((SetUpMove) m1).getDeltaStage(stat));
+                    stats.add(actualStat);
+                }
+
+                obj.add("StatisticsChange", stats);
             }
             attacksData.add(obj);
         }

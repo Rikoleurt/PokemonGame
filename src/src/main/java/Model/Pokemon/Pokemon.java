@@ -272,6 +272,10 @@ public class Pokemon {
         atkSpeRaise = 0;
         defSpeRaise = 0;
         speedRaise = 0;
+        healConfusion = 0;
+        healFear = 0;
+        poisonCoefficient = 1;
+        wakeUp = 0;
 
         updateStatChanges();
 
@@ -336,11 +340,25 @@ public class Pokemon {
 
     //region Setter
     public void setStatus(Status status) {
-        if(status == Status.KO) {
+        if (status == Status.KO) {
             setHP(0);
         }
+
+        if (status != Status.badlyPoisoned) {
+            poisonCoefficient = 1;
+        }
+
+        if (status != Status.asleep) {
+            wakeUp = 0;
+        }
+
+        if (status != Status.confused) {
+            healConfusion = 0;
+        }
+
         this.status = status;
     }
+
     public void setAttack(ArrayList<Move> moves, int position, Move move) {
         moves.set(position, move);
     }
@@ -421,18 +439,25 @@ public class Pokemon {
             executor.addEvent(new MessageEvent(name + " uses " + setUpMove.getName()));
 
             Pokemon affectedPokemon = setUpMove.isTargetSelf() ? this : target;
-            int delta = setUpMove.getStageDelta();
 
-            switch (setUpMove.getStat()) {
-                case "atk" -> affectedPokemon.atkRaise = clampStage(affectedPokemon.atkRaise + delta);
-                case "def" -> affectedPokemon.defRaise = clampStage(affectedPokemon.defRaise + delta);
-                case "speed" -> affectedPokemon.speedRaise = clampStage(affectedPokemon.speedRaise + delta);
-                case "atkSpe" -> affectedPokemon.atkSpeRaise = clampStage(affectedPokemon.atkSpeRaise + delta);
-                case "defSpe" -> affectedPokemon.defSpeRaise = clampStage(affectedPokemon.defSpeRaise + delta);
-                case "precision" -> affectedPokemon.updatePrecision(affectedPokemon, delta);
+            int atkDelta = setUpMove.getDeltaStage("atk");
+            int defDelta = setUpMove.getDeltaStage("def");
+            int speedDelta = setUpMove.getDeltaStage("speed");
+            int atkSpeDelta = setUpMove.getDeltaStage("atkSpe");
+            int defSpeDelta = setUpMove.getDeltaStage("defSpe");
+            int precisionDelta = setUpMove.getDeltaStage("precision");
+
+            for(String stat : setUpMove.getAllStat()){
+                switch (stat) {
+                    case "atk" -> affectedPokemon.atkRaise = clampStage(affectedPokemon.atkRaise + atkDelta);
+                    case "def" -> affectedPokemon.defRaise = clampStage(affectedPokemon.defRaise + defDelta);
+                    case "speed" -> affectedPokemon.speedRaise = clampStage(affectedPokemon.speedRaise + speedDelta);
+                    case "atkSpe" -> affectedPokemon.atkSpeRaise = clampStage(affectedPokemon.atkSpeRaise + atkSpeDelta);
+                    case "defSpe" -> affectedPokemon.defSpeRaise = clampStage(affectedPokemon.defSpeRaise + defSpeDelta);
+                    case "precision" -> affectedPokemon.updatePrecision(affectedPokemon, precisionDelta);
+                }
             }
 
-            writeStatUpgradeMsg(affectedPokemon, setUpMove.getStat(), setUpMove);
             affectedPokemon.updateStatChanges();
         }
     }
@@ -470,6 +495,41 @@ public class Pokemon {
                 System.out.println("Applying status from an attack");
                 target.setStatus(attack.getStatus());
             }
+
+            if(attack.hasSetup()){
+                Pokemon affectedPokemon = attack.isTargetSelf() ? this : target;
+
+                for(String stat : attack.getAllStat()){
+                    switch (stat) {
+                        case "atk" -> {
+                            int atkDelta = attack.getDeltaStage("atk");
+                            affectedPokemon.atkRaise = clampStage(affectedPokemon.atkRaise + atkDelta);
+                        }
+                        case "def" -> {
+                            int defDelta = attack.getDeltaStage("def");
+                            affectedPokemon.defRaise = clampStage(affectedPokemon.defRaise + defDelta);
+                        }
+                        case "speed" -> {
+                            int speedDelta = attack.getDeltaStage("speed");
+                            affectedPokemon.speedRaise = clampStage(affectedPokemon.speedRaise + speedDelta);
+                        }
+                        case "atkSpe" -> {
+                            int atkSpeDelta = attack.getDeltaStage("atkSpe");
+                            affectedPokemon.atkSpeRaise = clampStage(affectedPokemon.atkSpeRaise + atkSpeDelta);
+                        }
+                        case "defSpe" -> {
+                            int defSpeDelta = attack.getDeltaStage("defSpe");
+                            affectedPokemon.defSpeRaise = clampStage(affectedPokemon.defSpeRaise + defSpeDelta);
+                        }
+                        case "precision" -> {
+                            int precisionDelta = attack.getDeltaStage("precision");
+                            affectedPokemon.updatePrecision(affectedPokemon, precisionDelta);
+                        }
+                    }
+                }
+
+                affectedPokemon.updateStatChanges();
+            }
         }
 
         if (m instanceof StatusAttack statusAttack) {
@@ -483,20 +543,35 @@ public class Pokemon {
         }
 
         if (m instanceof SetUpMove setUpMove) {
-            if(!canHit(m)) {
-                applyStatusMalusHP();
-                return;
-            }
             Pokemon affectedPokemon = setUpMove.isTargetSelf() ? this : target;
-            int delta = setUpMove.getStageDelta();
 
-            switch (setUpMove.getStat()) {
-                case "atk" -> affectedPokemon.atkRaise = clampStage(affectedPokemon.atkRaise + delta);
-                case "def" -> affectedPokemon.defRaise = clampStage(affectedPokemon.defRaise + delta);
-                case "speed" -> affectedPokemon.speedRaise = clampStage(affectedPokemon.speedRaise + delta);
-                case "atkSpe" -> affectedPokemon.atkSpeRaise = clampStage(affectedPokemon.atkSpeRaise + delta);
-                case "defSpe" -> affectedPokemon.defSpeRaise = clampStage(affectedPokemon.defSpeRaise + delta);
-                case "precision" -> affectedPokemon.updatePrecision(affectedPokemon, delta);
+            for(String stat : setUpMove.getAllStat()){
+                switch (stat) {
+                    case "atk" -> {
+                        int atkDelta = setUpMove.getDeltaStage("atk");
+                        affectedPokemon.atkRaise = clampStage(affectedPokemon.atkRaise + atkDelta);
+                    }
+                    case "def" -> {
+                        int defDelta = setUpMove.getDeltaStage("def");
+                        affectedPokemon.defRaise = clampStage(affectedPokemon.defRaise + defDelta);
+                    }
+                    case "speed" -> {
+                        int speedDelta = setUpMove.getDeltaStage("speed");
+                        affectedPokemon.speedRaise = clampStage(affectedPokemon.speedRaise + speedDelta);
+                    }
+                    case "atkSpe" -> {
+                        int atkSpeDelta = setUpMove.getDeltaStage("atkSpe");
+                        affectedPokemon.atkSpeRaise = clampStage(affectedPokemon.atkSpeRaise + atkSpeDelta);
+                    }
+                    case "defSpe" -> {
+                        int defSpeDelta = setUpMove.getDeltaStage("defSpe");
+                        affectedPokemon.defSpeRaise = clampStage(affectedPokemon.defSpeRaise + defSpeDelta);
+                    }
+                    case "precision" -> {
+                        int precisionDelta = setUpMove.getDeltaStage("precision");
+                        affectedPokemon.updatePrecision(affectedPokemon, precisionDelta);
+                    }
+                }
             }
 
             affectedPokemon.updateStatChanges();
@@ -1238,31 +1313,31 @@ public class Pokemon {
     //endregion
 
     //region Helpers
-    private void writeStatUpgradeMsg(Pokemon target, String stat, SetUpMove move) {
-        switch (move.getStageDelta()){
-            case 1 -> {
-                console.log(target.name + " raises its " + stat);
-                executor.addEvent(new MessageEvent(target.name  + " raises its " + stat));
-            }
-            case 2 -> {
-                console.log(target.name + " sharply raises its " + stat);
-                executor.addEvent(new MessageEvent(target.name  + " sharply raises its " + stat));
-            }
-            case -1 -> {
-                console.log(target.name + "'s " + stat + " decreased");
-                executor.addEvent(new MessageEvent(target.name + "'s " + stat + " decreased"));
-            }
-            case -2 -> {
-                console.log(target.name + "'s " + stat + " harshly decreased");
-                executor.addEvent(new MessageEvent(target.name + "'s " + stat + " harshly decreased"));
-            }
-        }
-    }
+//    private void writeStatUpgradeMsg(Pokemon target, String stat, SetUpMove move) {
+//        switch (move.getStageDelta()){
+//            case 1 -> {
+//                console.log(target.name + " raises its " + stat);
+//                executor.addEvent(new MessageEvent(target.name  + " raises its " + stat));
+//            }
+//            case 2 -> {
+//                console.log(target.name + " sharply raises its " + stat);
+//                executor.addEvent(new MessageEvent(target.name  + " sharply raises its " + stat));
+//            }
+//            case -1 -> {
+//                console.log(target.name + "'s " + stat + " decreased");
+//                executor.addEvent(new MessageEvent(target.name + "'s " + stat + " decreased"));
+//            }
+//            case -2 -> {
+//                console.log(target.name + "'s " + stat + " harshly decreased");
+//                executor.addEvent(new MessageEvent(target.name + "'s " + stat + " harshly decreased"));
+//            }
+//        }
+//    }
 
     private boolean canHit(Move move){
         boolean canHit = false;
         double precision;
-        Random rand = new Random(SeedManager.getSeed());
+        Random rand = SeedManager.getRng();
         int imprecision = rand.nextInt(1,100);
 
         if(move instanceof Attack){

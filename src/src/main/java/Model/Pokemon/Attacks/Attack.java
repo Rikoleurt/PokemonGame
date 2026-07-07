@@ -6,7 +6,10 @@ import Model.Pokemon.PokemonEnum.Status;
 import Model.Pokemon.PokemonEnum.Type;
 import Utils.SeedManager;
 
-import java.util.Random;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Attack extends Move {
 
@@ -14,11 +17,16 @@ public class Attack extends Move {
     double precision;
     Status status;
     float statusChance;
+    boolean hasSetup;
+    Map<String, Integer> stats;
+    boolean isTargetSelf;
+
 
     public Attack(String name, int power, double precision, Type type, AttackMode Mode, int PP, int maxPP) {
         super(name, type, Mode, PP, maxPP);
         this.power = power;
         this.precision = precision;
+        this.hasSetup = false;
     }
 
     /**
@@ -39,6 +47,18 @@ public class Attack extends Move {
         this.precision = precision;
         this.status = status;
         this.statusChance = statusChance; // Value between 0 and 1
+        this.hasSetup = false;
+    }
+
+    public Attack(String name, int power, double precision, Type type, AttackMode Mode, int PP, int maxPP, Status status, float statusChance, Map<String, Integer> stats, boolean isTargetSelf) {
+        super(name, type, Mode, PP, maxPP);
+        this.power = power;
+        this.precision = precision;
+        this.status = status;
+        this.statusChance = statusChance;
+        this.stats = stats != null ? stats : new HashMap<>();
+        this.isTargetSelf = isTargetSelf;
+        this.hasSetup = !this.stats.isEmpty();
     }
 
     public void setPrecision(double precision) {
@@ -50,16 +70,29 @@ public class Attack extends Move {
     public double getPrecision() {
         return precision;
     }
-
     public boolean isStatusApplied(){
         if(status == null) return false;
         return SeedManager.getRng().nextFloat() < statusChance;
     }
-
     public Status getStatus(){
         return status;
     }
     public float getStatusChance() {
         return statusChance;
+    }
+    public boolean hasSetup() {
+        return hasSetup;
+    }
+    public Map<String, Integer> getStats() {
+        return stats;
+    }
+    public int getDeltaStage(String stat) {
+        return stats.get(stat);
+    }
+    public List<String> getAllStat(){
+        return new ArrayList<>(stats.keySet());
+    }
+    public boolean isTargetSelf() {
+        return isTargetSelf;
     }
 }

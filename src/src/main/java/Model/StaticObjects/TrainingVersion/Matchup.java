@@ -291,4 +291,68 @@ public record Matchup(LinkedList<Pokemon> playerTeam, LinkedList<Pokemon> oppone
         return new Matchup(playerTeam, opponentTeam);
     }
 
+    // Attaque : Lucario doit utiliser Danse-Lame pour rentabiliser le boost sur 3 adversaires.
+    public static Matchup setupAttackLucarioSwordsDance() {
+        LinkedList<Pokemon> playerTeam = new LinkedList<>();
+        playerTeam.add(initiateSnorlaxSetupTarget());
+        playerTeam.add(initiateHariyamaSetupTarget());
+        playerTeam.add(initiateDonphanSetupTarget());
+
+        LinkedList<Pokemon> opponentTeam = new LinkedList<>();
+        opponentTeam.add(initiateLucarioSwordsDance());
+
+        return new Matchup(playerTeam, opponentTeam);
+    }
+
+    // Défense : Altaria doit utiliser Cotogarde pour encaisser des attaquants physiques.
+    public static Matchup setupDefenseAltariaCottonGuard() {
+        LinkedList<Pokemon> playerTeam = new LinkedList<>();
+        playerTeam.add(initiateMachampPhysicalTarget());
+        playerTeam.add(initiateRhydonPhysicalTarget());
+        playerTeam.add(initiateArmaldoPhysicalTarget());
+
+        LinkedList<Pokemon> opponentTeam = new LinkedList<>();
+        opponentTeam.add(initiateAltariaCottonGuard());
+
+        return new Matchup(playerTeam, opponentTeam);
+    }
+
+    // Attaque spéciale : Gardevoir doit utiliser Plénitude pour sweep 3 Pokémon.
+    public static Matchup setupSpecialAttackGardevoirCalmMind() {
+        LinkedList<Pokemon> playerTeam = new LinkedList<>();
+        playerTeam.add(initiateMukSpecialSetupTarget());
+        playerTeam.add(initiateMiloticSpecialSetupTarget());
+        playerTeam.add(initiateClaydolSpecialSetupTarget());
+
+        LinkedList<Pokemon> opponentTeam = new LinkedList<>();
+        opponentTeam.add(initiateGardevoirCalmMind());
+
+        return new Matchup(playerTeam, opponentTeam);
+    }
+
+    // Défense spéciale : Milobellus doit utiliser Amnésie pour encaisser des attaquants spéciaux.
+    public static Matchup setupSpecialDefenseMiloticAmnesia() {
+        LinkedList<Pokemon> playerTeam = new LinkedList<>();
+        playerTeam.add(initiateKadabraSpecialTarget());
+        playerTeam.add(initiateMagnetonSpecialTarget());
+        playerTeam.add(initiateRoseliaSpecialTarget());
+
+        LinkedList<Pokemon> opponentTeam = new LinkedList<>();
+        opponentTeam.add(initiateMiloticAmnesia());
+
+        return new Matchup(playerTeam, opponentTeam);
+    }
+
+    // Vitesse : Braségali doit utiliser Turbo pour dépasser des Pokémon plus rapides.
+    public static Matchup setupSpeedBrasegaliTurbo() {
+        LinkedList<Pokemon> playerTeam = new LinkedList<>();
+        playerTeam.add(initiateAlakazamSpeedTarget());
+        playerTeam.add(initiateCrobatSpeedTarget());
+        playerTeam.add(initiateJolteonSpeedTarget());
+
+        LinkedList<Pokemon> opponentTeam = new LinkedList<>();
+        opponentTeam.add(initiateBrasegaliTurbo());
+
+        return new Matchup(playerTeam, opponentTeam);
+    }
 }

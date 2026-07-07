@@ -70,7 +70,7 @@ public class Main extends Application { // extends Application
 
 //        songManager.playSong("/music/champion_steven.mp3");
 
-        Matchup matchup = Matchup.burnAndSpecialMatchup();
+        Matchup matchup = Matchup.setupSpeedBrasegaliTurbo();
         gs = matchup.createGameState();
 
         System.out.println(gs.pretty_state());
