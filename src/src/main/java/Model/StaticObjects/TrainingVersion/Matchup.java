@@ -2,28 +2,31 @@ package Model.StaticObjects.TrainingVersion;
 
 import Model.GameState;
 import Model.Inventory.Bag;
+import Model.Inventory.Category;
+import Model.Inventory.Items.Heal.Heal;
 import Model.Inventory.Items.Item;
 import Model.Person.Trainer;
 import Model.Pokemon.Pokemon;
+import Utils.MatchupCategory;
+import Utils.SeedManager;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 
 import static Model.StaticObjects.TrainingVersion.PokemonSample.*;
 
-public record Matchup(LinkedList<Pokemon> playerTeam, LinkedList<Pokemon> opponentTeam) {
+public record Matchup(LinkedList<Pokemon> playerTeam, LinkedList<Pokemon> opponentTeam, MatchupCategory category) {
 
     public Trainer createPlayerTrainer() {
         Map<Item, Integer> inventory = new HashMap<>();
         Bag bag = new Bag(inventory);
+        // bag.setItem(new Heal(Category.HEALTH, "Potion", "Heals 20 HP to a Pokémon", 20), 1);
         return new Trainer("player", bag, playerTeam);
     }
 
     public Trainer createOpponentTrainer() {
         Map<Item, Integer> inventory = new HashMap<>();
         Bag bag = new Bag(inventory);
-//        bag.setItem(new Heal(Category.HEALTH, "Potion", "", 20), 1);
+        bag.setItem(new Heal(Category.HEALTH, "Hyper Potion", "Heals 200 HP to a Pokémon", 200), 1);
         return new Trainer("opponent", bag, opponentTeam);
     }
 
@@ -47,7 +50,7 @@ public record Matchup(LinkedList<Pokemon> playerTeam, LinkedList<Pokemon> oppone
         LinkedList<Pokemon> opponentTeam = new LinkedList<>();
         opponentTeam.add(initiatePikachu());
 
-        return new Matchup(playerTeam, opponentTeam);
+        return new Matchup(playerTeam, opponentTeam, MatchupCategory.OFFENSIVE);
     }
 
     // Super effective x2 : Salamèche vs Bulbizarre
@@ -58,7 +61,7 @@ public record Matchup(LinkedList<Pokemon> playerTeam, LinkedList<Pokemon> oppone
         LinkedList<Pokemon> opponentTeam = new LinkedList<>();
         opponentTeam.add(initiateSalameche());
 
-        return new Matchup(playerTeam, opponentTeam);
+        return new Matchup(playerTeam, opponentTeam, MatchupCategory.OFFENSIVE);
     }
 
     // Super effective x4 : Pikachu vs Léviator
@@ -69,7 +72,7 @@ public record Matchup(LinkedList<Pokemon> playerTeam, LinkedList<Pokemon> oppone
         LinkedList<Pokemon> opponentTeam = new LinkedList<>();
         opponentTeam.add(initiatePikachu());
 
-        return new Matchup(playerTeam, opponentTeam);
+        return new Matchup(playerTeam, opponentTeam, MatchupCategory.OFFENSIVE);
     }
 
     // Super effective x4 : Salamèche vs Paras
@@ -80,7 +83,7 @@ public record Matchup(LinkedList<Pokemon> playerTeam, LinkedList<Pokemon> oppone
         LinkedList<Pokemon> opponentTeam = new LinkedList<>();
         opponentTeam.add(initiateSalameche());
 
-        return new Matchup(playerTeam, opponentTeam);
+        return new Matchup(playerTeam, opponentTeam, MatchupCategory.OFFENSIVE);
     }
 
     // STAB : Salamèche vs Évoli
@@ -91,7 +94,7 @@ public record Matchup(LinkedList<Pokemon> playerTeam, LinkedList<Pokemon> oppone
         LinkedList<Pokemon> opponentTeam = new LinkedList<>();
         opponentTeam.add(initiateSalameche());
 
-        return new Matchup(playerTeam, opponentTeam);
+    return new Matchup(playerTeam, opponentTeam, MatchupCategory.OFFENSIVE);
     }
 
     // STAB : Carapuce vs Évoli
@@ -102,7 +105,7 @@ public record Matchup(LinkedList<Pokemon> playerTeam, LinkedList<Pokemon> oppone
         LinkedList<Pokemon> opponentTeam = new LinkedList<>();
         opponentTeam.add(initiateCarapuce());
 
-        return new Matchup(playerTeam, opponentTeam);
+        return new Matchup(playerTeam, opponentTeam, MatchupCategory.OFFENSIVE);
     }
 
     // STAB : Bulbizarre vs Évoli
@@ -113,7 +116,7 @@ public record Matchup(LinkedList<Pokemon> playerTeam, LinkedList<Pokemon> oppone
         LinkedList<Pokemon> opponentTeam = new LinkedList<>();
         opponentTeam.add(initiateBulbizarre());
 
-        return new Matchup(playerTeam, opponentTeam);
+        return new Matchup(playerTeam, opponentTeam, MatchupCategory.OFFENSIVE);
     }
 
     // SE + STAB : Bulbizarre vs Carapuce
@@ -124,7 +127,7 @@ public record Matchup(LinkedList<Pokemon> playerTeam, LinkedList<Pokemon> oppone
         LinkedList<Pokemon> opponentTeam = new LinkedList<>();
         opponentTeam.add(initiateBulbizarre());
 
-        return new Matchup(playerTeam, opponentTeam);
+        return new Matchup(playerTeam, opponentTeam, MatchupCategory.OFFENSIVE);
     }
 
     // Switch : lead défavorable, switch évident possible
@@ -136,7 +139,7 @@ public record Matchup(LinkedList<Pokemon> playerTeam, LinkedList<Pokemon> oppone
         opponentTeam.add(initiateSalameche());
         opponentTeam.add(initiateBulbizarre());
 
-        return new Matchup(playerTeam, opponentTeam);
+    return new Matchup(playerTeam, opponentTeam, MatchupCategory.SWITCH);
     }
 
     public static Matchup switchCoreStarters() {
@@ -150,7 +153,7 @@ public record Matchup(LinkedList<Pokemon> playerTeam, LinkedList<Pokemon> oppone
         opponentTeam.add(initiateBulbizarre());
         opponentTeam.add(initiateCarapuce());
 
-        return new Matchup(playerTeam, opponentTeam);
+        return new Matchup(playerTeam, opponentTeam, MatchupCategory.SWITCH);
     }
 
     // Status simple : Ekans vs Évoli
@@ -161,7 +164,7 @@ public record Matchup(LinkedList<Pokemon> playerTeam, LinkedList<Pokemon> oppone
         LinkedList<Pokemon> opponentTeam = new LinkedList<>();
         opponentTeam.add(initiateEkans());
 
-        return new Matchup(playerTeam, opponentTeam);
+        return new Matchup(playerTeam, opponentTeam, MatchupCategory.STATUS);
     }
 
     // Status / double type : Butterfree vs Carapuce
@@ -172,7 +175,7 @@ public record Matchup(LinkedList<Pokemon> playerTeam, LinkedList<Pokemon> oppone
         LinkedList<Pokemon> opponentTeam = new LinkedList<>();
         opponentTeam.add(initiateButterfree());
 
-        return new Matchup(playerTeam, opponentTeam);
+        return new Matchup(playerTeam, opponentTeam, MatchupCategory.STATUS);
     }
 
     public static Matchup lucarioVsBlisseyThenAvalugg() {
@@ -183,7 +186,7 @@ public record Matchup(LinkedList<Pokemon> playerTeam, LinkedList<Pokemon> oppone
         LinkedList<Pokemon> opponentTeam = new LinkedList<>();
         opponentTeam.add(initiateLucario());
 
-        return new Matchup(playerTeam, opponentTeam);
+        return new Matchup(playerTeam, opponentTeam, MatchupCategory.OFFENSIVE);
     }
 
     public static Matchup lucarioVsAvaluggThenBlissey() {
@@ -194,7 +197,7 @@ public record Matchup(LinkedList<Pokemon> playerTeam, LinkedList<Pokemon> oppone
         LinkedList<Pokemon> opponentTeam = new LinkedList<>();
         opponentTeam.add(initiateLucario());
 
-        return new Matchup(playerTeam, opponentTeam);
+        return new Matchup(playerTeam, opponentTeam, MatchupCategory.OFFENSIVE);
     }
 
     /*
@@ -211,7 +214,7 @@ public record Matchup(LinkedList<Pokemon> playerTeam, LinkedList<Pokemon> oppone
         LinkedList<Pokemon> opponentTeam = new LinkedList<>();
         opponentTeam.add(initiateMareep());
 
-        return new Matchup(playerTeam, opponentTeam);
+        return new Matchup(playerTeam, opponentTeam, MatchupCategory.STATUS);
     }
 
     // Poison classique : Gaz Toxik applique poisoned de manière déterministe
@@ -222,7 +225,7 @@ public record Matchup(LinkedList<Pokemon> playerTeam, LinkedList<Pokemon> oppone
         LinkedList<Pokemon> opponentTeam = new LinkedList<>();
         opponentTeam.add(initiateCrobat());
 
-        return new Matchup(playerTeam, opponentTeam);
+        return new Matchup(playerTeam, opponentTeam, MatchupCategory.STATUS);
     }
 
     // Gravement empoisonné : Toxic applique badlyPoisoned de manière déterministe
@@ -233,7 +236,7 @@ public record Matchup(LinkedList<Pokemon> playerTeam, LinkedList<Pokemon> oppone
         LinkedList<Pokemon> opponentTeam = new LinkedList<>();
         opponentTeam.add(initiateNostenferToxic());
 
-        return new Matchup(playerTeam, opponentTeam);
+        return new Matchup(playerTeam, opponentTeam, MatchupCategory.STATUS);
     }
 
     // Brûlure utile : Feu-Follet contre attaquant physique
@@ -244,7 +247,7 @@ public record Matchup(LinkedList<Pokemon> playerTeam, LinkedList<Pokemon> oppone
         LinkedList<Pokemon> opponentTeam = new LinkedList<>();
         opponentTeam.add(initiateNinetales());
 
-        return new Matchup(playerTeam, opponentTeam);
+        return new Matchup(playerTeam, opponentTeam, MatchupCategory.STATUS);
     }
 
     // Brûlure moins utile : Feu-Follet contre attaquant spécial
@@ -255,7 +258,7 @@ public record Matchup(LinkedList<Pokemon> playerTeam, LinkedList<Pokemon> oppone
         LinkedList<Pokemon> opponentTeam = new LinkedList<>();
         opponentTeam.add(initiateNinetales());
 
-        return new Matchup(playerTeam, opponentTeam);
+    return new Matchup(playerTeam, opponentTeam, MatchupCategory.STATUS);
     }
 
     // Confusion utile : Onde Folie contre attaquant physique
@@ -266,7 +269,7 @@ public record Matchup(LinkedList<Pokemon> playerTeam, LinkedList<Pokemon> oppone
         LinkedList<Pokemon> opponentTeam = new LinkedList<>();
         opponentTeam.add(initiateGardevoirConfuseRay());
 
-        return new Matchup(playerTeam, opponentTeam);
+        return new Matchup(playerTeam, opponentTeam, MatchupCategory.STATUS);
     }
 
     // Confusion moins utile : Onde Folie contre attaquant spécial
@@ -277,7 +280,7 @@ public record Matchup(LinkedList<Pokemon> playerTeam, LinkedList<Pokemon> oppone
         LinkedList<Pokemon> opponentTeam = new LinkedList<>();
         opponentTeam.add(initiateGardevoirConfuseRay());
 
-        return new Matchup(playerTeam, opponentTeam);
+        return new Matchup(playerTeam, opponentTeam, MatchupCategory.STATUS);
     }
 
     // Sommeil : Poudre Dodo contre un Pokémon de force globalement équivalente
@@ -288,20 +291,23 @@ public record Matchup(LinkedList<Pokemon> playerTeam, LinkedList<Pokemon> oppone
         LinkedList<Pokemon> opponentTeam = new LinkedList<>();
         opponentTeam.add(initiateRaflesia());
 
-        return new Matchup(playerTeam, opponentTeam);
+        return new Matchup(playerTeam, opponentTeam, MatchupCategory.STATUS);
     }
 
     // Attaque : Lucario doit utiliser Danse-Lame pour rentabiliser le boost sur 3 adversaires.
     public static Matchup setupAttackLucarioSwordsDance() {
         LinkedList<Pokemon> playerTeam = new LinkedList<>();
+
         playerTeam.add(initiateSnorlaxSetupTarget());
         playerTeam.add(initiateHariyamaSetupTarget());
         playerTeam.add(initiateDonphanSetupTarget());
 
+        Collections.shuffle(playerTeam, SeedManager.getRng());
+
         LinkedList<Pokemon> opponentTeam = new LinkedList<>();
         opponentTeam.add(initiateLucarioSwordsDance());
 
-        return new Matchup(playerTeam, opponentTeam);
+        return new Matchup(playerTeam, opponentTeam, MatchupCategory.SETUP);
     }
 
     // Défense : Altaria doit utiliser Cotogarde pour encaisser des attaquants physiques.
@@ -311,10 +317,12 @@ public record Matchup(LinkedList<Pokemon> playerTeam, LinkedList<Pokemon> oppone
         playerTeam.add(initiateRhydonPhysicalTarget());
         playerTeam.add(initiateArmaldoPhysicalTarget());
 
+        Collections.shuffle(playerTeam, SeedManager.getRng());
+
         LinkedList<Pokemon> opponentTeam = new LinkedList<>();
         opponentTeam.add(initiateAltariaCottonGuard());
 
-        return new Matchup(playerTeam, opponentTeam);
+        return new Matchup(playerTeam, opponentTeam, MatchupCategory.SETUP);
     }
 
     // Attaque spéciale : Gardevoir doit utiliser Plénitude pour sweep 3 Pokémon.
@@ -324,35 +332,39 @@ public record Matchup(LinkedList<Pokemon> playerTeam, LinkedList<Pokemon> oppone
         playerTeam.add(initiateMiloticSpecialSetupTarget());
         playerTeam.add(initiateClaydolSpecialSetupTarget());
 
+        Collections.shuffle(playerTeam, SeedManager.getRng());
+
         LinkedList<Pokemon> opponentTeam = new LinkedList<>();
         opponentTeam.add(initiateGardevoirCalmMind());
 
-        return new Matchup(playerTeam, opponentTeam);
+        return new Matchup(playerTeam, opponentTeam, MatchupCategory.SETUP);
     }
 
-    // Défense spéciale : Milobellus doit utiliser Amnésie pour encaisser des attaquants spéciaux.
     public static Matchup setupSpecialDefenseMiloticAmnesia() {
         LinkedList<Pokemon> playerTeam = new LinkedList<>();
-        playerTeam.add(initiateKadabraSpecialTarget());
-        playerTeam.add(initiateMagnetonSpecialTarget());
-        playerTeam.add(initiateRoseliaSpecialTarget());
+        playerTeam.add(initiateKadabraSpecialTargetBalanced());
+        playerTeam.add(initiateVenomothSpecialTargetBalanced());
+        playerTeam.add(initiateMisdreavusSpecialTargetBalanced());
+
+        Collections.shuffle(playerTeam, SeedManager.getRng());
 
         LinkedList<Pokemon> opponentTeam = new LinkedList<>();
-        opponentTeam.add(initiateMiloticAmnesia());
+        opponentTeam.add(initiateMiloticAmnesiaBalanced());
 
-        return new Matchup(playerTeam, opponentTeam);
+        return new Matchup(playerTeam, opponentTeam, MatchupCategory.SETUP);
     }
 
-    // Vitesse : Braségali doit utiliser Turbo pour dépasser des Pokémon plus rapides.
     public static Matchup setupSpeedBrasegaliTurbo() {
         LinkedList<Pokemon> playerTeam = new LinkedList<>();
-        playerTeam.add(initiateAlakazamSpeedTarget());
-        playerTeam.add(initiateCrobatSpeedTarget());
-        playerTeam.add(initiateJolteonSpeedTarget());
+        playerTeam.add(initiateJolteonSpeedTargetBalanced());
+        playerTeam.add(initiateElectrodeSpeedTargetBalanced());
+        playerTeam.add(initiatePersianSpeedTargetBalanced());
+
+        Collections.shuffle(playerTeam, SeedManager.getRng());
 
         LinkedList<Pokemon> opponentTeam = new LinkedList<>();
-        opponentTeam.add(initiateBrasegaliTurbo());
+        opponentTeam.add(initiateBrasegaliTurboBalanced());
 
-        return new Matchup(playerTeam, opponentTeam);
+        return new Matchup(playerTeam, opponentTeam, MatchupCategory.SETUP);
     }
 }

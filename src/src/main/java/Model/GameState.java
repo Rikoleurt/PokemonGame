@@ -1,5 +1,8 @@
 package Model;
 
+import Model.Inventory.Bag;
+import Model.Inventory.Items.Fight.StatBooster;
+import Model.Inventory.Items.Heal.Heal;
 import Model.Inventory.Items.Item;
 import Model.Person.Action;
 import Model.Person.Trainer;
@@ -55,6 +58,9 @@ public class GameState {
         Pokemon p11 = getPokemonFromIndex(opponent, 4);
         Pokemon p12 = getPokemonFromIndex(opponent, 5);
 
+        Bag playerBag = player.getBag();
+        Bag opponentBag = opponent.getBag();
+
         JsonObject obj = new JsonObject();
         obj.addProperty("turn", turn);
 
@@ -79,6 +85,16 @@ public class GameState {
         addTeamInfos(p10, opponentTeam);
         addTeamInfos(p11, opponentTeam);
         addTeamInfos(p12, opponentTeam);
+
+        JsonArray playerBagItems = new JsonArray();
+        JsonArray opponentBagItems = new JsonArray();
+
+        JsonObject playerBagData = new JsonObject();
+        JsonObject opponentBagData = new JsonObject();
+
+        playerBagData.add("Items", playerBagItems);
+        opponentBagData.add("Items", opponentBagItems);
+
 
         JsonObject first = new JsonObject();
         first.addProperty("name", starterName());
@@ -142,14 +158,23 @@ public class GameState {
         addTeamInfos(p11, opponentTeam);
         addTeamInfos(p12, opponentTeam);
 
+
+        JsonObject playerBagData = new JsonObject();
+        JsonObject opponentBagData = new JsonObject();
+
+        addBagInfos(player, playerBagData);
+        addBagInfos(opponent, opponentBagData);
+
         JsonObject first = new JsonObject();
         first.addProperty("name", starterName());
 
         playerInfos.add("player_team", playerTeam);
         playerInfos.addProperty("healthy_pokemons", player.getHealthyPokemon());
+        playerInfos.add("player_bag_data", playerBagData);
 
         opponentInfos.add("opponent_team", opponentTeam);
         opponentInfos.addProperty("healthy_pokemons", opponent.getHealthyPokemon());
+        opponentInfos.add("opponent_bag_data", opponentBagData);
 
         obj.add("player_infos", playerInfos);
         obj.add("opponent_infos", opponentInfos);
@@ -530,6 +555,22 @@ public class GameState {
         }
 
         pokemonData.add("attacks", attacksData);
+    }
+
+    private void addBagInfos(Trainer t, JsonObject bagData) {
+        Bag bag = t.getBag();
+
+        JsonArray items = new JsonArray();
+
+        for(Item item : bag.getInventory().keySet()){
+            items.add(item.getName());
+            items.add(item.getCategory().toString());
+            if(item instanceof Heal){
+                items.add(((Heal) item).getHP());
+            }
+            items.add(bag.getQuantity(item));
+        }
+        bagData.add("items", items);
     }
 
     public boolean is_player_first() {

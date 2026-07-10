@@ -14,10 +14,23 @@ public class PokemonSample {
 
     static HashMap<String, Move> attacks = initiateAttacks();
 
+    private static Move requireAttack(String key) {
+        Move move = attacks.get(key);
+
+        if (move == null) {
+            throw new IllegalArgumentException(
+                    "Attack not found in MovesSample: " + key
+                            + "\nAvailable attacks: " + attacks.keySet()
+            );
+        }
+
+        return move;
+    }
+
     public static Pokemon initiateBulbizarre() {
         ArrayList<Move> moves = new ArrayList<>();
-        moves.add(attacks.get("tackle"));
-        moves.add(attacks.get("vine_whip"));
+        moves.add(requireAttack("tackle"));
+        moves.add(requireAttack("vine_whip"));
 
         return new Pokemon(
                 "bulbasaur",
@@ -32,9 +45,9 @@ public class PokemonSample {
 
     public static Pokemon initiatePikachu() {
         ArrayList<Move> moves = new ArrayList<>();
-        moves.add(attacks.get("tackle"));
-        moves.add(attacks.get("thunder_shock"));
-        moves.add(attacks.get("rock_tomb"));
+        moves.add(requireAttack("tackle"));
+        moves.add(requireAttack("thunder_shock"));
+        moves.add(requireAttack("rock_tomb"));
 
         return new Pokemon(
                 "pikachu",
@@ -49,8 +62,8 @@ public class PokemonSample {
 
     public static Pokemon initiateCarapuce() {
         ArrayList<Move> moves = new ArrayList<>();
-        moves.add(attacks.get("tackle"));
-        moves.add(attacks.get("water_gun"));
+        moves.add(requireAttack("tackle"));
+        moves.add(requireAttack("water_gun"));
 
         return new Pokemon(
                 "squirtle",
@@ -65,8 +78,8 @@ public class PokemonSample {
 
     public static Pokemon initiateSalameche() {
         ArrayList<Move> moves = new ArrayList<>();
-        moves.add(attacks.get("tackle"));
-        moves.add(attacks.get("ember"));
+        moves.add(requireAttack("tackle"));
+        moves.add(requireAttack("ember"));
 
         return new Pokemon(
                 "charmander",
@@ -81,8 +94,8 @@ public class PokemonSample {
 
     public static Pokemon initiatePidgey() {
         ArrayList<Move> moves = new ArrayList<>();
-        moves.add(attacks.get("tackle"));
-        moves.add(attacks.get("gust"));
+        moves.add(requireAttack("tackle"));
+        moves.add(requireAttack("gust"));
 
         return new Pokemon(
                 "pidgey",
@@ -97,9 +110,9 @@ public class PokemonSample {
 
     public static Pokemon initiateButterfree() {
         ArrayList<Move> moves = new ArrayList<>();
-        moves.add(attacks.get("tackle"));
-        moves.add(attacks.get("confusion"));
-        moves.add(attacks.get("bug_bite"));
+        moves.add(requireAttack("tackle"));
+        moves.add(requireAttack("confusion"));
+        moves.add(requireAttack("bug_bite"));
 
         return new Pokemon(
                 "butterfree",
@@ -114,8 +127,8 @@ public class PokemonSample {
 
     public static Pokemon initiateEkans() {
         ArrayList<Move> moves = new ArrayList<>();
-        moves.add(attacks.get("bite"));
-        moves.add(attacks.get("poison_sting"));
+        moves.add(requireAttack("bite"));
+        moves.add(requireAttack("poison_sting"));
 
         return new Pokemon(
                 "ekans",
@@ -130,8 +143,8 @@ public class PokemonSample {
 
     public static Pokemon initiateLeviator() {
         ArrayList<Move> moves = new ArrayList<>();
-        moves.add(attacks.get("bite"));
-        moves.add(attacks.get("surf"));
+        moves.add(requireAttack("bite"));
+        moves.add(requireAttack("surf"));
 
         return new Pokemon(
                 "gyarados",
@@ -146,9 +159,9 @@ public class PokemonSample {
 
     public static Pokemon initiateParas() {
         ArrayList<Move> moves = new ArrayList<>();
-        moves.add(attacks.get("tackle"));
-        moves.add(attacks.get("vine_whip"));
-        moves.add(attacks.get("bug_bite"));
+        moves.add(requireAttack("tackle"));
+        moves.add(requireAttack("vine_whip"));
+        moves.add(requireAttack("bug_bite"));
 
         return new Pokemon(
                 "paras",
@@ -163,8 +176,8 @@ public class PokemonSample {
 
     public static Pokemon initiateEvoli() {
         ArrayList<Move> moves = new ArrayList<>();
-        moves.add(attacks.get("tackle"));
-        moves.add(attacks.get("bite"));
+        moves.add(requireAttack("tackle"));
+        moves.add(requireAttack("bite"));
 
         return new Pokemon(
                 "eevee",
@@ -179,8 +192,8 @@ public class PokemonSample {
 
     public static Pokemon initiateLucario() {
         ArrayList<Move> moves = new ArrayList<>();
-        moves.add(attacks.get("brick_break"));
-        moves.add(attacks.get("aura_sphere"));
+        moves.add(requireAttack("brick_break"));
+        moves.add(requireAttack("aura_sphere"));
 
         return new Pokemon(
                 "lucario",
@@ -195,7 +208,7 @@ public class PokemonSample {
 
     public static Pokemon initiateBlissey() {
         ArrayList<Move> moves = new ArrayList<>();
-        moves.add(attacks.get("tackle"));
+        moves.add(requireAttack("tackle"));
 
         return new Pokemon(
                 "blissey",
@@ -210,7 +223,7 @@ public class PokemonSample {
 
     public static Pokemon initiateAvalugg() {
         ArrayList<Move> moves = new ArrayList<>();
-        moves.add(attacks.get("tackle"));
+        moves.add(requireAttack("tackle"));
 
         return new Pokemon(
                 "avalugg",
@@ -225,9 +238,9 @@ public class PokemonSample {
 
     public static Pokemon initiateMareep() {
         ArrayList<Move> moves = new ArrayList<>();
-        moves.add(attacks.get("tackle"));
-        moves.add(attacks.get("thunder_shock"));
-        moves.add(attacks.get("thunder_wave"));
+        moves.add(requireAttack("tackle"));
+        moves.add(requireAttack("thunder_shock"));
+        moves.add(requireAttack("thunder_wave"));
 
         return new Pokemon(
                 "mareep",
@@ -242,9 +255,9 @@ public class PokemonSample {
 
     public static Pokemon initiateCrobat() {
         ArrayList<Move> moves = new ArrayList<>();
-        moves.add(attacks.get("bite"));
-        moves.add(attacks.get("poison_sting"));
-        moves.add(attacks.get("poison_gas"));
+        moves.add(requireAttack("bite"));
+        moves.add(requireAttack("poison_sting"));
+        moves.add(requireAttack("poison_gas"));
 
         return new Pokemon(
                 "crobat",
@@ -259,9 +272,9 @@ public class PokemonSample {
 
     public static Pokemon initiateNostenferToxic() {
         ArrayList<Move> moves = new ArrayList<>();
-        moves.add(attacks.get("bite"));
-        moves.add(attacks.get("poison_sting"));
-        moves.add(attacks.get("toxic"));
+        moves.add(requireAttack("bite"));
+        moves.add(requireAttack("poison_sting"));
+        moves.add(requireAttack("toxic"));
 
         return new Pokemon(
                 "crobat",
@@ -276,8 +289,8 @@ public class PokemonSample {
 
     public static Pokemon initiateShuckle() {
         ArrayList<Move> moves = new ArrayList<>();
-        moves.add(attacks.get("tackle"));
-        moves.add(attacks.get("rock_tomb"));
+        moves.add(requireAttack("tackle"));
+        moves.add(requireAttack("rock_tomb"));
 
         return new Pokemon(
                 "shuckle",
@@ -292,9 +305,9 @@ public class PokemonSample {
 
     public static Pokemon initiateNinetales() {
         ArrayList<Move> moves = new ArrayList<>();
-        moves.add(attacks.get("tackle"));
-        moves.add(attacks.get("ember"));
-        moves.add(attacks.get("will_o_wisp"));
+        moves.add(requireAttack("tackle"));
+        moves.add(requireAttack("ember"));
+        moves.add(requireAttack("will_o_wisp"));
 
         return new Pokemon(
                 "ninetales",
@@ -309,8 +322,8 @@ public class PokemonSample {
 
     public static Pokemon initiateMachop() {
         ArrayList<Move> moves = new ArrayList<>();
-        moves.add(attacks.get("tackle"));
-        moves.add(attacks.get("brick_break"));
+        moves.add(requireAttack("tackle"));
+        moves.add(requireAttack("brick_break"));
 
         return new Pokemon(
                 "machop",
@@ -325,8 +338,8 @@ public class PokemonSample {
 
     public static Pokemon initiateGardevoir() {
         ArrayList<Move> moves = new ArrayList<>();
-        moves.add(attacks.get("tackle"));
-        moves.add(attacks.get("confusion"));
+        moves.add(requireAttack("tackle"));
+        moves.add(requireAttack("confusion"));
 
         return new Pokemon(
                 "gardevoir",
@@ -341,9 +354,9 @@ public class PokemonSample {
 
     public static Pokemon initiateGardevoirConfuseRay() {
         ArrayList<Move> moves = new ArrayList<>();
-        moves.add(attacks.get("tackle"));
-        moves.add(attacks.get("confusion"));
-        moves.add(attacks.get("confuse_ray"));
+        moves.add(requireAttack("tackle"));
+        moves.add(requireAttack("confusion"));
+        moves.add(requireAttack("confuse_ray"));
 
         return new Pokemon(
                 "gardevoir",
@@ -358,9 +371,9 @@ public class PokemonSample {
 
     public static Pokemon initiateBrasegali() {
         ArrayList<Move> moves = new ArrayList<>();
-        moves.add(attacks.get("tackle"));
-        moves.add(attacks.get("ember"));
-        moves.add(attacks.get("brick_break"));
+        moves.add(requireAttack("tackle"));
+        moves.add(requireAttack("ember"));
+        moves.add(requireAttack("brick_break"));
 
         return new Pokemon(
                 "blaziken",
@@ -375,8 +388,8 @@ public class PokemonSample {
 
     public static Pokemon initiateAlakazam() {
         ArrayList<Move> moves = new ArrayList<>();
-        moves.add(attacks.get("tackle"));
-        moves.add(attacks.get("confusion"));
+        moves.add(requireAttack("tackle"));
+        moves.add(requireAttack("confusion"));
 
         return new Pokemon(
                 "alakazam",
@@ -391,9 +404,9 @@ public class PokemonSample {
 
     public static Pokemon initiateRaflesia() {
         ArrayList<Move> moves = new ArrayList<>();
-        moves.add(attacks.get("tackle"));
-        moves.add(attacks.get("energy_ball"));
-        moves.add(attacks.get("sleep_powder"));
+        moves.add(requireAttack("tackle"));
+        moves.add(requireAttack("energy_ball"));
+        moves.add(requireAttack("sleep_powder"));
 
         return new Pokemon(
                 "vileplume",
@@ -408,10 +421,10 @@ public class PokemonSample {
 
     public static Pokemon initiateLucarioSwordsDance() {
         ArrayList<Move> moves = new ArrayList<>();
-        moves.add(attacks.get("swords_dance"));
-        moves.add(attacks.get("close_combat"));
-        moves.add(attacks.get("earthquake"));
-        moves.add(attacks.get("aura_sphere"));
+        moves.add(requireAttack("swords_dance"));
+        moves.add(requireAttack("close_combat"));
+        moves.add(requireAttack("earthquake"));
+        moves.add(requireAttack("aura_sphere"));
 
         return new Pokemon(
                 "lucario",
@@ -426,10 +439,10 @@ public class PokemonSample {
 
     public static Pokemon initiateAltariaCottonGuard() {
         ArrayList<Move> moves = new ArrayList<>();
-        moves.add(attacks.get("cotton_guard"));
-        moves.add(attacks.get("thunder_wave"));
-        moves.add(attacks.get("aerial_ace"));
-        moves.add(attacks.get("dragon_claw"));
+        moves.add(requireAttack("cotton_guard"));
+        moves.add(requireAttack("thunder_wave"));
+        moves.add(requireAttack("aerial_ace"));
+        moves.add(requireAttack("dragon_claw"));
 
         return new Pokemon(
                 "altaria",
@@ -444,10 +457,10 @@ public class PokemonSample {
 
     public static Pokemon initiateGardevoirCalmMind() {
         ArrayList<Move> moves = new ArrayList<>();
-        moves.add(attacks.get("calm_mind"));
-        moves.add(attacks.get("psychic"));
-        moves.add(attacks.get("thunder_bolt"));
-        moves.add(attacks.get("energy_ball"));
+        moves.add(requireAttack("calm_mind"));
+        moves.add(requireAttack("psychic"));
+        moves.add(requireAttack("thunder_bolt"));
+        moves.add(requireAttack("energy_ball"));
 
         return new Pokemon(
                 "gardevoir",
@@ -462,10 +475,10 @@ public class PokemonSample {
 
     public static Pokemon initiateMiloticAmnesia() {
         ArrayList<Move> moves = new ArrayList<>();
-        moves.add(attacks.get("amnesia"));
-        moves.add(attacks.get("toxic"));
-        moves.add(attacks.get("surf"));
-        moves.add(attacks.get("water_gun"));
+        moves.add(requireAttack("amnesia"));
+        moves.add(requireAttack("toxic"));
+        moves.add(requireAttack("surf"));
+        moves.add(requireAttack("water_gun"));
 
         return new Pokemon(
                 "milotic",
@@ -480,10 +493,10 @@ public class PokemonSample {
 
     public static Pokemon initiateBrasegaliTurbo() {
         ArrayList<Move> moves = new ArrayList<>();
-        moves.add(attacks.get("turbo"));
-        moves.add(attacks.get("close_combat"));
-        moves.add(attacks.get("earthquake"));
-        moves.add(attacks.get("flamethrower"));
+        moves.add(requireAttack("turbo"));
+        moves.add(requireAttack("close_combat"));
+        moves.add(requireAttack("earthquake"));
+        moves.add(requireAttack("flamethrower"));
 
         return new Pokemon(
                 "blaziken",
@@ -498,8 +511,8 @@ public class PokemonSample {
 
     public static Pokemon initiateSnorlaxSetupTarget() {
         ArrayList<Move> moves = new ArrayList<>();
-        moves.add(attacks.get("tackle"));
-        moves.add(attacks.get("bite"));
+        moves.add(requireAttack("tackle"));
+        moves.add(requireAttack("bite"));
 
         return new Pokemon(
                 "snorlax",
@@ -514,8 +527,8 @@ public class PokemonSample {
 
     public static Pokemon initiateHariyamaSetupTarget() {
         ArrayList<Move> moves = new ArrayList<>();
-        moves.add(attacks.get("brick_break"));
-        moves.add(attacks.get("tackle"));
+        moves.add(requireAttack("brick_break"));
+        moves.add(requireAttack("tackle"));
 
         return new Pokemon(
                 "hariyama",
@@ -530,8 +543,8 @@ public class PokemonSample {
 
     public static Pokemon initiateDonphanSetupTarget() {
         ArrayList<Move> moves = new ArrayList<>();
-        moves.add(attacks.get("earthquake"));
-        moves.add(attacks.get("rock_tomb"));
+        moves.add(requireAttack("earthquake"));
+        moves.add(requireAttack("rock_tomb"));
 
         return new Pokemon(
                 "donphan",
@@ -546,8 +559,8 @@ public class PokemonSample {
 
     public static Pokemon initiateMachampPhysicalTarget() {
         ArrayList<Move> moves = new ArrayList<>();
-        moves.add(attacks.get("brick_break"));
-        moves.add(attacks.get("rock_tomb"));
+        moves.add(requireAttack("brick_break"));
+        moves.add(requireAttack("rock_tomb"));
 
         return new Pokemon(
                 "machamp",
@@ -562,8 +575,8 @@ public class PokemonSample {
 
     public static Pokemon initiateRhydonPhysicalTarget() {
         ArrayList<Move> moves = new ArrayList<>();
-        moves.add(attacks.get("earthquake"));
-        moves.add(attacks.get("rock_tomb"));
+        moves.add(requireAttack("earthquake"));
+        moves.add(requireAttack("rock_tomb"));
 
         return new Pokemon(
                 "rhydon",
@@ -578,8 +591,8 @@ public class PokemonSample {
 
     public static Pokemon initiateArmaldoPhysicalTarget() {
         ArrayList<Move> moves = new ArrayList<>();
-        moves.add(attacks.get("bug_bite"));
-        moves.add(attacks.get("rock_tomb"));
+        moves.add(requireAttack("bug_bite"));
+        moves.add(requireAttack("rock_tomb"));
 
         return new Pokemon(
                 "armaldo",
@@ -594,8 +607,8 @@ public class PokemonSample {
 
     public static Pokemon initiateMukSpecialSetupTarget() {
         ArrayList<Move> moves = new ArrayList<>();
-        moves.add(attacks.get("poison_sting"));
-        moves.add(attacks.get("bite"));
+        moves.add(requireAttack("poison_sting"));
+        moves.add(requireAttack("bite"));
 
         return new Pokemon(
                 "muk",
@@ -610,8 +623,8 @@ public class PokemonSample {
 
     public static Pokemon initiateMiloticSpecialSetupTarget() {
         ArrayList<Move> moves = new ArrayList<>();
-        moves.add(attacks.get("surf"));
-        moves.add(attacks.get("water_gun"));
+        moves.add(requireAttack("surf"));
+        moves.add(requireAttack("water_gun"));
 
         return new Pokemon(
                 "milotic",
@@ -626,8 +639,8 @@ public class PokemonSample {
 
     public static Pokemon initiateClaydolSpecialSetupTarget() {
         ArrayList<Move> moves = new ArrayList<>();
-        moves.add(attacks.get("confusion"));
-        moves.add(attacks.get("earthquake"));
+        moves.add(requireAttack("confusion"));
+        moves.add(requireAttack("earthquake"));
 
         return new Pokemon(
                 "claydol",
@@ -642,8 +655,8 @@ public class PokemonSample {
 
     public static Pokemon initiateKadabraSpecialTarget() {
         ArrayList<Move> moves = new ArrayList<>();
-        moves.add(attacks.get("psychic"));
-        moves.add(attacks.get("confusion"));
+        moves.add(requireAttack("psychic"));
+        moves.add(requireAttack("confusion"));
 
         return new Pokemon(
                 "kadabra",
@@ -658,8 +671,8 @@ public class PokemonSample {
 
     public static Pokemon initiateMagnetonSpecialTarget() {
         ArrayList<Move> moves = new ArrayList<>();
-        moves.add(attacks.get("thunder_bolt"));
-        moves.add(attacks.get("thunder_shock"));
+        moves.add(requireAttack("thunder_bolt"));
+        moves.add(requireAttack("thunder_shock"));
 
         return new Pokemon(
                 "magneton",
@@ -674,8 +687,8 @@ public class PokemonSample {
 
     public static Pokemon initiateRoseliaSpecialTarget() {
         ArrayList<Move> moves = new ArrayList<>();
-        moves.add(attacks.get("energy_ball"));
-        moves.add(attacks.get("poison_sting"));
+        moves.add(requireAttack("energy_ball"));
+        moves.add(requireAttack("poison_sting"));
 
         return new Pokemon(
                 "roselia",
@@ -690,8 +703,8 @@ public class PokemonSample {
 
     public static Pokemon initiateJolteonSpeedTarget() {
         ArrayList<Move> moves = new ArrayList<>();
-        moves.add(attacks.get("thunder_bolt"));
-        moves.add(attacks.get("tackle"));
+        moves.add(requireAttack("thunder_bolt"));
+        moves.add(requireAttack("tackle"));
 
         return new Pokemon(
                 "jolteon",
@@ -706,8 +719,8 @@ public class PokemonSample {
 
     public static Pokemon initiateCrobatSpeedTarget() {
         ArrayList<Move> moves = new ArrayList<>();
-        moves.add(attacks.get("bite"));
-        moves.add(attacks.get("poison_sting"));
+        moves.add(requireAttack("bite"));
+        moves.add(requireAttack("poison_sting"));
 
         return new Pokemon(
                 "crobat",
@@ -722,14 +735,137 @@ public class PokemonSample {
 
     public static Pokemon initiateAlakazamSpeedTarget() {
         ArrayList<Move> moves = new ArrayList<>();
-        moves.add(attacks.get("psychic"));
-        moves.add(attacks.get("confusion"));
+        moves.add(requireAttack("psychic"));
+        moves.add(requireAttack("confusion"));
 
         return new Pokemon(
                 "alakazam",
                 130, 130,
                 70, 65, 155, 105, 140,
                 Type.psychic, null,
+                moves,
+                Status.normal,
+                50
+        );
+    }
+
+    public static Pokemon initiateMiloticAmnesiaBalanced() {
+        ArrayList<Move> moves = new ArrayList<>();
+        moves.add(requireAttack("amnesia"));
+        moves.add(requireAttack("surf"));
+        moves.add(requireAttack("water_gun"));
+
+        return new Pokemon(
+                "milotic",
+                190, 190,
+                65, 90, 130, 80, 110,
+                Type.water, null,
+                moves,
+                Status.normal,
+                50
+        );
+    }
+
+    public static Pokemon initiateKadabraSpecialTargetBalanced() {
+        ArrayList<Move> moves = new ArrayList<>();
+        moves.add(requireAttack("confusion"));
+
+        return new Pokemon(
+                "kadabra",
+                135, 135,
+                35, 55, 105, 85, 105,
+                Type.psychic, null,
+                moves,
+                Status.normal,
+                50
+        );
+    }
+
+    public static Pokemon initiateVenomothSpecialTargetBalanced() {
+        ArrayList<Move> moves = new ArrayList<>();
+        moves.add(requireAttack("signal_beam"));
+
+        return new Pokemon(
+                "venomoth",
+                145, 145,
+                45, 70, 105, 90, 80,
+                Type.bug, Type.poison,
+                moves,
+                Status.normal,
+                50
+        );
+    }
+
+    public static Pokemon initiateMisdreavusSpecialTargetBalanced() {
+        ArrayList<Move> moves = new ArrayList<>();
+        moves.add(requireAttack("shadow_ball"));
+
+        return new Pokemon(
+                "misdreavus",
+                140, 140,
+                45, 70, 110, 90, 85,
+                Type.ghost, null,
+                moves,
+                Status.normal,
+                50
+        );
+    }
+
+    public static Pokemon initiateBrasegaliTurboBalanced() {
+        ArrayList<Move> moves = new ArrayList<>();
+        moves.add(requireAttack("dragon_dance"));
+        moves.add(requireAttack("brick_break"));
+
+        return new Pokemon(
+                "blaziken",
+                165, 165,
+                120, 85, 95, 85, 90,
+                Type.fire, Type.fighting,
+                moves,
+                Status.normal,
+                50
+        );
+    }
+
+    public static Pokemon initiateJolteonSpeedTargetBalanced() {
+        ArrayList<Move> moves = new ArrayList<>();
+        moves.add(requireAttack("thunder_shock"));
+
+        return new Pokemon(
+                "jolteon",
+                150, 150,
+                50, 110, 70, 70, 125,
+                Type.electric, null,
+                moves,
+                Status.normal,
+                50
+        );
+    }
+
+    public static Pokemon initiateElectrodeSpeedTargetBalanced() {
+        ArrayList<Move> moves = new ArrayList<>();
+        moves.add(requireAttack("thunder_shock"));
+
+        return new Pokemon(
+                "electrode",
+                140, 140,
+                50, 110, 65, 70, 130,
+                Type.electric, null,
+                moves,
+                Status.normal,
+                50
+        );
+    }
+
+    public static Pokemon initiatePersianSpeedTargetBalanced() {
+        ArrayList<Move> moves = new ArrayList<>();
+        moves.add(requireAttack("tackle"));
+
+        return new Pokemon(
+                "persian",
+                160, 160,
+                70, 110, 55, 65, 120,
+                Type.normal, null,
                 moves,
                 Status.normal,
                 50

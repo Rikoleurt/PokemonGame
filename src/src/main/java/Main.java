@@ -69,8 +69,7 @@ public class Main extends Application { // extends Application
         scene.setOnKeyPressed(event -> textBubble.handleKeyPress(event.getCode()));
 
 //        songManager.playSong("/music/champion_steven.mp3");
-
-        Matchup matchup = Matchup.setupSpeedBrasegaliTurbo();
+        Matchup matchup = Matchup.pikachuVsCarapuce();
         gs = matchup.createGameState();
 
         System.out.println(gs.pretty_state());

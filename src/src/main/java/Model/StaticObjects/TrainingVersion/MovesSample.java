@@ -196,6 +196,36 @@ public class MovesSample {
                 true
         );
 
+        Attack signalBeam = new Attack(
+                "Signal Beam",
+                60,
+                100,
+                Type.bug,
+                AttackMode.special,
+                20,
+                20
+        );
+
+        Attack shadowBall = new Attack(
+                "Shadow Ball",
+                80,
+                100,
+                Type.ghost,
+                AttackMode.special,
+                15,
+                15
+        );
+
+        SetUpMove dragonDance = new SetUpMove(
+                "Dragon dance",
+                Map.of("atk", 1, "speed", 1),
+                Type.dragon,
+                AttackMode.special,
+                20,
+                20,
+                true
+        );
+
         attackDB.put("tackle", tackle);
         attackDB.put("thunder_bolt", thunderBolt);
         attackDB.put("thunder_punch", thunderPunch);
@@ -236,6 +266,9 @@ public class MovesSample {
         attackDB.put("amnesia", amnesia);
         attackDB.put("turbo", turbo);
 
+        attackDB.put("signal_beam", signalBeam);
+        attackDB.put("shadow_ball", shadowBall);
+        attackDB.put("dragon_dance", dragonDance);
         return attackDB;
     }
 }
