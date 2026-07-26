@@ -159,4 +159,8 @@ public class Trainer implements Fighter {
         team.set(index, otherPokemon);
         team.set(temp, tempPokemon);
     }
+
+    private void getAgentAction() {
+
+    }
 }

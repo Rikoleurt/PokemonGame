@@ -26,7 +26,7 @@ public class EndTurn extends BattleEvent {
     }
 
     @Override
-    public void execute() {
+    public void execute() throws IOException {
         Pokemon npcPokemon = npc.getFrontPokemon();
         Pokemon playerPokemon = player.getFrontPokemon();
 

@@ -6,6 +6,8 @@ import View.Game.Battle.BattleView;
 import View.Game.Battle.InfoBars.Bar;
 import javafx.application.Platform;
 
+import java.io.IOException;
+
 public class UpdateBarEvent extends BattleEvent {
     Pokemon pokemon;
     int currentHP;
@@ -19,7 +21,13 @@ public class UpdateBarEvent extends BattleEvent {
     public void execute() {
         Platform.runLater(() -> {
             Bar bar = resolveBar(pokemon);
-            bar.updateHPBars(currentHP, this::onFinish);
+            bar.updateHPBars(currentHP, () -> {
+                try {
+                    onFinish();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
         });
     }
 

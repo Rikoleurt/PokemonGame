@@ -25,6 +25,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
+import java.io.IOException;
 import java.util.List;
 
 import static View.Game.Battle.BattleView.*;
@@ -136,31 +137,47 @@ public class BattleButtons extends HBox {
     private void onMoveButton() {
         atk1Button.setOnAction(e -> {
             if(pAtk1 != null) {
-                onButtonPressed(pAtk1, field);
+                try {
+                    onButtonPressed(pAtk1, field);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
             }
         });
 
         atk2Button.setOnAction(e -> {
             if(pAtk2 != null) {
-                onButtonPressed(pAtk2, field);
+                try {
+                    onButtonPressed(pAtk2, field);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
             }
 
         });
 
         atk3Button.setOnAction(e -> {
             if(pAtk3 != null) {
-                onButtonPressed(pAtk3, field);
+                try {
+                    onButtonPressed(pAtk3, field);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
             }
         });
 
         atk4Button.setOnAction(e -> {
             if(pAtk4 != null) {
-                onButtonPressed(pAtk4, field);
+                try {
+                    onButtonPressed(pAtk4, field);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
             }
         });
     }
 
-    private void onButtonPressed(Move move, Field field) {
+    private void onButtonPressed(Move move, Field field) throws IOException {
         player.setAction(Action.Attack);
         executor.addEvent(new StartTurn(npc, player, move, field, executor, this));
         executor.executeEvents(null);

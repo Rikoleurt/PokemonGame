@@ -3,6 +3,8 @@ package Controller.Fight.Battle.Events.GameEvents;
 import Controller.Fight.Battle.Events.BattleEvent;
 import Model.Pokemon.Pokemon;
 
+import java.io.IOException;
+
 public class StatusEvent extends BattleEvent {
     private final Pokemon pokemon;
 
@@ -11,7 +13,7 @@ public class StatusEvent extends BattleEvent {
     }
 
     @Override
-    public void execute() {
+    public void execute() throws IOException {
         pokemon.statusEffectAtEnd();
         onFinish();
     }

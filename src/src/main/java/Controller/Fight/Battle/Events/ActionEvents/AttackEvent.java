@@ -5,6 +5,7 @@ import Controller.Fight.Battle.Events.BattleEvent;
 import Model.Pokemon.Field;
 import Model.Pokemon.Move;
 import Model.Pokemon.Pokemon;
+import java.io.IOException;
 
 public class AttackEvent extends BattleEvent {
 
@@ -24,8 +25,14 @@ public class AttackEvent extends BattleEvent {
     }
 
     @Override
-    public void execute() {
+    public void execute() throws IOException {
         if(!attacker.isKO()) attacker.attack(defender, move, field);
-        executor.executeEvents(this::onFinish);
+        executor.executeEvents(()-> {
+            try {
+                onFinish();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 }

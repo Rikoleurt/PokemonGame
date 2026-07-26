@@ -4,6 +4,8 @@ import Controller.Fight.Battle.Events.BattleEvent;
 import View.Game.Battle.BattleView;
 import View.Game.Battle.Text.TextBubble;
 
+import java.io.IOException;
+
 public class MessageEvent extends BattleEvent {
     String message;
 
@@ -14,7 +16,13 @@ public class MessageEvent extends BattleEvent {
     @Override
     public void execute() {
         TextBubble bubble = BattleView.getTextBubble();
-        bubble.setOnMessageComplete(this::onFinish);
+        bubble.setOnMessageComplete(() -> {
+            try {
+                onFinish();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
         bubble.addMessage(message);
     }
 

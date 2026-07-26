@@ -1,7 +1,6 @@
 package Model;
 
 import Model.Inventory.Bag;
-import Model.Inventory.Items.Fight.StatBooster;
 import Model.Inventory.Items.Heal.Heal;
 import Model.Inventory.Items.Item;
 import Model.Person.Action;
@@ -13,17 +12,18 @@ import Model.Pokemon.Move;
 import Model.Pokemon.Pokemon;
 import Model.Pokemon.PokemonEnum.Status;
 import Model.StaticObjects.TestVersion.MovesExample;
+import Model.StaticObjects.TrainingVersion.Matchup;
 import Server.SocketServer;
+import Utils.MatchupRandomizer;
 import Utils.SeedManager;
-import View.Training.Console.View.BattleConsole;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 public class GameState {
     Trainer player;
@@ -34,8 +34,9 @@ public class GameState {
     boolean lastOpponentActionInvalid = false;
     String lastOpponentInvalidReason = "";
 
-    BattleConsole console = BattleConsole.getInstance();
     SocketServer server = SocketServer.getInstance();
+    List<Matchup> matchups = Matchup.allTrainingMatchups();
+    MatchupRandomizer matchupRandomizer = new MatchupRandomizer(matchups, SeedManager.getSeed());
 
     public GameState(Trainer player, Trainer opponent, int turn) {
         this.player = player;
@@ -189,12 +190,12 @@ public class GameState {
         return gson.toJson(obj);
     }
 
-    public void launchFight() throws IOException {
+    public void launchTrainingFight() throws IOException {
         System.out.println("---------------- Fight begins ----------------");
-        fightLoop();
+        fightTrainingLoop();
     }
 
-    private void fightLoop() throws IOException {
+    private void fightTrainingLoop() throws IOException {
         int episodeCount = 0;
         String pendingMsg = null;
 
@@ -269,7 +270,7 @@ public class GameState {
 
                 int actionIndex = Integer.parseInt(actionMsg);
 
-                step(actionIndex);
+                trainingStep(actionIndex);
                 turn++;
                 server.send(state());
             }
@@ -280,7 +281,55 @@ public class GameState {
         System.out.println("Total episodes done: " + episodeCount);
     }
 
-    private void step(int actionIndex) {
+    private Move resolveAttackByActionIndex(int actionIndex){
+        ArrayList<Move> movePool = opponent.getFrontPokemon().getAttacks();
+        if(actionIndex > 3) return null;
+        switch (actionIndex) {
+            case 0 -> {
+                if(movePool.getFirst() != null) {
+                    System.out.println(movePool.getFirst().getName());
+                    return movePool.getFirst();
+                }
+                else {
+                    System.out.println("Move not found at index 0.");
+                    return null;
+                }
+            }
+            case 1 -> {
+                if(movePool.get(1) != null){
+                    System.out.println(movePool.get(1).getName());
+                    return movePool.get(1);
+                }
+                else {
+                    System.out.println("Move not found at index 1.");
+                    return null;
+                }
+            }
+            case 2 -> {
+                if(movePool.get(2) != null){
+                    System.out.println(movePool.get(2).getName());
+                    return movePool.get(2);
+                }
+                else {
+                    System.out.println("Move not found at index 2.");
+                    return null;
+                }
+            }
+            case 3 -> {
+                if(movePool.getLast() != null){
+                    System.out.println(movePool.getLast().getName());
+                    return movePool.getLast();
+                }
+                else {
+                    System.out.println("Move not found at index 3.");
+                    return null;
+                }
+            }
+        }
+        return null;
+    }
+
+    private void trainingStep(int actionIndex) {
         clearLastActionFlags();
 
         Pokemon playerPokemon = player.getFrontPokemon();
@@ -633,13 +682,17 @@ public class GameState {
         isPlayerFirst = null;
         clearLastActionFlags();
 
+        Matchup matchup = matchupRandomizer.nextMatchup();
+
+        this.player = matchup.createPlayerTrainer();
+        this.opponent = matchup.createOpponentTrainer();
+
         for (Pokemon p : player.getTeam()) {
             p.heal();
         }
         for (Pokemon p : opponent.getTeam()) {
             p.heal();
         }
-
         SeedManager.incrementSeed();
         SeedManager.setSeed(SeedManager.getSeed());
     }
@@ -654,5 +707,9 @@ public class GameState {
 
     public Trainer getPlayer() {
         return player;
+    }
+
+    public Matchup getFirstMatchup(){
+        return matchups.getFirst();
     }
 }

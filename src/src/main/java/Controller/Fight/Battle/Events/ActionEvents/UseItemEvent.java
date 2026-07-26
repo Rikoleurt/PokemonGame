@@ -6,6 +6,8 @@ import Model.Inventory.Items.Item;
 import Model.Person.Fighter;
 import Model.Pokemon.Pokemon;
 
+import java.io.IOException;
+
 public class UseItemEvent extends BattleEvent {
     private final Fighter fighter;
     private final Item item;
@@ -20,9 +22,15 @@ public class UseItemEvent extends BattleEvent {
     }
 
     @Override
-    public void execute() {
+    public void execute() throws IOException {
         fighter.use(item, target);
-        executor.executeEvents(this::onFinish);
+        executor.executeEvents(() -> {
+            try {
+                onFinish();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 }
 

@@ -7,7 +7,6 @@ import Model.Person.Trainer;
 import Model.Pokemon.Pokemon;
 import Model.Pokemon.PokemonEnum.Status;
 import View.Game.Battle.BattleView;
-import View.Game.Battle.InfoBars.Bar;
 import View.Game.Battle.Text.TextBubble;
 import Utils.SceneManager;
 import javafx.animation.PauseTransition;
@@ -26,9 +25,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
 import javafx.util.Duration;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
@@ -130,7 +129,13 @@ public class SwitchView extends BorderPane {
             });
         }
         if(!(pokemon == player.getFrontPokemon())){
-            button.setOnAction(e -> handleSwitch(pokemon));
+            button.setOnAction(e -> {
+                try {
+                    handleSwitch(pokemon);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
         }
         return button;
     }
@@ -195,7 +200,7 @@ public class SwitchView extends BorderPane {
         return bar;
     }
 
-    protected void handleSwitch(Pokemon pokemon) {
+    protected void handleSwitch(Pokemon pokemon) throws IOException {
         BattleView.refreshSprites();
         if (pokemon.isKO()) {
             switchBubble.setVisible(true);

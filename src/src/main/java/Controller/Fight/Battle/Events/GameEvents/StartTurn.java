@@ -6,7 +6,6 @@ import Controller.Fight.Battle.Events.ActionEvents.Switch.FoeSwitch.FoeSwitchEve
 import Controller.Fight.Battle.Events.ActionEvents.Switch.PlayerSwitch.PlayerSwitchEvent;
 import Controller.Fight.Battle.Events.ActionEvents.UseItemEvent;
 import Controller.Fight.Battle.Events.BattleEvent;
-import Controller.Fight.Battle.Events.ComputeEvents.FoeEvents.FoeChoiceEvent;
 import Controller.Fight.Battle.Events.ComputeEvents.FoeEvents.FoeItemChoiceEvent;
 import Controller.Fight.Battle.Events.ComputeEvents.FoeEvents.FoePokemonChoiceEvent;
 import Controller.Fight.Battle.Events.ComputeEvents.Order;
@@ -16,9 +15,12 @@ import Model.Person.Trainer;
 import Model.Pokemon.Field;
 import Model.Pokemon.Move;
 import Model.Pokemon.Pokemon;
+import Server.ActionDecoder;
+import Server.SocketServer;
 import View.Game.Battle.BattleButtons;
 import View.Game.Battle.BattleView;
-import View.Training.Console.View.BattleConsole;
+
+import java.io.IOException;
 
 public class StartTurn extends BattleEvent {
 
@@ -30,7 +32,8 @@ public class StartTurn extends BattleEvent {
     private Item playerItem;
     private Pokemon switchTarget;
     private BattleButtons battleButtons;
-    BattleConsole console = BattleConsole.getInstance();
+    private final SocketServer socketServer = SocketServer.getInstance();
+    private final ActionDecoder decoder = new ActionDecoder();
 
     public StartTurn(Trainer npc, Trainer player, Move move, Field field, BattleExecutor executor, BattleButtons battleButtons) {
         this.npc = npc;
@@ -62,13 +65,15 @@ public class StartTurn extends BattleEvent {
     }
 
     @Override
-    public void execute() {
+    public void execute() throws IOException {
         executor.increaseTurn();
 
         BattleButtons.getHBox1().setVisible(false);
         BattleButtons.getHBox2().setVisible(false);
+        socketServer.send(socketServer.state(player,npc, executor.getTurn()));
+        String receivedMessage = socketServer.getActionMessage(npc);
 
-        Action npcAction = new FoeChoiceEvent(npc).compute();
+        Action npcAction = decoder.getActionFromMessage(receivedMessage);
         Action playerAction = player.getAction();
 
         Item item = new FoeItemChoiceEvent(npc).compute();
@@ -127,7 +132,7 @@ public class StartTurn extends BattleEvent {
         onFinish();
     }
 
-    @Override public void onFinish(){
+    @Override public void onFinish() throws IOException {
         executor.addEvent(new EndTurn(executor));
         executor.executeEvents(null);
     }

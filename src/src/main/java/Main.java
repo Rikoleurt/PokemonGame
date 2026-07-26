@@ -1,6 +1,8 @@
 import Model.GameState;
 import Model.StaticObjects.TrainingVersion.Matchup;
 import Server.SocketServer;
+import Utils.MatchupRandomizer;
+import Utils.SeedManager;
 import Utils.SongManager;
 import View.Game.Battle.BattleView;
 import View.Game.Battle.Text.TextBubble;
@@ -21,11 +23,11 @@ import java.util.*;
 public class Main extends Application { // extends Application
 
     BattleConsole console = BattleConsole.getInstance();
-    GameState gs;
+    static GameState gs;
     SongManager songManager = SongManager.getInstance();
-
+    static MatchupRandomizer matchupRandomizer;
     @Override
-    public void start(Stage primaryStage) throws IOException {
+    public void start(Stage primaryStage) {
 
         Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
         double screenWidth = screenBounds.getWidth();
@@ -50,7 +52,7 @@ public class Main extends Application { // extends Application
         SceneManager.getStage().setWidth(gameWidth);
         SceneManager.getStage().setHeight(screenHeight);
         SceneManager.getStage().setTitle("Pokémon Game");
-//        SceneManager.getStage().show();
+        SceneManager.getStage().show();
 
 
         ConsoleView consoleView = new ConsoleView();
@@ -69,11 +71,11 @@ public class Main extends Application { // extends Application
         scene.setOnKeyPressed(event -> textBubble.handleKeyPress(event.getCode()));
 
 //        songManager.playSong("/music/champion_steven.mp3");
-        Matchup matchup = Matchup.pikachuVsCarapuce();
-        gs = matchup.createGameState();
-
+//        gs = Matchup.salamecheVsBulbizarre().createGameState();
+        gs = Matchup.createGameState(BattleView.getPlayer(), BattleView.getNpc());
         System.out.println(gs.pretty_state());
         SocketServer server = SocketServer.getInstance();
+
         new Thread(() -> {
             try {
                 server.start(5001, gs);
@@ -83,7 +85,6 @@ public class Main extends Application { // extends Application
         }).start();
 
     }
-
     public static void main(String[] args) {
         launch(args);
     }

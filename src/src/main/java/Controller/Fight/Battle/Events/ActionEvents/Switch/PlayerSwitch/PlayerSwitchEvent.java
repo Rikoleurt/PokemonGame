@@ -8,6 +8,8 @@ import Model.Pokemon.Pokemon;
 import View.Game.Battle.BattleView;
 import Utils.SceneManager;
 
+import java.io.IOException;
+
 import static View.Game.Battle.BattleView.field;
 
 public class PlayerSwitchEvent extends BattleEvent {
@@ -23,7 +25,7 @@ public class PlayerSwitchEvent extends BattleEvent {
     }
 
     @Override
-    public void execute() {
+    public void execute() throws IOException {
         BattleView.getPlayerBar().setVisible(false);
         SceneManager.switchStageTo(SceneManager.getFightView());
         executor.addEvent(new MessageEvent(player.getFrontPokemon().getName() + " stop!"));
@@ -32,6 +34,12 @@ public class PlayerSwitchEvent extends BattleEvent {
         executor.addEvent(new MessageEvent(player.getFrontPokemon().getName() + " go!"));
         BattleView.getPlayerBar().setPokemon(player.getFrontPokemon());
         BattleView.getPlayerBar().setVisible(true);
-        executor.executeEvents(this::onFinish);
+        executor.executeEvents(()-> {
+            try {
+                onFinish();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 }

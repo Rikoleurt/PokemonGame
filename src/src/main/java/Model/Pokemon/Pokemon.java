@@ -668,12 +668,10 @@ public class Pokemon {
         if(attack.isStab(launcher)) {
             power *= 1.5f;
         }
-        // I decided to erase critical hits to test
-//        if (attack.isCritical(launcher)) {
-//            augmentedDamage = launcher.getAttack(attack).criticalDamage(launcher);
-//            executor.addEvent(new MessageEvent("Critical hit !"));
-//            return calculateEffectiveness(attack, launcher, target, power) * augmentedDamage;
-//        }
+        if (attack.isCritical(launcher)) {
+            augmentedDamage = launcher.getAttack(attack).criticalDamage(launcher);
+            return calculateEffectiveness(attack, launcher, target, power) * augmentedDamage;
+        }
         return calculateEffectiveness(attack, launcher, target, power);
     }
     /**

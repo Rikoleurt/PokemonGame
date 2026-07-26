@@ -25,6 +25,7 @@ import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
+import java.io.IOException;
 import java.util.Set;
 
 public class Categories extends VBox {
@@ -106,7 +107,11 @@ public class Categories extends VBox {
                         player.setAction(Action.Item);
                         SceneManager.switchStageTo(SceneManager.getFightView());
                         executor.addEvent(new StartTurn(npc, player, item, executor, BattleView.getFightButtons()));
-                        executor.executeEvents(null);
+                        try {
+                            executor.executeEvents(null);
+                        } catch (IOException ex) {
+                            throw new RuntimeException(ex);
+                        }
                     } else {
                         bagBubble.showBubble();
                         bagBubble.showMessage("It won't have any effect.");

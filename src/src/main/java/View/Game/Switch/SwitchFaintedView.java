@@ -11,6 +11,8 @@ import View.Game.Battle.Text.TextBubble;
 import javafx.animation.PauseTransition;
 import javafx.util.Duration;
 
+import java.io.IOException;
+
 public class SwitchFaintedView extends SwitchView {
     BattleButtons battleButtons;
 
@@ -22,7 +24,7 @@ public class SwitchFaintedView extends SwitchView {
     }
 
     @Override
-    protected void handleSwitch(Pokemon pokemon) {
+    protected void handleSwitch(Pokemon pokemon) throws IOException {
         BattleView.refreshSprites();
         if (pokemon.isKO()) {
             switchBubble.setVisible(true);

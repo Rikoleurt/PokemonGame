@@ -3,6 +3,7 @@ package Controller.Fight.Battle;
 import Controller.Fight.Battle.Events.BattleEvent;
 import Controller.Fight.Battle.Events.UIEvents.MessageEvent;
 
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -34,11 +35,17 @@ public class BattleExecutor {
         events.clear();
     }
 
-    public void executeEvents(Runnable onAllEventsFinished) {
+    public void executeEvents(Runnable onAllEventsFinished) throws IOException {
 //        getEventsFromQueue();
         if (!events.isEmpty()) {
             BattleEvent event = events.poll();
-            event.setOnFinish(() -> executeEvents(onAllEventsFinished));
+            event.setOnFinish(() -> {
+                try {
+                    executeEvents(onAllEventsFinished);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
             event.execute();
         } else {
             if (onAllEventsFinished != null) {
