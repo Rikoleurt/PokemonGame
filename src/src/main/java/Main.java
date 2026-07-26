@@ -50,9 +50,9 @@ public class Main extends Application { // extends Application
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/style/style.css")).toExternalForm());
 
         SceneManager.getStage().setScene(scene);
-        SceneManager.getStage().setX(consoleWidth);
+        SceneManager.getStage().setX(screenHeight);
         SceneManager.getStage().setY(0);
-        SceneManager.getStage().setWidth(gameWidth);
+        SceneManager.getStage().setWidth(screenWidth);
         SceneManager.getStage().setHeight(screenHeight);
         SceneManager.getStage().setTitle("Pokémon Game");
         SceneManager.getStage().show();
