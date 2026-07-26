@@ -1,0 +1,6 @@
+View/View.class
+View/Game/MainMenuView.class
+Main.class
+Controller/Fight/Battle/Events/GameEvents/StartTurn.class
+Utils/SceneManager.class
+Controller/Fight/Battle/Events/GameEvents/StartTurn$1.class

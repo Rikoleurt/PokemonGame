@@ -70,8 +70,13 @@ public class StartTurn extends BattleEvent {
 
         BattleButtons.getHBox1().setVisible(false);
         BattleButtons.getHBox2().setVisible(false);
-        socketServer.send(socketServer.state(player,npc, executor.getTurn()));
-        String receivedMessage = socketServer.getActionMessage(npc);
+        String receivedMessage = null;
+        try {
+            socketServer.send(socketServer.state(player, npc, executor.getTurn()));
+            receivedMessage = socketServer.getActionMessage(npc);
+        } catch (IOException e) {
+            System.out.println("IOException : " + e.getMessage() + " at StartTurn");
+        }
 
         Action npcAction = decoder.getActionFromMessage(receivedMessage);
         Action playerAction = player.getAction();

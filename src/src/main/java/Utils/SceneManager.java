@@ -1,6 +1,7 @@
 package Utils;
 
 import View.Game.Battle.BattleView;
+import View.Game.MainMenuView;
 import View.SettingView.AudioView;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -13,6 +14,7 @@ public class SceneManager {
     private static Stage primaryStage;
     private static Parent fightViewRoot;
     private static Parent audioViewRoot;
+    private static Parent mainMenuViewRoot;
 
     public static void setStage(Stage stage) {
         primaryStage = stage;
@@ -42,5 +44,8 @@ public class SceneManager {
     }
     public static void setAudioView(AudioView audioView) {
         audioViewRoot = audioView;
+    }
+    public static void setMainMenuView(MainMenuView mainMenuView) {
+        mainMenuViewRoot = mainMenuView;
     }
 }

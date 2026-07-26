@@ -140,15 +140,12 @@ public class Bar extends VBox {
     public Label getHealth() {
         return health;
     }
-
     public Label getName() {
         return name;
     }
-
     public Label getHP() {
         return HP;
     }
-
     public Label getLevel() {
         return level;
     }
@@ -205,8 +202,6 @@ public class Bar extends VBox {
         });
         timeline.play();
     }
-
-
 
     private static void ApplyColor(AtomicInteger currentHP, int maxHP, ProgressBar playerBar) {
         if (currentHP.get() > maxHP / 2) {

@@ -8,6 +8,7 @@ import View.Game.Battle.BattleView;
 import View.Game.Battle.Text.TextBubble;
 import Utils.SceneManager;
 
+import View.Game.MainMenuView;
 import View.Training.Console.View.BattleConsole;
 import View.Training.Console.View.ConsoleView;
 import javafx.application.Application;
@@ -37,12 +38,14 @@ public class Main extends Application { // extends Application
         double gameWidth = screenWidth - consoleWidth;
 
         SceneManager.setStage(primaryStage);
+        MainMenuView mainMenuView = new MainMenuView();
+        SceneManager.setMainMenuView(mainMenuView);
         BattleView battleView = new BattleView();
-        SceneManager.setFightView(battleView);
+//        SceneManager.setFightView(battleView);
 
         Font globalFont = Font.loadFont(Objects.requireNonNull(getClass().getResource("/font/pokemonFont.ttf")).toExternalForm(), 18);
 
-        Scene scene = new Scene(battleView, gameWidth, screenHeight);
+        Scene scene = new Scene(mainMenuView, screenWidth, screenHeight);
         scene.getRoot().setStyle("-fx-font-family: '" + globalFont.getName() + "'; -fx-font-size: 18px;");
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/style/style.css")).toExternalForm());
 
@@ -55,34 +58,34 @@ public class Main extends Application { // extends Application
         SceneManager.getStage().show();
 
 
-        ConsoleView consoleView = new ConsoleView();
-        Scene consoleScene = new Scene(consoleView, consoleWidth, screenHeight);
-
-        Stage consoleStage = new Stage();
-        consoleStage.setTitle("Battle Console");
-        consoleStage.setScene(consoleScene);
-        consoleStage.setX(0);
-        consoleStage.setY(0);
-        consoleStage.setWidth(consoleWidth);
-        consoleStage.setHeight(screenHeight);
+//        ConsoleView consoleView = new ConsoleView();
+//        Scene consoleScene = new Scene(consoleView, consoleWidth, screenHeight);
+//
+//        Stage consoleStage = new Stage();
+//        consoleStage.setTitle("Battle Console");
+//        consoleStage.setScene(consoleScene);
+//        consoleStage.setX(0);
+//        consoleStage.setY(0);
+//        consoleStage.setWidth(consoleWidth);
+//        consoleStage.setHeight(screenHeight);
 //        consoleStage.show();
-
+//
         TextBubble textBubble = BattleView.getTextBubble();
         scene.setOnKeyPressed(event -> textBubble.handleKeyPress(event.getCode()));
 
 //        songManager.playSong("/music/champion_steven.mp3");
 //        gs = Matchup.salamecheVsBulbizarre().createGameState();
-        gs = Matchup.createGameState(BattleView.getPlayer(), BattleView.getNpc());
-        System.out.println(gs.pretty_state());
-        SocketServer server = SocketServer.getInstance();
-
-        new Thread(() -> {
-            try {
-                server.start(5001, gs);
-            } catch (IOException e) {
-                System.out.println("Client connect failed " + e.getMessage());
-            }
-        }).start();
+//        gs = Matchup.createGameState(BattleView.getPlayer(), BattleView.getNpc());
+//        System.out.println(gs.pretty_state());
+//        SocketServer server = SocketServer.getInstance();
+//
+//        new Thread(() -> {
+//            try {
+//                server.start(5001, gs);
+//            } catch (IOException e) {
+//                System.out.println("Client connect failed " + e.getMessage());
+//            }
+//        }).start();
 
     }
     public static void main(String[] args) {
