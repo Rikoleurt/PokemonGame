@@ -1235,33 +1235,38 @@ public class Pokemon {
         int N = this.getLevel();
         double nCubed = Math.pow(N,3);
 
-        switch (this.getExpType()) {
-            case Fast -> currentMaxExp = (int) (0.8 * nCubed);
-            case Medium -> currentMaxExp = (int) nCubed;
-            case Slow -> currentMaxExp = (int) (1.25 * nCubed);
-            case Parabolic -> currentMaxExp = (int) (1.2 * nCubed - 15 * Math.pow(N, 2) + 100 * N - 140);
-            case Erratic -> {
-                if (1 <= N && N <= 50) {
-                    currentMaxExp = (int) (nCubed * (100 - N) / 50);
-                } else if (51 <= N && N <= 68) {
-                    currentMaxExp = (int) (nCubed * (150 - N) / 100);
-                } else if (69 <= N && N <= 98) {
-                    currentMaxExp = (int) (nCubed * (
-                                                1.274 - (1.0 / 50) * Math.floor(N / 3.0) - calculateP()
-                                        ));
-                } else if (99 <= N && N <= 100) {
-                    currentMaxExp = (int) (nCubed * (160 - N) / 100);
+        if (expType != null) {
+            switch (this.getExpType()) {
+                case Fast -> currentMaxExp = (int) (0.8 * nCubed);
+                case Medium -> currentMaxExp = (int) nCubed;
+                case Slow -> currentMaxExp = (int) (1.25 * nCubed);
+                case Parabolic -> currentMaxExp = (int) (1.2 * nCubed - 15 * Math.pow(N, 2) + 100 * N - 140);
+                case Erratic -> {
+                    if (1 <= N && N <= 50) {
+                        currentMaxExp = (int) (nCubed * (100 - N) / 50);
+                    } else if (51 <= N && N <= 68) {
+                        currentMaxExp = (int) (nCubed * (150 - N) / 100);
+                    } else if (69 <= N && N <= 98) {
+                        currentMaxExp = (int) (nCubed * (
+                                                    1.274 - (1.0 / 50) * Math.floor(N / 3.0) - calculateP()
+                                            ));
+                    } else if (99 <= N && N <= 100) {
+                        currentMaxExp = (int) (nCubed * (160 - N) / 100);
+                    }
+                }
+                case Fluctuating -> {
+                    if (1 <= N && N <= 15) {
+                        currentMaxExp = (int) (nCubed * ((24 + Math.floor((N + 1) / 3.0)) / 50));
+                    } else if (16 <= N && N <= 35) {
+                        currentMaxExp = (int) (nCubed * ((14 + N) / 50.0));
+                    } else if (36 <= N && N <= 100) {
+                        currentMaxExp = (int) (nCubed * ((32 + Math.floor(N / 2.0)) / 50));
+                    }
                 }
             }
-            case Fluctuating -> {
-                if (1 <= N && N <= 15) {
-                    currentMaxExp = (int) (nCubed * ((24 + Math.floor((N + 1) / 3.0)) / 50));
-                } else if (16 <= N && N <= 35) {
-                    currentMaxExp = (int) (nCubed * ((14 + N) / 50.0));
-                } else if (36 <= N && N <= 100) {
-                    currentMaxExp = (int) (nCubed * ((32 + Math.floor(N / 2.0)) / 50));
-                }
-            }
+        } else {
+            System.out.println("Backup value due to null expType");
+            return 0;
         }
 
         return currentMaxExp;

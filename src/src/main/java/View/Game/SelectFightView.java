@@ -1,12 +1,20 @@
 package View.Game;
 
+import Model.Inventory.Bag;
+import Model.Person.Trainer;
+import Model.StaticObjects.TrainingVersion.Matchup;
+import Utils.SceneManager;
+import View.Game.Battle.BattleView;
+import View.View;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
-public class SelectFightView extends BorderPane {
+import java.util.Map;
+
+public class SelectFightView extends BorderPane implements View {
 
     public SelectFightView() {
         init();
@@ -27,25 +35,20 @@ public class SelectFightView extends BorderPane {
         firstScenarioButton.setPrefWidth(200);
         firstScenarioButton.setPrefHeight(400);
         firstScenarioButton.setStyle("-fx-font-size: 30");
-        firstScenarioButton.setOnAction(e -> {});
+        firstScenarioButton.setOnAction(e -> {onFirstScenarioPressed();});
 
         secondScenarioButton.setPrefWidth(200);
         secondScenarioButton.setPrefHeight(400);
         secondScenarioButton.setStyle("-fx-font-size: 30");
-        secondScenarioButton.setOnAction(e -> {});
+        secondScenarioButton.setOnAction(e -> {onSecondScenarioPressed();});
 
         thirdScenarioButton.setPrefWidth(200);
         thirdScenarioButton.setPrefHeight(400);
         thirdScenarioBox.setStyle("-fx-font-size: 30");
-        thirdScenarioButton.setOnAction(e -> {});
+        thirdScenarioButton.setOnAction(e -> {onThirdScenarioPressed();});
 
         // Center the buttons
         horizontalMainContainer.setPadding(new Insets(150, 0, 0, 400));
-        // Rules for the player
-        /*
-          - Players can launch once the battle
-          - Once they finished the battles, they must hand in the results
-         */
 
         firstScenarioBox.getChildren().addAll(firstScenarioButton);
         secondScenarioBox.getChildren().addAll(secondScenarioButton);
@@ -54,5 +57,44 @@ public class SelectFightView extends BorderPane {
         horizontalMainContainer.getChildren().addAll(firstScenarioBox, secondScenarioBox, thirdScenarioBox);
 
         setCenter(horizontalMainContainer);
+    }
+
+    private void onFirstScenarioPressed() {
+
+        Matchup matchup = Matchup.juanScenario6v6();
+
+        Trainer player = new Trainer("Player", new Bag(null), matchup.playerTeam());
+        Trainer agent = new Trainer("Agent", new Bag(null), matchup.opponentTeam());
+
+        BattleView battleView = new BattleView(player, agent);
+        BattleView.refreshSprites();
+
+        SceneManager.setRoot(battleView);
+    }
+
+    private void onSecondScenarioPressed() {
+
+        Matchup matchup = Matchup.spectraScenario6v6();
+
+        Trainer player = new Trainer("Player", new Bag(null), matchup.playerTeam());
+        Trainer agent = new Trainer("Agent", new Bag(null), matchup.opponentTeam());
+
+        BattleView battleView = new BattleView(player, agent);
+        BattleView.refreshSprites();
+
+        SceneManager.setRoot(battleView);
+    }
+
+    private void onThirdScenarioPressed() {
+
+        Matchup matchup = Matchup.pierreRochardScenario6v6();
+
+        Trainer player = new Trainer("Player", new Bag(null), matchup.playerTeam());
+        Trainer agent = new Trainer("Agent", new Bag(null), matchup.opponentTeam());
+
+        BattleView battleView = new BattleView(player, agent);
+        BattleView.refreshSprites();
+
+        SceneManager.setRoot(battleView);
     }
 }

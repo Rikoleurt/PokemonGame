@@ -8,7 +8,6 @@ import java.util.LinkedList;
 import Controller.Fight.Battle.BattleExecutor;
 import Model.GameState;
 import Model.Inventory.Bag;
-import Model.Inventory.Items.Item;
 import Model.Person.Action;
 import Model.Person.Trainer;
 import Model.Pokemon.Attacks.Attack;
@@ -31,7 +30,7 @@ public class SocketServer {
 
     private final Trainer player = BattleView.getPlayer();
     private final Pokemon pokemon = player.getFrontPokemon();
-    private final Trainer npc = BattleView.getNpc();
+    private final Trainer npc = BattleView.getAgent();
     private final Pokemon pokemon2 = npc.getFrontPokemon();
     private final BattleExecutor executor = BattleExecutor.getInstance();
     private static SocketServer instance;
@@ -300,7 +299,7 @@ public class SocketServer {
     public String refreshState() throws IOException{
         Trainer refreshedPlayer = BattleView.getPlayer();
         Pokemon refreshedOpponent = refreshedPlayer.getFrontPokemon();
-        Trainer refreshedNPC = BattleView.getNpc();
+        Trainer refreshedNPC = BattleView.getAgent();
         Pokemon refreshedSelf = refreshedNPC.getFrontPokemon();
         return state(refreshedPlayer, refreshedNPC, executor.getTurn());
     }

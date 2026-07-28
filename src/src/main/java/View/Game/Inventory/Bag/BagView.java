@@ -6,6 +6,7 @@ import View.Game.Inventory.Bag.Component.CategoryMenu;
 import View.Game.Inventory.Bag.Component.PokemonList;
 import Utils.SceneManager;
 
+import View.View;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -17,7 +18,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
-public class BagView extends BorderPane {
+public class BagView extends BorderPane implements View {
 
     Trainer player;
     Trainer npc;
@@ -39,9 +40,7 @@ public class BagView extends BorderPane {
         Button backButton = makeBackButton(onClose);
         onBackPressed(backButton); // If the button is pressed, the fight view will be shown
 
-
         BorderPane.setMargin(pokemonList, new Insets(0, 40, 0, 0));
-
 
         // Make the menu in the bag view
         HBox commandBox = new HBox();

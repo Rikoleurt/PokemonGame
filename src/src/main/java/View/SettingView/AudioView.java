@@ -3,6 +3,7 @@ package View.SettingView;
 import Utils.SceneManager;
 import Utils.SongManager;
 import View.Game.Battle.InfoBars.Bar;
+import View.View;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -19,7 +20,7 @@ import javafx.scene.text.Font;
 
 import java.util.Objects;
 
-public class AudioView extends BorderPane {
+public class AudioView extends BorderPane implements View {
 
     Slider volumeSlider;
     static Font font = Font.loadFont(Objects.requireNonNull(Bar.class.getResource("/font/pokemonFont.ttf")).toExternalForm(), 32);

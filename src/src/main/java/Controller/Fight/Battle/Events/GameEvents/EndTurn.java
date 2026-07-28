@@ -27,7 +27,7 @@ public class EndTurn extends BattleEvent {
 
     @Override
     public void execute() throws IOException {
-        Pokemon npcPokemon = npc.getFrontPokemon();
+        Pokemon npcPokemon = agent.getFrontPokemon();
         Pokemon playerPokemon = player.getFrontPokemon();
 
         Field field = BattleView.getTerrain();
@@ -35,12 +35,12 @@ public class EndTurn extends BattleEvent {
         if(playerPokemon.getStatus() != Status.normal) executor.addEvent(new StatusEvent(playerPokemon));
         if(npcPokemon.getStatus() != Status.normal) executor.addEvent(new StatusEvent(npcPokemon));
 
-        if (npcPokemon.isKO() && npc.getHealthyPokemon() > 0) {
+        if (npcPokemon.isKO() && agent.getHealthyPokemon() > 0) {
             executor.addEvent(new MessageEvent(npcPokemon.getName() + " fainted."));
-            Pokemon next = npc.chooseSwitchTarget();
+            Pokemon next = agent.chooseSwitchTarget();
             if(next != null){
-                executor.addEvent(new MessageEvent(npc.getName() + " sends " + next.getName() + "!"));
-                executor.addEvent(new SwitchEvent(npc, next, field, executor));
+                executor.addEvent(new MessageEvent(agent.getName() + " sends " + next.getName() + "!"));
+                executor.addEvent(new SwitchEvent(agent, next, field, executor));
                 try {
                     socketServer.send(socketServer.refreshState());
                 } catch (IOException e) {
@@ -57,9 +57,9 @@ public class EndTurn extends BattleEvent {
                 System.out.println("IOException : " + e.getMessage());
             }
         }
-        if(npc.getHealthyPokemon() == 0){
-            executor.addEvent(new MessageEvent(npc.getName() + " has been defeated."));
-            executor.addEvent(new MessageEvent(npc.getName() + " gives you 1000 Poké dollars."));
+        if(agent.getHealthyPokemon() == 0){
+            executor.addEvent(new MessageEvent(agent.getName() + " has been defeated."));
+            executor.addEvent(new MessageEvent(agent.getName() + " gives you 1000 Poké dollars."));
             executor.executeEvents(null);
             try {
                 socketServer.send(socketServer.refreshState());

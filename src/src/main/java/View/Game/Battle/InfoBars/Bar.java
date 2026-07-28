@@ -94,10 +94,10 @@ public class Bar extends VBox {
         imageView2.setPreserveRatio(true);
 
         if (this instanceof OpponentBar) {
-            int size = npc.getTeam().size();
+            int size = agent.getTeam().size();
             HBox pokeHBox = new HBox();
             for (int i = 0; i < size; i++) {
-                if (npc.getTeam().get(i).getName().equals("KO")) {
+                if (agent.getTeam().get(i).getName().equals("KO")) {
                     Image image = new Image(Objects.requireNonNull(Bar.class.getResource("/images/pokeballKO.png")).toExternalForm());
                     ImageView imageView = new ImageView(image);
                     imageView.setFitWidth(20);
@@ -264,9 +264,9 @@ public class Bar extends VBox {
         HBox pokeHBox = new HBox();
         pokeHBox.setSpacing(4);
         if (this instanceof OpponentBar) {
-            int size = npc.getTeam().size();
+            int size = agent.getTeam().size();
             for (int i = 0; i < size; i++) {
-                boolean ko = npc.getTeam().get(i).isKO();
+                boolean ko = agent.getTeam().get(i).isKO();
                 String imgPath = ko ? "/images/pokeballKO.png" : "/images/pokeball.png";
                 ImageView iv = new ImageView(new Image(Objects.requireNonNull(Bar.class.getResource(imgPath)).toExternalForm()));
                 iv.setFitWidth(20);

@@ -4,6 +4,7 @@ import Controller.Fight.Battle.BattleExecutor;
 import Controller.Fight.Battle.Events.GameEvents.StartTurn;
 
 import Model.Person.Action;
+import Model.Person.Trainer;
 import Model.Pokemon.Field;
 import Model.Pokemon.Pokemon;
 import Model.Pokemon.Move;
@@ -32,13 +33,16 @@ import static View.Game.Battle.BattleView.*;
 
 public class BattleButtons extends HBox {
 
-    private Pokemon playerPokemon = player.getFrontPokemon();
-    private Pokemon npcPokemon = npc.getFrontPokemon();
+    Trainer player;
+    Trainer opponent;
 
-    Move pAtk1 = getMove(0);
-    Move pAtk2 = getMove(1);
-    Move pAtk3 = getMove(2);
-    Move pAtk4 = getMove(3);
+    private Pokemon playerPokemon;
+    private Pokemon foePokemon;
+
+    Move pAtk1;
+    Move pAtk2;
+    Move pAtk3;
+    Move pAtk4;
 
     // Initial buttons
     static Button runButton = createBaseButtons("#67b60b","Run");
@@ -47,10 +51,10 @@ public class BattleButtons extends HBox {
     static Button pokemonButton = createBaseButtons("#1371f4","Pokemon");
 
     // Attack buttons
-    Button atk1Button = createBaseButtons(getColorFromAttack(pAtk1), getAttackName(0));
-    Button atk2Button = createBaseButtons(getColorFromAttack(pAtk2), getAttackName(1));
-    Button atk3Button = createBaseButtons(getColorFromAttack(pAtk3), getAttackName(2));
-    Button atk4Button = createBaseButtons(getColorFromAttack(pAtk4), getAttackName(3));
+    Button atk1Button;
+    Button atk2Button;
+    Button atk3Button;
+    Button atk4Button;
 
     private final TextBubble textBubble;
 
@@ -62,9 +66,23 @@ public class BattleButtons extends HBox {
 
     BattleExecutor executor = BattleExecutor.getInstance();
 
-    public BattleButtons(TextBubble textBubble) {
+    public BattleButtons(Trainer player, Trainer opponent, TextBubble textBubble) {
         this.textBubble = textBubble;
+        this.player = player;
+        this.opponent = opponent;
 
+        playerPokemon = player.getFrontPokemon();
+        foePokemon = opponent.getFrontPokemon();
+
+        pAtk1 = getMove(0);
+        pAtk2 = getMove(1);
+        pAtk3 = getMove(2);
+        pAtk4 = getMove(3);
+
+        atk1Button = createBaseButtons(getColorFromAttack(pAtk1), getAttackName(0));
+        atk2Button = createBaseButtons(getColorFromAttack(pAtk2), getAttackName(1));
+        atk3Button = createBaseButtons(getColorFromAttack(pAtk3), getAttackName(2));
+        atk4Button = createBaseButtons(getColorFromAttack(pAtk4), getAttackName(3));
         ObservableList<Node> components = getChildren();
 
         refreshFromCurrentPokemon();
@@ -115,7 +133,7 @@ public class BattleButtons extends HBox {
         atk1Button.requestFocus();
 
         bagButton.setOnAction(e -> {
-            BagView bagView = new BagView(player, npc, textBubble, () -> {
+            BagView bagView = new BagView(player, agent, textBubble, () -> {
                 SceneManager.switchStageTo(SceneManager.getFightView()); // back to fight
             });
             SceneManager.switchStageTo(bagView); // go in the bag
@@ -123,7 +141,7 @@ public class BattleButtons extends HBox {
 
 
         pokemonButton.setOnAction(e -> {
-            SwitchView switchView = new SwitchView(player, npc, textBubble, () -> SceneManager.switchStageTo(SceneManager.getFightView()));
+            SwitchView switchView = new SwitchView(player, agent, textBubble, () -> SceneManager.switchStageTo(SceneManager.getFightView()));
             SceneManager.switchStageTo(switchView);
         });
 
@@ -179,7 +197,7 @@ public class BattleButtons extends HBox {
 
     private void onButtonPressed(Move move, Field field) throws IOException {
         player.setAction(Action.Attack);
-        executor.addEvent(new StartTurn(npc, player, move, field, executor, this));
+        executor.addEvent(new StartTurn(agent, player, move, field, executor, this));
         executor.executeEvents(null);
     }
 
@@ -294,7 +312,7 @@ public class BattleButtons extends HBox {
 
     private void refreshFromCurrentPokemon() {
         playerPokemon = player.getFrontPokemon();
-        npcPokemon = npc.getFrontPokemon();
+        foePokemon = agent.getFrontPokemon();
 
         pAtk1 = getMove(0);
         pAtk2 = getMove(1);

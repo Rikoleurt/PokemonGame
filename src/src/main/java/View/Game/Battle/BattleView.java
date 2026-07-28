@@ -13,6 +13,7 @@ import View.Game.Battle.InfoBars.PlayerBar;
 import View.Game.Battle.Text.StatBubble;
 import View.Game.Battle.Text.TextBubble;
 import View.SettingView.AudioView;
+import View.View;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -32,21 +33,17 @@ import java.util.Objects;
 import static Model.StaticObjects.TestVersion.NPCExample.initiateEnemy;
 import static Model.StaticObjects.TestVersion.PlayerExample.initiatePlayer;
 
-public class BattleView extends BorderPane {
+public class BattleView extends BorderPane implements View {
     static TextBubble textBubble = new TextBubble();
     static StatBubble statBubble = new StatBubble();
 
-    public static Trainer player = initiatePlayer();
-    public static Trainer npc = initiateEnemy();
+    public static Trainer player;
+    public static Trainer agent;
 
-    static Pokemon playerPokemon = player.getFrontPokemon();
-    static Pokemon npcPokemon = npc.getFrontPokemon();
-
-    static Bar opponentBar = new OpponentBar(5, npcPokemon);
-    static Bar playerBar = new PlayerBar(5, playerPokemon);
-    public static Field field = new Field(player.getTeam(), npc.getTeam(), Debris.normal, Weather.normal);
-
-    static BattleButtons battleButtons = new BattleButtons(textBubble);
+    static BattleButtons battleButtons;
+    static Bar opponentBar;
+    static Bar playerBar;
+    public static Field field;
 
     static ImageView playerSprite;
     static ImageView opponentSprite;
@@ -63,8 +60,17 @@ public class BattleView extends BorderPane {
         spriteOverride.put("ekans", "ekans");
     }
 
-    public BattleView() {
+    public BattleView(Trainer player, Trainer agent) {
+        BattleView.player = player;
+        BattleView.agent = agent;
+
+        battleButtons = new BattleButtons(player, agent, textBubble);
+
+        playerBar = new Bar(10, player.getFrontPokemon());
+        opponentBar = new Bar(10, agent.getFrontPokemon());
+
         // Set up player and opponent bars
+
         HBox bottomBox = new HBox();
         bottomBox.setSpacing(20);
         bottomBox.setPadding(new Insets(10));
@@ -220,7 +226,7 @@ public class BattleView extends BorderPane {
 
     public static void refreshSprites() {
         Pokemon p = player.getFrontPokemon();
-        Pokemon n = npc.getFrontPokemon();
+        Pokemon n = agent.getFrontPokemon();
         playerSprite.setImage(spriteFor(p, true));
         opponentSprite.setImage(spriteFor(n, false));
     }
@@ -237,8 +243,8 @@ public class BattleView extends BorderPane {
     public static BattleButtons getFightButtons() {
         return battleButtons;
     }
-    public static Trainer getNpc() {
-        return npc;
+    public static Trainer getAgent() {
+        return agent;
     }
     public static Trainer getPlayer() {
         return player;
@@ -246,5 +252,12 @@ public class BattleView extends BorderPane {
     public static Field getTerrain() {
         return field;
     }
-
+    public static void setPlayer(Trainer player) {
+        BattleView.player = player;
+        BattleView.refreshSprites();
+    }
+    public static void setAgent(Trainer agent) {
+        BattleView.agent = agent;
+        BattleView.refreshSprites();
+    }
 }

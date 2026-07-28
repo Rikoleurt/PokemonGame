@@ -1,24 +1,17 @@
 import Model.GameState;
-import Model.StaticObjects.TrainingVersion.Matchup;
-import Server.SocketServer;
 import Utils.MatchupRandomizer;
-import Utils.SeedManager;
 import Utils.SongManager;
 import View.Game.Battle.BattleView;
 import View.Game.Battle.Text.TextBubble;
 import Utils.SceneManager;
-
 import View.Game.MainMenuView;
 import View.Training.Console.View.BattleConsole;
-import View.Training.Console.View.ConsoleView;
 import javafx.application.Application;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.text.Font;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-
-import java.io.IOException;
 import java.util.*;
 
 public class Main extends Application { // extends Application
@@ -40,8 +33,6 @@ public class Main extends Application { // extends Application
         SceneManager.setStage(primaryStage);
         MainMenuView mainMenuView = new MainMenuView();
         SceneManager.setMainMenuView(mainMenuView);
-        BattleView battleView = new BattleView();
-//        SceneManager.setFightView(battleView);
 
         Font globalFont = Font.loadFont(Objects.requireNonNull(getClass().getResource("/font/pokemonFont.ttf")).toExternalForm(), 18);
 

@@ -9,6 +9,7 @@ import Model.Pokemon.PokemonEnum.Status;
 import View.Game.Battle.BattleView;
 import View.Game.Battle.Text.TextBubble;
 import Utils.SceneManager;
+import View.View;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -31,7 +32,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
-public class SwitchView extends BorderPane {
+public class SwitchView extends BorderPane implements View {
 
     Trainer player;
     Trainer npc;

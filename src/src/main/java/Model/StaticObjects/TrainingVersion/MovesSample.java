@@ -89,7 +89,87 @@ public class MovesSample {
         Attack luminocanon = new Attack("Luminocanon", 80, 100, Type.steel, AttackMode.special, 10, 10);
         Attack eclatMagique = new Attack("Éclat Magique", 80, 100, Type.fairy, AttackMode.special, 10, 10);
         Attack gyroballe = new Attack("Gyroballe", 80, 100, Type.steel, AttackMode.physical, 10, 10);
+        Attack ballOmbre = new Attack(
+                "Ball'Ombre",
+                80,
+                100,
+                Type.ghost,
+                AttackMode.special,
+                15,
+                15
+        );
 
+        Attack ombrePortee = new Attack(
+                "Ombre Portée",
+                40,
+                100,
+                Type.ghost,
+                AttackMode.physical,
+                30,
+                30
+        );
+
+        Attack pinceMasse = new Attack(
+                "Pince-Masse",
+                100,
+                90,
+                Type.water,
+                AttackMode.physical,
+                10,
+                10
+        );
+
+        Attack dracoSouffle = new Attack(
+                "Draco-Souffle",
+                60,
+                100,
+                Type.dragon,
+                AttackMode.special,
+                20,
+                20,
+                Status.paralyzed,
+                0.30f
+        );
+
+        Attack aeropique = new Attack(
+                "Aéropique",
+                60,
+                100,
+                Type.flying,
+                AttackMode.physical,
+                20,
+                20
+        );
+
+        Attack eboulement = new Attack(
+                "Éboulement",
+                75,
+                90,
+                Type.rock,
+                AttackMode.physical,
+                10,
+                10
+        );
+
+        Attack plaieCroix = new Attack(
+                "Plaie-Croix",
+                80,
+                100,
+                Type.bug,
+                AttackMode.physical,
+                15,
+                15
+        );
+
+        Attack poingOmbre = new Attack(
+                "Poing Ombre",
+                60,
+                100,
+                Type.ghost,
+                AttackMode.physical,
+                20,
+                20
+        );
         // endregion
 
         // region Attaques de statut
@@ -299,6 +379,30 @@ public class MovesSample {
         attackDB.put("iron_defense", murDeFer);
 
         attackDB.put("turbo", turbo);
+
+        attackDB.put("ball_ombre", ballOmbre);
+        attackDB.put("shadow_ball", ballOmbre);
+
+        attackDB.put("ombre_portee", ombrePortee);
+        attackDB.put("shadow_sneak", ombrePortee);
+
+        attackDB.put("pince_masse", pinceMasse);
+        attackDB.put("crabhammer", pinceMasse);
+
+        attackDB.put("draco_souffle", dracoSouffle);
+        attackDB.put("dragon_breath", dracoSouffle);
+
+        attackDB.put("aeropique", aeropique);
+        attackDB.put("aerial_ace", aeropique);
+
+        attackDB.put("eboulement", eboulement);
+        attackDB.put("rock_slide", eboulement);
+
+        attackDB.put("plaie_croix", plaieCroix);
+        attackDB.put("x_scissor", plaieCroix);
+
+        attackDB.put("poing_ombre", poingOmbre);
+        attackDB.put("shadow_punch", poingOmbre);
 
         // endregion
 

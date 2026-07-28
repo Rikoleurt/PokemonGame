@@ -412,4 +412,88 @@ public record Matchup(LinkedList<Pokemon> playerTeam, LinkedList<Pokemon> oppone
     }
 
     // endregion
+
+    //region versus player
+
+    // Juan : scénario 6 contre 6 orienté Eau.
+    // L'agent doit exploiter les statuts et les placements sans utiliser
+    // systématiquement Danse Draco ou Amnésie.
+    public static Matchup juanScenario6v6() {
+        LinkedList<Pokemon> playerTeam = createEvaluationPlayerTeam();
+
+        LinkedList<Pokemon> opponentTeam = new LinkedList<>();
+        opponentTeam.add(initiateLovdiscJuan());
+        opponentTeam.add(initiateBarbichaJuan());
+        opponentTeam.add(initiatePhogleurJuan());
+        opponentTeam.add(initiateColhomardJuan());
+        opponentTeam.add(initiateHyporoiJuan());
+        opponentTeam.add(initiateLeviatorJuan());
+
+        return new Matchup(
+                playerTeam,
+                opponentTeam,
+                MatchupCategory.MIXED
+        );
+    }
+
+
+    // Spectra : scénario 6 contre 6 centré sur les immunités,
+    // les altérations de statut et les attaquants Spectre physiques et spéciaux.
+    public static Matchup spectraScenario6v6() {
+        LinkedList<Pokemon> playerTeam = createEvaluationPlayerTeam();
+
+        LinkedList<Pokemon> opponentTeam = new LinkedList<>();
+        opponentTeam.add(initiateBranetteSpectraPhysical());
+        opponentTeam.add(initiateTeraclopeSpectraDefensive());
+        opponentTeam.add(initiateTenefixSpectra());
+        opponentTeam.add(initiateFeuforeveSpectra());
+        opponentTeam.add(initiateEctoplasmaSpectra());
+        opponentTeam.add(initiateMomartikSpectra());
+
+        return new Matchup(
+                playerTeam,
+                opponentTeam,
+                MatchupCategory.MIXED
+        );
+    }
+
+
+    // Pierre Rochard : scénario final 6 contre 6.
+// L'équipe combine de fortes résistances, du setup physique et spécial,
+// ainsi que plusieurs formes de contrôle par statut.
+    public static Matchup pierreRochardScenario6v6() {
+        LinkedList<Pokemon> playerTeam = createEvaluationPlayerTeam();
+
+        LinkedList<Pokemon> opponentTeam = new LinkedList<>();
+        opponentTeam.add(initiateAirmurePierreRochardFinal());
+        opponentTeam.add(initiateVacilysPierreRochardFinal());
+        opponentTeam.add(initiateArmaldoPierreRochardFinal());
+        opponentTeam.add(initiateKaorinePierreRochardFinal());
+        opponentTeam.add(initiateGalekingPierreRochardFinal());
+        opponentTeam.add(initiateMetalossePierreRochardFinal());
+
+        return new Matchup(
+                playerTeam,
+                opponentTeam,
+                MatchupCategory.MIXED
+        );
+    }
+
+
+    // Équipe fixe du joueur pour rendre les résultats comparables entre scénarios.
+    // Une nouvelle instance de chaque Pokémon est créée pour chaque combat.
+    private static LinkedList<Pokemon> createEvaluationPlayerTeam() {
+        LinkedList<Pokemon> playerTeam = new LinkedList<>();
+
+        playerTeam.add(initiateJungkoEvaluation());
+        playerTeam.add(initiateBrasegaliEvaluation());
+        playerTeam.add(initiateLaggronEvaluation());
+        playerTeam.add(initiateGardevoirEvaluation());
+        playerTeam.add(initiateMagnetonEvaluation());
+        playerTeam.add(initiateAbsolEvaluation());
+
+        return playerTeam;
+    }
+
+    //endregion
 }

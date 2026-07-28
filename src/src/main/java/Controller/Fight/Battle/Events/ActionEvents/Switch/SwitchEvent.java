@@ -28,17 +28,17 @@ public class SwitchEvent extends BattleEvent {
     @Override
     public void execute() {
         if (fighter == player) {
-            SwitchFaintedView switchView = new SwitchFaintedView(player, npc, BattleView.getTextBubble(), BattleView.getFightButtons(), () -> SceneManager.switchStageTo(SceneManager.getFightView()));
+            SwitchFaintedView switchView = new SwitchFaintedView(player, agent, BattleView.getTextBubble(), BattleView.getFightButtons(), () -> SceneManager.switchStageTo(SceneManager.getFightView()));
             SceneManager.switchStageTo(switchView);
             switchView.setTurnDisable(true);
             refreshSprites();
             return;
         }
 
-        if (fighter == npc) {
-            npc.setFront(other, field);
+        if (fighter == agent) {
+            agent.setFront(other, field);
             BattleView.refreshSprites();
-            BattleView.getOpponentBar().setPokemon(npc.getFrontPokemon());
+            BattleView.getOpponentBar().setPokemon(agent.getFrontPokemon());
             BattleView.getFightButtons().resetFightButtons(getClass().getSimpleName());
             BattleView.getOpponentBar().refreshBar();
         }

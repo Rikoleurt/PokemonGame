@@ -1,6 +1,7 @@
 package View.Game;
 
 import Utils.SceneManager;
+import View.View;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -11,7 +12,7 @@ import javafx.scene.layout.VBox;
 
 import javax.swing.*;
 
-public class MainMenuView extends BorderPane {
+public class MainMenuView extends BorderPane implements View {
 
     public MainMenuView() {
         init();
