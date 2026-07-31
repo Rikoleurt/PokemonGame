@@ -5,12 +5,12 @@ import Controller.Fight.Battle.Events.BattleEvent;
 import Controller.Fight.Battle.Events.UIEvents.MessageEvent;
 import Model.Person.Trainer;
 import Model.Pokemon.Pokemon;
-import View.Game.Battle.BattleView;
+import View.GameView.BattleViews.BattleView;
 import Utils.SceneManager;
 
 import java.io.IOException;
 
-import static View.Game.Battle.BattleView.field;
+import static View.GameView.BattleViews.BattleView.field;
 
 public class PlayerSwitchEvent extends BattleEvent {
 

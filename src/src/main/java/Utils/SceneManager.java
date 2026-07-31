@@ -1,7 +1,7 @@
 package Utils;
 
-import View.Game.Battle.BattleView;
-import View.Game.MainMenuView;
+import View.GameView.BattleViews.BattleView;
+import View.GameView.MainMenuView;
 import View.SettingView.AudioView;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -20,10 +20,16 @@ public class SceneManager {
         primaryStage = stage;
     }
 
-    public static void setRoot(Parent root){
+    public static void setRoot(Parent root) {
         Scene scene = new Scene(root);
-        scene.getStylesheets().add(Objects.requireNonNull(SceneManager.class.getResource("/style/style.css")).toExternalForm());
+        scene.getStylesheets().add(
+                Objects.requireNonNull(
+                        SceneManager.class.getResource("/style/style.css")
+                ).toExternalForm()
+        );
+
         primaryStage.setScene(scene);
+        installBattleKeyHandler();
         primaryStage.show();
     }
 
@@ -47,5 +53,14 @@ public class SceneManager {
     }
     public static void setMainMenuView(MainMenuView mainMenuView) {
         mainMenuViewRoot = mainMenuView;
+    }
+    public static void installBattleKeyHandler() {
+        primaryStage.getScene().addEventFilter(
+                javafx.scene.input.KeyEvent.KEY_PRESSED,
+                event -> {
+                    System.out.println("[Scene] key=" + event.getCode());
+                    BattleView.getTextBubble().handleKeyPress(event.getCode());
+                }
+        );
     }
 }

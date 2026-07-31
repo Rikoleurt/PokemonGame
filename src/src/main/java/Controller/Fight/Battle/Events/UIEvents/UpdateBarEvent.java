@@ -2,8 +2,8 @@ package Controller.Fight.Battle.Events.UIEvents;
 
 import Controller.Fight.Battle.Events.BattleEvent;
 import Model.Pokemon.Pokemon;
-import View.Game.Battle.BattleView;
-import View.Game.Battle.InfoBars.Bar;
+import View.GameView.BattleViews.BattleView;
+import View.GameView.BattleViews.InfoBars.Bar;
 import javafx.application.Platform;
 
 import java.io.IOException;

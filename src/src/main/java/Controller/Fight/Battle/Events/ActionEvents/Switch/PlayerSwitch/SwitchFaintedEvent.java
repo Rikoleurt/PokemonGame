@@ -3,12 +3,12 @@ package Controller.Fight.Battle.Events.ActionEvents.Switch.PlayerSwitch;
 import Controller.Fight.Battle.BattleExecutor;
 import Model.Person.Trainer;
 import Model.Pokemon.Pokemon;
-import View.Game.Battle.BattleView;
+import View.GameView.BattleViews.BattleView;
 import Utils.SceneManager;
 
 import java.io.IOException;
 
-import static View.Game.Battle.BattleView.field;
+import static View.GameView.BattleViews.BattleView.field;
 
 public class SwitchFaintedEvent extends PlayerSwitchEvent {
 

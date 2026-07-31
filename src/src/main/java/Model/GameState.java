@@ -11,8 +11,8 @@ import Model.Pokemon.Attacks.StatusAttack;
 import Model.Pokemon.Move;
 import Model.Pokemon.Pokemon;
 import Model.Pokemon.PokemonEnum.Status;
-import Model.StaticObjects.TestVersion.MovesExample;
 import Model.StaticObjects.TrainingVersion.Matchup;
+import Model.StaticObjects.TrainingVersion.MovesSample;
 import Server.SocketServer;
 import Utils.MatchupRandomizer;
 import Utils.SeedManager;
@@ -550,7 +550,7 @@ public class GameState {
             Move m1 = attacks1.get(i);
 
             obj.addProperty("slot", i);
-            obj.addProperty("id", MovesExample.getIdByName(attacks.get(i)));
+            obj.addProperty("id", MovesSample.getIdByName(attacks.get(i)));
             obj.addProperty("name", attacks.get(i));
             obj.addProperty("type", m1.getType().toString());
             obj.addProperty("Mode", m1.getMode().toString());
@@ -608,18 +608,19 @@ public class GameState {
 
     private void addBagInfos(Trainer t, JsonObject bagData) {
         Bag bag = t.getBag();
-
         JsonArray items = new JsonArray();
-
-        for(Item item : bag.getInventory().keySet()){
-            items.add(item.getName());
-            items.add(item.getCategory().toString());
-            if(item instanceof Heal){
-                items.add(((Heal) item).getHP());
+        if(bag != null) {
+            for (Item item : bag.getInventory().keySet()) {
+                items.add(item.getName());
+                items.add(item.getCategory().toString());
+                if (item instanceof Heal) {
+                    items.add(((Heal) item).getHP());
+                }
+                items.add(bag.getQuantity(item));
             }
-            items.add(bag.getQuantity(item));
+
+            bagData.add("items", items);
         }
-        bagData.add("items", items);
     }
 
     public boolean is_player_first() {

@@ -1,8 +1,8 @@
 package Controller.Fight.Battle.Events.UIEvents;
 
 import Controller.Fight.Battle.Events.BattleEvent;
-import View.Game.Battle.BattleView;
-import View.Game.Battle.Text.TextBubble;
+import View.GameView.BattleViews.BattleView;
+import View.GameView.BattleViews.Text.TextBubble;
 
 import java.io.IOException;
 
@@ -15,14 +15,18 @@ public class MessageEvent extends BattleEvent {
 
     @Override
     public void execute() {
+        System.out.println("[MessageEvent] start: " + message);
+
         TextBubble bubble = BattleView.getTextBubble();
         bubble.setOnMessageComplete(() -> {
+            System.out.println("[MessageEvent] complete: " + message);
             try {
                 onFinish();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         });
+
         bubble.addMessage(message);
     }
 

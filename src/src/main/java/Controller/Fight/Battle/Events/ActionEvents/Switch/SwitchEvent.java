@@ -5,12 +5,12 @@ import Controller.Fight.Battle.Events.BattleEvent;
 import Model.Person.Fighter;
 import Model.Pokemon.Field;
 import Model.Pokemon.Pokemon;
-import View.Game.Battle.BattleView;
+import View.GameView.BattleViews.BattleView;
 import Utils.SceneManager;
-import View.Game.Switch.SwitchFaintedView;
+import View.GameView.Switch.SwitchFaintedView;
 
-import static View.Game.Battle.BattleView.*;
-import static View.Game.Battle.BattleView.refreshSprites;
+import static View.GameView.BattleViews.BattleView.*;
+import static View.GameView.BattleViews.BattleView.refreshSprites;
 
 public class SwitchEvent extends BattleEvent {
     private final Fighter fighter;

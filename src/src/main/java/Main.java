@@ -1,10 +1,12 @@
 import Model.GameState;
+import Model.StaticObjects.TrainingVersion.Matchup;
+import Server.SocketServer;
 import Utils.MatchupRandomizer;
 import Utils.SongManager;
-import View.Game.Battle.BattleView;
-import View.Game.Battle.Text.TextBubble;
+import View.GameView.BattleViews.BattleView;
+import View.GameView.BattleViews.Text.TextBubble;
 import Utils.SceneManager;
-import View.Game.MainMenuView;
+import View.GameView.MainMenuView;
 import View.Training.Console.View.BattleConsole;
 import javafx.application.Application;
 import javafx.geometry.Rectangle2D;
@@ -12,6 +14,8 @@ import javafx.scene.Scene;
 import javafx.scene.text.Font;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+
+import java.io.IOException;
 import java.util.*;
 
 public class Main extends Application { // extends Application
@@ -64,22 +68,28 @@ public class Main extends Application { // extends Application
         TextBubble textBubble = BattleView.getTextBubble();
         scene.setOnKeyPressed(event -> textBubble.handleKeyPress(event.getCode()));
 
+        scene.setOnKeyPressed(event -> {
+            System.out.println("[Main] key=" + event.getCode());
+            textBubble.handleKeyPress(event.getCode());
+        });
 //        songManager.playSong("/music/champion_steven.mp3");
-//        gs = Matchup.salamecheVsBulbizarre().createGameState();
-//        gs = Matchup.createGameState(BattleView.getPlayer(), BattleView.getNpc());
-//        System.out.println(gs.pretty_state());
-//        SocketServer server = SocketServer.getInstance();
-//
-//        new Thread(() -> {
-//            try {
-//                server.start(5001, gs);
-//            } catch (IOException e) {
-//                System.out.println("Client connect failed " + e.getMessage());
-//            }
-//        }).start();
-
+        gs = Matchup.createGameState(BattleView.getPlayer(), BattleView.getAgent());
+//        train();
     }
     public static void main(String[] args) {
         launch(args);
+    }
+
+    public void train(){
+        gs = Matchup.salamecheVsBulbizarre().createGameState();
+        System.out.println(gs.pretty_state());
+        SocketServer server = SocketServer.getInstance();
+        new Thread(() -> {
+            try {
+                server.startAndTrain(5001, gs);
+            } catch (IOException e) {
+                System.out.println("Client connect failed " + e.getMessage());
+            }
+        }).start();
     }
 }

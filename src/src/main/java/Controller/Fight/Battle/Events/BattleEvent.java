@@ -21,7 +21,7 @@ public abstract class BattleEvent implements Event {
     }
 
     /**
-     * Executes the event with a certain implementation. One must use onFinish() to respect the chaining
+     * Executes the event. One must use onFinish() to respect the chaining
      * (mandatory in the body of execute())
      */
     public abstract void execute() throws IOException;

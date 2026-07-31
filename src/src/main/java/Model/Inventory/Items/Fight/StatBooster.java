@@ -4,7 +4,6 @@ import Model.Inventory.Category;
 import Model.Inventory.Items.Item;
 import Model.Inventory.Items.Consumable;
 import Model.Pokemon.Pokemon;
-import View.Game.Battle.Text.TextBubble;
 
 public class StatBooster extends Item implements Consumable {
 

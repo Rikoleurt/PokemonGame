@@ -15,8 +15,8 @@ import Model.Pokemon.Attacks.SetUpMove;
 import Model.Pokemon.Attacks.StatusAttack;
 import Model.Pokemon.Move;
 import Model.Pokemon.Pokemon;
-import Model.StaticObjects.TestVersion.MovesExample;
-import View.Game.Battle.BattleView;
+import Model.StaticObjects.TrainingVersion.MovesSample;
+import View.GameView.BattleViews.BattleView;
 import com.google.gson.*;
 
 public class SocketServer {
@@ -25,19 +25,13 @@ public class SocketServer {
     private Socket clientSocket;
     private BufferedReader in;
     private BufferedWriter out;
-    private final Gson gsonPretty = new GsonBuilder().setPrettyPrinting().create();
-    private final Gson gson = new Gson();
 
-    private final Trainer player = BattleView.getPlayer();
-    private final Pokemon pokemon = player.getFrontPokemon();
-    private final Trainer npc = BattleView.getAgent();
-    private final Pokemon pokemon2 = npc.getFrontPokemon();
     private final BattleExecutor executor = BattleExecutor.getInstance();
     private static SocketServer instance;
 
     boolean lastOpponentActionInvalid = false;
     String lastOpponentInvalidReason = "";
-    int turn;
+
     Boolean isPlayerFirst;
 
     public static SocketServer getInstance() {
@@ -153,7 +147,7 @@ public class SocketServer {
 
 
         JsonObject first = new JsonObject();
-        first.addProperty("name", starterName(agent));
+        first.addProperty("name", starterName(player, agent));
 
         playerInfos.add("player_team", playerTeam);
         playerInfos.addProperty("healthy_pokemons", player.getHealthyPokemon());
@@ -228,7 +222,7 @@ public class SocketServer {
             Move m1 = attacks1.get(i);
 
             obj.addProperty("slot", i);
-            obj.addProperty("id", MovesExample.getIdByName(attacks.get(i)));
+            obj.addProperty("id", MovesSample.getIdByMove(m1));
             obj.addProperty("name", attacks.get(i));
             obj.addProperty("type", m1.getType().toString());
             obj.addProperty("Mode", m1.getMode().toString());
@@ -304,35 +298,41 @@ public class SocketServer {
         return state(refreshedPlayer, refreshedNPC, executor.getTurn());
     }
 
-    public void step(Trainer agent) throws IOException {
-        String protocolMessage = readMessage();
-        String actionMessage = readMessage();
-        System.out.println("Received: " + protocolMessage);
-        System.out.println("Received: " + actionMessage);
-        if (player.getHealthyPokemon() <= 0 || agent.getHealthyPokemon() <= 0) return;
-        if (protocolMessage.startsWith("RESET")) {
-            System.out.println("Reset, ignore");
-        }
-        if (protocolMessage.startsWith("DONE")) return;
-        int actionIndex = Integer.parseInt(actionMessage);
+    public String getActionMessage(
+            Trainer player,
+            Trainer agent
+    ) throws IOException {
 
-        turn++;
-    }
+        while (true) {
+            String message = readMessage();
 
-    public String getActionMessage(Trainer agent) throws IOException {
-        String protocolMessage = readMessage();
-        String actionMessage = readMessage();
-        System.out.println("Received: " + protocolMessage);
-        System.out.println("Received: " + actionMessage);
+            if (message == null) {
+                throw new EOFException("Client disconnected");
+            }
 
-        if (player.getHealthyPokemon() <= 0 || agent.getHealthyPokemon() <= 0) return null;
-        if (protocolMessage.startsWith("RESET")) {
-            System.out.println("Reset, ignore");
+            System.out.println("Received: " + message);
+
+            if (message.startsWith("RESET")) {
+                System.out.println("Reset, ignore");
+                continue;
+            }
+
+            if (message.startsWith("DONE")) {
+                System.out.println("Done, ignore");
+                return null;
+            }
+
+            if (player == null || agent == null) {
+                return null;
+            }
+
+            if (player.getHealthyPokemon() <= 0
+                    || agent.getHealthyPokemon() <= 0) {
+                return null;
+            }
+
+            return message;
         }
-        if (protocolMessage.startsWith("DONE")){
-            System.out.println("Done, ignore");
-        }
-        return actionMessage;
     }
 
     private void markOpponentInvalidAction(String reason) {
@@ -340,18 +340,11 @@ public class SocketServer {
         lastOpponentInvalidReason = reason;
     }
 
-    private String starterName(Trainer agent) {
+    private String starterName(Trainer player, Trainer agent) {
+        if (player == null) throw new IllegalStateException("Cannot determine starter: player Trainer is null");
+        if (agent == null) throw new IllegalStateException("Cannot determine starter: agent Trainer is null");
         if (isPlayerFirst == null) return player.getName();
-        return isPlayerFirst ? player.getName() : agent.getName();
-    }
 
-    public Action resolveActionByActionIndex(int actionIndex) {
-        if(actionIndex <= 3) return Action.Attack;
-        else if (actionIndex == 4) return Action.Switch;
-        else if (actionIndex == 5) return Action.Item;
-        else {
-            System.out.println("Unknown Action" + actionIndex);
-            return null;
-        }
+        return isPlayerFirst ? player.getName() : agent.getName();
     }
 }

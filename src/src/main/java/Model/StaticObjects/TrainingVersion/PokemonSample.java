@@ -12,9 +12,7 @@ import static Model.StaticObjects.TrainingVersion.MovesSample.initiateAttacks;
 
 public class PokemonSample {
 
-    static HashMap<String, Move> attacks = initiateAttacks();
-
-    private static Move requireAttack(String key) {
+    private static Move requireAttack(HashMap<String, Move> attacks, String key) {
         Move move = attacks.get(key);
 
         if (move == null) {
@@ -28,10 +26,15 @@ public class PokemonSample {
     }
 
     private static ArrayList<Move> moves(String... keys) {
+        // A fresh move database is created for every Pokémon declaration.
+        // Pokémon therefore never share mutable Move instances or PP values.
+        HashMap<String, Move> attacks = initiateAttacks();
         ArrayList<Move> moves = new ArrayList<>();
+
         for (String key : keys) {
-            moves.add(requireAttack(key));
+            moves.add(requireAttack(attacks, key));
         }
+
         return moves;
     }
 
@@ -39,7 +42,7 @@ public class PokemonSample {
 
     public static Pokemon initiateBulbizarre() {
         return new Pokemon(
-                "Bulbizarre",
+                1,"Bulbizarre",
                 112, 112,
                 61, 61, 72, 72, 57,
                 Type.grass, null,
@@ -51,7 +54,7 @@ public class PokemonSample {
 
     public static Pokemon initiateSalameche() {
         return new Pokemon(
-                "Salamèche",
+                4, "Salamèche",
                 106, 106,
                 64, 55, 72, 62, 77,
                 Type.fire, null,
@@ -63,7 +66,7 @@ public class PokemonSample {
 
     public static Pokemon initiateCarapuce() {
         return new Pokemon(
-                "Carapuce",
+                7, "Carapuce",
                 111, 111,
                 61, 77, 62, 76, 55,
                 Type.water, null,
@@ -75,7 +78,7 @@ public class PokemonSample {
 
     public static Pokemon initiateLeviator() {
         return new Pokemon(
-                "Léviator",
+                130, "Léviator",
                 162, 162,
                 137, 91, 72, 112, 93,
                 Type.water, Type.flying,
@@ -87,7 +90,7 @@ public class PokemonSample {
 
     public static Pokemon initiateGardevoirOffensive() {
         return new Pokemon(
-                "Gardevoir",
+                282, "Gardevoir",
                 143, 143,
                 85, 85, 145, 135, 100,
                 Type.psychic, Type.fairy,
@@ -99,7 +102,7 @@ public class PokemonSample {
 
     public static Pokemon initiateBrasegaliOffensive() {
         return new Pokemon(
-                "Braségali",
+                257, "Braségali",
                 155, 155,
                 140, 90, 130, 90, 100,
                 Type.fire, Type.fighting,
@@ -111,7 +114,7 @@ public class PokemonSample {
 
     public static Pokemon initiateLugulabre() {
         return new Pokemon(
-                "Lugulabre",
+                609, "Lugulabre",
                 135, 135,
                 75, 100, 165, 110, 90,
                 Type.ghost, Type.fire,
@@ -123,7 +126,7 @@ public class PokemonSample {
 
     public static Pokemon initiateRaichuOffensive() {
         return new Pokemon(
-                "Raichu",
+                26, "Raichu",
                 135, 135,
                 110, 80, 110, 100, 130,
                 Type.electric, null,
@@ -135,7 +138,7 @@ public class PokemonSample {
 
     public static Pokemon initiateSablaireau() {
         return new Pokemon(
-                "Sablaireau",
+                28, "Sablaireau",
                 150, 150,
                 120, 130, 65, 75, 85,
                 Type.ground, null,
@@ -151,7 +154,7 @@ public class PokemonSample {
 
     public static Pokemon initiateWattouatStatus() {
         return new Pokemon(
-                "Wattouat",
+                179, "Wattouat",
                 117, 117,
                 52, 52, 82, 62, 42,
                 Type.electric, null,
@@ -163,7 +166,7 @@ public class PokemonSample {
 
     public static Pokemon initiateNostenferPoisonGas() {
         return new Pokemon(
-                "Nostenfer",
+                169, "Nostenfer",
                 160, 160,
                 100, 90, 90, 100, 150,
                 Type.poison, Type.flying,
@@ -175,7 +178,7 @@ public class PokemonSample {
 
     public static Pokemon initiateNostenferToxic() {
         return new Pokemon(
-                "Nostenfer",
+                169, "Nostenfer",
                 160, 160,
                 100, 90, 90, 100, 150,
                 Type.poison, Type.flying,
@@ -187,7 +190,7 @@ public class PokemonSample {
 
     public static Pokemon initiateCaratrocSetupTarget() {
         return new Pokemon(
-                "Caratroc",
+                213, "Caratroc",
                 120, 120,
                 30, 230, 30, 230, 10,
                 Type.bug, Type.rock,
@@ -199,7 +202,7 @@ public class PokemonSample {
 
     public static Pokemon initiateFeunardStatus() {
         return new Pokemon(
-                "Feunard",
+                38, "Feunard",
                 148, 148,
                 87, 95, 101, 120, 120,
                 Type.fire, null,
@@ -211,7 +214,7 @@ public class PokemonSample {
 
     public static Pokemon initiateMachopeurPhysical() {
         return new Pokemon(
-                "Machopeur",
+                67, "Machopeur",
                 150, 150,
                 120, 90, 65, 70, 70,
                 Type.fighting, null,
@@ -223,7 +226,7 @@ public class PokemonSample {
 
     public static Pokemon initiateGardevoirSpecialTarget() {
         return new Pokemon(
-                "Gardevoir",
+                282, "Gardevoir",
                 143, 143,
                 85, 85, 145, 135, 100,
                 Type.psychic, Type.fairy,
@@ -235,7 +238,7 @@ public class PokemonSample {
 
     public static Pokemon initiateGardevoirConfuseRay() {
         return new Pokemon(
-                "Gardevoir",
+                282, "Gardevoir",
                 143, 143,
                 85, 85, 145, 135, 100,
                 Type.psychic, Type.fairy,
@@ -247,7 +250,7 @@ public class PokemonSample {
 
     public static Pokemon initiateDracolossePhysical() {
         return new Pokemon(
-                "Dracolosse",
+                149, "Dracolosse",
                 166, 166,
                 154, 115, 120, 120, 100,
                 Type.dragon, Type.flying,
@@ -259,7 +262,7 @@ public class PokemonSample {
 
     public static Pokemon initiateAlakazamSpecial() {
         return new Pokemon(
-                "Alakazam",
+                65, "Alakazam",
                 130, 130,
                 70, 65, 155, 105, 140,
                 Type.psychic, null,
@@ -271,7 +274,7 @@ public class PokemonSample {
 
     public static Pokemon initiateRaflesiaSleep() {
         return new Pokemon(
-                "Raflesia",
+                45, "Raflesia",
                 150, 150,
                 100, 105, 125, 110, 70,
                 Type.grass, Type.poison,
@@ -283,7 +286,7 @@ public class PokemonSample {
 
     public static Pokemon initiateEvoli() {
         return new Pokemon(
-                "Évoli",
+                133, "Évoli",
                 122, 122,
                 67, 62, 57, 77, 67,
                 Type.normal, null,
@@ -299,7 +302,7 @@ public class PokemonSample {
 
     public static Pokemon initiateLucarioSwordsDance() {
         return new Pokemon(
-                "Lucario",
+                448, "Lucario",
                 145, 145,
                 115, 80, 120, 80, 115,
                 Type.fighting, Type.steel,
@@ -311,7 +314,7 @@ public class PokemonSample {
 
     public static Pokemon initiateAltariaCottonGuard() {
         return new Pokemon(
-                "Altaria",
+                334, "Altaria",
                 165, 165,
                 90, 90, 90, 115, 100,
                 Type.dragon, Type.flying,
@@ -323,7 +326,7 @@ public class PokemonSample {
 
     public static Pokemon initiateGardevoirCalmMind() {
         return new Pokemon(
-                "Gardevoir",
+                282, "Gardevoir",
                 143, 143,
                 85, 85, 145, 135, 100,
                 Type.psychic, Type.fairy,
@@ -335,7 +338,7 @@ public class PokemonSample {
 
     public static Pokemon initiateMiloticAmnesiaBalanced() {
         return new Pokemon(
-                "Milobellus",
+                350, "Milobellus",
                 190, 190,
                 65, 90, 130, 80, 110,
                 Type.water, null,
@@ -347,7 +350,7 @@ public class PokemonSample {
 
     public static Pokemon initiateBrasegaliTurboBalanced() {
         return new Pokemon(
-                "Braségali",
+                257, "Braségali",
                 165, 165,
                 120, 85, 95, 85, 90,
                 Type.fire, Type.fighting,
@@ -359,7 +362,7 @@ public class PokemonSample {
 
     public static Pokemon initiateSnorlaxSetupTarget() {
         return new Pokemon(
-                "Ronflex",
+                143, "Ronflex",
                 235, 235,
                 130, 85, 75, 130, 50,
                 Type.normal, null,
@@ -371,7 +374,7 @@ public class PokemonSample {
 
     public static Pokemon initiateHariyamaSetupTarget() {
         return new Pokemon(
-                "Hariyama",
+                297, "Hariyama",
                 220, 220,
                 140, 80, 55, 80, 55,
                 Type.fighting, null,
@@ -383,7 +386,7 @@ public class PokemonSample {
 
     public static Pokemon initiateDonphanSetupTarget() {
         return new Pokemon(
-                "Donphan",
+                232, "Donphan",
                 165, 165,
                 140, 140, 60, 80, 50,
                 Type.ground, null,
@@ -395,7 +398,7 @@ public class PokemonSample {
 
     public static Pokemon initiateMachampPhysicalTarget() {
         return new Pokemon(
-                "Mackogneur",
+                68, "Mackogneur",
                 165, 165,
                 150, 90, 75, 95, 75,
                 Type.fighting, null,
@@ -407,7 +410,7 @@ public class PokemonSample {
 
     public static Pokemon initiateRhydonPhysicalTarget() {
         return new Pokemon(
-                "Rhinoféros",
+                112, "Rhinoféros",
                 180, 180,
                 150, 140, 65, 65, 45,
                 Type.ground, Type.rock,
@@ -419,7 +422,7 @@ public class PokemonSample {
 
     public static Pokemon initiateArmaldoPhysicalTarget() {
         return new Pokemon(
-                "Armaldo",
+                348, "Armaldo",
                 165, 165,
                 145, 120, 80, 100, 55,
                 Type.rock, Type.bug,
@@ -431,7 +434,7 @@ public class PokemonSample {
 
     public static Pokemon initiateMukSpecialSetupTarget() {
         return new Pokemon(
-                "Grotadmorv",
+                89, "Grotadmorv",
                 165, 165,
                 115, 95, 85, 120, 50,
                 Type.poison, null,
@@ -443,7 +446,7 @@ public class PokemonSample {
 
     public static Pokemon initiateMiloticSpecialSetupTarget() {
         return new Pokemon(
-                "Milobellus",
+                350, "Milobellus",
                 170, 170,
                 70, 99, 120, 145, 80,
                 Type.water, null,
@@ -455,7 +458,7 @@ public class PokemonSample {
 
     public static Pokemon initiateClaydolSpecialSetupTarget() {
         return new Pokemon(
-                "Kaorine",
+                344, "Kaorine",
                 155, 155,
                 90, 125, 90, 140, 75,
                 Type.ground, Type.psychic,
@@ -467,7 +470,7 @@ public class PokemonSample {
 
     public static Pokemon initiateKadabraSpecialTargetBalanced() {
         return new Pokemon(
-                "Kadabra",
+                64, "Kadabra",
                 135, 135,
                 35, 55, 105, 85, 105,
                 Type.psychic, null,
@@ -479,7 +482,7 @@ public class PokemonSample {
 
     public static Pokemon initiateVenomothSpecialTargetBalanced() {
         return new Pokemon(
-                "Aéromite",
+                49, "Aéromite",
                 145, 145,
                 45, 70, 105, 90, 80,
                 Type.bug, Type.poison,
@@ -491,7 +494,7 @@ public class PokemonSample {
 
     public static Pokemon initiateMisdreavusSpecialTargetBalanced() {
         return new Pokemon(
-                "Feuforêve",
+                200, "Feuforêve",
                 140, 140,
                 45, 70, 110, 90, 85,
                 Type.ghost, null,
@@ -503,7 +506,7 @@ public class PokemonSample {
 
     public static Pokemon initiateJolteonSpeedTargetBalanced() {
         return new Pokemon(
-                "Voltali",
+                135, "Voltali",
                 150, 150,
                 50, 110, 70, 70, 125,
                 Type.electric, null,
@@ -515,7 +518,7 @@ public class PokemonSample {
 
     public static Pokemon initiateElectrodeSpeedTargetBalanced() {
         return new Pokemon(
-                "Électrode",
+                101, "Électrode",
                 140, 140,
                 50, 110, 65, 70, 130,
                 Type.electric, null,
@@ -527,7 +530,7 @@ public class PokemonSample {
 
     public static Pokemon initiatePersianSpeedTargetBalanced() {
         return new Pokemon(
-                "Persian",
+                53, "Persian",
                 160, 160,
                 70, 110, 55, 65, 120,
                 Type.normal, null,
@@ -543,7 +546,7 @@ public class PokemonSample {
 
     public static Pokemon initiateDracolossePeter() {
         return new Pokemon(
-                "Dracolosse",
+                149, "Dracolosse",
                 166, 166,
                 154, 115, 120, 120, 100,
                 Type.dragon, Type.flying,
@@ -555,7 +558,7 @@ public class PokemonSample {
 
     public static Pokemon initiateLeviatorPeter() {
         return new Pokemon(
-                "Léviator",
+                130, "Léviator",
                 162, 162,
                 137, 91, 72, 112, 93,
                 Type.water, Type.flying,
@@ -567,7 +570,7 @@ public class PokemonSample {
 
     public static Pokemon initiatePteraPeter() {
         return new Pokemon(
-                "Ptéra",
+                142, "Ptéra",
                 155, 155,
                 125, 85, 80, 95, 150,
                 Type.rock, Type.flying,
@@ -579,7 +582,7 @@ public class PokemonSample {
 
     public static Pokemon initiateMagnetonMixed() {
         return new Pokemon(
-                "Magnéton",
+                82, "Magnéton",
                 145, 145,
                 70, 105, 120, 95, 75,
                 Type.electric, Type.steel,
@@ -591,7 +594,7 @@ public class PokemonSample {
 
     public static Pokemon initiateLaggronMixed() {
         return new Pokemon(
-                "Laggron",
+                260, "Laggron",
                 175, 175,
                 130, 110, 105, 110, 80,
                 Type.water, Type.ground,
@@ -603,7 +606,7 @@ public class PokemonSample {
 
     public static Pokemon initiateAlakazamBlue() {
         return new Pokemon(
-                "Alakazam",
+                65, "Alakazam",
                 130, 130,
                 70, 65, 155, 105, 140,
                 Type.psychic, null,
@@ -615,7 +618,7 @@ public class PokemonSample {
 
     public static Pokemon initiateArcaninBlue() {
         return new Pokemon(
-                "Arcanin",
+                59, "Arcanin",
                 165, 165,
                 130, 100, 120, 100, 115,
                 Type.fire, null,
@@ -627,7 +630,7 @@ public class PokemonSample {
 
     public static Pokemon initiateRhinoférosBlue() {
         return new Pokemon(
-                "Rhinoféros",
+                112, "Rhinoféros",
                 180, 180,
                 150, 140, 65, 65, 45,
                 Type.ground, Type.rock,
@@ -639,7 +642,7 @@ public class PokemonSample {
 
     public static Pokemon initiateNoacierMixed() {
         return new Pokemon(
-                "Noacier",
+                598, "Noacier",
                 160, 160,
                 115, 150, 65, 135, 40,
                 Type.grass, Type.steel,
@@ -651,7 +654,7 @@ public class PokemonSample {
 
     public static Pokemon initiateLucarioMixed() {
         return new Pokemon(
-                "Lucario",
+                448, "Lucario",
                 145, 145,
                 115, 80, 120, 80, 115,
                 Type.fighting, Type.steel,
@@ -663,7 +666,7 @@ public class PokemonSample {
 
     public static Pokemon initiateMetalossePierreRochard() {
         return new Pokemon(
-                "Métalosse",
+                376, "Métalosse",
                 155, 155,
                 155, 150, 115, 110, 90,
                 Type.steel, Type.psychic,
@@ -675,7 +678,7 @@ public class PokemonSample {
 
     public static Pokemon initiateAirmurePierreRochard() {
         return new Pokemon(
-                "Airmure",
+                227, "Airmure",
                 140, 140,
                 100, 160, 60, 90, 90,
                 Type.steel, Type.flying,
@@ -687,7 +690,7 @@ public class PokemonSample {
 
     public static Pokemon initiateVacilysPierreRochard() {
         return new Pokemon(
-                "Vacilys",
+                346, "Vacilys",
                 165, 165,
                 101, 117, 101, 127, 63,
                 Type.rock, Type.grass,
@@ -699,7 +702,7 @@ public class PokemonSample {
 
     public static Pokemon initiateMilobellusMixed() {
         return new Pokemon(
-                "Milobellus",
+                350, "Milobellus",
                 170, 170,
                 70, 99, 120, 145, 100,
                 Type.water, null,
@@ -711,7 +714,7 @@ public class PokemonSample {
 
     public static Pokemon initiateCarchacrokCynthia() {
         return new Pokemon(
-                "Carchacrok",
+                445, "Carchacrok",
                 183, 183,
                 150, 115, 100, 105, 122,
                 Type.dragon, Type.ground,
@@ -723,7 +726,7 @@ public class PokemonSample {
 
     public static Pokemon initiateLucarioCynthia() {
         return new Pokemon(
-                "Lucario",
+                448, "Lucario",
                 145, 145,
                 115, 80, 120, 80, 115,
                 Type.fighting, Type.steel,
@@ -735,7 +738,7 @@ public class PokemonSample {
 
     public static Pokemon initiateMammochonMixed() {
         return new Pokemon(
-                "Mammochon",
+                473, "Mammochon",
                 185, 185,
                 150, 100, 80, 80, 100,
                 Type.ice, Type.ground,
@@ -747,7 +750,7 @@ public class PokemonSample {
 
     public static Pokemon initiateDracolosseMixedTarget() {
         return new Pokemon(
-                "Dracolosse",
+                149, "Dracolosse",
                 166, 166,
                 154, 115, 120, 120, 100,
                 Type.dragon, Type.flying,
@@ -759,7 +762,7 @@ public class PokemonSample {
 
     public static Pokemon initiateTranchodonIris() {
         return new Pokemon(
-                "Tranchodon",
+                612, "Tranchodon",
                 151, 151,
                 167, 110, 80, 90, 117,
                 Type.dragon, null,
@@ -771,7 +774,7 @@ public class PokemonSample {
 
     public static Pokemon initiateDracolosseIris() {
         return new Pokemon(
-                "Dracolosse",
+                149, "Dracolosse",
                 166, 166,
                 154, 115, 120, 120, 100,
                 Type.dragon, Type.flying,
@@ -783,7 +786,7 @@ public class PokemonSample {
 
     public static Pokemon initiateLokhlassIris() {
         return new Pokemon(
-                "Lokhlass",
+                131, "Lokhlass",
                 205, 205,
                 105, 100, 105, 115, 80,
                 Type.water, Type.ice,
@@ -842,7 +845,7 @@ public class PokemonSample {
 
     public static Pokemon initiateLovdiscJuan() {
         return new Pokemon(
-                "Lovdisc",
+                370, "Lovdisc",
                 125, 125,
                 55, 75, 65, 85, 120,
                 Type.water, null,
@@ -859,7 +862,7 @@ public class PokemonSample {
 
     public static Pokemon initiateBarbichaJuan() {
         return new Pokemon(
-                "Barbicha",
+                340, "Barbicha",
                 175, 175,
                 105, 95, 95, 90, 75,
                 Type.water, Type.ground,
@@ -876,7 +879,7 @@ public class PokemonSample {
 
     public static Pokemon initiatePhogleurJuan() {
         return new Pokemon(
-                "Phogleur",
+                364, "Phogleur",
                 180, 180,
                 80, 110, 100, 110, 65,
                 Type.ice, Type.water,
@@ -893,7 +896,7 @@ public class PokemonSample {
 
     public static Pokemon initiateColhomardJuan() {
         return new Pokemon(
-                "Colhomard",
+                342, "Colhomard",
                 150, 150,
                 140, 105, 110, 75, 75,
                 Type.water, Type.dark,
@@ -910,7 +913,7 @@ public class PokemonSample {
 
     public static Pokemon initiateHyporoiJuan() {
         return new Pokemon(
-                "Hyporoi",
+                230, "Hyporoi",
                 160, 160,
                 115, 115, 115, 115, 105,
                 Type.water, Type.dragon,
@@ -927,7 +930,7 @@ public class PokemonSample {
 
     public static Pokemon initiateLeviatorJuan() {
         return new Pokemon(
-                "Léviator",
+                130, "Léviator",
                 175, 175,
                 145, 100, 80, 120, 105,
                 Type.water, Type.flying,
@@ -949,7 +952,7 @@ public class PokemonSample {
 
     public static Pokemon initiateBranetteSpectraPhysical() {
         return new Pokemon(
-                "Branette",
+                354, "Branette",
                 145, 145,
                 135, 85, 100, 85, 85,
                 Type.ghost, null,
@@ -966,7 +969,7 @@ public class PokemonSample {
 
     public static Pokemon initiateTeraclopeSpectraDefensive() {
         return new Pokemon(
-                "Téraclope",
+                356, "Téraclope",
                 150, 150,
                 90, 165, 85, 165, 55,
                 Type.ghost, null,
@@ -983,7 +986,7 @@ public class PokemonSample {
 
     public static Pokemon initiateTenefixSpectra() {
         return new Pokemon(
-                "Ténéfix",
+                302, "Ténéfix",
                 145, 145,
                 100, 100, 85, 95, 75,
                 Type.dark, Type.ghost,
@@ -1000,7 +1003,7 @@ public class PokemonSample {
 
     public static Pokemon initiateFeuforeveSpectra() {
         return new Pokemon(
-                "Feuforêve",
+                200, "Feuforêve",
                 145, 145,
                 75, 90, 120, 120, 105,
                 Type.ghost, null,
@@ -1017,7 +1020,7 @@ public class PokemonSample {
 
     public static Pokemon initiateEctoplasmaSpectra() {
         return new Pokemon(
-                "Ectoplasma",
+                94, "Ectoplasma",
                 145, 145,
                 80, 80, 150, 100, 130,
                 Type.ghost, Type.poison,
@@ -1034,7 +1037,7 @@ public class PokemonSample {
 
     public static Pokemon initiateMomartikSpectra() {
         return new Pokemon(
-                "Momartik",
+                478, "Momartik",
                 145, 145,
                 90, 85, 115, 85, 130,
                 Type.ice, Type.ghost,
@@ -1056,7 +1059,7 @@ public class PokemonSample {
 
     public static Pokemon initiateAirmurePierreRochardFinal() {
         return new Pokemon(
-                "Airmure",
+                227, "Airmure",
                 155, 155,
                 105, 165, 65, 100, 95,
                 Type.steel, Type.flying,
@@ -1073,7 +1076,7 @@ public class PokemonSample {
 
     public static Pokemon initiateVacilysPierreRochardFinal() {
         return new Pokemon(
-                "Vacilys",
+                346, "Vacilys",
                 180, 180,
                 110, 125, 115, 140, 65,
                 Type.rock, Type.grass,
@@ -1090,7 +1093,7 @@ public class PokemonSample {
 
     public static Pokemon initiateArmaldoPierreRochardFinal() {
         return new Pokemon(
-                "Armaldo",
+                348, "Armaldo",
                 170, 170,
                 150, 130, 85, 105, 65,
                 Type.rock, Type.bug,
@@ -1107,7 +1110,7 @@ public class PokemonSample {
 
     public static Pokemon initiateKaorinePierreRochardFinal() {
         return new Pokemon(
-                "Kaorine",
+                344, "Kaorine",
                 165, 165,
                 90, 130, 115, 145, 85,
                 Type.ground, Type.psychic,
@@ -1124,7 +1127,7 @@ public class PokemonSample {
 
     public static Pokemon initiateGalekingPierreRochardFinal() {
         return new Pokemon(
-                "Galeking",
+                306, "Galeking",
                 175, 175,
                 145, 170, 80, 90, 70,
                 Type.steel, Type.rock,
@@ -1141,7 +1144,7 @@ public class PokemonSample {
 
     public static Pokemon initiateMetalossePierreRochardFinal() {
         return new Pokemon(
-                "Métalosse",
+                376, "Métalosse",
                 170, 170,
                 160, 155, 120, 120, 100,
                 Type.steel, Type.psychic,
@@ -1160,7 +1163,7 @@ public class PokemonSample {
 
     public static Pokemon initiateJungkoEvaluation() {
         return new Pokemon(
-                "Jungko",
+                254, "Jungko",
                 155, 155,
                 105, 85, 135, 100, 140,
                 Type.grass, null,
@@ -1177,7 +1180,7 @@ public class PokemonSample {
 
     public static Pokemon initiateBrasegaliEvaluation() {
         return new Pokemon(
-                "Braségali",
+                257, "Braségali",
                 165, 165,
                 135, 90, 125, 90, 110,
                 Type.fire, Type.fighting,
@@ -1194,7 +1197,7 @@ public class PokemonSample {
 
     public static Pokemon initiateLaggronEvaluation() {
         return new Pokemon(
-                "Laggron",
+                260, "Laggron",
                 185, 185,
                 135, 120, 105, 110, 75,
                 Type.water, Type.ground,
@@ -1211,7 +1214,7 @@ public class PokemonSample {
 
     public static Pokemon initiateGardevoirEvaluation() {
         return new Pokemon(
-                "Gardevoir",
+                282, "Gardevoir",
                 155, 155,
                 80, 90, 150, 140, 105,
                 Type.psychic, Type.fairy,
@@ -1228,7 +1231,7 @@ public class PokemonSample {
 
     public static Pokemon initiateMagnetonEvaluation() {
         return new Pokemon(
-                "Magnéton",
+                82, "Magnéton",
                 150, 150,
                 75, 115, 135, 105, 85,
                 Type.electric, Type.steel,
@@ -1245,7 +1248,7 @@ public class PokemonSample {
 
     public static Pokemon initiateAbsolEvaluation() {
         return new Pokemon(
-                "Absol",
+                359,"Absol",
                 155, 155,
                 150, 90, 90, 85, 105,
                 Type.dark, null,

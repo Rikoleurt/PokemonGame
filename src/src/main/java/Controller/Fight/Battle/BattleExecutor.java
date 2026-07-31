@@ -36,9 +36,11 @@ public class BattleExecutor {
     }
 
     public void executeEvents(Runnable onAllEventsFinished) throws IOException {
-//        getEventsFromQueue();
+        getEventsFromQueue();
+        System.out.println("Executing Battle Events");
         if (!events.isEmpty()) {
             BattleEvent event = events.poll();
+            System.out.println("Battle Event being executed : " + event);
             event.setOnFinish(() -> {
                 try {
                     executeEvents(onAllEventsFinished);

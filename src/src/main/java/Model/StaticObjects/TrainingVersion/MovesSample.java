@@ -13,8 +13,45 @@ import java.util.Map;
 
 public class MovesSample {
 
-    public static HashMap<String, Move> initiateAttacks() {
-        HashMap<String, Move> attackDB = new HashMap<>();
+    private static final HashMap<String, Move> attackDB = new HashMap<>();
+    private static final HashMap<String, Integer> IDS_BY_DISPLAY_NAME = new HashMap<>();
+
+    private static void registerMove(
+            int id,
+            Move move,
+            String... keys
+    ) {
+        if (move == null) {
+            throw new IllegalArgumentException("Move cannot be null");
+        }
+        if (id < 0 || id >= 255) {
+            throw new IllegalArgumentException("Move ID must be between 0 and 254: " + id);
+        }
+        if (IDS_BY_DISPLAY_NAME.containsValue(id)) {
+            throw new IllegalArgumentException("Move ID already registered: " + id);
+        }
+        if (IDS_BY_DISPLAY_NAME.containsKey(move.getName())) {
+            throw new IllegalArgumentException("Move already registered: " + move.getName());
+        }
+
+        IDS_BY_DISPLAY_NAME.put(move.getName(), id);
+
+        for (String key : keys) {
+            if (key == null || key.isBlank()) {
+                throw new IllegalArgumentException("Move key cannot be blank");
+            }
+            if (attackDB.containsKey(key)) {
+                throw new IllegalArgumentException("Move key already registered: " + key);
+            }
+            attackDB.put(key, move);
+        }
+    }
+
+    public static synchronized HashMap<String, Move> initiateAttacks() {
+        // Rebuild the templates on every call so each Pokémon can receive
+        // independent Move instances (especially independent PP values).
+        attackDB.clear();
+        IDS_BY_DISPLAY_NAME.clear();
 
         // region Attaques offensives
 
@@ -253,159 +290,295 @@ public class MovesSample {
 
         // region Enregistrement des attaques
 
-        attackDB.put("charge", charge);
-        attackDB.put("tackle", charge);
+        registerMove(0, charge,
+                "charge",
+                "tackle"
+        );
 
-        attackDB.put("flammeche", flammeche);
-        attackDB.put("ember", flammeche);
+        registerMove(1, flammeche,
+                "flammeche",
+                "ember"
+        );
 
-        attackDB.put("fouet_lianes", fouetLianes);
-        attackDB.put("vine_whip", fouetLianes);
+        registerMove(2, fouetLianes,
+                "fouet_lianes",
+                "vine_whip"
+        );
 
-        attackDB.put("pistolet_a_o", pistoletAO);
-        attackDB.put("water_gun", pistoletAO);
+        registerMove(3, pistoletAO,
+                "pistolet_a_o",
+                "water_gun"
+        );
 
-        attackDB.put("morsure", morsure);
-        attackDB.put("bite", morsure);
+        registerMove(4, morsure,
+                "morsure",
+                "bite"
+        );
 
-        attackDB.put("eclair", eclair);
-        attackDB.put("thunder_shock", eclair);
+        registerMove(5, eclair,
+                "eclair",
+                "thunder_shock"
+        );
 
-        attackDB.put("tonnerre", tonnerre);
-        attackDB.put("thunder_bolt", tonnerre);
+        registerMove(6, tonnerre,
+                "tonnerre",
+                "thunder_bolt"
+        );
 
-        attackDB.put("surf", surf);
-        attackDB.put("cascade", cascade);
-        attackDB.put("queue_de_fer", queueDeFer);
-        attackDB.put("iron_tail", queueDeFer);
+        registerMove(7, surf,
+                "surf"
+        );
 
-        attackDB.put("psyko", psyko);
-        attackDB.put("psychic", psyko);
+        registerMove(8, cascade,
+                "cascade",
+                "waterfall"
+        );
 
-        attackDB.put("eco_sphere", ecoSphere);
-        attackDB.put("energy_ball", ecoSphere);
+        registerMove(9, queueDeFer,
+                "queue_de_fer",
+                "iron_tail"
+        );
 
-        attackDB.put("rayon_gemme", rayonGemme);
-        attackDB.put("power_gem", rayonGemme);
+        registerMove(10, psyko,
+                "psyko",
+                "psychic"
+        );
 
-        attackDB.put("seisme", seisme);
-        attackDB.put("earthquake", seisme);
+        registerMove(11, ecoSphere,
+                "eco_sphere",
+                "energy_ball"
+        );
 
-        attackDB.put("pied_saute", piedSaute);
-        attackDB.put("high_jump_kick", piedSaute);
+        registerMove(12, rayonGemme,
+                "rayon_gemme",
+                "power_gem"
+        );
 
-        attackDB.put("casse_brique", casseBrique);
-        attackDB.put("brick_break", casseBrique);
+        registerMove(13, seisme,
+                "seisme",
+                "earthquake"
+        );
 
-        attackDB.put("aurasphere", aurasphere);
-        attackDB.put("aura_sphere", aurasphere);
+        registerMove(14, piedSaute,
+                "pied_saute",
+                "high_jump_kick"
+        );
 
-        attackDB.put("exploforce", exploforce);
-        attackDB.put("focus_blast", exploforce);
+        registerMove(15, casseBrique,
+                "casse_brique",
+                "brick_break"
+        );
 
-        attackDB.put("dracogriffe", dracogriffe);
-        attackDB.put("dragon_claw", dracogriffe);
+        registerMove(16, aurasphere,
+                "aurasphere",
+                "aura_sphere"
+        );
 
-        attackDB.put("lance_flammes", lanceFlammes);
-        attackDB.put("flamethrower", lanceFlammes);
+        registerMove(17, exploforce,
+                "exploforce",
+                "focus_blast"
+        );
 
-        attackDB.put("crocs_givre", crocsGivre);
-        attackDB.put("ice_fang", crocsGivre);
+        registerMove(18, dracogriffe,
+                "dracogriffe",
+                "dragon_claw"
+        );
 
-        attackDB.put("lame_de_roc", lameDeRoc);
-        attackDB.put("stone_edge", lameDeRoc);
+        registerMove(19, lanceFlammes,
+                "lance_flammes",
+                "flamethrower"
+        );
 
-        attackDB.put("poing_meteore", poingMeteore);
-        attackDB.put("meteor_mash", poingMeteore);
+        registerMove(20, crocsGivre,
+                "crocs_givre",
+                "ice_fang"
+        );
 
-        attackDB.put("aile_d_acier", aileDAcier);
-        attackDB.put("steel_wing", aileDAcier);
+        registerMove(21, lameDeRoc,
+                "lame_de_roc",
+                "stone_edge"
+        );
 
-        attackDB.put("telluriforce", telluriforce);
-        attackDB.put("earth_power", telluriforce);
+        registerMove(22, poingMeteore,
+                "poing_meteore",
+                "meteor_mash"
+        );
 
-        attackDB.put("tranche_nuit", trancheNuit);
-        attackDB.put("night_slash", trancheNuit);
+        registerMove(23, aileDAcier,
+                "aile_d_acier",
+                "steel_wing"
+        );
 
-        attackDB.put("laser_glace", laserGlace);
-        attackDB.put("ice_beam", laserGlace);
+        registerMove(24, telluriforce,
+                "telluriforce",
+                "earth_power"
+        );
 
-        attackDB.put("vibrobscur", vibrobscur);
-        attackDB.put("dark_pulse", vibrobscur);
+        registerMove(25, trancheNuit,
+                "tranche_nuit",
+                "night_slash"
+        );
 
-        attackDB.put("luminocanon", luminocanon);
-        attackDB.put("flash_cannon", luminocanon);
+        registerMove(26, laserGlace,
+                "laser_glace",
+                "ice_beam"
+        );
 
-        attackDB.put("eclat_magique", eclatMagique);
-        attackDB.put("dazzling_gleam", eclatMagique);
+        registerMove(27, vibrobscur,
+                "vibrobscur",
+                "dark_pulse"
+        );
 
-        attackDB.put("gyroballe", gyroballe);
-        attackDB.put("gyro_ball", gyroballe);
+        registerMove(28, luminocanon,
+                "luminocanon",
+                "flash_cannon"
+        );
 
-        attackDB.put("cage_eclair", cageEclair);
-        attackDB.put("thunder_wave", cageEclair);
+        registerMove(29, eclatMagique,
+                "eclat_magique",
+                "dazzling_gleam"
+        );
 
-        attackDB.put("gaz_toxik", gazToxik);
-        attackDB.put("poison_gas", gazToxik);
+        registerMove(30, gyroballe,
+                "gyroballe",
+                "gyro_ball"
+        );
 
-        attackDB.put("toxik", toxik);
-        attackDB.put("toxic", toxik);
+        registerMove(31, cageEclair,
+                "cage_eclair",
+                "thunder_wave"
+        );
 
-        attackDB.put("feu_follet", feuFollet);
-        attackDB.put("will_o_wisp", feuFollet);
+        registerMove(32, gazToxik,
+                "gaz_toxik",
+                "poison_gas"
+        );
 
-        attackDB.put("onde_folie", ondeFolie);
-        attackDB.put("confuse_ray", ondeFolie);
+        registerMove(33, toxik,
+                "toxik",
+                "toxic"
+        );
 
-        attackDB.put("poudre_dodo", poudreDodo);
-        attackDB.put("sleep_powder", poudreDodo);
+        registerMove(34, feuFollet,
+                "feu_follet",
+                "will_o_wisp"
+        );
 
-        attackDB.put("danse_lames", danseLames);
-        attackDB.put("swords_dance", danseLames);
+        registerMove(35, ondeFolie,
+                "onde_folie",
+                "confuse_ray"
+        );
 
-        attackDB.put("cotogarde", cotogarde);
-        attackDB.put("cotton_guard", cotogarde);
+        registerMove(36, poudreDodo,
+                "poudre_dodo",
+                "sleep_powder"
+        );
 
-        attackDB.put("plenitude", plenitude);
-        attackDB.put("calm_mind", plenitude);
+        registerMove(37, danseLames,
+                "danse_lames",
+                "swords_dance"
+        );
 
-        attackDB.put("amnesie", amnesie);
-        attackDB.put("amnesia", amnesie);
+        registerMove(38, cotogarde,
+                "cotogarde",
+                "cotton_guard"
+        );
 
-        attackDB.put("danse_draco", danseDraco);
-        attackDB.put("dragon_dance", danseDraco);
+        registerMove(39, plenitude,
+                "plenitude",
+                "calm_mind"
+        );
 
-        attackDB.put("mur_de_fer", murDeFer);
-        attackDB.put("iron_defense", murDeFer);
+        registerMove(40, amnesie,
+                "amnesie",
+                "amnesia"
+        );
 
-        attackDB.put("turbo", turbo);
+        registerMove(41, danseDraco,
+                "danse_draco",
+                "dragon_dance"
+        );
 
-        attackDB.put("ball_ombre", ballOmbre);
-        attackDB.put("shadow_ball", ballOmbre);
+        registerMove(42, murDeFer,
+                "mur_de_fer",
+                "iron_defense"
+        );
 
-        attackDB.put("ombre_portee", ombrePortee);
-        attackDB.put("shadow_sneak", ombrePortee);
+        registerMove(43, turbo,
+                "turbo"
+        );
 
-        attackDB.put("pince_masse", pinceMasse);
-        attackDB.put("crabhammer", pinceMasse);
+        registerMove(44, ballOmbre,
+                "ball_ombre",
+                "shadow_ball"
+        );
 
-        attackDB.put("draco_souffle", dracoSouffle);
-        attackDB.put("dragon_breath", dracoSouffle);
+        registerMove(45, ombrePortee,
+                "ombre_portee",
+                "shadow_sneak"
+        );
 
-        attackDB.put("aeropique", aeropique);
-        attackDB.put("aerial_ace", aeropique);
+        registerMove(46, pinceMasse,
+                "pince_masse",
+                "crabhammer"
+        );
 
-        attackDB.put("eboulement", eboulement);
-        attackDB.put("rock_slide", eboulement);
+        registerMove(47, dracoSouffle,
+                "draco_souffle",
+                "dragon_breath"
+        );
 
-        attackDB.put("plaie_croix", plaieCroix);
-        attackDB.put("x_scissor", plaieCroix);
+        registerMove(48, aeropique,
+                "aeropique",
+                "aerial_ace"
+        );
 
-        attackDB.put("poing_ombre", poingOmbre);
-        attackDB.put("shadow_punch", poingOmbre);
+        registerMove(49, eboulement,
+                "eboulement",
+                "rock_slide"
+        );
 
-        // endregion
+        registerMove(50, plaieCroix,
+                "plaie_croix",
+                "x_scissor"
+        );
 
-        return attackDB;
+        registerMove(51, poingOmbre,
+                "poing_ombre",
+                "shadow_punch"
+        );
+
+
+    //endregion
+
+        // Return a snapshot: later initialisations cannot alter the caller's lookup map.
+        return new HashMap<>(attackDB);
+    }
+
+    public static int getIdByName(String attackName) {
+        if (attackName == null || attackName.isBlank()) {
+            return 255;
+        }
+
+        ensureInitialized();
+
+        return IDS_BY_DISPLAY_NAME.getOrDefault(
+                attackName,
+                255
+        );
+    }
+
+    public static int getIdByMove(Move move) {
+        if (move == null) {
+            return 255;
+        }
+
+        return getIdByName(move.getName());
+    }
+
+    private static void ensureInitialized() {
+        if (attackDB.isEmpty()) {
+            initiateAttacks();
+        }
     }
 }

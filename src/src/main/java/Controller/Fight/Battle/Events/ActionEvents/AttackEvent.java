@@ -21,7 +21,6 @@ public class AttackEvent extends BattleEvent {
         this.move = move;
         this.field = field;
         this.executor = executor;
-//        System.out.println(attacker.getName() + " attacks " + defender.getName());
     }
 
     @Override

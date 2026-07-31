@@ -16,13 +16,14 @@ import Utils.SeedManager;
 import java.io.*;
 import java.util.*;
 import View.Training.Console.View.BattleConsole;
-import View.Game.Battle.BattleView;
+import View.GameView.BattleViews.BattleView;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
 
 
 public class Pokemon {
     // region Variable
+    private final int id;
     int HP;
     int maxHP;
     int hpIV;
@@ -78,10 +79,11 @@ public class Pokemon {
     BattleConsole console = BattleConsole.getInstance();
     //endregion
 
-    public Pokemon(String name, int maxHP, int HP, int atk, int def, int atkSpe, int defSpe, int speed, int baseHP, int baseAtk, int baseDef, int baseAtkSpe, int baseDefSpe, int baseSpeed,
+    public Pokemon(int id, String name, int maxHP, int HP, int atk, int def, int atkSpe, int defSpe, int speed, int baseHP, int baseAtk, int baseDef, int baseAtkSpe, int baseDefSpe, int baseSpeed,
                    int hpIV, int atkIV, int defIV, int atkSpeIV, int defSpeIV, int speedIV, int hpEV, int atkEV, int defEV, int atkSpeEV, int defSpeEV, int speedEV, int atkRaise, int
                    defRaise, int atkSpeRaise, int defSpeRaise, int speedRaise, int level, Type type, ArrayList<Move> moves, String gender, int exp, int maxExp, Experience expType,
                    Status status){
+        this.id = id;
         this.name = name;
         this.maxHP = maxHP;
         this.HP = HP;
@@ -123,7 +125,8 @@ public class Pokemon {
         this.status = status;
     }
 
-    public Pokemon(String name, int maxHP, int HP, int atk, int def, int atkSpe, int defSpe, int speed, Type type, ArrayList<Move> moves, Status status, int level){
+    public Pokemon(int id, String name, int maxHP, int HP, int atk, int def, int atkSpe, int defSpe, int speed, Type type, ArrayList<Move> moves, Status status, int level){
+        this.id = id;
         this.name = name;
         this.maxHP = maxHP;
         this.HP = HP;
@@ -138,7 +141,8 @@ public class Pokemon {
         this.level = level;
     }
 
-    public Pokemon(String name, int maxHP, int HP, int atk, int def, int atkSpe, int defSpe, int speed, Type type, Type type2, ArrayList<Move> moves, Status status, int level){
+    public Pokemon(int id, String name, int maxHP, int HP, int atk, int def, int atkSpe, int defSpe, int speed, Type type, Type type2, ArrayList<Move> moves, Status status, int level){
+        this.id = id;
         this.name = name;
         this.maxHP = maxHP;
         this.HP = HP;
@@ -162,6 +166,9 @@ public class Pokemon {
     }
 
     //region Getter
+    public int getId() {
+        return id;
+    }
     public String getName(){
         return name;
     }

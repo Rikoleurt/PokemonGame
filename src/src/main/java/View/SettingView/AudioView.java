@@ -2,7 +2,7 @@ package View.SettingView;
 
 import Utils.SceneManager;
 import Utils.SongManager;
-import View.Game.Battle.InfoBars.Bar;
+import View.GameView.BattleViews.InfoBars.Bar;
 import View.View;
 import javafx.application.Platform;
 import javafx.geometry.Insets;

@@ -1,6 +1,6 @@
 package View.Training.Console.View;
 
-import View.Game.Battle.BattleButtons;
+import View.GameView.BattleViews.BattleButtons;
 import javafx.scene.control.TextArea;
 import javafx.scene.text.Font;
 
