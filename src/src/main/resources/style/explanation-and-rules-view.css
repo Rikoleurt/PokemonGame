@@ -1,0 +1,13 @@
+.explanation-and-rules-view .button {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+}
+
+.explanation-and-rules-view .button:hover {
+    -fx-background-color: rgba(0, 0, 0, 0.08);
+}
+
+.explanation-and-rules-view .button:pressed {
+    -fx-background-color: rgba(0, 0, 0, 0.15);
+}
