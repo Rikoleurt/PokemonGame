@@ -7,6 +7,7 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import View.ExplanationAndRulesView;
 
 public class MainMenuView extends BorderPane implements View {
 
@@ -50,7 +51,8 @@ public class MainMenuView extends BorderPane implements View {
         setCenter(verticalMenuContainer);
     }
 
-    public void onPlayPressed() {
-        SceneManager.switchStageTo(new SelectFightView());
+
+    private void onPlayPressed() {
+        SceneManager.switchStageTo(new ExplanationAndRulesView());
     }
 }
