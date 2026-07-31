@@ -63,21 +63,21 @@ public class SelectFightView extends BorderPane implements View {
     }
 
     private void onFirstScenarioPressed() {
-
         Matchup matchup = Matchup.juanScenario6v6();
 
         Trainer player = new Trainer("Player", new Bag(Map.of()), matchup.playerTeam());
         Trainer agent = new Trainer("Agent", new Bag(Map.of()), matchup.opponentTeam());
 
         Field field = new Field(player.getTeam(), agent.getTeam(), Debris.normal, Weather.normal);
+
         BattleView battleView = new BattleView(player, agent, field);
         BattleView.refreshSprites();
 
+        SceneManager.setFightView(battleView);
         SceneManager.setRoot(battleView);
     }
 
     private void onSecondScenarioPressed() {
-
         Matchup matchup = Matchup.spectraScenario6v6();
 
         Trainer player = new Trainer("Player", new Bag(null), matchup.playerTeam());
@@ -88,11 +88,11 @@ public class SelectFightView extends BorderPane implements View {
         BattleView battleView = new BattleView(player, agent, field);
         BattleView.refreshSprites();
 
+        SceneManager.setFightView(battleView);
         SceneManager.setRoot(battleView);
     }
 
     private void onThirdScenarioPressed() {
-
         Matchup matchup = Matchup.pierreRochardScenario6v6();
 
         Trainer player = new Trainer("Player", new Bag(null), matchup.playerTeam());
@@ -103,6 +103,7 @@ public class SelectFightView extends BorderPane implements View {
         BattleView battleView = new BattleView(player, agent, field);
         BattleView.refreshSprites();
 
+        SceneManager.setFightView(battleView);
         SceneManager.setRoot(battleView);
     }
 }

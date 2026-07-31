@@ -77,6 +77,7 @@ public class StartTurn extends BattleEvent {
         String receivedMessage = null;
 
         try {
+            System.out.println("Sending state at " + getClass().getSimpleName());
             socketServer.send(socketServer.state(player, agent, executor.getTurn()));
             receivedMessage = socketServer.getActionMessage(player, agent);
         } catch (IOException e) {
@@ -93,12 +94,6 @@ public class StartTurn extends BattleEvent {
 
         Item agentItem;
         Pokemon agentSwitchTarget;
-        switch (agentAction) {
-            case Attack -> agentMove = decoder.resolveMoveByActionIndex(actionIndex);
-            case Switch -> agentSwitchTarget = decoder.resolveSwitchTargetByActionIndex(actionIndex);
-            case Item  -> agentItem = decoder.resolveItemByActionIndex(actionIndex);
-
-        }
 
         Pokemon playerPokemon = player.getFrontPokemon();
         Pokemon agentPokemon = agent.getFrontPokemon();
@@ -107,36 +102,29 @@ public class StartTurn extends BattleEvent {
         boolean playerPriority = order.compute();
 
         if (playerPriority && !playerPokemon.isKO()) {
-            System.out.println("Player goes first");
             switch (playerAction) {
                 case Attack -> {
-                    System.out.println("Player attacks first");
                     executor.addEvent(new AttackEvent(playerPokemon, agentPokemon, move, field, executor));
                 }
                 case Item -> {
-                    System.out.println("Player items first");
                     executor.addEvent(new UseItemEvent(player, playerItem, playerPokemon, executor));
                 }
                 case Switch -> {
-                    System.out.println("Player switches first");
                     executor.addEvent(new PlayerSwitchEvent(player, playerSwitchTarget, executor));
                     playerPokemon = playerSwitchTarget;
                 }
             }
             if (!agentPokemon.isKO()) {
-                System.out.println("Agent is second");
                 switch (agentAction) {
                     case Attack -> {
-                        System.out.println("Agent attacks second");
+                        agentMove = decoder.resolveMoveByActionIndex(actionIndex);
                         executor.addEvent(new AttackEvent(agentPokemon, playerPokemon, agentMove, field, executor));
                     }
                     case Item -> {
-                        System.out.println("Agent items second");
                         agentItem = decoder.resolveItemByActionIndex(actionIndex);
                         executor.addEvent(new UseItemEvent(agent, agentItem, agentPokemon, executor));
                     }
                     case Switch -> {
-                        System.out.println("Agent switches second");
                         agentSwitchTarget = decoder.resolveSwitchTargetByActionIndex(actionIndex);
                         executor.addEvent(new FoeSwitchEvent(agent, agentSwitchTarget, field));
                         agentPokemon = agentSwitchTarget;
@@ -144,37 +132,30 @@ public class StartTurn extends BattleEvent {
                 }
             }
         } else if (!agentPokemon.isKO()) {
-            System.out.println("Agent goes first");
             switch (agentAction) {
                 case Attack -> {
-                    System.out.println("Agent attacks first");
+                    agentMove = decoder.resolveMoveByActionIndex(actionIndex);
                     executor.addEvent(new AttackEvent(agentPokemon, playerPokemon, agentMove, field, executor));
                 }
                 case Item -> {
-                    System.out.println("Agent items first");
                     agentItem = decoder.resolveItemByActionIndex(actionIndex);
                     executor.addEvent(new UseItemEvent(agent, agentItem, agentPokemon, executor));
                 }
                 case Switch -> {
-                    System.out.println("Agent switches first");
                     agentSwitchTarget = decoder.resolveSwitchTargetByActionIndex(actionIndex);
                     executor.addEvent(new FoeSwitchEvent(agent, agentSwitchTarget, field));
                     agentPokemon = agentSwitchTarget;
                 }
             }
             if (!playerPokemon.isKO()) {
-                System.out.println("Player is second");
                 switch (playerAction) {
                     case Attack -> {
-                        System.out.println("Player attacks second");
                         executor.addEvent(new AttackEvent(playerPokemon, agentPokemon, move, field, executor));
                     }
                     case Item -> {
-                        System.out.println("Player items second");
                         executor.addEvent(new UseItemEvent(player, playerItem, playerPokemon, executor));
                     }
                     case Switch -> {
-                        System.out.println("Player switches second");
                         executor.addEvent(new PlayerSwitchEvent(player, playerSwitchTarget, executor));
                         playerPokemon = playerSwitchTarget;
                     }

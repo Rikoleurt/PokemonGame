@@ -58,7 +58,7 @@ public class SceneManager {
         primaryStage.getScene().addEventFilter(
                 javafx.scene.input.KeyEvent.KEY_PRESSED,
                 event -> {
-                    System.out.println("[Scene] key=" + event.getCode());
+//                    System.out.println("[Scene] key=" + event.getCode());
                     BattleView.getTextBubble().handleKeyPress(event.getCode());
                 }
         );

@@ -37,8 +37,13 @@ public class ActionDecoder {
     }
 
     public Pokemon resolveSwitchTargetByActionIndex(int actionIndex) {
-        if (agent == null || actionIndex < 4 || actionIndex > 8) return null;
         int teamIndex = actionIndex - 3;
+        System.out.println("action index : " + actionIndex);
+        for (Pokemon p : agent.getTeam()){
+            System.out.println(p.getName() + " at index " + agent.getIndexOf(p) + ", Index targeted : " + teamIndex);
+        }
+
+        if (actionIndex < 4 || actionIndex > 8) return null;
         if (teamIndex >= agent.getTeam().size()) return null;
 
         return agent.getTeam().get(teamIndex);

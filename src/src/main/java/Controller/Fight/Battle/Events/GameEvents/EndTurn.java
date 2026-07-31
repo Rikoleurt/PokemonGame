@@ -57,6 +57,7 @@ public class EndTurn extends BattleEvent {
     private void getAgentSwitchResponse(Field field) {
         String receivedMessage = null;
         try {
+            System.out.println("Sending state at " + getClass().getSimpleName());
             socketServer.send(socketServer.state(player, agent, executor.getTurn()));
             receivedMessage = socketServer.getActionMessage(player, agent);
             System.out.println("Received : " + receivedMessage);
@@ -87,11 +88,6 @@ public class EndTurn extends BattleEvent {
     private void finalizeTurn(Field field) {
         Pokemon playerPokemon = player.getFrontPokemon();
 
-        if (playerPokemon.isKO() && player.getHealthyPokemon() > 0) {
-            executor.addEvent(new MessageEvent(playerPokemon.getName() + " fainted."));
-            executor.addEvent(new SwitchEvent(player, playerPokemon, field, executor));
-        }
-
         if (agent.getHealthyPokemon() == 0) {
             executor.addEvent(new MessageEvent(agent.getName() + " has been defeated."));
             executor.addEvent(new MessageEvent(agent.getName() + " gives you 1000 Poké dollars."));
@@ -101,7 +97,6 @@ public class EndTurn extends BattleEvent {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            sendRefreshedState();
             return;
         }
 
@@ -114,8 +109,12 @@ public class EndTurn extends BattleEvent {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            sendRefreshedState();
             return;
+        }
+
+        if (playerPokemon.isKO() && player.getHealthyPokemon() > 0) {
+            executor.addEvent(new MessageEvent(playerPokemon.getName() + " fainted."));
+            executor.addEvent(new SwitchEvent(player, playerPokemon, field, executor));
         }
 
         try {
@@ -127,6 +126,7 @@ public class EndTurn extends BattleEvent {
 
     private void sendRefreshedState() {
         try {
+            System.out.println("Sending state at " + getClass().getSimpleName());
             socketServer.send(socketServer.refreshState());
         } catch (IOException e) {
             System.out.println("IOException : " + e.getMessage());
@@ -143,7 +143,5 @@ public class EndTurn extends BattleEvent {
         BattleView.refreshSprites();
         getPlayerBar().refreshBar();
         getOpponentBar().refreshBar();
-
-        sendRefreshedState();
     }
 }

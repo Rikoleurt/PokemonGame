@@ -52,7 +52,7 @@ public class SocketServer {
         gs.launchTrainingFight();
     }
 
-    public void start(int port, GameState gs) throws IOException {
+    public void start(int port) throws IOException {
         serverSocket = new ServerSocket(port);
 
         System.out.println("Java TCP server waits on port " + port + "...");

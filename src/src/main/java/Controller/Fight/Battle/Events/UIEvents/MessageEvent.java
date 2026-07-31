@@ -15,11 +15,8 @@ public class MessageEvent extends BattleEvent {
 
     @Override
     public void execute() {
-        System.out.println("[MessageEvent] start: " + message);
-
         TextBubble bubble = BattleView.getTextBubble();
         bubble.setOnMessageComplete(() -> {
-            System.out.println("[MessageEvent] complete: " + message);
             try {
                 onFinish();
             } catch (IOException e) {

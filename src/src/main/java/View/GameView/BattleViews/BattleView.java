@@ -224,7 +224,7 @@ public class BattleView extends BorderPane implements View {
 
         new Thread(() -> {
             try {
-                server.start(5001, gs);
+                server.start(5001);
             } catch (IOException e) {
                 System.out.println("Client connect failed " + e.getMessage());
             }

@@ -67,11 +67,6 @@ public class Main extends Application { // extends Application
 //
         TextBubble textBubble = BattleView.getTextBubble();
         scene.setOnKeyPressed(event -> textBubble.handleKeyPress(event.getCode()));
-
-        scene.setOnKeyPressed(event -> {
-            System.out.println("[Main] key=" + event.getCode());
-            textBubble.handleKeyPress(event.getCode());
-        });
 //        songManager.playSong("/music/champion_steven.mp3");
         gs = Matchup.createGameState(BattleView.getPlayer(), BattleView.getAgent());
 //        train();

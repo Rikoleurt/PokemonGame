@@ -132,11 +132,11 @@ public class TextBubble extends HBox implements Bubble {
     }
 
     public void handleKeyPress(KeyCode code) {
-        System.out.println(
-                "[TextBubble] key=" + code
-                        + ", isTyping=" + isTyping
-                        + ", callback=" + (onMessageComplete != null)
-        );
+//        System.out.println(
+//                "[TextBubble] key=" + code
+//                        + ", isTyping=" + isTyping
+//                        + ", callback=" + (onMessageComplete != null)
+//        );
         if (code == KeyCode.SPACE || code == KeyCode.ENTER) {
             if (isTyping) {
                 typingTimeline.stop();
